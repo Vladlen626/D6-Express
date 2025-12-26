@@ -1,0 +1,80 @@
+# Unity
+* text=auto
+# Unity YAML
+*.meta text eol=lf
+*.unity text eol=lf
+*.asset text eol=lf
+*.prefab text eol=lf
+*.mat text eol=lf
+*.anim text eol=lf
+*.controller text eol=lf
+*.overrideController text eol=lf
+*.physicMaterial text eol=lf
+*.physicsMaterial2D text eol=lf
+*.playable text eol=lf
+*.mask text eol=lf
+*.brush text eol=lf
+*.flare text eol=lf
+*.fontsettings text eol=lf
+*.guiskin text eol=lf
+*.giparams text eol=lf
+*.renderTexture text eol=lf
+*.spriteatlas text eol=lf
+*.terrainlayer text eol=lf
+*.mixer text eol=lf
+*.shadervariants text eol=lf
+*.preset text eol=lf
+*.asmdef text eol=lf
+# Unity LFS (бинарные файлы)
+*.cubemap binary
+*.unitypackage binary
+# FMOD - критически важно для работы на Mac/Linux
+Assets/Plugins/FMOD/**/*.bundle text eol=lf
+Assets/Plugins/FMOD/**/*.bundle.meta text eol=lf
+Assets/Plugins/FMOD/**/*.plist text eol=lf
+Assets/Plugins/FMOD/**/*.info.plist text eol=lf
+*.info.plist text eol=lf
+# FMOD banks
+*.bank binary
+*.strings.bank binary
+# Изображения
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.jpeg binary
+*.png filter=lfs diff=lfs merge=lfs -text
+*.gif binary
+*.psd binary
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.tif binary
+*.tiff binary
+*.iff binary
+*.exr binary
+*.hdr filter=lfs diff=lfs merge=lfs -text
+# Аудио
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.ogg binary
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.aiff binary
+*.aif binary
+# Видео
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+*.mov filter=lfs diff=lfs merge=lfs -text
+*.avi binary
+# 3D модели
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.obj binary
+*.max binary
+*.blend binary
+*.dae binary
+*.mb binary
+*.ma binary
+# Fonts
+*.ttf binary
+*.otf binary
+# Executables
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.a binary
+Assets/Plugins/FMOD/**/*.bundle text eol=lf
+Assets/Plugins/FMOD/**/Info.plist text eol=lf
