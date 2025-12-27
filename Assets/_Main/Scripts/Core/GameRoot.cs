@@ -47,10 +47,11 @@ namespace _Main.Scripts.Core
 			if (sceneContext == null)
 			{
 				logger.LogError($"[GameRoot] SceneContext mistype'{activeSceneName}'!]");
+				return;
 			}
 
 			var diceViews =
-				await DiceFactory.SpawnDiceArrayAsync(factory, sceneContext.DicePositionsHandler.DicePositions);
+				await DiceFactory.SpawnDiceArrayAsync(factory, sceneContext.DiceGameTableView.DicePositionsHandler.DicePositions);
 			
 			var diceControllers = new List<DiceController>();
 

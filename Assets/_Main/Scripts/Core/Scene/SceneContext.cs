@@ -3,7 +3,7 @@ using UnityEngine;
 public class SceneContext : MonoBehaviour, ISceneContext
 {
 	[SerializeField]
-	private DicePositionsHandler dicePositionsHandler;
+	private DiceTableView diceGameTableView;
 	
-	public DicePositionsHandler DicePositionsHandler => dicePositionsHandler;
+	public DiceTableView DiceGameTableView => diceGameTableView;
 }

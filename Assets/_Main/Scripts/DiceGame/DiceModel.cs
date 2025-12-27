@@ -1,16 +1,11 @@
-﻿namespace _Main.Scripts.Dice
+﻿using System;
+
+namespace _Main.Scripts.Dice
 {
-	public class LoadedDiceProfileConfig
-	{
-		private string profileName = "Default";
-		private float[] weights = new float[6] { 1, 1, 1, 1, 1, 1 };
-
-		public string ProfileName => profileName;
-		public float[] Weights => weights;
-	}
-
 	public class DiceModel
 	{
+		public event Action OnDiceChosen;
+		public event Action OnValueChanged;
 		public int CurrentValue { get; private set; }
 		public bool IsChosen { get; private set; }
 		public bool IsSaved { get; private set; }
@@ -23,14 +18,22 @@
 			CurrentValue = 0;
 		}
 
+		public void Roll()
+		{
+			var newValue = DiceGameUtils.GetWeightedRandomValue(Profile.Weights);
+			SetValue(newValue);
+		}
+
 		public void SetValue(int value)
 		{
 			CurrentValue = value;
+			OnValueChanged?.Invoke();
 		}
 
 		public void SetChosen(bool chosen)
 		{
 			IsChosen = chosen;
+			OnDiceChosen?.Invoke();
 		}
 
 		public void SetSaved(bool saved)

@@ -814,7 +814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca138d27da52904b8334370eb0c1709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneContext
-  dicePositionsHandler: {fileID: 1743654741}
+  diceGameTableView: {fileID: 5270810719160515192}
 --- !u!1 &1482825936
 GameObject:
   m_ObjectHideFlags: 0
@@ -927,17 +927,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1482825936}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1743654741 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8818887974081468422, guid: c8800b79a4d59aa499fb3b7afa5d5de1, type: 3}
-  m_PrefabInstance: {fileID: 5270810719160515191}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d9bae687e0713a4d98aeeddb4a8bf07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DicePositionsHandler
 --- !u!1 &2091746251
 GameObject:
   m_ObjectHideFlags: 0
@@ -1079,6 +1068,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8800b79a4d59aa499fb3b7afa5d5de1, type: 3}
+--- !u!114 &5270810719160515192 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1360581831750028765, guid: c8800b79a4d59aa499fb3b7afa5d5de1, type: 3}
+  m_PrefabInstance: {fileID: 5270810719160515191}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a482f3d4abd4a2180a7841c810447aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DiceGameTableView
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

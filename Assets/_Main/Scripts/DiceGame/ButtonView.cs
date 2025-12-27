@@ -1,0 +1,64 @@
+﻿using System;
+using DG.Tweening;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace _Main.Scripts.Game.Views
+{
+	public class ButtonView : MonoBehaviour
+	{
+		[SerializeField] private Collider buttonCollider;
+		[SerializeField] private MeshRenderer meshRenderer;
+		[SerializeField] private Outline outline;
+
+		public event Action OnClicked;
+
+		private bool isInteractable = true;
+		private Camera mainCamera;
+
+		private void Start()
+		{
+			mainCamera = Camera.main;
+		}
+
+		private void Update()
+		{
+			if (!isInteractable)
+			{
+				return;
+			}
+
+			if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+			{
+				CheckClick();
+			}
+		}
+
+		private void CheckClick()
+		{
+			Vector2 mousePos = Mouse.current.position.ReadValue();
+			Ray ray = mainCamera.ScreenPointToRay(mousePos);
+
+			if (Physics.Raycast(ray, out RaycastHit hit))
+			{
+				if (hit.collider == buttonCollider)
+				{
+					OnClicked?.Invoke();
+					PlayClickAnimation();
+				}
+			}
+		}
+
+		private void PlayClickAnimation()
+		{
+			transform.DOScale(0.9f, 0.1f).OnComplete(() =>
+				transform.DOScale(1f, 0.1f));
+		}
+		
+		public void SetInteractable(bool interactable)
+		{
+			isInteractable = interactable;
+			outline.OutlineColor = isInteractable ? Color.green : Color.red;
+		}
+	}
+}
