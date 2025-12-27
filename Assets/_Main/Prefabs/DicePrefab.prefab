@@ -603,7 +603,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6138043921473953259}
   - component: {fileID: 6291876546772440758}
-  - component: {fileID: 6672728739630648082}
+  - component: {fileID: 1808630530691819604}
   m_Layer: 0
   m_Name: DicePrefab
   m_TagString: Untagged
@@ -647,10 +647,10 @@ MonoBehaviour:
   - {fileID: 3552139752064433706}
   - {fileID: 5916330896780248061}
   model: {fileID: 3362445673493656372}
-  outline: {fileID: 6672728739630648082}
+  outline: {fileID: 1808630530691819604}
   animSpeed: 0.15
   yOffset: 0.02
---- !u!114 &6672728739630648082
+--- !u!114 &1808630530691819604
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -659,9 +659,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6801955793903224657}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 1, y: -1}
-  m_UseGraphicAlpha: 1
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 0
+  outlineColor: {r: 1, g: 1, b: 1, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
