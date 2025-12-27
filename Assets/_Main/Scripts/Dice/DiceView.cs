@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using DG.Tweening;
@@ -10,12 +11,12 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private MeshRenderer[] sideMeshes;
 		[SerializeField] private Transform model;
 		[SerializeField] private Outline outline;
-        
+
 		[SerializeField] private float animSpeed = 0.15f;
 		[SerializeField] private float yOffset = 0.02f;
-        
-		public UnityAction OnDiceClicked;
-        
+
+		public event Action OnDiceClicked;
+
 		public void SetSideMesh(int value)
 		{
 			foreach (var mesh in sideMeshes)
@@ -34,30 +35,30 @@ namespace _Main.Scripts.Dice
 			if (isChosen)
 			{
 				model.DOLocalMove(Vector3.up * yOffset, animSpeed);
-				//outline.OutlineColor = Color.red;
+				outline.OutlineColor = Color.green;
 			}
 			else
 			{
 				model.DOLocalMove(Vector3.zero, animSpeed);
-				//outline.OutlineColor = Color.black;
+				outline.OutlineColor = Color.black;
 			}
 		}
-        
+
 		public void PlayPressAnimation()
 		{
 			transform.DOScale(0.9f, animSpeed);
 		}
-        
+
 		public void PlayReleaseAnimation()
 		{
 			transform.DOScale(1f, animSpeed);
 		}
-        
+
 		private void OnMouseDown()
 		{
 			PlayPressAnimation();
 		}
-        
+
 		private void OnMouseUp()
 		{
 			PlayReleaseAnimation();
