@@ -21,14 +21,14 @@ public class MovementController : MonoBehaviour
     bool isGrounded, isSprinting;
     float rotationX;
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    void Update()
+    private void Update()
     {
         if (controller.isGrounded && velocity.y < 0)
             velocity.y = -2f;
