@@ -53,19 +53,27 @@ namespace _Main.Scripts.Core
 			var diceViews =
 				await DiceFactory.SpawnDiceArrayAsync(factory, sceneContext.DiceGameTableView.DicePositionsHandler.DicePositions);
 			
-			var diceControllers = new List<DiceController>();
+			var controllersList = new List<IBaseController>();
+			var diceModels = new List<DiceModel>();
+			var gameModel = new GameModel();
+			var turnModel = new TurnModel();
 
 			foreach (var diceView in diceViews)
 			{
 				var model = new DiceModel(new LoadedDiceProfileConfig());
 				var controller = new DiceController(model, diceView);
-				diceControllers.Add(controller);
+				diceModels.Add(model);
+				controllersList.Add(controller);
 			}
+			
+			controllersList.Add(new DiceGameController(gameModel, turnModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger)); 
 
-			foreach (var diceController in diceControllers)
+			foreach (var controller in controllersList)
 			{
-				await _lifecycle.RegisterAsync(diceController);
+				await _lifecycle.RegisterAsync(controller);
 			}
+			
+			
 
 		}
 	}

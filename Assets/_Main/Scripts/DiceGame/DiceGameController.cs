@@ -5,7 +5,7 @@ using PlatformCore.Services;
 
 namespace _Main.Scripts.Dice
 {
-	public class DiceGameController : IBaseController, IActivatable, IDeactivatable
+	public class DiceGameController : IBaseController, IActivatable
 	{
 		public event Action<int> OnTurnPointsChanged;
 		public event Action<int> OnBankedPointsChanged;

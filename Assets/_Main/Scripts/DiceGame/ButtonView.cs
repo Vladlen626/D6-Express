@@ -7,10 +7,9 @@ namespace _Main.Scripts.Game.Views
 {
 	public class ButtonView : MonoBehaviour
 	{
+		[SerializeField] private Transform buttonModel;
 		[SerializeField] private Collider buttonCollider;
-		[SerializeField] private MeshRenderer meshRenderer;
 		[SerializeField] private Outline outline;
-
 		public event Action OnClicked;
 
 		private bool isInteractable = true;
@@ -51,8 +50,8 @@ namespace _Main.Scripts.Game.Views
 
 		private void PlayClickAnimation()
 		{
-			transform.DOScale(0.9f, 0.1f).OnComplete(() =>
-				transform.DOScale(1f, 0.1f));
+			buttonModel.DOScale(0.9f, 0.1f).OnComplete(() =>
+				buttonModel.DOScale(1f, 0.1f));
 		}
 		
 		public void SetInteractable(bool interactable)
