@@ -13,7 +13,7 @@ namespace _Main.Scripts.Dice
 		public event Action OnHotDice;
 		public event Action<bool> OnGameEnded; // true = win, false = lose
 
-		private readonly GameModel _gameModel;
+		private readonly DiceGameModel _diceGameModel;
 		private readonly TurnModel _turnModel;
 
 		private readonly DiceModel[] _diceModels; // 6 костей
@@ -23,13 +23,13 @@ namespace _Main.Scripts.Dice
 		private readonly ILoggerService _logger;
 
 		public DiceGameController(
-			GameModel gameModel,
+			DiceGameModel diceGameModel,
 			TurnModel turnModel,
 			DiceModel[] diceModels,
 			DiceTableView tableView,
 			ILoggerService logger)
 		{
-			_gameModel = gameModel;
+			_diceGameModel = diceGameModel;
 			_turnModel = turnModel;
 			_diceModels = diceModels;
 			_tableView = tableView;
@@ -134,19 +134,19 @@ namespace _Main.Scripts.Dice
 		{
 			_logger?.Log("[DiceGameController] ✋ Pass button pressed");
 
-			_gameModel.AddBankedPoints(_turnModel.TurnPoints);
+			_diceGameModel.AddBankedPoints(_turnModel.TurnPoints);
 			_logger?.Log(
-				$"[DiceGameController] Banked {_turnModel.TurnPoints} points. Total banked: {_gameModel.BankedPoints}");
+				$"[DiceGameController] Banked {_turnModel.TurnPoints} points. Total banked: {_diceGameModel.BankedPoints}");
 
 			_turnModel.Reset();
 			_dicePool.ResetAll();
 
-			OnBankedPointsChanged?.Invoke(_gameModel.BankedPoints);
+			OnBankedPointsChanged?.Invoke(_diceGameModel.BankedPoints);
 
-			if (_gameModel.BankedPoints >= GameModel.TARGET_SCORE)
+			if (_diceGameModel.BankedPoints >= DiceGameModel.TARGET_SCORE)
 			{
 				_logger?.Log(
-					$"[DiceGameController] 🎉 WIN! Reached {_gameModel.BankedPoints}/{GameModel.TARGET_SCORE}");
+					$"[DiceGameController] 🎉 WIN! Reached {_diceGameModel.BankedPoints}/{DiceGameModel.TARGET_SCORE}");
 				OnGameEnded?.Invoke(true);
 			}
 

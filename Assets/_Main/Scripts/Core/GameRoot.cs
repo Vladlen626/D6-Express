@@ -55,7 +55,7 @@ namespace _Main.Scripts.Core
 			
 			var controllersList = new List<IBaseController>();
 			var diceModels = new List<DiceModel>();
-			var gameModel = new GameModel();
+			var gameModel = new DiceGameModel();
 			var turnModel = new TurnModel();
 
 			foreach (var diceView in diceViews)

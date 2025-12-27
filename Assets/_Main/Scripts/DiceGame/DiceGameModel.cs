@@ -1,6 +1,6 @@
 ﻿namespace _Main.Scripts.Dice
 {
-	public class GameModel
+	public class DiceGameModel
 	{
 		public const int TARGET_SCORE = 4000;
 
