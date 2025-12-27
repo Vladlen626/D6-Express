@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class LandscapeGenerator : MonoBehaviour
 {
-    [Header("Objects to Spawn")]
+    [SerializeField]
     private GameObject[] landScapePrefabs;
 
     [SerializeField]
