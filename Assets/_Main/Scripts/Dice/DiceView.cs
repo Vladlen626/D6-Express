@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using DG.Tweening;
-using UnityEngine.UI;
 
 namespace _Main.Scripts.Dice
 {
@@ -11,11 +10,66 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private MeshRenderer[] sideMeshes;
 		[SerializeField] private Transform model;
 		[SerializeField] private Outline outline;
+		[SerializeField] private Collider diceCollider;
 
 		[SerializeField] private float animSpeed = 0.15f;
 		[SerializeField] private float yOffset = 0.02f;
 
 		public event Action OnDiceClicked;
+
+		private Camera _mainCamera;
+		private bool _isPressed;
+
+		private void Start()
+		{
+			_mainCamera = Camera.main;
+
+			if (_mainCamera == null)
+			{
+				Debug.LogError("[DiceView] Main Camera not found!");
+			}
+		}
+
+		private void Update()
+		{
+			if (!_mainCamera)
+			{
+				return;
+			}
+			
+			if (Mouse.current.leftButton.wasPressedThisFrame)
+			{
+				if (IsMouseOverDice())
+				{
+					_isPressed = true;
+					PlayPressAnimation();
+				}
+			}
+
+			if (Mouse.current.leftButton.wasReleasedThisFrame && _isPressed)
+			{
+				_isPressed = false;
+				PlayReleaseAnimation();
+
+				if (IsMouseOverDice())
+				{
+					OnDiceClicked?.Invoke();
+				}
+			}
+		}
+
+		private bool IsMouseOverDice()
+		{
+			Vector2 mousePos = Mouse.current.position.ReadValue();
+			Ray ray = _mainCamera.ScreenPointToRay(mousePos);
+
+			if (Physics.Raycast(ray, out RaycastHit hit))
+			{
+				return hit.collider == diceCollider;
+			}
+
+			return false;
+		}
 
 		public void SetSideMesh(int value)
 		{
@@ -32,6 +86,11 @@ namespace _Main.Scripts.Dice
 
 		public void UpdateChosenVisual(bool isChosen)
 		{
+			if (!outline.enabled)
+			{
+				outline.enabled = true;
+			}
+
 			if (isChosen)
 			{
 				model.DOLocalMove(Vector3.up * yOffset, animSpeed);
@@ -52,17 +111,6 @@ namespace _Main.Scripts.Dice
 		public void PlayReleaseAnimation()
 		{
 			transform.DOScale(1f, animSpeed);
-		}
-
-		private void OnMouseDown()
-		{
-			PlayPressAnimation();
-		}
-
-		private void OnMouseUp()
-		{
-			PlayReleaseAnimation();
-			OnDiceClicked?.Invoke();
 		}
 	}
 }

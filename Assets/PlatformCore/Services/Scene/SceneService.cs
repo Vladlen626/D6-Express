@@ -150,7 +150,10 @@ namespace PlatformCore.Services
 			sceneContext = null;
 
 			var scene = SceneManager.GetSceneByName(sceneName);
-			if (!scene.IsValid() || !scene.isLoaded) return false;
+			if (!scene.IsValid() || !scene.isLoaded)
+			{
+				return false;
+			}
 
 			var roots = scene.GetRootGameObjects();
 			for (int i = 0; i < roots.Length; i++)
@@ -162,7 +165,10 @@ namespace PlatformCore.Services
 				}
 
 				sceneContext = roots[i].GetComponentInChildren<ISceneContext>(true);
-				if (sceneContext != null) return true;
+				if (sceneContext != null)
+				{
+					return true;
+				}
 			}
 
 			return false;
