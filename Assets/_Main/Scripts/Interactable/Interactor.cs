@@ -66,7 +66,7 @@ public class Interactor : MonoBehaviour
 		canInteract = false;
 	}
 
-	private void OnJump(InputValue value)
+	private void OnInteract(InputValue value)
 	{
 		if (value.isPressed && canInteract && currentInteractable != null)
 		{

@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 6387508034594910953}
   - component: {fileID: 3437503639966455305}
   - component: {fileID: 5194861488153054670}
+  - component: {fileID: 7177956718561451581}
   m_Layer: 0
   m_Name: ChairSeat
   m_TagString: Untagged
@@ -156,6 +157,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableSittable
   sitTfm: {fileID: 7297328465462658331}
+--- !u!114 &7177956718561451581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5237999682709320598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 630e2a9849bf55e4e9838f6800ec2d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hintable
+  hintText: chair
 --- !u!1 &7067987036417520896
 GameObject:
   m_ObjectHideFlags: 0

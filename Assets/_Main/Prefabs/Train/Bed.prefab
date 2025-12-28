@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6861946813531686000}
   m_Layer: 0
-  m_Name: TransformSit
+  m_Name: TransformLay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,6 +43,8 @@ GameObject:
   - component: {fileID: 4453492532646835305}
   - component: {fileID: 1338229824825850084}
   - component: {fileID: 3049780485471383982}
+  - component: {fileID: 8807814866214649401}
+  - component: {fileID: 863660582378621437}
   m_Layer: 0
   m_Name: Bed
   m_TagString: Untagged
@@ -143,3 +145,29 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8807814866214649401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3258363089336196802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
+  sitTfm: {fileID: 6861946813531686000}
+--- !u!114 &863660582378621437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3258363089336196802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 630e2a9849bf55e4e9838f6800ec2d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hintable
+  hintText: bed

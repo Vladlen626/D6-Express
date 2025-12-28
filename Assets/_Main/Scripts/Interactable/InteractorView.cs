@@ -23,7 +23,10 @@ public class InteractorView : MonoBehaviour
 
 	private void OnNoticed(GameObject interactable)
 	{
-		hintText.text = interactable.name;
+		if (interactable.TryGetComponent<Hintable>(out var hintable))
+		{
+			hintText.text = hintable.HintText;
+		}
 	}
 
 	private void OnMissed(GameObject interactable)

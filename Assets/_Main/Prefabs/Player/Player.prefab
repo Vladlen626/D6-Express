@@ -345,6 +345,7 @@ MonoBehaviour:
   interactionDistance: 3
   actions:
   - rid: 1463701297492918341
+  - rid: 1463701297492918344
   interactableLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -354,6 +355,9 @@ MonoBehaviour:
     RefIds:
     - rid: 1463701297492918341
       type: {class: InteractableActionSit, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1463701297492918344
+      type: {class: InteractableActionLay, ns: , asm: Assembly-CSharp}
       data: 
 --- !u!114 &3411494938860463788
 MonoBehaviour:
@@ -369,9 +373,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStateController
   states:
   - rid: 1463701297492918342
+  - rid: 1463701297492918343
   references:
     version: 2
     RefIds:
     - rid: 1463701297492918342
       type: {class: CharacterStateHandlerSitting, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1463701297492918343
+      type: {class: CharacterStateHandlerLaying, ns: , asm: Assembly-CSharp}
       data: 

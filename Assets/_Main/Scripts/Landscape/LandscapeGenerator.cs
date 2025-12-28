@@ -4,6 +4,9 @@ using UnityEngine;
 public class LandscapeGenerator : MonoBehaviour
 {
     [SerializeField]
+    private Transform instantiatedObjectsParent;
+
+    [SerializeField]
     private GameObject[] landScapePrefabs;
 
     [SerializeField]
@@ -63,7 +66,7 @@ public class LandscapeGenerator : MonoBehaviour
 
         spawnPos.x += Random.Range(-GetWidth(), GetWidth());
 
-        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity, instantiatedObjectsParent);
         obj.AddComponent<LandscapeObject>().Initialize(speed);
         activeObjects.Add(obj);
     }

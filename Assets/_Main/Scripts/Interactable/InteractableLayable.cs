@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class InteractableSittable : Interactable
+public class InteractableLayable : Interactable
 {
     [SerializeField]
     private Transform sitTfm;
