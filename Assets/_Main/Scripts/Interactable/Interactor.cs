@@ -1,26 +1,25 @@
 using System;
 using System.Collections.Generic;
+using _Main.Scripts.Core.Services;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterStateController))]
 public class Interactor : MonoBehaviour
 {
-	[SerializeField]
-	private float interactionDistance = 3f;
+	[SerializeField] private float interactionDistance = 3f;
 
-	[SerializeReference]
-	[SubclassSelector]
+	[SerializeReference] [SubclassSelector]
 	private List<InteractionAction> actions = new();
 
-	[SerializeField]
-	private LayerMask interactableLayerMask;
+	[SerializeField] private LayerMask interactableLayerMask;
 
-	[SerializeField]
-	private Transform viewTransform;
+	[SerializeField] private Transform viewTransform;
 
 	private GameObject currentInteractable;
 	private CharacterStateController characterStateController;
+
+	private IInputService inputService;
 
 	public event Action<GameObject> Noticed;
 	public event Action<GameObject> Missed;
@@ -35,9 +34,19 @@ public class Interactor : MonoBehaviour
 		characterStateController = GetComponent<CharacterStateController>();
 	}
 
+	public void Initialize(IInputService inInputService)
+	{
+		inputService = inInputService;
+	}
+
 	private void Update()
 	{
 		HandleInteraction();
+
+		if (inputService != null && inputService.IsInteract && currentInteractable)
+		{
+			OnInteract();
+		}
 	}
 
 	private void HandleInteraction()
@@ -66,19 +75,16 @@ public class Interactor : MonoBehaviour
 		}
 	}
 
-	private void OnInteract(InputValue value)
+	private void OnInteract()
 	{
-		if (value.isPressed && currentInteractable != null)
+		var interactable = currentInteractable.GetComponent<IInteractable>();
+		foreach (var item in actions)
 		{
-			var interactable = currentInteractable.GetComponent<IInteractable>();
-			foreach (var item in actions)
+			// TODO: подумать еще раз.
+			if (item.CanInteract(interactable))
 			{
-				// TODO: подумать еще раз.
-				if (item.CanInteract(interactable))
-				{
-					interactable.StartInteract(this);
-					item.StartInteract(interactable);
-				}
+				interactable.StartInteract(this);
+				item.StartInteract(interactable);
 			}
 		}
 	}

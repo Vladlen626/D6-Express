@@ -1,17 +1,20 @@
-﻿using System.Collections.Generic;
-using _Main.Scripts.Core.Services;
+﻿using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
-using PlatformCore.Services;
 using PlatformCore.Services.Factory;
 
 public static class PlayerFactory
 {
-
-	public static async UniTask<PlayerView> SpawnPlayer(SceneContext sceneContext, IObjectFactory factory)
+	public static async UniTask<PlayerView> SpawnPlayer(SceneContext sceneContext, IObjectFactory factory, IInputService inputService)
 	{
-		return await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerPrefab, sceneContext.PlayerSpawnPosition.position,
+		var playerView =  await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerPrefab, sceneContext.PlayerSpawnPosition.position,
 			sceneContext.PlayerSpawnPosition.rotation);;
+
+		var playerInteractSystem = playerView.GetComponent<Interactor>();
+		playerInteractSystem.Initialize(inputService);
+		sceneContext?.InteractorView.Initialize(playerInteractSystem);
+
+		return playerView;
 	}
 	
 	public static IBaseController[] GetPlayerBaseControllers(PlayerView playerView, ServiceLocator serviceLocator)

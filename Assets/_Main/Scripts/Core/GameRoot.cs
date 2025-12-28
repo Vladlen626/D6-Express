@@ -53,6 +53,7 @@ namespace _Main.Scripts.Core
 			var uiService = _serviceLocator.Get<IUIService>();
 			var cameraService = _serviceLocator.Get<ICameraService>();
 			var cursorService = _serviceLocator.Get<ICursorService>();
+			var inputService = _serviceLocator.Get<IInputService>();
 			
 			cursorService.UnlockCursor();
 			// Controllers list
@@ -85,11 +86,10 @@ namespace _Main.Scripts.Core
 			{
 				var sceneContext = context as SceneContext;
 				controllersList.AddRange(await DiceFactory.GetDiceGameControllers(sceneContext, factory, logger));
-				
-				var player = await PlayerFactory.SpawnPlayer(sceneContext, factory);
+
+				var player = await PlayerFactory.SpawnPlayer(sceneContext, factory, inputService);
 				controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(player, _serviceLocator));
 				cameraService.AttachTo(player.CameraRoot);
-				sceneContext?.InteractorView.Initialize(player.GetComponent<Interactor>());
 			}
 
 			foreach (var controller in controllersList)
