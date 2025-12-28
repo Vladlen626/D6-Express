@@ -9,13 +9,18 @@ namespace _Main.Scripts.Dice
 
 		public void AddTurnPoints(int points)
 		{
-			TurnPoints += points;
-			OnTurnPointsChanged?.Invoke();
+			SetTurnPoints(TurnPoints + points);
 		}
 
 		public void Reset()
 		{
-			TurnPoints = 0;
+			SetTurnPoints(0);
+		}
+		
+		private void SetTurnPoints(int points)
+		{
+			TurnPoints = points;
+			OnTurnPointsChanged?.Invoke();
 		}
 	}
 }

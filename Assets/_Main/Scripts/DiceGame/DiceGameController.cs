@@ -131,7 +131,7 @@ namespace _Main.Scripts.Dice
 			if (_dicePool.AllBanked())
 			{
 				_logger?.Log("[DiceGameController] 🔥 HOT DICE! Resetting all dice.");
-				_dicePool.ResetAll();
+				ResetTable();
 			}
 
 			UpdateUI();
@@ -146,7 +146,7 @@ namespace _Main.Scripts.Dice
 				$"[DiceGameController] Banked {_turnModel.TurnPoints} points. Total banked: {_diceGameModel.BankedPoints}");
 
 			_turnModel.Reset();
-			_dicePool.ResetAll();
+			ResetTable();
 
 			UpdateUI();
 		}
@@ -169,6 +169,12 @@ namespace _Main.Scripts.Dice
 			_tableView.SetButtonInteractable("Roll", canRoll);
 			_tableView.SetButtonInteractable("Save", canSave);
 			_tableView.SetButtonInteractable("Pass", canPass);
+		}
+
+		private void ResetTable()
+		{
+			_diceGameModel.ResetAllPositions();
+			_dicePool.ResetAll();
 		}
 	}
 }

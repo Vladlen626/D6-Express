@@ -19,7 +19,7 @@ namespace _Main.Scripts.Dice
 		public DiceModel(LoadedDiceProfileConfig profile)
 		{
 			Profile = profile;
-			CurrentValue = 0;
+			Reset();
 		}
 
 		public void Roll()
@@ -53,9 +53,9 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
-			CurrentValue = 0;
-			IsChosen = false;
-			IsSaved = false;
+			SetValue(0);
+			SetChosen(false);
+			SetSaved(false);
 		}
 	}
 }
