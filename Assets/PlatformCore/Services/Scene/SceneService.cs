@@ -53,11 +53,6 @@ namespace PlatformCore.Services
 		{
 			await LoadSceneAsync(sceneName, LoadSceneMode.Additive, ct);
 		}
-
-		public UniTask LoadEnvironmentSceneAsync(string sceneName, bool unloadPrev, CancellationToken ct = default)
-		{
-			throw new NotImplementedException();
-		}
 		
 		public async UniTask LoadSceneAsync(string sceneName, LoadSceneMode mode,
 			CancellationToken ct = default)

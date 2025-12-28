@@ -41,6 +41,10 @@ namespace _Main.Scripts.Core
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
 
+			var sceneForLoad = SceneNames.TrainScene;
+			await sceneService.LoadSceneAsync(sceneForLoad);
+			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
+
 			if (!sceneService.TryGetSceneContext(activeSceneName, out var context))
 			{
 				logger.LogError($"[GameRoot] SceneContext not found in scene '{activeSceneName}'!");
