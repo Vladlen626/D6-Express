@@ -55,7 +55,7 @@ namespace _Main.Scripts.Core
 			
 			var controllersList = new List<IBaseController>();
 			var diceModels = new List<DiceModel>();
-			var gameModel = new DiceGameModel();
+			var diceGameModel = new DiceGameModel();
 			var turnModel = new TurnModel();
 
 			foreach (var diceView in diceViews)
@@ -66,7 +66,7 @@ namespace _Main.Scripts.Core
 				controllersList.Add(controller);
 			}
 			
-			controllersList.Add(new DiceGameController(gameModel, turnModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger)); 
+			controllersList.Add(new DiceGameController(diceGameModel, turnModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger)); 
 
 			foreach (var controller in controllersList)
 			{

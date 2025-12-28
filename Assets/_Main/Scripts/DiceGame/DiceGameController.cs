@@ -7,16 +7,10 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceGameController : IBaseController, IActivatable
 	{
-		public event Action<int> OnTurnPointsChanged;
-		public event Action<int> OnBankedPointsChanged;
-		public event Action OnBust;
-		public event Action OnHotDice;
-		public event Action<bool> OnGameEnded; // true = win, false = lose
-
 		private readonly DiceGameModel _diceGameModel;
 		private readonly TurnModel _turnModel;
 
-		private readonly DiceModel[] _diceModels; // 6 костей
+		private readonly DiceModel[] _diceModels;
 		private readonly DiceTableView _tableView;
 
 		private readonly DicePoolLogic _dicePool;
@@ -46,6 +40,11 @@ namespace _Main.Scripts.Dice
 			_tableView.OnSaveClicked += HandleSave;
 			_tableView.OnPassClicked += HandlePass;
 
+			foreach (var diceModel in _diceModels)
+			{
+				diceModel.OnDiceChosenChanged += UpdateUI;
+			}
+			
 			UpdateUI();
 		}
 
@@ -56,6 +55,11 @@ namespace _Main.Scripts.Dice
 			_tableView.OnRollClicked -= HandleRoll;
 			_tableView.OnSaveClicked -= HandleSave;
 			_tableView.OnPassClicked -= HandlePass;
+			
+			foreach (var diceModel in _diceModels)
+			{
+				diceModel.OnDiceChosenChanged -= UpdateUI;
+			}
 		}
 
 		// === ОБРАБОТЧИКИ КНОПОК ===
@@ -80,7 +84,6 @@ namespace _Main.Scripts.Dice
 			{
 				_logger?.Log("[DiceGameController] ❌ BUST! Turn points lost.");
 				_turnModel.Reset();
-				OnBust?.Invoke();
 			}
 
 			UpdateUI();
@@ -121,12 +124,10 @@ namespace _Main.Scripts.Dice
 			if (_dicePool.AllBanked())
 			{
 				_logger?.Log("[DiceGameController] 🔥 HOT DICE! Resetting all dice.");
-				OnHotDice?.Invoke();
 				_dicePool.ResetAll();
 				HandleRoll();
 			}
-
-			OnTurnPointsChanged?.Invoke(_turnModel.TurnPoints);
+			
 			UpdateUI();
 		}
 
@@ -140,15 +141,6 @@ namespace _Main.Scripts.Dice
 
 			_turnModel.Reset();
 			_dicePool.ResetAll();
-
-			OnBankedPointsChanged?.Invoke(_diceGameModel.BankedPoints);
-
-			if (_diceGameModel.BankedPoints >= DiceGameModel.TARGET_SCORE)
-			{
-				_logger?.Log(
-					$"[DiceGameController] 🎉 WIN! Reached {_diceGameModel.BankedPoints}/{DiceGameModel.TARGET_SCORE}");
-				OnGameEnded?.Invoke(true);
-			}
 
 			UpdateUI();
 		}

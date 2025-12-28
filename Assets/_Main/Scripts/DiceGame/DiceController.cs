@@ -17,8 +17,11 @@ namespace _Main.Scripts.Dice
 		public void Activate()
 		{
 			diceModel.OnValueChanged += OnDiceValueChangedHandler;
-			diceModel.OnDiceChosen += OnDiceChosenHandler;
+			diceModel.OnDiceChosenChanged += OnDiceChosenChangedHandler;
+			diceModel.OnDiceSavedChanged += OnDiceSavedChangedHandler;
+
 			diceView.OnDiceClicked += OnDiceClickedHandler;
+
 
 			diceModel.Roll();
 		}
@@ -26,7 +29,8 @@ namespace _Main.Scripts.Dice
 		public void Deactivate()
 		{
 			diceModel.OnValueChanged -= OnDiceValueChangedHandler;
-			diceModel.OnDiceChosen -= OnDiceChosenHandler;
+			diceModel.OnDiceChosenChanged -= OnDiceChosenChangedHandler;
+			diceModel.OnDiceSavedChanged -= OnDiceSavedChangedHandler;
 
 			if (diceView != null)
 			{
@@ -44,7 +48,7 @@ namespace _Main.Scripts.Dice
 			diceModel.SetChosen(!diceModel.IsChosen);
 		}
 
-		private void OnDiceChosenHandler()
+		private void OnDiceChosenChangedHandler()
 		{
 			diceView.UpdateChosenVisual(diceModel.IsChosen);
 		}
@@ -52,6 +56,12 @@ namespace _Main.Scripts.Dice
 		private void OnDiceValueChangedHandler()
 		{
 			diceView.SetSideMesh(diceModel.CurrentValue);
+		}
+
+		private void OnDiceSavedChangedHandler()
+		{
+			var pos = Vector3.zero;
+			diceView.MoveToPosition(pos);
 		}
 	}
 }

@@ -112,5 +112,10 @@ namespace _Main.Scripts.Dice
 		{
 			transform.DOScale(1f, animSpeed);
 		}
+
+		public void MoveToPosition(Vector3 position)
+		{
+			transform.DOMove(position, animSpeed);
+		}
 	}
 }

@@ -4,7 +4,8 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceModel
 	{
-		public event Action OnDiceChosen;
+		public event Action OnDiceChosenChanged;
+		public event Action OnDiceSavedChanged;
 		public event Action OnValueChanged;
 		public int CurrentValue { get; private set; }
 		public bool IsChosen { get; private set; }
@@ -33,12 +34,13 @@ namespace _Main.Scripts.Dice
 		public void SetChosen(bool chosen)
 		{
 			IsChosen = chosen;
-			OnDiceChosen?.Invoke();
+			OnDiceChosenChanged?.Invoke();
 		}
 
 		public void SetSaved(bool saved)
 		{
 			IsSaved = saved;
+			OnDiceSavedChanged?.Invoke();
 		}
 
 		public void Reset()
