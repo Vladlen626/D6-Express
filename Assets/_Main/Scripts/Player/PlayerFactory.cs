@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services;
@@ -13,9 +14,16 @@ public static class PlayerFactory
 			sceneContext.PlayerSpawnPosition.rotation);;
 	}
 	
-	public static async UniTask<IBaseController[]> GetPlayerBaseControllers(SceneContext sceneContext, IObjectFactory factory)
+	public static IBaseController[] GetPlayerBaseControllers(PlayerView playerView, ServiceLocator serviceLocator)
 	{
-		var playerControllers = new List<IBaseController>();
-		return playerControllers.ToArray();
+		var input = serviceLocator.Get<IInputService>();
+		var cursor = serviceLocator.Get<ICursorService>();
+		
+		var playerControllers = new IBaseController[]
+		{
+			new MovementController(playerView, input, cursor),
+		};
+		
+		return playerControllers;
 	}
 }

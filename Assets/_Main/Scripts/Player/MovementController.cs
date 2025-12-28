@@ -1,54 +1,61 @@
+using _Main.Scripts.Core.Services;
+using PlatformCore.Core;
+using PlatformCore.Infrastructure.Lifecycle;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(CharacterController))]
-public class MovementController : MonoBehaviour
+public class MovementController : IBaseController, IActivatable, IUpdatable
 {
-    [Header("Movement")]
-    public float walkSpeed = 5f;
-    public float runSpeed = 10f;
-    public float jumpHeight = 2f;
-    public float gravity = -20f;
+	private readonly CharacterController controller;
+	private readonly PlayerView playerView;
+	private readonly IInputService inputService;
+	private readonly ICursorService cursorService;
 
-    [Header("Look")]
-    public float mouseSensitivity = 2f;
-    public Transform cameraTransform;
-    public float lookXLimit = 45f;
+	Vector3 velocity;
+	Vector2 moveInput => inputService.Move;
+	Vector2 lookInput => inputService.Look;
+	bool isSprint => inputService.IsSprinting;
+	bool isGrounded;
+	float rotationX;
 
-    CharacterController controller;
-    Vector3 velocity;
-    Vector2 moveInput, lookInput;
-    bool isGrounded, isSprinting;
-    float rotationX;
+	private Transform transform => playerView.transform;
 
-    private void Start()
-    {
-        controller = GetComponent<CharacterController>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
+	public MovementController(PlayerView inPlayerView, IInputService inInputService, ICursorService inCursor)
+	{
+		playerView = inPlayerView;
+		controller = inPlayerView.CharacterController;
+		inputService = inInputService;
+		cursorService = inCursor;
+	}
 
-    private void Update()
-    {
-        if (controller.isGrounded && velocity.y < 0)
-            velocity.y = -2f;
+	public void Activate()
+	{
+		cursorService.LockCursor();
+	}
 
-        if (controller.enabled)
-        {
-            Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-            controller.Move((isSprinting ? runSpeed : walkSpeed) * Time.deltaTime * move);
+	public void Deactivate()
+	{
+		cursorService.UnlockCursor();
+	}
 
-            velocity.y += gravity * Time.deltaTime;
-            controller.Move(velocity * Time.deltaTime);
-        }
+	public void OnUpdate(float deltaTime)
+	{
+		if (controller.isGrounded && velocity.y < 0)
+		{
+			velocity.y = -2f;
+		}
 
-        rotationX -= lookInput.y * mouseSensitivity;
-        rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-        cameraTransform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-        transform.rotation *= Quaternion.Euler(0, lookInput.x * mouseSensitivity, 0);
-    }
+		if (controller.enabled)
+		{
+			Vector3 move = playerView.transform.right * moveInput.x + transform.forward * moveInput.y;
+			controller.Move((isSprint ? playerView.runSpeed : playerView.walkSpeed) * Time.deltaTime * move);
 
-    public void OnMove(InputValue value) => moveInput = value.Get<Vector2>();
-    public void OnLook(InputValue value) => lookInput = value.Get<Vector2>();
-    public void OnSprint(InputValue value) => isSprinting = value.isPressed;
+			velocity.y += playerView.gravity * Time.deltaTime;
+			controller.Move(velocity * Time.deltaTime);
+		}
+
+		rotationX -= lookInput.y * playerView.mouseSensitivity;
+		rotationX = Mathf.Clamp(rotationX, -playerView.lookXLimit, playerView.lookXLimit);
+		playerView.CameraRoot.localRotation = Quaternion.Euler(rotationX, 0, 0);
+		transform.rotation *= Quaternion.Euler(0, lookInput.x * playerView.mouseSensitivity, 0);
+	}
 }

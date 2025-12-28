@@ -3,6 +3,7 @@ using _Main.Scripts.Core.Services;
 using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Infrastructure;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
@@ -27,6 +28,7 @@ namespace _Main.Scripts.Core
 			var uiService = new UIBaseService(logger, resourceService, persistentSceneContext.StaticCanvas,
 				persistentSceneContext.DynamicCanvas);
 			var cameraService = new CameraService(objectFactory);
+			var cursorService = new CursorService(uiService);
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
 			_serviceLocator.Register<IResourceService, ResourceService>(resourceService);
@@ -37,6 +39,7 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<IUIService, UIBaseService>(uiService);
 			_serviceLocator.Register<ICameraShakeService, CameraService>(cameraService);
 			_serviceLocator.Register<ICameraService, CameraService>(cameraService);
+			_serviceLocator.Register<ICursorService, CursorService>(cursorService);
 
 			Debug.Log("[GameRoot] Services registered!");
 		}
@@ -82,6 +85,7 @@ namespace _Main.Scripts.Core
 				controllersList.AddRange(await DiceFactory.GetDiceGameControllers(sceneContext, factory, logger));
 				
 				var player = await PlayerFactory.SpawnPlayer(sceneContext, factory);
+				controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(player, _serviceLocator));
 				cameraService.AttachTo(player.CameraRoot);
 			}
 
