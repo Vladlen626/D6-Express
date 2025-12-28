@@ -16,6 +16,8 @@ namespace _Main.Scripts.Dice
 		private readonly DicePoolLogic _dicePool;
 		private readonly ILoggerService _logger;
 
+		private bool _justSaved;
+
 		public DiceGameController(
 			DiceGameModel diceGameModel,
 			TurnModel turnModel,
@@ -44,7 +46,8 @@ namespace _Main.Scripts.Dice
 			{
 				diceModel.OnDiceChosenChanged += UpdateUI;
 			}
-			
+
+			_justSaved = false;
 			UpdateUI();
 		}
 
@@ -55,7 +58,7 @@ namespace _Main.Scripts.Dice
 			_tableView.OnRollClicked -= HandleRoll;
 			_tableView.OnSaveClicked -= HandleSave;
 			_tableView.OnPassClicked -= HandlePass;
-			
+
 			foreach (var diceModel in _diceModels)
 			{
 				diceModel.OnDiceChosenChanged -= UpdateUI;
@@ -67,6 +70,8 @@ namespace _Main.Scripts.Dice
 		private void HandleRoll()
 		{
 			_logger?.Log("[DiceGameController] 🎲 Roll button pressed");
+
+			_justSaved = false;
 
 			var unbankedDice = _dicePool.GetUnbanked();
 			foreach (var dice in unbankedDice)
@@ -84,6 +89,7 @@ namespace _Main.Scripts.Dice
 			{
 				_logger?.Log("[DiceGameController] ❌ BUST! Turn points lost.");
 				_turnModel.Reset();
+				HandlePass();
 			}
 
 			UpdateUI();
@@ -125,9 +131,9 @@ namespace _Main.Scripts.Dice
 			{
 				_logger?.Log("[DiceGameController] 🔥 HOT DICE! Resetting all dice.");
 				_dicePool.ResetAll();
-				HandleRoll();
+				_justSaved = true;
 			}
-			
+
 			UpdateUI();
 		}
 
@@ -142,14 +148,39 @@ namespace _Main.Scripts.Dice
 			_turnModel.Reset();
 			_dicePool.ResetAll();
 
+			_justSaved = false;
+
 			UpdateUI();
 		}
 
 		private void UpdateUI()
 		{
-			bool canRoll = _dicePool.HasUnbanked();
-			bool canSave = _dicePool.GetSelected().Length > 0;
-			bool canPass = _turnModel.TurnPoints > 0;
+			var selectedDice = _dicePool.GetSelected();
+			var selectedValues = new int[selectedDice.Length];
+			for (int i = 0; i < selectedDice.Length; i++)
+			{
+				selectedValues[i] = selectedDice[i].CurrentValue;
+			}
+
+			bool hasValidComboSelected = DiceGameUtils.HasValidCombo(selectedValues);
+
+			// ЛОГИКА КНОПОК:
+
+			// 1. ROLL активна если:
+			// - Есть незабанкованные кубы И ничего не выбрано в данный момент
+			// - И (Это самое начало хода ИЛИ мы только что сохранили очки за комбинацию)
+			bool canRoll = _dicePool.HasUnbanked() &&
+			               selectedDice.Length == 0 &&
+			               (_turnModel.TurnPoints == 0 || _justSaved);
+
+			// 2. SAVE активна если:
+			// - Выбрана валидная комбинация (больше 0 очков)
+			bool canSave = hasValidComboSelected;
+
+			// 3. PASS активна если:
+			// - У игрока есть накопленные очки за этот ход
+			// - И сейчас ничего не выбрано (нужно либо всё сохранить, либо всё отменить перед пасом)
+			bool canPass = _turnModel.TurnPoints > 0 && selectedDice.Length == 0;
 
 			_tableView.SetButtonInteractable("Roll", canRoll);
 			_tableView.SetButtonInteractable("Save", canSave);

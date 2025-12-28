@@ -1,5 +1,6 @@
 ﻿using System;
 using _Main.Scripts.Game.Views;
+using TMPro;
 using UnityEngine;
 
 public class DiceTableView : MonoBehaviour
@@ -8,8 +9,12 @@ public class DiceTableView : MonoBehaviour
 
 	public DicePositionsHandler DicePositionsHandler => dicePositionsHandler;
 
-	[Header("Buttons")]
-	[SerializeField] private ButtonView rollButton;
+	[Header("Score")] [SerializeField] private TextMeshProUGUI targetScoreText;
+	[SerializeField] private TextMeshProUGUI totalScoreText;
+	[SerializeField] private TextMeshProUGUI currentScoreText;
+
+
+	[Header("Buttons")] [SerializeField] private ButtonView rollButton;
 	[SerializeField] private ButtonView saveButton;
 	[SerializeField] private ButtonView passButton;
 
@@ -38,5 +43,20 @@ public class DiceTableView : MonoBehaviour
 				passButton.SetInteractable(interactable);
 				break;
 		}
+	}
+
+	public void SetTotalScoreText(string text)
+	{
+		totalScoreText.text = text;
+	}
+
+	public void SetTargetScoreText(string text)
+	{
+		targetScoreText.text = text;
+	}
+
+	public void SetCurrentScoreText(string text)
+	{
+		currentScoreText.text = text;
 	}
 }
