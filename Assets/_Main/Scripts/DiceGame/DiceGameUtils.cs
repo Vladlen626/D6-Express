@@ -4,243 +4,131 @@ using UnityEngine;
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
-	/// Статические утилиты для подсчёта очков и проверки комбинаций
+	/// Статические утилиты для подсчёта очков (упрощённый KCD/Farkle-стиль)
 	/// </summary>
 	public static class DiceGameUtils
 	{
-		// ========================================
-		// ПОДСЧЁТ ОЧКОВ
-		// ========================================
-
-		/// <summary>
-		/// Подсчитать очки за набор костей по правилам из документа
-		/// </summary>
-		public static int CalculateScore(int[] values)
+		private class DiceInfo
 		{
+			public int[] Counts = new int[7];
+			public int[] TripleCounts = new int[7];
+			public int SingleOnes;
+			public int SingleFives;
+			public bool IsStraight_1_6;
+			public bool IsStraight_1_5;
+			public bool IsStraight_2_6;
+		}
+
+		private static DiceInfo AnalyzeValues(int[] values)
+		{
+			var info = new DiceInfo();
+
 			if (values == null || values.Length == 0)
-				return 0;
+				return info;
 
-			int totalScore = 0;
-			var counts = new int[7]; // индексы 1-6
-
-			// Считаем количество каждого значения
 			foreach (var value in values)
 			{
 				if (value >= 1 && value <= 6)
-					counts[value]++;
+					info.Counts[value]++;
 			}
 
-			// === СПЕЦИАЛЬНЫЕ КОМБИНАЦИИ ===
+			var sorted = values.OrderBy(v => v).ToArray();
 
-			// Стрейт (1-2-3-4-5-6) = 1500
-			if (values.Length == 6 && counts.Skip(1).All(c => c == 1))
-			{
-				return 1500;
-			}
+			info.IsStraight_1_6 = (values.Length == 6 && sorted.SequenceEqual(new[] { 1, 2, 3, 4, 5, 6 }));
+			info.IsStraight_1_5 = (values.Length == 5 && sorted.SequenceEqual(new[] { 1, 2, 3, 4, 5 }));
+			info.IsStraight_2_6 = (values.Length == 5 && sorted.SequenceEqual(new[] { 2, 3, 4, 5, 6 }));
 
-			// 3 пары = 750
-			int pairCount = counts.Skip(1).Count(c => c == 2);
-			if (pairCount == 3)
-			{
-				return 750;
-			}
-
-			// === THREE OF A KIND ===
 			for (int face = 1; face <= 6; face++)
 			{
-				if (counts[face] >= 3)
-				{
-					if (face == 1)
-					{
-						// 1-1-1 = 1000
-						totalScore += 1000;
-
-						// Каждая дополнительная 1 удваивает
-						for (int i = 3; i < counts[face]; i++)
-						{
-							totalScore *= 2;
-						}
-					}
-					else
-					{
-						// X-X-X = face * 100
-						totalScore += face * 100;
-
-						// Каждая дополнительная кость удваивает
-						for (int i = 3; i < counts[face]; i++)
-						{
-							totalScore *= 2;
-						}
-					}
-
-					counts[face] = 0; // Убираем использованные кости
-				}
+				if (info.Counts[face] >= 3)
+					info.TripleCounts[face] = info.Counts[face];
 			}
 
-			// === ОДИНОЧНЫЕ 1 и 5 ===
-			totalScore += counts[1] * 100; // Каждая 1 = 100
-			totalScore += counts[5] * 50; // Каждая 5 = 50
+			info.SingleOnes = System.Math.Max(0, info.Counts[1] - info.TripleCounts[1]);
+			info.SingleFives = System.Math.Max(0, info.Counts[5] - info.TripleCounts[5]);
 
-			return totalScore;
+			return info;
 		}
 
-		// ========================================
-		// ПРОВЕРКА КОМБИНАЦИЙ
-		// ========================================
+		private static int ScoreNOfKind(int face, int count)
+		{
+			if (count < 3)
+				return 0;
+
+			int baseScore = (face == 1) ? 1000 : face * 100;
+
+			for (int i = 3; i < count; i++)
+				baseScore *= 2;
+
+			return baseScore;
+		}
 
 		/// <summary>
-		/// Проверка на BUST (нет ни одной очковой кости)
+		/// Подсчитать очки. Возвращает null если невалидная комбинация.
 		/// </summary>
-		public static bool IsBust(int[] values)
+		public static int? CalculateScore(int[] values)
 		{
 			if (values == null || values.Length == 0)
-				return true;
+				return null;
 
-			return !HasValidCombo(values);
+			var info = AnalyzeValues(values);
+
+			if (info.IsStraight_1_6) return 1500;
+			if (info.IsStraight_1_5) return 500;
+			if (info.IsStraight_2_6) return 750;
+
+			int totalScore = 0;
+
+			for (int face = 1; face <= 6; face++)
+			{
+				if (info.TripleCounts[face] >= 3)
+					totalScore += ScoreNOfKind(face, info.TripleCounts[face]);
+			}
+
+			totalScore += info.SingleOnes * 100;
+			totalScore += info.SingleFives * 50;
+
+			// Проверка "мёртвых" костей
+			foreach (int face in new[] { 2, 3, 4, 6 })
+			{
+				int unused = info.Counts[face] - info.TripleCounts[face];
+				if (unused > 0)
+					return null;
+			}
+
+			return totalScore > 0 ? totalScore : (int?)null;
 		}
 
 		/// <summary>
-		/// Есть ли хоть одна валидная комбинация?
+		/// Есть ли в броске хоть одна очковая кость? (для проверки BUST)
 		/// </summary>
-		public static bool HasValidCombo(int[] values)
+		public static bool RollHasAnyScore(int[] values)
 		{
 			if (values == null || values.Length == 0)
 				return false;
 
-			var counts = new int[7];
-			foreach (var value in values)
+			var info = AnalyzeValues(values);
+
+			if (info.IsStraight_1_6 || info.IsStraight_1_5 || info.IsStraight_2_6)
+				return true;
+
+			if (values.Contains(1) || values.Contains(5))
+				return true;
+
+			for (int face = 1; face <= 6; face++)
 			{
-				if (value >= 1 && value <= 6)
-					counts[value]++;
+				if (info.Counts[face] >= 3)
+					return true;
 			}
-
-			// Стрейт 1-2-3-4-5-6
-			if (values.Length == 6 && counts.Skip(1).All(c => c == 1))
-				return true;
-
-			// 3 пары
-			int pairCount = counts.Skip(1).Count(c => c == 2);
-			if (pairCount == 3)
-				return true;
-
-			// Three of a kind любого значения
-			if (counts.Any(c => c >= 3))
-				return true;
-
-			// Хотя бы одна 1 или 5
-			if (counts[1] > 0 || counts[5] > 0)
-				return true;
 
 			return false;
 		}
 
-		/// <summary>
-		/// Проверка на стрейт (1-2-3-4-5-6)
-		/// </summary>
-		public static bool HasStraight(int[] values)
-		{
-			if (values == null || values.Length != 6)
-				return false;
-
-			return values.OrderBy(v => v).SequenceEqual(new[] { 1, 2, 3, 4, 5, 6 });
-		}
-
-		/// <summary>
-		/// Проверка на 3 пары
-		/// </summary>
-		public static bool HasThreePairs(int[] values)
-		{
-			if (values == null || values.Length != 6)
-				return false;
-
-			var counts = new int[7];
-			foreach (var value in values)
-			{
-				if (value >= 1 && value <= 6)
-					counts[value]++;
-			}
-
-			int pairCount = counts.Skip(1).Count(c => c == 2);
-			return pairCount == 3;
-		}
-
-		/// <summary>
-		/// Проверка на Three of a Kind
-		/// </summary>
-		public static bool HasThreeOfKind(int[] values)
-		{
-			if (values == null || values.Length < 3)
-				return false;
-
-			var counts = new int[7];
-			foreach (var value in values)
-			{
-				if (value >= 1 && value <= 6)
-					counts[value]++;
-			}
-
-			return counts.Any(c => c >= 3);
-		}
-
-		// ========================================
-		// ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ
-		// ========================================
-
-		/// <summary>
-		/// Получить название комбинации для отображения
-		/// </summary>
-		public static string GetComboName(int[] values)
-		{
-			if (values == null || values.Length == 0)
-				return "No Combo";
-
-			if (HasStraight(values))
-				return "Straight (1500)";
-
-			if (HasThreePairs(values))
-				return "Three Pairs (750)";
-
-			if (HasThreeOfKind(values))
-			{
-				var counts = new int[7];
-				foreach (var value in values)
-				{
-					if (value >= 1 && value <= 6)
-						counts[value]++;
-				}
-
-				for (int face = 1; face <= 6; face++)
-				{
-					if (counts[face] >= 3)
-					{
-						int score = face == 1 ? 1000 : face * 100;
-						return $"Three {face}'s ({score})";
-					}
-				}
-			}
-
-			int ones = values.Count(v => v == 1);
-			int fives = values.Count(v => v == 5);
-
-			if (ones > 0 && fives > 0)
-				return $"{ones}×1 + {fives}×5 ({ones * 100 + fives * 50})";
-
-			if (ones > 0)
-				return $"{ones}×1 ({ones * 100})";
-
-			if (fives > 0)
-				return $"{fives}×5 ({fives * 50})";
-
-			return "No Combo";
-		}
-		
 		public static int GetWeightedRandomValue(float[] weights)
 		{
 			float totalWeight = 0f;
 			foreach (float weight in weights)
-			{
 				totalWeight += weight;
-			}
 
 			float randomValue = Random.Range(0f, totalWeight);
 			float cumulativeWeight = 0f;
@@ -249,9 +137,7 @@ namespace _Main.Scripts.Dice
 			{
 				cumulativeWeight += weights[i];
 				if (randomValue <= cumulativeWeight)
-				{
 					return i + 1;
-				}
 			}
 
 			return 1;

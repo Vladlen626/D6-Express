@@ -187,7 +187,7 @@ namespace _Main.Scripts.Dice
 			int previewPoints = hasValidComboSelected ? DiceGameUtils.CalculateScore(selectedValues) : 0;
 			_turnModel.SetPreviewPoints(previewPoints);
 
-			_tableView.SetButtonInteractable("ReRoll", hasValidComboSelected);
+			_tableView.SetButtonInteractable("Roll", hasValidComboSelected);
 			_tableView.SetButtonInteractable("Pass", canPass);
 		}
 	}
