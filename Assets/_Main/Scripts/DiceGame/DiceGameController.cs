@@ -76,18 +76,16 @@ namespace _Main.Scripts.Dice
 					selectedValues[i] = selectedDice[i].CurrentValue;
 				}
 
-				if (!DiceGameUtils.HasValidCombo(selectedValues))
+				// ИЗМЕНЕНО: проверка через CalculateScore
+				int points = DiceGameUtils.CalculateScore(selectedValues);
+				if (points < 0)
 				{
 					_logger?.LogWarning("[DiceGameController] Invalid selection!");
 					return;
 				}
 
-				int points = DiceGameUtils.CalculateScore(selectedValues);
 				_turnModel.AddTurnPoints(points);
-
-				string comboName = DiceGameUtils.GetComboName(selectedValues);
-				_logger?.Log(
-					$"[DiceGameController] Scored {points} points ({comboName}). Turn total: {_turnModel.TurnPoints}");
+				_logger?.Log($"[DiceGameController] Scored {points} points. Turn total: {_turnModel.TurnPoints}");
 
 				_dicePool.BankSelected();
 			}
@@ -117,7 +115,8 @@ namespace _Main.Scripts.Dice
 				rolledValues[i] = unbankedDice[i].CurrentValue;
 			}
 
-			if (DiceGameUtils.IsBust(rolledValues))
+			// ИЗМЕНЕНО: используем RollHasAnyScore вместо IsBust
+			if (!DiceGameUtils.RollHasAnyScore(rolledValues))
 			{
 				_logger?.Log("[DiceGameController] ❌ BUST! Turn points lost.");
 				_turnModel.Reset();
@@ -142,14 +141,12 @@ namespace _Main.Scripts.Dice
 					selectedValues[i] = selectedDice[i].CurrentValue;
 				}
 
-				if (DiceGameUtils.HasValidCombo(selectedValues))
+				// ИЗМЕНЕНО: проверка через CalculateScore
+				int points = DiceGameUtils.CalculateScore(selectedValues);
+				if (points > 0)
 				{
-					int points = DiceGameUtils.CalculateScore(selectedValues);
 					_turnModel.AddTurnPoints(points);
-
-					string comboName = DiceGameUtils.GetComboName(selectedValues);
-					_logger?.Log(
-						$"[DiceGameController] Scored {points} points ({comboName}). Turn total: {_turnModel.TurnPoints}");
+					_logger?.Log($"[DiceGameController] Scored {points} points. Turn total: {_turnModel.TurnPoints}");
 				}
 			}
 
@@ -181,10 +178,11 @@ namespace _Main.Scripts.Dice
 				selectedValues[i] = selectedDice[i].CurrentValue;
 			}
 
-			bool hasValidComboSelected = DiceGameUtils.HasValidCombo(selectedValues);
+			int scorePreview = DiceGameUtils.CalculateScore(selectedValues);
+			bool hasValidComboSelected = scorePreview > 0;
 			bool canPass = hasValidComboSelected || (_turnModel.TurnPoints > 0 && selectedDice.Length == 0);
-			
-			int previewPoints = hasValidComboSelected ? DiceGameUtils.CalculateScore(selectedValues) : 0;
+
+			int previewPoints = hasValidComboSelected ? scorePreview : 0;
 			_turnModel.SetPreviewPoints(previewPoints);
 
 			_tableView.SetButtonInteractable("Roll", hasValidComboSelected);

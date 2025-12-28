@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
-	/// <summary>
-	/// Статические утилиты для подсчёта очков (упрощённый KCD/Farkle-стиль)
-	/// </summary>
 	public static class DiceGameUtils
 	{
 		private class DiceInfo
@@ -64,12 +61,12 @@ namespace _Main.Scripts.Dice
 		}
 
 		/// <summary>
-		/// Подсчитать очки. Возвращает null если невалидная комбинация.
+		/// Подсчитать очки. Возвращает -1 если невалидная комбинация.
 		/// </summary>
-		public static int? CalculateScore(int[] values)
+		public static int CalculateScore(int[] values)
 		{
 			if (values == null || values.Length == 0)
-				return null;
+				return -1;
 
 			var info = AnalyzeValues(values);
 
@@ -93,14 +90,22 @@ namespace _Main.Scripts.Dice
 			{
 				int unused = info.Counts[face] - info.TripleCounts[face];
 				if (unused > 0)
-					return null;
+					return -1; // Невалидная комбинация
 			}
 
-			return totalScore > 0 ? totalScore : (int?)null;
+			return totalScore > 0 ? totalScore : -1;
 		}
 
 		/// <summary>
-		/// Есть ли в броске хоть одна очковая кость? (для проверки BUST)
+		/// Валидна ли комбинация? (для проверки перед банком)
+		/// </summary>
+		public static bool IsValidCombo(int[] values)
+		{
+			return CalculateScore(values) > 0;
+		}
+
+		/// <summary>
+		/// Есть ли в броске хоть одна очковая кость? (для BUST)
 		/// </summary>
 		public static bool RollHasAnyScore(int[] values)
 		{
