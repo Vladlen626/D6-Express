@@ -13,6 +13,7 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshPro targetScoreText;
 	[SerializeField] private TextMeshPro bankedScoreText;
 	[SerializeField] private TextMeshPro currentScoreText;
+	[SerializeField] private TextMeshPro previewScoreText;
 
 
 	[Header("Buttons")]
@@ -47,18 +48,23 @@ public class DiceTableView : MonoBehaviour
 		}
 	}
 
-	public void SetBankedScoreText(string text)
+	public void SetBankedPointsText(string text)
 	{
 		bankedScoreText.text = text;
 	}
 
-	public void SetTargetScoreText(string text)
+	public void SetTargetPointsText(string text)
 	{
 		targetScoreText.text = text;
 	}
 
-	public void SetCurrentScoreText(string text)
+	public void SetCurrentPointsText(string text)
 	{
 		currentScoreText.text = text;
+	}
+
+	public void SetPreviewPointsText(string text)
+	{
+		previewScoreText.text = text;
 	}
 }

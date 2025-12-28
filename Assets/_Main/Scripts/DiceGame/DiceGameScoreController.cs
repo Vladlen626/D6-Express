@@ -19,34 +19,42 @@ namespace _Main.Scripts.Dice
 		{
 			diceGameModel.OnBankedPointsChanged += OnBankedPointsChangedHandler;
 			diceGameModel.OnTargetPointsChanged += OnTargetPointsChangedHandler;
-			turnModel.OnTurnPointsChanged += OnCurrentScoreChangedHandler;
+			turnModel.OnTurnPointsChanged += OnTurnPointsChangedHandler;
+			turnModel.OnPreviewPointsChanged += OnPreviewPointsChangedHandler;
 			
 			
 			OnBankedPointsChangedHandler();
 			OnTargetPointsChangedHandler();
-			OnCurrentScoreChangedHandler();
+			OnTurnPointsChangedHandler();
+			OnPreviewPointsChangedHandler();
 		}
 
 		public void Deactivate()
 		{
 			diceGameModel.OnBankedPointsChanged -= OnBankedPointsChangedHandler;
 			diceGameModel.OnTargetPointsChanged -= OnTargetPointsChangedHandler;
-			turnModel.OnTurnPointsChanged -= OnCurrentScoreChangedHandler;
+			turnModel.OnTurnPointsChanged -= OnTurnPointsChangedHandler;
+			turnModel.OnPreviewPointsChanged -= OnPreviewPointsChangedHandler;
 		}
 
 		private void OnBankedPointsChangedHandler()
 		{
-			diceTableView.SetBankedScoreText(diceGameModel.BankedPoints.ToString());
+			diceTableView.SetBankedPointsText(diceGameModel.BankedPoints.ToString());
 		}
 
 		private void OnTargetPointsChangedHandler()
 		{
-			diceTableView.SetTargetScoreText(diceGameModel.TargetPoints.ToString());
+			diceTableView.SetTargetPointsText(diceGameModel.TargetPoints.ToString());
 		}
 
-		private void OnCurrentScoreChangedHandler()
+		private void OnTurnPointsChangedHandler()
 		{
-			diceTableView.SetCurrentScoreText(turnModel.TurnPoints.ToString());
+			diceTableView.SetCurrentPointsText(turnModel.TurnPoints.ToString());
+		}
+		
+		private void OnPreviewPointsChangedHandler()
+		{
+			diceTableView.SetPreviewPointsText(turnModel.PreviewPoints.ToString());
 		}
 	}
 }

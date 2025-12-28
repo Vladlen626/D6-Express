@@ -169,6 +169,9 @@ namespace _Main.Scripts.Dice
 			_tableView.SetButtonInteractable("Roll", canRoll);
 			_tableView.SetButtonInteractable("Save", canSave);
 			_tableView.SetButtonInteractable("Pass", canPass);
+
+			int previewPoints = hasValidComboSelected ? DiceGameUtils.CalculateScore(selectedValues) : 0;
+			_turnModel.SetPreviewPoints(previewPoints);
 		}
 
 		private void ResetTable()
