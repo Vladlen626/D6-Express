@@ -9,12 +9,14 @@ public class DiceTableView : MonoBehaviour
 
 	public DicePositionsHandler DicePositionsHandler => dicePositionsHandler;
 
-	[Header("Score")] [SerializeField] private TextMeshProUGUI targetScoreText;
-	[SerializeField] private TextMeshProUGUI totalScoreText;
-	[SerializeField] private TextMeshProUGUI currentScoreText;
+	[Header("Score")]
+	[SerializeField] private TextMeshPro targetScoreText;
+	[SerializeField] private TextMeshPro bankedScoreText;
+	[SerializeField] private TextMeshPro currentScoreText;
 
 
-	[Header("Buttons")] [SerializeField] private ButtonView rollButton;
+	[Header("Buttons")]
+	[SerializeField] private ButtonView rollButton;
 	[SerializeField] private ButtonView saveButton;
 	[SerializeField] private ButtonView passButton;
 
@@ -45,9 +47,9 @@ public class DiceTableView : MonoBehaviour
 		}
 	}
 
-	public void SetTotalScoreText(string text)
+	public void SetBankedScoreText(string text)
 	{
-		totalScoreText.text = text;
+		bankedScoreText.text = text;
 	}
 
 	public void SetTargetScoreText(string text)

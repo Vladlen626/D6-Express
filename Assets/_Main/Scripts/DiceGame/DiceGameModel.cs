@@ -8,9 +8,11 @@ namespace _Main.Scripts.Dice
 	{
 		private const int TARGET_SCORE = 4000;
 		public event Action OnBankedPointsChanged;
+		public event Action OnTargetPointsChanged;
 		public event Action OnGameConditionPassed;
 		
 		public int BankedPoints { get; private set; }
+		public int TargetPoints { get; private set; }
 		public int BankedDiceCount => _occupiedBankedPositions.Count;
 
 		public int ActiveDiceCount => _occupiedActivePositions.Count;
@@ -28,6 +30,8 @@ namespace _Main.Scripts.Dice
 
 			_occupiedActivePositions.Clear();
 			_occupiedBankedPositions.Clear();
+			
+			TargetPoints = TARGET_SCORE;
 		}
 		
 		public Transform GetFreeActivePosition()
@@ -96,7 +100,9 @@ namespace _Main.Scripts.Dice
 		{
 			ResetAllPositions();
 			BankedPoints = 0;
+			TargetPoints = 0;
 			OnBankedPointsChanged?.Invoke();
+			OnTargetPointsChanged?.Invoke();
 		}
 
 		private void CheckPointsCondition()
