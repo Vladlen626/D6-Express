@@ -16,6 +16,16 @@ namespace _Main.Scripts.Dice
 			diceView = inDiceView;
 			diceGameModel = inDiceGameModel;
 		}
+
+		private void InitializePosition()
+		{
+			var startPos = diceGameModel.GetFreeActivePosition();
+			if (startPos != null)
+			{
+				diceModel.SetCurrentPosition(startPos);
+				diceView.transform.position = startPos.position;
+			}
+		}
 		public void Activate()
 		{
 			diceModel.OnValueChanged += OnDiceValueChangedHandler;
@@ -24,7 +34,7 @@ namespace _Main.Scripts.Dice
 
 			diceView.OnDiceClicked += OnDiceClickedHandler;
 
-
+			InitializePosition();
 			diceModel.Roll();
 		}
 
@@ -38,6 +48,8 @@ namespace _Main.Scripts.Dice
 			{
 				diceView.OnDiceClicked -= OnDiceClickedHandler;
 			}
+
+			ReleaseCurrentPosition();
 		}
 
 		private void OnDiceClickedHandler()
@@ -74,7 +86,7 @@ namespace _Main.Scripts.Dice
 		
 		private void ReleaseCurrentPosition()
 		{
-			if (!diceModel.CurrentPosition)
+			if (diceModel.CurrentPosition == null)
 			{
 				return;
 			}
