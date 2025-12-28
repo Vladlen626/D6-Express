@@ -52,7 +52,9 @@ namespace _Main.Scripts.Core
 			var audioService = _serviceLocator.Get<IAudioService>();
 			var uiService = _serviceLocator.Get<IUIService>();
 			var cameraService = _serviceLocator.Get<ICameraService>();
-
+			var cursorService = _serviceLocator.Get<ICursorService>();
+			
+			cursorService.UnlockCursor();
 			// Controllers list
 			var controllersList = new List<IBaseController>();
 			// --------------
@@ -87,6 +89,7 @@ namespace _Main.Scripts.Core
 				var player = await PlayerFactory.SpawnPlayer(sceneContext, factory);
 				controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(player, _serviceLocator));
 				cameraService.AttachTo(player.CameraRoot);
+				sceneContext?.InteractorView.Initialize(player.GetComponent<Interactor>());
 			}
 
 			foreach (var controller in controllersList)

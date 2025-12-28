@@ -9,16 +9,22 @@ public class InteractorView : MonoBehaviour
 	[SerializeField]
 	private Interactor interactor;
 
-	private void OnEnable()
+	public void Initialize(Interactor inInteractor)
 	{
+		interactor = inInteractor;
 		interactor.Noticed += OnNoticed;
 		interactor.Missed += OnMissed;
 	}
 
-	private void OnDisable()
+	public void Deactivate()
 	{
 		interactor.Missed -= OnMissed;
 		interactor.Noticed -= OnNoticed;
+	}
+
+	private void OnDestroy()
+	{
+		Deactivate();
 	}
 
 	private void OnNoticed(GameObject interactable)

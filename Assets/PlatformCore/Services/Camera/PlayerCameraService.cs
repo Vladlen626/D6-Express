@@ -48,9 +48,17 @@ namespace PlatformCore.Services
 			{
 				return;
 			}
+			
+			// ЭТО СПЕЦИФИЧЕСКА ЛОГИКА ДАННОГО ПРОЕКТА
+			//_camera.Follow = target;
+			//_camera.LookAt = target;
 
-			_camera.Follow = target;
-			_camera.LookAt = target;
+			_camera.transform.SetParent(target);
+			_camera.transform.localPosition = Vector3.zero;
+			_camera.transform.localRotation = Quaternion.identity;
+
+			_camera.Follow = null;
+			_camera.LookAt = null;
 		}
 
 		public Transform GetCameraTransform()

@@ -47,10 +47,10 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 		if (controller.enabled)
 		{
 			Vector3 move = playerView.transform.right * moveInput.x + transform.forward * moveInput.y;
-			controller.Move((isSprint ? playerView.runSpeed : playerView.walkSpeed) * Time.deltaTime * move);
+			controller.Move((isSprint ? playerView.runSpeed : playerView.walkSpeed) * deltaTime * move);
 
-			velocity.y += playerView.gravity * Time.deltaTime;
-			controller.Move(velocity * Time.deltaTime);
+			velocity.y += playerView.gravity * deltaTime;
+			controller.Move(velocity * deltaTime);
 		}
 
 		rotationX -= lookInput.y * playerView.mouseSensitivity;
