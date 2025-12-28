@@ -9,7 +9,7 @@ public class CharacterStateController : MonoBehaviour
 
     private readonly Dictionary<CharacterState, CharacterStateHandler> dictStates = new();
 
-    private CharacterStateHandler currentState;
+    public CharacterState State { get; private set; }
 
     private void Awake()
     {
@@ -29,12 +29,16 @@ public class CharacterStateController : MonoBehaviour
 
     private void EnterState(CharacterState state)
     {
-        currentState?.Exit();
+        if (dictStates.ContainsKey(State))
+        {
+            dictStates[State].Exit();
+        }
 
         if (dictStates.ContainsKey(state))
         {
-            currentState = dictStates[state];
-            currentState.Enter();
+            dictStates[state].Enter();
         }
+
+        State = state;
     }
 }

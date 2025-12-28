@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(CharacterStateController))]
 public class Interactor : MonoBehaviour
 {
 	[SerializeField]
@@ -19,7 +20,7 @@ public class Interactor : MonoBehaviour
 	private Transform viewTransform;
 
 	private GameObject currentInteractable;
-	private bool canInteract;
+	private CharacterStateController characterStateController;
 
 	public event Action<GameObject> Noticed;
 	public event Action<GameObject> Missed;
@@ -30,6 +31,8 @@ public class Interactor : MonoBehaviour
 		{
 			item.Init(this);
 		}
+
+		characterStateController = GetComponent<CharacterStateController>();
 	}
 
 	private void Update()
@@ -39,36 +42,33 @@ public class Interactor : MonoBehaviour
 
 	private void HandleInteraction()
 	{
-		Ray ray = new(viewTransform.transform.position, viewTransform.transform.forward);
-
-		Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.green, 3);
-
-		// TODO: не юзать стринг
-		if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactableLayerMask))
+		if (CanInteract())
 		{
-			IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-			// TODO: проверять что есть подходящий экшн
-			if (interactable != null && interactable.CanInteract(this))
+			Ray ray = new(viewTransform.transform.position, viewTransform.transform.forward);
+
+			if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactableLayerMask))
 			{
-				currentInteractable = hit.collider.gameObject;
-				Noticed(currentInteractable);
-				canInteract = true;
-				return;
+				IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+				// TODO: проверять что есть подходящий экшн
+				if (interactable != null && interactable.CanInteract(this))
+				{
+					currentInteractable = hit.collider.gameObject;
+					Noticed?.Invoke(currentInteractable);
+					return;
+				}
 			}
 		}
 
 		if (currentInteractable != null)
 		{
-			var interactable = currentInteractable;
+			Missed?.Invoke(currentInteractable);
 			currentInteractable = null;
-			Missed(interactable);
 		}
-		canInteract = false;
 	}
 
 	private void OnInteract(InputValue value)
 	{
-		if (value.isPressed && canInteract && currentInteractable != null)
+		if (value.isPressed && currentInteractable != null)
 		{
 			var interactable = currentInteractable.GetComponent<IInteractable>();
 			foreach (var item in actions)
@@ -81,6 +81,11 @@ public class Interactor : MonoBehaviour
 				}
 			}
 		}
+	}
+
+	private bool CanInteract()
+	{
+		return characterStateController.State == CharacterState.DEFAULT;
 	}
 
 	private void OnDrawGizmos()
