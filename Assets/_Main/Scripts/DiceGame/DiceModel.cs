@@ -53,9 +53,9 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
-			SetValue(0);
 			SetChosen(false);
 			SetSaved(false);
+			SetValue(0);
 		}
 	}
 }
