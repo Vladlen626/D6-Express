@@ -50,18 +50,20 @@ namespace _Main.Scripts.Core
 				return;
 			}
 
+			var dicePosHandler = sceneContext.DiceGameTableView.DicePositionsHandler;
+
 			var diceViews =
-				await DiceFactory.SpawnDiceArrayAsync(factory, sceneContext.DiceGameTableView.DicePositionsHandler.DicePositions);
+				await DiceFactory.SpawnDiceArrayAsync(factory, dicePosHandler.DicePositions);
 			
 			var controllersList = new List<IBaseController>();
 			var diceModels = new List<DiceModel>();
-			var diceGameModel = new DiceGameModel();
+			var diceGameModel = new DiceGameModel(dicePosHandler.DicePositions, dicePosHandler.BankedPositions);
 			var turnModel = new TurnModel();
 
 			foreach (var diceView in diceViews)
 			{
 				var model = new DiceModel(new LoadedDiceProfileConfig());
-				var controller = new DiceController(model, diceView);
+				var controller = new DiceController(model, diceView, diceGameModel);
 				diceModels.Add(model);
 				controllersList.Add(controller);
 			}

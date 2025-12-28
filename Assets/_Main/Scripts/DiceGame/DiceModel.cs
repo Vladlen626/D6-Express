@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
@@ -10,6 +11,8 @@ namespace _Main.Scripts.Dice
 		public int CurrentValue { get; private set; }
 		public bool IsChosen { get; private set; }
 		public bool IsSaved { get; private set; }
+		
+		public Transform CurrentPosition { get; private set; }
 
 		public LoadedDiceProfileConfig Profile { get; private set; }
 
@@ -41,6 +44,11 @@ namespace _Main.Scripts.Dice
 		{
 			IsSaved = saved;
 			OnDiceSavedChanged?.Invoke();
+		}
+
+		public void SetCurrentPosition(Transform position)
+		{
+			CurrentPosition = position;
 		}
 
 		public void Reset()
