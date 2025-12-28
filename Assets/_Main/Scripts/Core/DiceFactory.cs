@@ -10,8 +10,6 @@ namespace _Main.Scripts.Core
 {
 	public static class DiceFactory
 	{
-		private const string DICE_PREFAB_PATH = "Items/DicePrefab";
-
 		public static async UniTask<IBaseController[]> GetDiceGameControllers(
 			SceneContext sceneContext,
 			IObjectFactory factory,
@@ -62,7 +60,7 @@ namespace _Main.Scripts.Core
 			{
 
 				var diceView = await factory.CreateAsync<DiceView>(
-					DICE_PREFAB_PATH,
+					ResourcePaths.Items.DicePrefab,
 					spawnPositions[i].position,
 					Quaternion.identity
 				);
@@ -75,6 +73,7 @@ namespace _Main.Scripts.Core
 				
 				diceView.transform.SetParent(spawnPositions[i]);
 				diceView.transform.localRotation = new Quaternion(0,0,0,0);
+				diceView.Initialize();
 
 				diceViews[i] = diceView;
 			}

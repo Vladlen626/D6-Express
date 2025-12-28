@@ -20,14 +20,9 @@ namespace _Main.Scripts.Dice
 		private Camera _mainCamera;
 		private bool _isPressed;
 
-		private void Start()
+		public void Initialize()
 		{
 			_mainCamera = Camera.main;
-
-			if (_mainCamera == null)
-			{
-				Debug.LogError("[DiceView] Main Camera not found!");
-			}
 		}
 
 		private void Update()

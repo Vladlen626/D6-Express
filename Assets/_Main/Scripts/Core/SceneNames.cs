@@ -2,6 +2,7 @@
 {
 	public static class SceneNames
 	{
-		public static string TrainScene = "Train";
+		public static string Train = "Train";
+		public static string MainMenu = "MainMenu";
 	}
 }

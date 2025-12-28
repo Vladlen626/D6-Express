@@ -33,6 +33,7 @@ namespace _Main.Scripts.UI
 
 		private void OnStartClickedHandler()
 		{
+			_context.Hide();
 			_startTcs?.TrySetResult();
 		}
 

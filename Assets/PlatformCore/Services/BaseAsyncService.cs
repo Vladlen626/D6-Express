@@ -11,12 +11,3 @@ public abstract class BaseAsyncService : IAsyncInitializable
 
 	public virtual void Dispose() { }
 }
-
-public abstract class PlayerLocalService : IPlayerLocalService
-{
-	protected virtual UniTask OnInitAsync(CancellationToken ct) => UniTask.CompletedTask;
-	public UniTask InitAsync(CancellationToken ct) => OnInitAsync(ct);
-
-	public virtual void Dispose() { }
-
-}

@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using _Main.Scripts.Core.Services;
+using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.Factory.PlatformCore.Services.Factory;
+using PlatformCore.Services.UI;
 using UnityEngine;
 
 namespace _Main.Scripts.Core
@@ -22,6 +24,9 @@ namespace _Main.Scripts.Core
 			var sceneService = new SceneService(logger);
 			var inputService = new InputBaseService();
 			var audioService = new AudioBaseService(logger);
+			var uiService = new UIBaseService(logger, resourceService, persistentSceneContext.StaticCanvas,
+				persistentSceneContext.DynamicCanvas);
+			var cameraService = new CameraService(objectFactory);
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
 			_serviceLocator.Register<IResourceService, ResourceService>(resourceService);
@@ -29,6 +34,9 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<ISceneService, SceneService>(sceneService);
 			_serviceLocator.Register<IInputService, InputBaseService>(inputService);
 			_serviceLocator.Register<IAudioService, AudioBaseService>(audioService);
+			_serviceLocator.Register<IUIService, UIBaseService>(uiService);
+			_serviceLocator.Register<ICameraShakeService, CameraService>(cameraService);
+			_serviceLocator.Register<ICameraService, CameraService>(cameraService);
 
 			Debug.Log("[GameRoot] Services registered!");
 		}
@@ -39,6 +47,8 @@ namespace _Main.Scripts.Core
 			var logger = _serviceLocator.Get<ILoggerService>();
 			var sceneService = _serviceLocator.Get<ISceneService>();
 			var audioService = _serviceLocator.Get<IAudioService>();
+			var uiService = _serviceLocator.Get<IUIService>();
+			var cameraService = _serviceLocator.Get<ICameraService>();
 
 			// Controllers list
 			var controllersList = new List<IBaseController>();
@@ -46,29 +56,34 @@ namespace _Main.Scripts.Core
 
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
-
-			var sceneForLoad = SceneNames.TrainScene;
+			
+			//Load MainMenu Scene
+			var sceneForLoad = SceneNames.MainMenu;
 			await sceneService.LoadSceneAsync(sceneForLoad);
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
 
+			var mainMenuController = new MainMenuController(uiService);
+			await _lifecycle.RegisterAsync(mainMenuController);
+
+			await mainMenuController.WaitForStartAsync();
+			await sceneService.UnloadSceneAsync(sceneForLoad);
+
+			// Start Game
+			sceneForLoad = SceneNames.Train;
+			await sceneService.LoadSceneAsync(sceneForLoad);
+			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
+
+			//TODO: Сделать статический класс с названиями треков
 			await audioService.PlayMusicAsync("event:/GameplayEvent");
 
-			if (!sceneService.TryGetSceneContext(sceneForLoad, out var context))
+			if (sceneService.TryGetSceneContext(sceneForLoad, out var context))
 			{
-				logger.LogError($"[GameRoot] SceneContext not found in scene '{sceneForLoad}'!");
-			}
-
-			var sceneContext = context as SceneContext;
-			if (sceneContext == null)
-			{
-				logger.LogError($"[GameRoot] SceneContext mistype'{sceneForLoad}'!]");
-			}
-
-			if (sceneContext != null)
-			{
+				var sceneContext = context as SceneContext;
 				controllersList.AddRange(await DiceFactory.GetDiceGameControllers(sceneContext, factory, logger));
+				
+				var player = await PlayerFactory.SpawnPlayer(sceneContext, factory);
+				cameraService.AttachTo(player.CameraRoot);
 			}
-			
 
 			foreach (var controller in controllersList)
 			{
