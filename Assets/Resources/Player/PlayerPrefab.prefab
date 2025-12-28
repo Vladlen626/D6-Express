@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 3688636356647218882}
   - component: {fileID: 1353585870120323076}
   - component: {fileID: 6681934855089884787}
-  - component: {fileID: 8956381940596609225}
   - component: {fileID: 8885480304943086778}
   - component: {fileID: 3411494938860463788}
   - component: {fileID: 3369340536190415365}
@@ -208,25 +207,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8956381940596609225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3864496680010171841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eae6865304892084a8797f7577618eef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MovementController
-  walkSpeed: 5
-  runSpeed: 10
-  jumpHeight: 2
-  gravity: -20
-  mouseSensitivity: 0.075
-  cameraTransform: {fileID: 3656734799142745478}
-  lookXLimit: 45
 --- !u!114 &8885480304943086778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -292,6 +272,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f575a01f64afa824dbc3806be5860016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerView
+  walkSpeed: 5
+  runSpeed: 10
+  jumpHeight: 2
+  gravity: -20
+  characterController: {fileID: 6681934855089884787}
+  mouseSensitivity: 0.075
+  lookXLimit: 45
   cameraRoot: {fileID: 3656734799142745478}
 --- !u!1 &7089752732164083115
 GameObject:
