@@ -11,6 +11,7 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnJumpReleased;
 		public event Action OnPausePressed;
 		public event Action OnInteractPressed;
+		public event Action<Vector2> OnMoved;
 
 		public Vector2 Move { get; private set; }
 		public Vector2 Look { get; private set; }
@@ -65,7 +66,11 @@ namespace _Main.Scripts.Core.Services
 
 		private void BindActions()
 		{
-			_actions.Player.Move.performed += ctx => { Move = ctx.ReadValue<Vector2>(); };
+			_actions.Player.Move.performed += ctx =>
+			{
+				Move = ctx.ReadValue<Vector2>();
+				OnMoved?.Invoke(Move);
+			};
 			_actions.Player.Move.canceled += _ => { Move = Vector2.zero; };
 
 			_actions.Player.Sprint.performed += _ => { IsSprinting = true; };

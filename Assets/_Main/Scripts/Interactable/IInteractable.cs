@@ -1,5 +1,6 @@
 public interface IInteractable
 {
-    public bool CanInteract();
-    public void Interact();
+    bool CanInteract(Interactor interactor);
+    void StartInteract(Interactor interactor);
+    void StopInteract(Interactor interactor);
 }

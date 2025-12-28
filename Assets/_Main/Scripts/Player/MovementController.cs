@@ -33,13 +33,15 @@ public class MovementController : MonoBehaviour
         if (controller.isGrounded && velocity.y < 0)
             velocity.y = -2f;
 
-        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-        controller.Move((isSprinting ? runSpeed : walkSpeed) * Time.deltaTime * move);
+        if (controller.enabled)
+        {
+            Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
+            controller.Move((isSprinting ? runSpeed : walkSpeed) * Time.deltaTime * move);
 
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
+        }
 
-        // Поворот камеры
         rotationX -= lookInput.y * mouseSensitivity;
         rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
         cameraTransform.localRotation = Quaternion.Euler(rotationX, 0, 0);

@@ -1,16 +1,19 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Interactor : MonoBehaviour
 {
 	[SerializeField]
-	[Header("Interaction")]
 	private float interactionDistance = 3f;
 
+	[SerializeReference]
+	[SubclassSelector]
+	private List<InteractionAction> actions = new();
+
 	[SerializeField]
-	[Header("Interaction")]
-	private LayerMask interactableObjectsLayer;
+	private LayerMask interactableLayerMask;
 
 	[SerializeField]
 	private Transform viewTransform;
@@ -20,6 +23,14 @@ public class Interactor : MonoBehaviour
 
 	public event Action<GameObject> Noticed;
 	public event Action<GameObject> Missed;
+
+	private void Awake()
+	{
+		foreach (var item in actions)
+		{
+			item.Init(this);
+		}
+	}
 
 	private void Update()
 	{
@@ -32,10 +43,12 @@ public class Interactor : MonoBehaviour
 
 		Debug.DrawRay(ray.origin, ray.direction * interactionDistance, Color.green, 3);
 
-		if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactableObjectsLayer))
+		// TODO: не юзать стринг
+		if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactableLayerMask))
 		{
 			IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-			if (interactable != null && interactable.CanInteract())
+			// TODO: проверять что есть подходящий экшн
+			if (interactable != null && interactable.CanInteract(this))
 			{
 				currentInteractable = hit.collider.gameObject;
 				Noticed(currentInteractable);
@@ -57,7 +70,16 @@ public class Interactor : MonoBehaviour
 	{
 		if (value.isPressed && canInteract && currentInteractable != null)
 		{
-			currentInteractable.GetComponent<IInteractable>().Interact();
+			var interactable = currentInteractable.GetComponent<IInteractable>();
+			foreach (var item in actions)
+			{
+				// TODO: подумать еще раз.
+				if (item.CanInteract(interactable))
+				{
+					interactable.StartInteract(this);
+					item.StartInteract(interactable);
+				}
+			}
 		}
 	}
 
