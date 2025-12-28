@@ -72,6 +72,9 @@ namespace _Main.Scripts.Core
 					Debug.LogError($"[GameRoot] Failed to spawn dice {i}!");
 					continue;
 				}
+				
+				diceView.transform.SetParent(spawnPositions[i]);
+				diceView.transform.localRotation = new Quaternion(0,0,0,0);
 
 				diceViews[i] = diceView;
 			}

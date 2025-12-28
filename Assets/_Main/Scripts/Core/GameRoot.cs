@@ -4,6 +4,7 @@ using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.Factory.PlatformCore.Services.Factory;
 using UnityEngine;
@@ -21,12 +22,14 @@ namespace _Main.Scripts.Core
 			var objectFactory = new ObjectFactory(resourceService, logger);
 			var sceneService = new SceneService(logger);
 			var inputService = new InputBaseService();
+			var audioService = new AudioBaseService(logger);
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
 			_serviceLocator.Register<IResourceService, ResourceService>(resourceService);
 			_serviceLocator.Register<IObjectFactory, ObjectFactory>(objectFactory);
 			_serviceLocator.Register<ISceneService, SceneService>(sceneService);
 			_serviceLocator.Register<IInputService, InputBaseService>(inputService);
+			_serviceLocator.Register<IAudioService, AudioBaseService>(audioService);
 
 			Debug.Log("[GameRoot] Services registered!");
 		}
@@ -36,14 +39,20 @@ namespace _Main.Scripts.Core
 			var factory = _serviceLocator.Get<IObjectFactory>();
 			var logger = _serviceLocator.Get<ILoggerService>();
 			var sceneService = _serviceLocator.Get<ISceneService>();
+			var audioService = _serviceLocator.Get<IAudioService>();
+
+			// Controllers list
 			var controllersList = new List<IBaseController>();
-			
+			// --------------
+
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
 
 			var sceneForLoad = SceneNames.TrainScene;
 			await sceneService.LoadSceneAsync(sceneForLoad);
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
+
+			await audioService.PlayMusicAsync("event:/GameplayEvent");
 
 			if (!sceneService.TryGetSceneContext(sceneForLoad, out var context))
 			{

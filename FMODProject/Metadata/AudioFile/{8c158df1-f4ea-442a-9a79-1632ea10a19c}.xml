@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{8c158df1-f4ea-442a-9a79-1632ea10a19c}">
+		<property name="assetPath">
+			<value>поезд-в-огне.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>124.968</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{2982e4c4-74fa-4b14-9bac-3351b6233cb2}</destination>
+		</relationship>
+	</object>
+</objects>
