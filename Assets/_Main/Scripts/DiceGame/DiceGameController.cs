@@ -37,14 +37,13 @@ namespace _Main.Scripts.Dice
 			_logger?.Log("[DiceGameController] Activating...");
 
 			_tableView.OnRollClicked += HandleRoll;
-			_tableView.OnSaveClicked += HandleSave;
 			_tableView.OnPassClicked += HandlePass;
 
 			foreach (var diceModel in _diceModels)
 			{
 				diceModel.OnDiceChosenChanged += UpdateUI;
 			}
-			
+
 			UpdateUI();
 		}
 
@@ -53,7 +52,6 @@ namespace _Main.Scripts.Dice
 			_logger?.Log("[DiceGameController] Deactivating...");
 
 			_tableView.OnRollClicked -= HandleRoll;
-			_tableView.OnSaveClicked -= HandleSave;
 			_tableView.OnPassClicked -= HandlePass;
 
 			foreach (var diceModel in _diceModels)
@@ -66,20 +64,53 @@ namespace _Main.Scripts.Dice
 
 		private void HandleRoll()
 		{
-			_logger?.Log("[DiceGameController] 🎲 Roll button pressed");
+			_logger?.Log("[DiceGameController] 🎲 ReRoll button pressed");
 
+			// 1. Сохраняем выбранные кубы
 			var selectedDice = _dicePool.GetSelected();
 			if (selectedDice.Length > 0)
 			{
-				HandleSave();
+				var selectedValues = new int[selectedDice.Length];
+				for (var i = 0; i < selectedDice.Length; i++)
+				{
+					selectedValues[i] = selectedDice[i].CurrentValue;
+				}
+
+				if (!DiceGameUtils.HasValidCombo(selectedValues))
+				{
+					_logger?.LogWarning("[DiceGameController] Invalid selection!");
+					return;
+				}
+
+				int points = DiceGameUtils.CalculateScore(selectedValues);
+				_turnModel.AddTurnPoints(points);
+
+				string comboName = DiceGameUtils.GetComboName(selectedValues);
+				_logger?.Log(
+					$"[DiceGameController] Scored {points} points ({comboName}). Turn total: {_turnModel.TurnPoints}");
+
+				_dicePool.BankSelected();
 			}
 
+			// 2. Очищаем превью
+			_turnModel.SetPreviewPoints(0);
+
+			// 3. Проверка на HOT DICE (все кубы забанкованы)
+			if (_dicePool.AllBanked())
+			{
+				_logger?.Log("[DiceGameController] 🔥 HOT DICE! Resetting all dice.");
+				_diceGameModel.ResetAllPositions();
+				_dicePool.ResetAll();
+			}
+
+			// 4. Бросаем оставшиеся кубы
 			var unbankedDice = _dicePool.GetUnbanked();
 			foreach (var dice in unbankedDice)
 			{
 				dice.Roll();
 			}
 
+			// 5. Проверка на BUST
 			var rolledValues = new int[unbankedDice.Length];
 			for (var i = 0; i < unbankedDice.Length; i++)
 			{
@@ -91,47 +122,7 @@ namespace _Main.Scripts.Dice
 				_logger?.Log("[DiceGameController] ❌ BUST! Turn points lost.");
 				_turnModel.Reset();
 				HandlePass();
-			}
-
-			UpdateUI();
-		}
-
-		private void HandleSave()
-		{
-			_logger?.Log("[DiceGameController] 💾 Save button pressed");
-
-			var selectedDiceArray = _dicePool.GetSelected();
-			if (selectedDiceArray.Length == 0)
-			{
-				_logger?.LogWarning("[DiceGameController] No dice selected!");
 				return;
-			}
-
-			var selectedValues = new int[selectedDiceArray.Length];
-			for (var i = 0; i < selectedDiceArray.Length; i++)
-			{
-				selectedValues[i] = selectedDiceArray[i].CurrentValue;
-			}
-
-			if (!DiceGameUtils.HasValidCombo(selectedValues))
-			{
-				_logger?.LogWarning("[DiceGameController] Invalid selection!");
-				return;
-			}
-
-			int points = DiceGameUtils.CalculateScore(selectedValues);
-			_turnModel.AddTurnPoints(points);
-
-			string comboName = DiceGameUtils.GetComboName(selectedValues);
-			_logger?.Log(
-				$"[DiceGameController] Scored {points} points ({comboName}). Turn total: {_turnModel.TurnPoints}");
-
-			_dicePool.BankSelected();
-
-			if (_dicePool.AllBanked())
-			{
-				_logger?.Log("[DiceGameController] 🔥 HOT DICE! Resetting all dice.");
-				ResetTable();
 			}
 
 			UpdateUI();
@@ -141,12 +132,42 @@ namespace _Main.Scripts.Dice
 		{
 			_logger?.Log("[DiceGameController] ✋ Pass button pressed");
 
+			// 1. Сохраняем выбранные кубы (если есть)
+			var selectedDice = _dicePool.GetSelected();
+			if (selectedDice.Length > 0)
+			{
+				var selectedValues = new int[selectedDice.Length];
+				for (var i = 0; i < selectedDice.Length; i++)
+				{
+					selectedValues[i] = selectedDice[i].CurrentValue;
+				}
+
+				if (DiceGameUtils.HasValidCombo(selectedValues))
+				{
+					int points = DiceGameUtils.CalculateScore(selectedValues);
+					_turnModel.AddTurnPoints(points);
+
+					string comboName = DiceGameUtils.GetComboName(selectedValues);
+					_logger?.Log(
+						$"[DiceGameController] Scored {points} points ({comboName}). Turn total: {_turnModel.TurnPoints}");
+				}
+			}
+
+			// 2. Банкуем очки хода в общий счет
 			_diceGameModel.AddBankedPoints(_turnModel.TurnPoints);
 			_logger?.Log(
 				$"[DiceGameController] Banked {_turnModel.TurnPoints} points. Total banked: {_diceGameModel.BankedPoints}");
 
+			// 3. Сбрасываем ход
 			_turnModel.Reset();
-			ResetTable();
+			_diceGameModel.ResetAllPositions();
+			_dicePool.ResetAll();
+
+			// 4. Бросаем все кубы для начала нового хода
+			foreach (var dice in _diceModels)
+			{
+				dice.Roll();
+			}
 
 			UpdateUI();
 		}
@@ -161,23 +182,13 @@ namespace _Main.Scripts.Dice
 			}
 
 			bool hasValidComboSelected = DiceGameUtils.HasValidCombo(selectedValues);
+			bool canPass = hasValidComboSelected || (_turnModel.TurnPoints > 0 && selectedDice.Length == 0);
 			
-			bool canRoll = _dicePool.HasUnbanked() && selectedDice.Length == 0;
-			bool canSave = hasValidComboSelected;
-			bool canPass = _turnModel.TurnPoints > 0 && selectedDice.Length == 0;
-
-			_tableView.SetButtonInteractable("Roll", canRoll);
-			_tableView.SetButtonInteractable("Save", canSave);
-			_tableView.SetButtonInteractable("Pass", canPass);
-
 			int previewPoints = hasValidComboSelected ? DiceGameUtils.CalculateScore(selectedValues) : 0;
 			_turnModel.SetPreviewPoints(previewPoints);
-		}
 
-		private void ResetTable()
-		{
-			_diceGameModel.ResetAllPositions();
-			_dicePool.ResetAll();
+			_tableView.SetButtonInteractable("ReRoll", hasValidComboSelected);
+			_tableView.SetButtonInteractable("Pass", canPass);
 		}
 	}
 }
