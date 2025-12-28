@@ -45,15 +45,15 @@ namespace _Main.Scripts.Core
 			await sceneService.LoadSceneAsync(sceneForLoad);
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
 
-			if (!sceneService.TryGetSceneContext(activeSceneName, out var context))
+			if (!sceneService.TryGetSceneContext(sceneForLoad, out var context))
 			{
-				logger.LogError($"[GameRoot] SceneContext not found in scene '{activeSceneName}'!");
+				logger.LogError($"[GameRoot] SceneContext not found in scene '{sceneForLoad}'!");
 			}
 
 			var sceneContext = context as SceneContext;
 			if (sceneContext == null)
 			{
-				logger.LogError($"[GameRoot] SceneContext mistype'{activeSceneName}'!]");
+				logger.LogError($"[GameRoot] SceneContext mistype'{sceneForLoad}'!]");
 			}
 
 			if (sceneContext != null)
