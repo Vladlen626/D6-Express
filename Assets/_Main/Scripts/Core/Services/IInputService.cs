@@ -21,6 +21,9 @@ namespace _Main.Scripts.Core.Services
 		void EnableAllInputs();
 		void DisableAllInputs();
 
+		void EnableCameraInputs();
+		void DisableCameraInputs();
+
 		void EnablePlayerInputs();
 		void DisablePlayerInputs();
 

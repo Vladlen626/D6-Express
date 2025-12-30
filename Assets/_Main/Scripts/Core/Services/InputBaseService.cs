@@ -61,7 +61,17 @@ namespace _Main.Scripts.Core.Services
 
 		public void DisablePlayerInputs()
 		{
-			_actions.Player.Enable();
+			_actions.Player.Disable();
+		}
+
+		public void EnableCameraInputs()
+		{
+			_actions.Player.Look.Enable();
+		}
+		
+		public void DisableCameraInputs()
+		{
+			_actions.Player.Look.Disable();
 		}
 
 		private void BindActions()
