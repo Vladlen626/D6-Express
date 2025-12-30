@@ -10,12 +10,15 @@ namespace PlatformCore.Services.Audio
 		private readonly ILoggerService _logger;
 
 		private FMOD.Studio.EventInstance _currentMusic;
-		private float _masterVolume = 0.5f;
+		private float _masterVolume = 0.8f;
 		private float _musicVolume = 0.5f;
 		private float _sfxVolume = 0.5f;
-		private bool _isMuted = false;
+		private bool _isMuted;
 
 		public bool IsMuted => _isMuted;
+		public float MasterVolume => _masterVolume;
+		public float MusicVolume => _musicVolume;
+		public float SfxVolume => _sfxVolume;
 
 		public AudioBaseService(ILoggerService logger)
 		{

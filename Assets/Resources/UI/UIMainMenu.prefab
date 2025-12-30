@@ -64,10 +64,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eca816ed3c044eb96465d1f295a5d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Main.Scripts.UI.UIMainMenu
-  _canvasType: 0
   _group: {fileID: 5089125921639085364}
-  _startBtn: {fileID: 2167334904950361017}
-  _settingsBtn: {fileID: 3318451685123584342}
+  _canvasType: 0
 --- !u!1 &897988385397227435
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,9 +389,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PauseScreen, Assembly-CSharp
-        m_MethodName: OnResumeClick
+      - m_Target: {fileID: 7278982728291001176}
+        m_TargetAssemblyTypeName: _Main.Scripts.UI.UIMainMenu, Assembly-CSharp
+        m_MethodName: SettingsBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -649,9 +647,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: PauseScreen, Assembly-CSharp
-        m_MethodName: OnResumeClick
+      - m_Target: {fileID: 7278982728291001176}
+        m_TargetAssemblyTypeName: _Main.Scripts.UI.UIMainMenu, Assembly-CSharp
+        m_MethodName: StartBtn
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

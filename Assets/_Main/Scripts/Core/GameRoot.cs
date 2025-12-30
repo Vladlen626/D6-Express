@@ -92,6 +92,13 @@ namespace _Main.Scripts.Core
 				cameraService.AttachTo(player.CameraRoot);
 			}
 
+			var baseControllers = new IBaseController[]
+			{
+				new SettingsController(uiService, audioService, cursorService, inputService),
+			};
+
+			controllersList.AddRange(baseControllers);
+
 			foreach (var controller in controllersList)
 			{
 				await _lifecycle.RegisterAsync(controller);

@@ -4,7 +4,7 @@ using PlatformCore.Services.UI;
 
 namespace _Main.Scripts.UI
 {
-	public class MainMenuController : BaseContextController<MainMenu>
+	public class MainMenuController : BaseContextController<UIMainMenu>
 	{
 		private UniTaskCompletionSource _startTcs;
 
