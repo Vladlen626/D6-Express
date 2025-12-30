@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PlatformCore.Services.UI
 {
-	public abstract class BaseUIElement : MonoBehaviour
+	public abstract class UIBaseElement : MonoBehaviour
 	{
 		[Header("Canvas Performance Settings")] [SerializeField]
 		private UICanvasType _canvasType = UICanvasType.Static;

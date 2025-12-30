@@ -13,13 +13,6 @@ namespace PlatformCore.Services
 			_loggerService = loggerService;
 		}
 
-		public UniTask InitializeAsync(CancellationToken cancellationToken)
-		{
-			_loggerService?.Log("[ResourceService] Initialized");
-
-			return UniTask.CompletedTask;
-		}
-
 		public async UniTask<T> LoadAsync<T>(string path) where T : Object
 		{
 			_loggerService?.Log($"[ResourceService] Loading: {path}");

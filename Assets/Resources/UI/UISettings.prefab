@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5089125921639085364}
   - component: {fileID: 8573048588781693533}
   m_Layer: 0
-  m_Name: UISettingsAudio
+  m_Name: UISettings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

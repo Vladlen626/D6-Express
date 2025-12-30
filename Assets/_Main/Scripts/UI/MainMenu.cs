@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace _Main.Scripts.UI
 {
-	public class UIMainMenu : BaseUIElement
+	public class MainMenu : UIBaseElement
 	{
 		[SerializeField] private CanvasGroup _group;
 		[SerializeField] private Button _startBtn;

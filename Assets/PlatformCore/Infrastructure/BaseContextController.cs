@@ -4,7 +4,7 @@ using PlatformCore.Services.UI;
 
 namespace PlatformCore.Core
 {
-	public class BaseContextController<T> : IBaseController, IActivatable, IPreloadable where T : BaseUIElement
+	public class BaseContextController<T> : IBaseController, IActivatable, IPreloadable where T : UIBaseElement
 	{
 		protected readonly IUIService _uiService;
 		protected T _context;

@@ -8,7 +8,8 @@ public class PlayerView : MonoBehaviour
 	public float jumpHeight = 2f;
 	public float gravity = -20f;
 
-	[SerializeField] private CharacterController characterController;
+	[SerializeField] 
+	private CharacterController characterController;
 
 	[Header("Look")] 
 	public float mouseSensitivity = 2f;
