@@ -13,6 +13,8 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnInteractPressed;
 		public event Action<Vector2> OnMoved;
 
+		public event Action OnDebugSwitchPressed;
+
 		public Vector2 Move { get; private set; }
 		public Vector2 Look { get; private set; }
 		public bool IsJumping { get; private set; }
@@ -36,12 +38,14 @@ namespace _Main.Scripts.Core.Services
 		{
 			EnableUIInputs();
 			EnablePlayerInputs();
+			EnableDebugInputs();
 		}
 
 		public void DisableAllInputs()
 		{
 			DisableUIInputs();
 			DisablePlayerInputs();
+			DisableDebugInputs();
 		}
 
 		public void EnableUIInputs()
@@ -72,6 +76,16 @@ namespace _Main.Scripts.Core.Services
 		public void DisableCameraInputs()
 		{
 			_actions.Player.Look.Disable();
+		}
+
+		public void EnableDebugInputs()
+		{
+			_actions.Debug.Enable();
+		}
+
+		public void DisableDebugInputs()
+		{
+			_actions.Debug.Disable();
 		}
 
 		private void BindActions()
@@ -109,6 +123,11 @@ namespace _Main.Scripts.Core.Services
 			};
 
 			_actions.UI.Cancel.started += _ => OnPausePressed?.Invoke();
+
+			_actions.Debug.Switch.started += _ =>
+			{
+				OnDebugSwitchPressed?.Invoke();
+			};
 		}
 
 		public void Dispose()

@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 135556005}
   - component: {fileID: 135556007}
   - component: {fileID: 135556006}
+  - component: {fileID: 135556008}
   m_Layer: 0
   m_Name: GameRoot
   m_TagString: Untagged
@@ -180,6 +181,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: PlatformCore::PlatformCore.Core.PersistentSceneContext
   StaticCanvas: {fileID: 713969098}
   DynamicCanvas: {fileID: 875112093}
+--- !u!114 &135556008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 135556004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecc099febaeed8942827217011338c1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game
+  level:
+    segments:
+    - days: 3
+    - days: 3
+    - days: 3
 --- !u!1 &478914268
 GameObject:
   m_ObjectHideFlags: 0
@@ -558,6 +576,82 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1693020242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1693020244}
+  - component: {fileID: 1693020246}
+  m_Layer: 0
+  m_Name: ImGui
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1693020244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693020242}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.09206, y: 0, z: -20.57265}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1693020246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1693020242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3823c58ff231244a92c4f9877f7911e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UImGui::UImGui.UImGui
+  _camera: {fileID: 478914271}
+  _renderFeature: {fileID: 0}
+  _rendererType: 1
+  _platformType: 1
+  _iniSettings: {fileID: 11400000, guid: 58bfce57d1ff5514a9cb07738dc3c233, type: 2}
+  _initialConfiguration:
+    ImGuiConfig: 65
+    DoubleClickTime: 0.3
+    DoubleClickMaxDist: 6
+    DragThreshold: 6
+    KeyRepeatDelay: 0.25
+    KeyRepeatRate: 0.05
+    FontGlobalScale: 1
+    FontAllowUserScaling: 0
+    DisplayFramebufferScale: {x: 1, y: 1}
+    MouseDrawCursor: 0
+    TextCursorBlink: 0
+    ResizeFromEdges: 1
+    MoveFromTitleOnly: 1
+    ConfigMemoryCompactTimer: 1
+    ConfigDockingNoSplit: 0
+    ConfigDockingAlwaysTabBar: 0
+    ConfigDockingTransparentPayload: 0
+  _fontCustomInitializer:
+    m_PersistentCalls:
+      m_Calls: []
+  _fontAtlasConfiguration: {fileID: 11400000, guid: d378799a553529246857df27e9e0bf11, type: 2}
+  _shaders: {fileID: 11400000, guid: 68f2e550e81076948ba9757c73f74336, type: 2}
+  _style: {fileID: 11400000, guid: 90718c4e7d6fa04438adef1ad7a432cc, type: 2}
+  _cursorShapes: {fileID: 11400000, guid: 71deade41763c6e4eaeb5df973b321f1, type: 2}
+  _urpRenderGraphBypass: 1
+  _doGlobalEvents: 1
 --- !u!1 &2091746251
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,3 +738,4 @@ SceneRoots:
   - {fileID: 478914273}
   - {fileID: 2091746254}
   - {fileID: 135556005}
+  - {fileID: 1693020244}
