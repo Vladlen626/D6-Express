@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PlatformCore.Services.UI.SplashScreen
 {
-	public class SplashScreenElement : BaseUIElement
+	public class SplashScreenElement : UIBaseElement
 	{
 		[SerializeField]
 		private CanvasGroup _canvasGroup;

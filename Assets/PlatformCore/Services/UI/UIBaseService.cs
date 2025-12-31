@@ -15,7 +15,7 @@ namespace PlatformCore.Services.UI
 		private readonly Transform _staticCanvas;
 		private readonly Transform _dynamicCanvas;
 
-		private readonly Dictionary<Type, BaseUIElement> _windows = new();
+		private readonly Dictionary<Type, UIBaseElement> _windows = new();
 
 		// локальный токен для отмены
 		private CancellationTokenSource _cts;
@@ -39,7 +39,7 @@ namespace PlatformCore.Services.UI
 		}
 
 		// === SHOW ===
-		public T GetWindow<T>() where T : BaseUIElement
+		public T GetWindow<T>() where T : UIBaseElement
 		{
 			var type = typeof(T);
 			if (!_windows.TryGetValue(type, out var window))
@@ -57,13 +57,13 @@ namespace PlatformCore.Services.UI
 			return (T)window;
 		}
 
-		public bool IsShowed<T>() where T : BaseUIElement
+		public bool IsShowed<T>() where T : UIBaseElement
 		{
 			return _windows.TryGetValue(typeof(T), out var window) && window.gameObject.activeSelf;
 		}
 
 		// === PRELOAD / UNLOAD ===
-		public async UniTask PreloadAsync<T>() where T : BaseUIElement
+		public async UniTask PreloadAsync<T>() where T : UIBaseElement
 		{
 			var type = typeof(T);
 			if (_windows.TryGetValue(type, out var window))
@@ -72,7 +72,7 @@ namespace PlatformCore.Services.UI
 			await LoadAsync<T>(_token);
 		}
 
-		public void Unload<T>() where T : BaseUIElement
+		public void Unload<T>() where T : UIBaseElement
 		{
 			var type = typeof(T);
 			if (!_windows.TryGetValue(type, out var window))
@@ -85,7 +85,7 @@ namespace PlatformCore.Services.UI
 		}
 
 		// === INTERNAL LOADING ===
-		private async UniTask<T> LoadAsync<T>(CancellationToken ct) where T : BaseUIElement
+		private async UniTask<T> LoadAsync<T>(CancellationToken ct) where T : UIBaseElement
 		{
 			var type = typeof(T);
 			var path = $"UI/{type.Name}";

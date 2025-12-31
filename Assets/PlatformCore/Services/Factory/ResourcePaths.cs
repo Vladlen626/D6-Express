@@ -25,7 +25,7 @@ namespace PlatformCore.Services.Factory
 		public static class UI
 		{
 			public const string UIMainMenu = "UI/UIMainMenu";
-			public const string UISettingsAudio = "UI/UISettingsAudio";
+			public const string UISettings = "UI/UISettings";
 		}
 
 	}
