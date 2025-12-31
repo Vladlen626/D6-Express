@@ -27,4 +27,13 @@ public static class LevelFactory
         
        return levelControllers;
     }
+    
+    public static IEnumerable<IBaseController> GetSleepControllers(LevelModel levelModel, PlayerView playerView)
+    {
+        var sleepView = playerView.GetComponent<SleepView>();
+        var interactor = playerView.GetComponent<Interactor>();
+
+        var sleepController = new SleepController(levelModel, sleepView, interactor);
+        yield return sleepController;
+    }
 }

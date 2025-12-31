@@ -102,7 +102,7 @@ namespace _Main.Scripts.Core
 				cameraService.AttachTo(player.CameraRoot);
 				
 				// Level
-				controllersList.AddRange(SleepFactory.GetBaseControllers(levelModel, player));
+				controllersList.AddRange(LevelFactory.GetSleepControllers(levelModel, player));
 				controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel, 
 					playerModel, diceGameModel));
 			}
