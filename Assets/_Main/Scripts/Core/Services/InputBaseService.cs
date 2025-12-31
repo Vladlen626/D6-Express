@@ -70,7 +70,7 @@ namespace _Main.Scripts.Core.Services
 		{
 			_actions.Player.Look.Enable();
 		}
-		
+
 		public void DisableCameraInputs()
 		{
 			_actions.Player.Look.Disable();
@@ -107,7 +107,10 @@ namespace _Main.Scripts.Core.Services
 				OnInteractPressed?.Invoke();
 			};
 
-			_actions.Player.Interact.canceled += _ => { IsInteract = false; };
+			_actions.Player.Interact.canceled += _ =>
+			{
+				IsInteract = false;
+			};
 
 			_actions.Player.Jump.started += _ =>
 			{

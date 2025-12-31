@@ -119,6 +119,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1269738996343081537}
+  - {fileID: 6625939292616219998}
   m_Father: {fileID: 3688636356647218882}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3864496680010171841
@@ -135,6 +136,7 @@ GameObject:
   - component: {fileID: 8885480304943086778}
   - component: {fileID: 3411494938860463788}
   - component: {fileID: 3369340536190415365}
+  - component: {fileID: 4243707368022263982}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -223,6 +225,7 @@ MonoBehaviour:
   actions:
   - rid: 1463701297492918341
   - rid: 1463701297492918344
+  - rid: 1463701355882086646
   interactableLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -235,6 +238,9 @@ MonoBehaviour:
       data: 
     - rid: 1463701297492918344
       type: {class: InteractableActionLay, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 1463701355882086646
+      type: {class: InteractableActionSleep, ns: , asm: Assembly-CSharp}
       data: 
 --- !u!114 &3411494938860463788
 MonoBehaviour:
@@ -280,6 +286,100 @@ MonoBehaviour:
   mouseSensitivity: 0.075
   lookXLimit: 45
   cameraRoot: {fileID: 3656734799142745478}
+--- !u!114 &4243707368022263982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3864496680010171841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8539c0740819eb44a93f714088d860c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SleepView
+  sleepObject: {fileID: 6783262070188634394}
+--- !u!1 &6783262070188634394
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6625939292616219998}
+  - component: {fileID: 4877846121391638134}
+  - component: {fileID: 7886502406236209169}
+  - component: {fileID: 3701077634476146247}
+  m_Layer: 6
+  m_Name: SleepView
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &6625939292616219998
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6783262070188634394}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.5, y: -0.5, z: 0.5, w: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0.5}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7710623791842373449}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 90}
+--- !u!64 &4877846121391638134
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6783262070188634394}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &7886502406236209169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6783262070188634394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 630e2a9849bf55e4e9838f6800ec2d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hintable
+  hintText: sleep
+--- !u!114 &3701077634476146247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6783262070188634394}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 406c797edcd5b044b8be1de3478c575d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableSleepable
 --- !u!1 &7089752732164083115
 GameObject:
   m_ObjectHideFlags: 0

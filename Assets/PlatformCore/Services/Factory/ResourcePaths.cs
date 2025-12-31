@@ -27,6 +27,7 @@ namespace PlatformCore.Services.Factory
 			public const string UILevelView = "UI/UILevelView";
 			public const string UIMainMenu = "UI/UIMainMenu";
 			public const string UISettings = "UI/UISettings";
+			public const string UISleepView = "UI/UISleepView";
 		}
 
 	}

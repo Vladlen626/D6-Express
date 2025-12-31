@@ -1,3 +1,6 @@
+using PlatformCore.Core;
+using PlatformCore.Services.UI;
+
 public abstract class DebugMenuItem
 {
     public virtual string Path { get; }
@@ -36,5 +39,25 @@ public class DbgMenuItemIncrementTicks : DebugMenuItem
     public override void Execute()
     {
         levelModel.IncrementTicks();
+    }
+}
+
+public class DbgMenuItemIncrementSleep : DebugMenuItem
+{
+    public override string Path => "Sleep";
+
+    public override void Execute()
+    {
+        Locator.Resolve<IUIService>().GetWindow<UISleepView>().CloseEyes();
+    }
+}
+
+public class DbgMenuItemIncrementWakeUp : DebugMenuItem
+{
+    public override string Path => "Wake Up";
+
+    public override void Execute()
+    {
+        Locator.Resolve<IUIService>().GetWindow<UISleepView>().OpenEyes();
     }
 }
