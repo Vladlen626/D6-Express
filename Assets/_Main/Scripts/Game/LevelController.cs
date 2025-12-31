@@ -18,6 +18,7 @@ public class LevelController : IBaseController, IActivatable
         levelModel.TickChanged += OnTickChanged;
         levelModel.DayChanged += OnDaysChanged;
         OnTickChanged();
+        OnDaysChanged();
     }
 
     public void Deactivate()
