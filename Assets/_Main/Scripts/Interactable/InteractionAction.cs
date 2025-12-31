@@ -3,7 +3,6 @@ using System;
 [Serializable]
 public abstract class InteractionAction
 {
-	public bool InAction { get; private set; }
 	protected Interactor Interactor { get; private set; }
 
 	public event Action Started;
@@ -18,7 +17,6 @@ public abstract class InteractionAction
 
 	public void StartInteract(IInteractable interactable)
 	{
-		InAction = true;
 		Started?.Invoke();
 
 		StartInteractInternal(interactable);
@@ -26,7 +24,6 @@ public abstract class InteractionAction
 
 	public void StopInteract(IInteractable interactable)
 	{
-		InAction = false;
 		StopInteractInternal(interactable);
 
 		Ended?.Invoke();

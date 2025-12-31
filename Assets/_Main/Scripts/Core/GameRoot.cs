@@ -95,7 +95,7 @@ namespace _Main.Scripts.Core
 				controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(player, _serviceLocator));
 				cameraService.AttachTo(player.CameraRoot);
 
-				controllersList.AddRange(SleepFactory.GetBaseControllers(player));
+				controllersList.AddRange(SleepFactory.GetBaseControllers(levelModel, player));
 				controllersList.AddRange(LevelFactory.GetBaseControllers(uiService, levelModel, sceneContext));
 			}
 

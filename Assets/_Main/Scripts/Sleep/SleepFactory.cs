@@ -1,15 +1,15 @@
 using System.Collections.Generic;
-using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
+using PlatformCore.Services.UI;
 
 public static class SleepFactory
 {
-	public static IEnumerable<IBaseController> GetBaseControllers(PlayerView playerView)
+	public static IEnumerable<IBaseController> GetBaseControllers(LevelModel levelModel, PlayerView playerView)
 	{
 		var sleepView = playerView.GetComponent<SleepView>();
 		var interactor = playerView.GetComponent<Interactor>();
 
-		var sleepController = new SleepController(sleepView, interactor);
+		var sleepController = new SleepController(levelModel, sleepView, interactor);
 		yield return sleepController;
 	}
 } 

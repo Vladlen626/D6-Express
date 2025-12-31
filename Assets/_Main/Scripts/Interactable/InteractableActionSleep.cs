@@ -1,4 +1,7 @@
 using System;
+using Cysharp.Threading.Tasks;
+using PlatformCore.Core;
+using PlatformCore.Services.UI;
 
 [Serializable]
 public class InteractableActionSleep : InteractionAction
@@ -17,13 +20,22 @@ public class InteractableActionSleep : InteractionAction
         return interactable is InteractableSleepable && stateController.State == CharacterState.LAYING;
     }
 
-    protected override void StartInteractInternal(IInteractable interactable)
+    protected override async void StartInteractInternal(IInteractable interactable)
     {
-        base.StartInteractInternal(interactable);
+        stateController.TryEnterState(CharacterState.TRANSITION);
+
+        // todo господь прости поправлю позже
+        await Locator.Resolve<IUIService>().PreloadAsync<UISleepView>();
+        await Locator.Resolve<IUIService>().GetWindow<UISleepView>().CloseEyes();
+        await UniTask.WaitForSeconds(1);
+
+        StopInteract(interactable);
     }
 
-    protected override void StopInteractInternal(IInteractable interactable)
+    protected override async void StopInteractInternal(IInteractable interactable)
     {
-        base.StopInteractInternal(interactable);
+        await Locator.Resolve<IUIService>().GetWindow<UISleepView>().OpenEyes();
+
+        stateController.TryEnterState(CharacterState.LAYING);
     }
 }

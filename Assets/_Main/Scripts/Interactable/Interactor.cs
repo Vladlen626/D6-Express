@@ -19,9 +19,10 @@ public class Interactor : MonoBehaviour
 
 	[SerializeField] private Transform viewTransform;
 
-	private InteractionAction currentAction;
-	private Interactable currentInteractable;
+	// todo: стэк тут ту мач
+	private readonly Stack<InteractionAction> actionStack = new();
 
+	private Interactable currentInteractable;
 	private CharacterStateController characterStateController;
 
 	private IInputService inputService;
@@ -72,11 +73,6 @@ public class Interactor : MonoBehaviour
 			{
 				Interactable interactable = hit.collider.GetComponent<Interactable>();
 
-				if (interactable == currentInteractable)
-				{
-					return;
-				}
-
 				if (interactable != null && interactable.CanInteract(this) && TryGetAction(interactable, out var action))
 				{
 					currentInteractable = interactable;
@@ -97,13 +93,15 @@ public class Interactor : MonoBehaviour
 	{
 		if (currentInteractable != null)
 		{
-			TryGetAction(currentInteractable, out currentAction);
+			TryGetAction(currentInteractable, out var action);
 
-			currentAction.Started += OnInteractionStarted;
-			currentAction.Ended += OnInteractionEnded;
+			actionStack.Push(action);
+
+			action.Started += OnInteractionStarted;
+			action.Ended += OnInteractionEnded;
 
 			currentInteractable.StartInteract(this);
-			currentAction.StartInteract(currentInteractable);
+			action.StartInteract(currentInteractable);
 		}
 	}
 
@@ -130,21 +128,20 @@ public class Interactor : MonoBehaviour
 
 	private void OnInteractionStarted()
 	{
-		Locator.Resolve<ILoggerService>().Log(currentAction.ToString() + " interaction action started");
+		Locator.Resolve<ILoggerService>().Log(actionStack.ToString() + " interaction action started");
 
-		InteractionStarted?.Invoke(currentAction);
+		InteractionStarted?.Invoke(actionStack.Peek());
 	}
 
 	private void OnInteractionEnded()
 	{
-		Locator.Resolve<ILoggerService>().Log(currentAction.ToString() + " interaction action ended");
+		Locator.Resolve<ILoggerService>().Log(actionStack.ToString() + " interaction action ended");
 
-		var action = currentAction;
+		var action = actionStack.Pop();
 
 		action.Ended -= OnInteractionEnded;
 		action.Started -= OnInteractionStarted;
 
-		currentAction = null;
 		InteractionEnded.Invoke(action);
 	}
 

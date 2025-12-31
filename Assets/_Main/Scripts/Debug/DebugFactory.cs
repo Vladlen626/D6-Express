@@ -8,8 +8,10 @@ public static class DebugFactory
     {
         var incrementTick = new DbgMenuItemIncrementTicks(levelModel);
         var incrementDay = new DbgMenuItemIncrementDays(levelModel);
+        var sleep = new DbgMenuItemIncrementSleep();
+        var wakeUp = new DbgMenuItemIncrementWakeUp();
 
-        var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay);
+        var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp);
         var menu = new DebugMenuUIModel(gameMenu);
 
         yield return new DebugMenuUIController(inputService, cursorService, menu);
