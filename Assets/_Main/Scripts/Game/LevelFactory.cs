@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using PlatformCore.Core;
+using PlatformCore.Services.UI;
 
 public static class LevelFactory
 {
@@ -13,10 +14,8 @@ public static class LevelFactory
         return levelModel;
     }
 
-    public static IEnumerable<IBaseController> GetBaseControllers(SceneContext sceneContext, LevelModel levelModel)
+    public static IEnumerable<IBaseController> GetBaseControllers(IUIService uiService, LevelModel levelModel, SceneContext sceneContext)
     {
-        var levelView = sceneContext.LevelView;
-
-        yield return new LevelController(levelModel, levelView);
+        yield return new LevelController(uiService, levelModel, sceneContext.Sun);
     }
 }

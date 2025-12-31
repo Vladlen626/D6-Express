@@ -11,11 +11,11 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	[SerializeField]
 	private InteractorView interactorView;
 
-	[SerializeField]
-	private LevelView levelView;
+	[SerializeField] 
+	private Light sun;
 
 	public DiceTableView DiceGameTableView => diceGameTableView;
 	public Transform PlayerSpawnPosition => playerSpawnPosition;
 	public InteractorView InteractorView => interactorView;
-	public LevelView LevelView => levelView;
+	public Light Sun => sun;
 }

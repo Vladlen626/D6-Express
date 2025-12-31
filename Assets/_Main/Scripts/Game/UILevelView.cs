@@ -1,7 +1,8 @@
+using PlatformCore.Services.UI;
 using TMPro;
 using UnityEngine;
 
-public class LevelView : MonoBehaviour
+public class UILevelView : UIBaseElement
 {
     [Header("DaynightCycle")]
     [SerializeField]
@@ -19,8 +20,6 @@ public class LevelView : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI days;
-
-    public Light Sun => sun;
     public Gradient LightColor => lightColor;
     public AnimationCurve LightIntensity => lightIntensity;
 

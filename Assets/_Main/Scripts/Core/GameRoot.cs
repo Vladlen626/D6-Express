@@ -94,8 +94,7 @@ namespace _Main.Scripts.Core
 				var player = await PlayerFactory.SpawnPlayer(sceneContext, factory, inputService);
 				controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(player, _serviceLocator));
 				cameraService.AttachTo(player.CameraRoot);
-
-				controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, levelModel));
+				controllersList.AddRange(LevelFactory.GetBaseControllers(uiService, levelModel, sceneContext));
 			}
 
 			var baseControllers = new IBaseController[]

@@ -1,19 +1,20 @@
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
+using PlatformCore.Services.UI;
 using UnityEngine;
 
-public class LevelController : IBaseController, IActivatable
+public class LevelController : BaseContextController<UILevelView>
 {
     private readonly LevelModel levelModel;
-    private readonly LevelView levelView;
+    private readonly Light sun;
 
-    public LevelController(LevelModel levelModel, LevelView levelView)
+    public LevelController(IUIService uiService, LevelModel levelModel, Light sun) :  base(uiService)
     {
         this.levelModel = levelModel;
-        this.levelView = levelView;
+        this.sun = sun;
     }
 
-    public void Activate()
+    protected override void OnActivate()
     {
         levelModel.TickChanged += OnTickChanged;
         levelModel.DayChanged += OnDaysChanged;
@@ -21,7 +22,7 @@ public class LevelController : IBaseController, IActivatable
         OnDaysChanged();
     }
 
-    public void Deactivate()
+    protected override void OnDeactivate()
     {
         levelModel.DayChanged -= OnDaysChanged;
         levelModel.TickChanged -= OnTickChanged;
@@ -29,15 +30,15 @@ public class LevelController : IBaseController, IActivatable
 
     private void OnTickChanged()
     {
-        levelView.Sun.transform.rotation = Quaternion.Euler(levelModel.TickRatio * 360f - 90f, 170f, 0f);
-        levelView.Sun.color = levelView.LightColor.Evaluate(levelModel.TickRatio);
-        levelView.Sun.intensity = levelView.LightIntensity.Evaluate(levelModel.TickRatio);
+        sun.transform.rotation = Quaternion.Euler(levelModel.TickRatio * 360f - 90f, 170f, 0f);
+        sun.color = _context.LightColor.Evaluate(levelModel.TickRatio);
+        sun.intensity = _context.LightIntensity.Evaluate(levelModel.TickRatio);
 
-        levelView.SetTicksText($"Ticks: {levelModel.Tick} / {levelModel.TicksPerDay}");
+        _context.SetTicksText($"Ticks: {levelModel.Tick} / {levelModel.TicksPerDay}");
     }
 
     private void OnDaysChanged()
     {
-        levelView.SetDaysText($"Days: {levelModel.Day} / {levelModel.Days}");
+        _context.SetDaysText($"Days: {levelModel.Day} / {levelModel.Days}");
     }
 }
