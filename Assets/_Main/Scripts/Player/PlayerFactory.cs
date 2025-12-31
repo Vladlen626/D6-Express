@@ -5,7 +5,19 @@ using PlatformCore.Services.Factory;
 
 public static class PlayerFactory
 {
-	public static async UniTask<PlayerView> SpawnPlayer(SceneContext sceneContext, IObjectFactory factory, IInputService inputService)
+	public static PlayerModel CreatePlayerModel()
+	{
+		// TODO: Перенести в конфиги
+		int startCash = 300;
+		var playerModel = new PlayerModel();
+		playerModel.InventoryModel.GiveCash(startCash);
+		
+		
+		return playerModel;
+	}
+	
+	
+	public static async UniTask<PlayerView> SpawnPlayerView(SceneContext sceneContext, IObjectFactory factory, IInputService inputService)
 	{
 		var playerView =  await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerPrefab, sceneContext.PlayerSpawnPosition.position,
 			sceneContext.PlayerSpawnPosition.rotation);;

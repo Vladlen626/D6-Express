@@ -1,44 +1,56 @@
+﻿using _Main.Scripts.Dice;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
-using PlatformCore.Services.UI;
 using UnityEngine;
 
-public class LevelController : BaseContextController<UILevelView>
+public class LevelController : IBaseController, IActivatable
 {
-    private readonly LevelModel levelModel;
-    private readonly Light sun;
+	private readonly LevelModel levelModel;
+	private readonly PlayerModel playerModel;
+	private readonly DiceGameModel diceGameModel;
 
-    public LevelController(IUIService uiService, LevelModel levelModel, Light sun) :  base(uiService)
-    {
-        this.levelModel = levelModel;
-        this.sun = sun;
-    }
+	private InventoryModel inventoryModel => playerModel.InventoryModel;
 
-    protected override void OnActivate()
-    {
-        levelModel.TickChanged += OnTickChanged;
-        levelModel.DayChanged += OnDaysChanged;
-        OnTickChanged();
-        OnDaysChanged();
-    }
+	public LevelController(LevelModel levelModel, PlayerModel playerModel, DiceGameModel diceGameModel)
+	{
+		this.levelModel = levelModel;
+		this.playerModel = playerModel;
+		this.diceGameModel = diceGameModel;
+	}
 
-    protected override void OnDeactivate()
-    {
-        levelModel.DayChanged -= OnDaysChanged;
-        levelModel.TickChanged -= OnTickChanged;
-    }
+	public void Activate()
+	{
+		levelModel.DayChanged += DayChangedHandler;
+		diceGameModel.OnGameConditionPassed += OnDiceGameConditionPassedHandler;
+		diceGameModel.OnGameConditionFailed += OnDiceGameConditionFailedHandler;
+	}
 
-    private void OnTickChanged()
-    {
-        sun.transform.rotation = Quaternion.Euler(levelModel.TickRatio * 360f - 90f, 170f, 0f);
-        sun.color = _context.LightColor.Evaluate(levelModel.TickRatio);
-        sun.intensity = _context.LightIntensity.Evaluate(levelModel.TickRatio);
+	public void Deactivate()
+	{
+		levelModel.DayChanged -= DayChangedHandler;
+		diceGameModel.OnGameConditionPassed -= OnDiceGameConditionPassedHandler;
+		diceGameModel.OnGameConditionFailed += OnDiceGameConditionFailedHandler;
+	}
+	
+	private void OnDiceGameConditionPassedHandler()
+	{
+		inventoryModel.GiveCash(diceGameModel.BetSize);
+	}
 
-        _context.SetTicksText($"Ticks: {levelModel.Tick} / {levelModel.TicksPerDay}");
-    }
+	private void OnDiceGameConditionFailedHandler()
+	{
+		inventoryModel.TakeCash(diceGameModel.BetSize);
+	}
 
-    private void OnDaysChanged()
-    {
-        _context.SetDaysText($"Days: {levelModel.Day} / {levelModel.Days}");
-    }
+	private void DayChangedHandler()
+	{
+		if (inventoryModel.CashCount >= levelModel.CashGoal)
+		{
+			Debug.Log("YOU WIN");
+		}
+		else
+		{
+			Debug.Log("YOU LOSE");
+		}
+	}
 }

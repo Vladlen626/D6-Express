@@ -5,9 +5,9 @@ using PlatformCore.Services;
 
 namespace _Main.Scripts.Dice
 {
-	public class DiceGameController : IBaseController, IActivatable
+	public class DiceGameProcessController : IBaseController, IActivatable
 	{
-		private readonly DiceGameModel _diceGameModel;
+		private readonly TableModel _tableModel;
 		private readonly TurnModel _turnModel;
 
 		private readonly DiceModel[] _diceModels;
@@ -16,14 +16,14 @@ namespace _Main.Scripts.Dice
 		private readonly DicePoolLogic _dicePool;
 		private readonly ILoggerService _logger;
 
-		public DiceGameController(
-			DiceGameModel diceGameModel,
+		public DiceGameProcessController(
+			TableModel tableModel,
 			TurnModel turnModel,
 			DiceModel[] diceModels,
 			DiceTableView tableView,
 			ILoggerService logger)
 		{
-			_diceGameModel = diceGameModel;
+			_tableModel = tableModel;
 			_turnModel = turnModel;
 			_diceModels = diceModels;
 			_tableView = tableView;
@@ -84,20 +84,20 @@ namespace _Main.Scripts.Dice
 					return;
 				}
 
-				_turnModel.AddTurnPoints(points);
-				_logger?.Log($"[DiceGameController] Scored {points} points. Turn total: {_turnModel.TurnPoints}");
+				_tableModel.AddTurnPoints(points);
+				_logger?.Log($"[DiceGameController] Scored {points} points. Turn total: {_tableModel.TurnPoints}");
 
 				_dicePool.BankSelected();
 			}
 
 			// 2. Очищаем превью
-			_turnModel.SetPreviewPoints(0);
+			_tableModel.SetPreviewPoints(0);
 
 			// 3. Проверка на HOT DICE (все кубы забанкованы)
 			if (_dicePool.AllBanked())
 			{
 				_logger?.Log("[DiceGameController] 🔥 HOT DICE! Resetting all dice.");
-				_diceGameModel.ResetAllPositions();
+				_tableModel.ResetAllPositions();
 				_dicePool.ResetAll();
 			}
 
@@ -119,7 +119,7 @@ namespace _Main.Scripts.Dice
 			if (!DiceGameUtils.RollHasAnyScore(rolledValues))
 			{
 				_logger?.Log("[DiceGameController] ❌ BUST! Turn points lost.");
-				_turnModel.Reset();
+				_tableModel.Reset();
 				HandlePass();
 				return;
 			}
@@ -145,19 +145,19 @@ namespace _Main.Scripts.Dice
 				int points = DiceGameUtils.CalculateScore(selectedValues);
 				if (points > 0)
 				{
-					_turnModel.AddTurnPoints(points);
-					_logger?.Log($"[DiceGameController] Scored {points} points. Turn total: {_turnModel.TurnPoints}");
+					_tableModel.AddTurnPoints(points);
+					_logger?.Log($"[DiceGameController] Scored {points} points. Turn total: {_tableModel.TurnPoints}");
 				}
 			}
 
 			// 2. Банкуем очки хода в общий счет
-			_diceGameModel.AddBankedPoints(_turnModel.TurnPoints);
+			_tableModel.AddBankedPoints(_tableModel.TurnPoints);
 			_logger?.Log(
-				$"[DiceGameController] Banked {_turnModel.TurnPoints} points. Total banked: {_diceGameModel.BankedPoints}");
+				$"[DiceGameController] Banked {_tableModel.TurnPoints} points. Total banked: {_tableModel.BankedPoints}");
 
 			// 3. Сбрасываем ход
-			_turnModel.Reset();
-			_diceGameModel.ResetAllPositions();
+			_tableModel.Reset();
+			_tableModel.ResetAllPositions();
 			_dicePool.ResetAll();
 
 			// 4. Бросаем все кубы для начала нового хода
@@ -180,10 +180,10 @@ namespace _Main.Scripts.Dice
 
 			int scorePreview = DiceGameUtils.CalculateScore(selectedValues);
 			bool hasValidComboSelected = scorePreview > 0;
-			bool canPass = hasValidComboSelected || (_turnModel.TurnPoints > 0 && selectedDice.Length == 0);
+			bool canPass = hasValidComboSelected || (_tableModel.TurnPoints > 0 && selectedDice.Length == 0);
 
 			int previewPoints = hasValidComboSelected ? scorePreview : 0;
-			_turnModel.SetPreviewPoints(previewPoints);
+			_tableModel.SetPreviewPoints(previewPoints);
 
 			_tableView.SetButtonInteractable("Roll", hasValidComboSelected);
 			_tableView.SetButtonInteractable("Pass", canPass);

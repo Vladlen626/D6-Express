@@ -1,25 +1,24 @@
 ﻿using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
-using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
 	public class DiceController : IBaseController, IActivatable
 	{
-		private readonly DiceGameModel diceGameModel;
+		private readonly TableModel _tableModel;
 		private readonly DiceModel diceModel;
 		private readonly DiceView diceView;
 
-		public DiceController(DiceModel inDiceModel, DiceView inDiceView, DiceGameModel inDiceGameModel)
+		public DiceController(DiceModel inDiceModel, DiceView inDiceView, TableModel inTableModel)
 		{
 			diceModel = inDiceModel;
 			diceView = inDiceView;
-			diceGameModel = inDiceGameModel;
+			_tableModel = inTableModel;
 		}
 
 		private void InitializePosition()
 		{
-			var startPos = diceGameModel.GetFreeActivePosition();
+			var startPos = _tableModel.GetFreeActivePosition();
 			if (startPos != null)
 			{
 				diceModel.SetCurrentPosition(startPos);
@@ -77,8 +76,8 @@ namespace _Main.Scripts.Dice
 			ReleaseCurrentPosition();
 
 			var newPos = diceModel.IsSaved
-				? diceGameModel.GetFreeBankedPosition()
-				: diceGameModel.GetFreeActivePosition();
+				? _tableModel.GetFreeBankedPosition()
+				: _tableModel.GetFreeActivePosition();
 			
 			diceModel.SetCurrentPosition(newPos);
 			diceView.MoveToPosition(newPos.position);
@@ -93,11 +92,11 @@ namespace _Main.Scripts.Dice
 
 			if (diceModel.IsSaved)
 			{
-				diceGameModel.ReleaseBankedPosition(diceModel.CurrentPosition);
+				_tableModel.ReleaseBankedPosition(diceModel.CurrentPosition);
 			}
 			else
 			{
-				diceGameModel.ReleaseActivePosition(diceModel.CurrentPosition);
+				_tableModel.ReleaseActivePosition(diceModel.CurrentPosition);
 			}
 
 			diceModel.SetCurrentPosition(null);

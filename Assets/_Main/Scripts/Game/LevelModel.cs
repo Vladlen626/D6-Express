@@ -2,6 +2,7 @@ using System;
 
 public class LevelModel
 {
+    public readonly int CashGoal;
     public readonly int TicksPerDay;
     public readonly int Days;
 
@@ -13,10 +14,11 @@ public class LevelModel
     public event Action DayChanged;
     public event Action LevelFinished;
 
-    public LevelModel(int ticksPerDay, int days)
+    public LevelModel(int ticksPerDay, int days, int cashGoal)
     {
         this.Days = days;
         this.TicksPerDay = ticksPerDay;
+        this.CashGoal = cashGoal;
     }
 
     public void IncrementDays()

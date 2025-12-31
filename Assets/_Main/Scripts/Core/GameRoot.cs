@@ -61,6 +61,8 @@ namespace _Main.Scripts.Core
 			// --------------
 
 			var levelModel = LevelFactory.CreateLevelModel();
+			var diceGameModel = DiceFactory.CreateDiceGameModel();
+			var playerModel = PlayerFactory.CreatePlayerModel();
 
 			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel));
 
@@ -89,12 +91,19 @@ namespace _Main.Scripts.Core
 			if (sceneService.TryGetSceneContext(sceneForLoad, out var context))
 			{
 				var sceneContext = context as SceneContext;
-				controllersList.AddRange(await DiceFactory.GetDiceGameControllers(sceneContext, factory, logger));
 
-				var player = await PlayerFactory.SpawnPlayer(sceneContext, factory, inputService);
+				//DiceGame
+				controllersList.AddRange(await DiceFactory.GetDiceGameControllers(sceneContext, factory, logger,
+					diceGameModel));
+
+				//Player
+				var player = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService);
 				controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(player, _serviceLocator));
 				cameraService.AttachTo(player.CameraRoot);
-				controllersList.AddRange(LevelFactory.GetBaseControllers(uiService, levelModel, sceneContext));
+				
+				// Level
+				controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel, 
+					playerModel, diceGameModel));
 			}
 
 			var baseControllers = new IBaseController[]

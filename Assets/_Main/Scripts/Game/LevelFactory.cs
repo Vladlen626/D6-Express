@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Main.Scripts.Dice;
 using PlatformCore.Core;
 using PlatformCore.Services.UI;
 
@@ -9,13 +10,21 @@ public static class LevelFactory
         // TODO: в настройки
         var ticksPerDay = 3;
         int days = 3;
+        int cashGoal = 500;
 
-        var levelModel = new LevelModel(ticksPerDay, days);
+        var levelModel = new LevelModel(ticksPerDay, days, cashGoal);
         return levelModel;
     }
 
-    public static IEnumerable<IBaseController> GetBaseControllers(IUIService uiService, LevelModel levelModel, SceneContext sceneContext)
+    public static IEnumerable<IBaseController> GetBaseControllers(SceneContext sceneContext, IUIService uiService,
+        LevelModel levelModel, PlayerModel playerModel, DiceGameModel diceGameModel)
     {
-        yield return new LevelController(uiService, levelModel, sceneContext.Sun);
+        var levelControllers = new IBaseController[]
+        {
+            new LevelViewController(uiService, levelModel, sceneContext.Sun),
+            new LevelController(levelModel, playerModel, diceGameModel)
+        };
+        
+       return levelControllers;
     }
 }

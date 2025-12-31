@@ -10,10 +10,24 @@ namespace _Main.Scripts.Core
 {
 	public static class DiceFactory
 	{
+		public static DiceGameModel CreateDiceGameModel()
+		{
+			int targetScore = 4000;
+			int betSize = 200;
+
+			var diceGameModel = new DiceGameModel();
+			diceGameModel.SetTargetScore(targetScore);
+			diceGameModel.SetBetSize(betSize);
+			
+			return diceGameModel;
+		}
+		
+		
 		public static async UniTask<IBaseController[]> GetDiceGameControllers(
 			SceneContext sceneContext,
 			IObjectFactory factory,
-			ILoggerService logger)
+			ILoggerService logger,
+			DiceGameModel diceGameModel)
 		{
 			var controllersList = new List<IBaseController>();
 
@@ -27,22 +41,23 @@ namespace _Main.Scripts.Core
 			var diceViews = 
 				await SpawnDiceArrayAsync(factory, dicePosHandler.DicePositions);
 
+			var tableModel = new TableModel(dicePosHandler.DicePositions, dicePosHandler.BankedPositions);
 			var diceModels = new List<DiceModel>();
-			var diceGameModel = new DiceGameModel(dicePosHandler.DicePositions, dicePosHandler.BankedPositions);
 			var turnModel = new TurnModel();
 
 			foreach (var diceView in diceViews)
 			{
 				var model = new DiceModel(new LoadedDiceProfileConfig()); 
-				var controller = new DiceController(model, diceView, diceGameModel);
+				var controller = new DiceController(model, diceView, tableModel);
 				diceModels.Add(model);
 				controllersList.Add(controller);
 			}
 			
 			var diceGameControllers = new IBaseController[]
 			{
-				new DiceGameController(diceGameModel, turnModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger),
-				new DiceGameScoreController(diceGameModel, turnModel, sceneContext.DiceGameTableView)
+				new DiceGameProcessController(tableModel, turnModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger),
+				new DiceGameScoreViewController(tableModel, sceneContext.DiceGameTableView, diceGameModel),
+				new DiceGameResultController(diceGameModel, tableModel)
 			};
 			
 			controllersList.AddRange(diceGameControllers);
