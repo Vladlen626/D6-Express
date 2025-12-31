@@ -64,9 +64,9 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 		transform.rotation *= Quaternion.Euler(0, lookInput.x * playerView.mouseSensitivity, 0);
 	}
 
-	private void OnCharacterStateChanged()
+	private void OnCharacterStateChanged(CharacterState oldCharacterState, CharacterState newCharacterState)
 	{
-		if (playerModel.currentCharacterState == CharacterState.DICE_GAME)
+		if (oldCharacterState == CharacterState.DICE_GAME || newCharacterState == CharacterState.DICE_GAME)
 		{
 			ResetCameraRotation();
 		}

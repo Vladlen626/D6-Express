@@ -38,9 +38,9 @@ namespace _Main.Scripts.Dice
 			playerModel.OnCharacterStateChanged -= OnCharacterStateChangedHandler;
 		}
 
-		private void OnCharacterStateChangedHandler()
+		private void OnCharacterStateChangedHandler(CharacterState oldCharacterState, CharacterState newCharacterState)
 		{
-			if (playerModel.currentCharacterState == CharacterState.DICE_GAME)
+			if (newCharacterState == CharacterState.DICE_GAME)
 			{
 				StartDiceGame().Forget();
 			}
@@ -76,6 +76,11 @@ namespace _Main.Scripts.Dice
 
 		private void StopDiceGame()
 		{
+			if (gameControllers == null)
+			{
+				return;
+			}
+
 			foreach (var controller in gameControllers)
 			{
 				lifecycleService.Unregister(controller);

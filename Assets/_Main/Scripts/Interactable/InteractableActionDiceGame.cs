@@ -8,6 +8,7 @@ public class InteractableActionDiceGame : InteractionAction
 {
 	private CharacterStateController stateController;
 	private Vector3 lastPos;
+	private Quaternion lastRot;
 
 	public override void Init(Interactor interactor)
 	{
@@ -26,6 +27,7 @@ public class InteractableActionDiceGame : InteractionAction
 		stateController.TryEnterState(CharacterState.TRANSITION);
 
 		lastPos = Interactor.transform.position;
+		lastRot = Interactor.transform.rotation;
 
 		var interactableDiceGame = interactable as InteractableDiceGame;
 
@@ -43,7 +45,10 @@ public class InteractableActionDiceGame : InteractionAction
 	{
 		inputService.OnMoved -= OnMoved;
 
-		await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
+	
+		await UniTask.WhenAll(moveTask, rotateTask);
 
 		stateController.TryEnterState(CharacterState.DEFAULT);
 	}

@@ -133,9 +133,9 @@ GameObject:
   - component: {fileID: 3688636356647218882}
   - component: {fileID: 1353585870120323076}
   - component: {fileID: 6681934855089884787}
+  - component: {fileID: 3369340536190415365}
   - component: {fileID: 8885480304943086778}
   - component: {fileID: 3411494938860463788}
-  - component: {fileID: 3369340536190415365}
   - component: {fileID: 4243707368022263982}
   m_Layer: 0
   m_Name: PlayerPrefab
@@ -209,6 +209,27 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3369340536190415365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3864496680010171841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f575a01f64afa824dbc3806be5860016, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerView
+  walkSpeed: 5
+  runSpeed: 10
+  jumpHeight: 2
+  gravity: -20
+  characterController: {fileID: 6681934855089884787}
+  characterStateController: {fileID: 3411494938860463788}
+  mouseSensitivity: 0.075
+  lookXLimit: 45
+  cameraRoot: {fileID: 3656734799142745478}
 --- !u!114 &8885480304943086778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,26 +295,6 @@ MonoBehaviour:
     - rid: 8683858885762875632
       type: {class: CharacterStateHandlerDiceGame, ns: , asm: Assembly-CSharp}
       data: 
---- !u!114 &3369340536190415365
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3864496680010171841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f575a01f64afa824dbc3806be5860016, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerView
-  walkSpeed: 5
-  runSpeed: 10
-  jumpHeight: 2
-  gravity: -20
-  characterController: {fileID: 6681934855089884787}
-  mouseSensitivity: 0.075
-  lookXLimit: 45
-  cameraRoot: {fileID: 3656734799142745478}
 --- !u!114 &4243707368022263982
 MonoBehaviour:
   m_ObjectHideFlags: 0

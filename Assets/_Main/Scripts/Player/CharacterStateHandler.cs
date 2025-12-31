@@ -10,10 +10,11 @@ public abstract class CharacterStateHandler
     public void Init(CharacterStateController characterStateController)
     {
         Controller = characterStateController;
+        OnInit();
     }
 
     public abstract void Enter();
     public abstract void Exit();
 
-    public virtual void Start() { }
+    public virtual void OnInit() { }
 }

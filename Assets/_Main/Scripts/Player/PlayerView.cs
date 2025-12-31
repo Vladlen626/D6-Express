@@ -10,11 +10,15 @@ public class PlayerView : MonoBehaviour
 
 	[SerializeField] 
 	private CharacterController characterController;
+	
+	[SerializeField] 
+	private CharacterStateController characterStateController;
 
 	[Header("Look")] 
 	public float mouseSensitivity = 2f;
 	public float lookXLimit = 45f;
 	[SerializeField] private Transform cameraRoot;
 	public CharacterController CharacterController => characterController;
+	public CharacterStateController CharacterStateController => characterStateController;
 	public Transform CameraRoot => cameraRoot;
 }

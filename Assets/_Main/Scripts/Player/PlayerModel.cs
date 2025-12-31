@@ -2,13 +2,18 @@
 
 public class PlayerModel
 {
-	public event Action OnCharacterStateChanged;
+	public event Action<CharacterState, CharacterState> OnCharacterStateChanged;
 	public InventoryModel InventoryModel {get; private set;}
 	public CharacterState currentCharacterState { get; private set; }
-
 	public PlayerModel()
 	{
 		InventoryModel = new InventoryModel();
+	}
+	public void SetCharacterState(CharacterState characterState)
+	{
+		var oldCharacterState = currentCharacterState;
+		currentCharacterState = characterState;
+		OnCharacterStateChanged?.Invoke(oldCharacterState, currentCharacterState);
 	}
 }
 

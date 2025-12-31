@@ -101,6 +101,7 @@ namespace _Main.Scripts.Core
 
 			//Player
 			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService);
+			playerView.CharacterStateController.Initialize(playerModel);
 			cameraService.AttachTo(playerView.CameraRoot);
 			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
 

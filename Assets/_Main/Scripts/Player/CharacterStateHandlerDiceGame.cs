@@ -1,6 +1,7 @@
 ﻿using System;
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
+using UnityEngine;
 
 [Serializable]
 public class CharacterStateHandlerDiceGame : CharacterStateHandler
@@ -9,7 +10,7 @@ public class CharacterStateHandlerDiceGame : CharacterStateHandler
 	private ICursorService cursorService;
 	private IInputService inputService;
 
-	public override void Start()
+	public override void OnInit()
 	{
 		cursorService = Locator.Resolve<ICursorService>();
 		inputService = Locator.Resolve<IInputService>();
@@ -17,12 +18,16 @@ public class CharacterStateHandlerDiceGame : CharacterStateHandler
 
 	public override void Enter()
 	{
+		Controller.GetComponent<CharacterController>().enabled = false;
+		Controller.GetComponent<Collider>().enabled = false;
 		inputService.DisableCameraInputs();
 		cursorService.UnlockCursor();
 	}
 
 	public override void Exit()
 	{
+		Controller.GetComponent<CharacterController>().enabled = true;
+		Controller.GetComponent<Collider>().enabled = true;
 		inputService.EnableCameraInputs();
 		cursorService.LockCursor();
 	}

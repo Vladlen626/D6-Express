@@ -9,10 +9,13 @@ public class CharacterStateController : MonoBehaviour
 
     private readonly Dictionary<CharacterState, CharacterStateHandler> dictStates = new();
 
-    public CharacterState State { get; private set; }
+    private PlayerModel playerModel;
+    public CharacterState State => playerModel.currentCharacterState;
 
-    private void Awake()
+    public void Initialize(PlayerModel playerModel)
     {
+        this.playerModel = playerModel;
+        
         foreach (var item in states)
         {
             item.Init(this);
@@ -20,14 +23,6 @@ public class CharacterStateController : MonoBehaviour
         }
 
         EnterState(CharacterState.DEFAULT);
-    }
-
-    private void Start()
-    {
-        foreach (var item in states)
-        {
-            item.Start();
-        }
     }
 
     public void TryEnterState(CharacterState state)
@@ -46,7 +41,6 @@ public class CharacterStateController : MonoBehaviour
         {
             dictStates[state].Enter();
         }
-
-        State = state;
+        playerModel.SetCharacterState(state);
     }
 }
