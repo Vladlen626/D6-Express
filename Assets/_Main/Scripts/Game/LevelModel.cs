@@ -21,6 +21,9 @@ public class LevelModel
 
     public void IncrementDays()
     {
+        Tick = 0;
+        TickChanged?.Invoke();
+
         if (Day + 1 == Days)
         {
             LevelFinished?.Invoke();
@@ -41,8 +44,6 @@ public class LevelModel
         }
         else
         {
-            Tick = 0;
-            TickChanged?.Invoke();
             IncrementDays();
         }
     }
