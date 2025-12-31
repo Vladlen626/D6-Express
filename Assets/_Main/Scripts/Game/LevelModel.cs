@@ -2,10 +2,10 @@ using System;
 
 public class LevelModel
 {
-    private readonly int ticksPerDay;
-    private readonly int days;
+    public readonly int TicksPerDay;
+    public readonly int Days;
 
-    public float TickRatio => Tick / (float)ticksPerDay;
+    public float TickRatio => Tick / (float)TicksPerDay;
     public int Tick { get; private set; }
     public int Day { get; private set; }
 
@@ -15,13 +15,13 @@ public class LevelModel
 
     public LevelModel(int ticksPerDay, int days)
     {
-        this.days = days;
-        this.ticksPerDay = ticksPerDay;
+        this.Days = days;
+        this.TicksPerDay = ticksPerDay;
     }
 
     public void IncrementDays()
     {
-        if (Day + 1 == days)
+        if (Day + 1 == Days)
         {
             LevelFinished?.Invoke();
         }
@@ -34,7 +34,7 @@ public class LevelModel
 
     public void IncrementTicks()
     {
-        if (Tick + 1 < ticksPerDay)
+        if (Tick + 1 < TicksPerDay)
         {
             Tick++;
             TickChanged?.Invoke();

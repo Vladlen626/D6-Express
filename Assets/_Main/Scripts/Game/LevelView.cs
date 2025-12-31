@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class LevelView : MonoBehaviour
@@ -12,7 +13,24 @@ public class LevelView : MonoBehaviour
     [SerializeField]
     private AnimationCurve lightIntensity;
 
+    [Header("UI")]
+    [SerializeField]
+    private TextMeshProUGUI ticks;
+
+    [SerializeField]
+    private TextMeshProUGUI days;
+
     public Light Sun => sun;
     public Gradient LightColor => lightColor;
     public AnimationCurve LightIntensity => lightIntensity;
+
+    public void SetTicksText(string text)
+    {
+        ticks.text = text;
+    }
+
+    public void SetDaysText(string text)
+    {
+        days.text = text;
+    }
 }

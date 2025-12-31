@@ -16,11 +16,13 @@ public class LevelController : IBaseController, IActivatable
     public void Activate()
     {
         levelModel.TickChanged += OnTickChanged;
+        levelModel.DayChanged += OnDaysChanged;
         OnTickChanged();
     }
 
     public void Deactivate()
     {
+        levelModel.DayChanged -= OnDaysChanged;
         levelModel.TickChanged -= OnTickChanged;
     }
 
@@ -29,5 +31,12 @@ public class LevelController : IBaseController, IActivatable
         levelView.Sun.transform.rotation = Quaternion.Euler(levelModel.TickRatio * 360f - 90f, 170f, 0f);
         levelView.Sun.color = levelView.LightColor.Evaluate(levelModel.TickRatio);
         levelView.Sun.intensity = levelView.LightIntensity.Evaluate(levelModel.TickRatio);
+
+        levelView.SetTicksText($"Ticks: {levelModel.Tick} / {levelModel.TicksPerDay}");
+    }
+
+    private void OnDaysChanged()
+    {
+        levelView.SetDaysText($"Days: {levelModel.Day} / {levelModel.Days}");
     }
 }
