@@ -54,15 +54,19 @@ namespace _Main.Scripts.Core
 			var cameraService = _serviceLocator.Get<ICameraService>();
 			var cursorService = _serviceLocator.Get<ICursorService>();
 			var inputService = _serviceLocator.Get<IInputService>();
-			
+
 			cursorService.UnlockCursor();
 			// Controllers list
 			var controllersList = new List<IBaseController>();
 			// --------------
 
+			var levelModel = LevelFactory.CreateLevelModel();
+
+			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel));
+
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
-			
+
 			//Load MainMenu Scene
 			var sceneForLoad = SceneNames.MainMenu;
 			await sceneService.LoadSceneAsync(sceneForLoad);
@@ -90,9 +94,9 @@ namespace _Main.Scripts.Core
 				var player = await PlayerFactory.SpawnPlayer(sceneContext, factory, inputService);
 				controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(player, _serviceLocator));
 				cameraService.AttachTo(player.CameraRoot);
-			}
 
-			controllersList.AddRange(DebugFactory.GetDebugBaseController(inputService, cursorService));
+				controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, levelModel));
+			}
 
 			foreach (var controller in controllersList)
 			{

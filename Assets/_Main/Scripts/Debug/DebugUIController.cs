@@ -1,32 +1,30 @@
 using _Main.Scripts.Core.Services;
-using ImGuiNET;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using UImGui;
-using UnityEngine;
 
-public class DebugUIController : IBaseController, IActivatable
+public class DebugMenuUIController : IBaseController, IActivatable
 {
     private bool opened;
     private readonly IInputService inputService;
     private readonly ICursorService cursorService;
+    private readonly DebugMenuUIModel model;
 
-    public DebugUIController(IInputService inputService, ICursorService cursorService)
+    public DebugMenuUIController(IInputService inputService, ICursorService cursorService, DebugMenuUIModel model)
     {
         this.inputService = inputService;
         this.cursorService = cursorService;
+        this.model = model;
     }
 
     public void Activate()
     {
         inputService.OnDebugSwitchPressed += OnDebugSwitched;
-
     }
 
     public void Deactivate()
     {
         inputService.OnDebugSwitchPressed -= OnDebugSwitched;
-
     }
 
     private void OnDebugSwitched()
@@ -49,24 +47,6 @@ public class DebugUIController : IBaseController, IActivatable
 
     private void OnLayout(UImGui.UImGui uImGui)
     {
-        if (ImGui.BeginMainMenuBar())
-        {
-            if (ImGui.BeginMenu("Game"))
-            {
-                if (ImGui.MenuItem("Increment Tick"))
-                {
-                    Debug.Log("puk");
-                }
-
-                if (ImGui.MenuItem("Increment Day"))
-                {
-                    Debug.Log("srenk");
-                }
-
-                ImGui.EndMenu();
-            }
-
-            ImGui.EndMainMenuBar();
-        }
+        model.OnLayout(uImGui);
     }
 }

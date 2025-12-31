@@ -135,7 +135,6 @@ GameObject:
   - component: {fileID: 8885480304943086778}
   - component: {fileID: 3411494938860463788}
   - component: {fileID: 3369340536190415365}
-  - component: {fileID: 7861555720136702845}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -281,18 +280,6 @@ MonoBehaviour:
   mouseSensitivity: 0.075
   lookXLimit: 45
   cameraRoot: {fileID: 3656734799142745478}
---- !u!114 &7861555720136702845
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3864496680010171841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 319a620493fb39046ac2ef7625673621, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestWindow
 --- !u!1 &7089752732164083115
 GameObject:
   m_ObjectHideFlags: 0
