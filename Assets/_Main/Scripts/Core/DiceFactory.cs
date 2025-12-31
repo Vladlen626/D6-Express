@@ -12,13 +12,8 @@ namespace _Main.Scripts.Core
 	{
 		public static DiceGameModel CreateDiceGameModel()
 		{
-			int targetScore = 4000;
-			int betSize = 200;
-
 			var diceGameModel = new DiceGameModel();
-			diceGameModel.SetTargetScore(targetScore);
-			diceGameModel.SetBetSize(betSize);
-			
+
 			return diceGameModel;
 		}
 		

@@ -43,6 +43,14 @@ public class Interactor : MonoBehaviour
 		characterStateController = GetComponent<CharacterStateController>();
 	}
 
+	private void Start()
+	{
+		foreach (var item in actions)
+		{
+			item.Start();
+		}
+	}
+
 	private void OnDisable()
 	{
 		if (inputService == null)

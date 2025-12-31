@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using _Main.Scripts.Core.Services;
+using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
@@ -88,28 +89,30 @@ namespace _Main.Scripts.Core
 			//TODO: Сделать статический класс с названиями треков
 			await audioService.PlayMusicAsync("event:/GameplayEvent");
 
-			if (sceneService.TryGetSceneContext(sceneForLoad, out var context))
+			//TODO: Контекст сейчас будет обязательным на игровой сцене
+			// Какая-то херня, над править, но пока нет идей как. Дальше посмотрим.
+			if (!sceneService.TryGetSceneContext(sceneForLoad, out var context))
 			{
-				var sceneContext = context as SceneContext;
-
-				//DiceGame
-				controllersList.AddRange(await DiceFactory.GetDiceGameControllers(sceneContext, factory, logger,
-					diceGameModel));
-
-				//Player
-				var player = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService);
-				controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(player, _serviceLocator));
-				cameraService.AttachTo(player.CameraRoot);
-				
-				// Level
-				controllersList.AddRange(LevelFactory.GetSleepControllers(levelModel, player));
-				controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel, 
-					playerModel, diceGameModel));
+				Debug.LogError($"[GameRoot] Scene {sceneForLoad} could not have SceneContext!");
+				return;
 			}
+
+			var sceneContext = context as SceneContext;
+
+			//Player
+			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService);
+			cameraService.AttachTo(playerView.CameraRoot);
+			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
+
+			// Level
+			controllersList.AddRange(LevelFactory.GetSleepControllers(levelModel, playerView));
+			controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel, 
+				playerModel, diceGameModel));
 
 			var baseControllers = new IBaseController[]
 			{
 				new SettingsController(uiService, audioService, cursorService, inputService),
+				new DiceGameStartController(diceGameModel, playerModel, sceneContext, _serviceLocator),
 			};
 
 			controllersList.AddRange(baseControllers);

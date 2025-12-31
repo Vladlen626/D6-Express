@@ -1,8 +1,11 @@
 using System;
+using _Main.Scripts.Core.Services;
+using PlatformCore.Core;
 
 [Serializable]
 public abstract class InteractionAction
 {
+	protected IInputService inputService;
 	protected Interactor Interactor { get; private set; }
 
 	public event Action Started;
@@ -11,6 +14,11 @@ public abstract class InteractionAction
 	public virtual void Init(Interactor interactor)
 	{
 		Interactor = interactor;
+	}
+
+	public virtual void Start()
+	{
+		inputService = Locator.Resolve<IInputService>();
 	}
 
 	public abstract bool CanInteract(IInteractable interactable);

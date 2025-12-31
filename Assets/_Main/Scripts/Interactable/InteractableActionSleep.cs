@@ -25,6 +25,7 @@ public class InteractableActionSleep : InteractionAction
         stateController.TryEnterState(CharacterState.TRANSITION);
 
         // todo господь прости поправлю позже
+        // ПИЗДЕЦ НАСРАЛ ЖОСКА, работает -> терплю
         await Locator.Resolve<IUIService>().PreloadAsync<UISleepView>();
         await Locator.Resolve<IUIService>().GetWindow<UISleepView>().CloseEyes();
         await UniTask.WaitForSeconds(1);

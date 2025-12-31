@@ -1,4 +1,5 @@
 ﻿using _Main.Scripts.Core;
+using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
@@ -29,19 +30,44 @@ namespace _Main.Scripts.Dice
 
 		public void Activate()
 		{
-			throw new System.NotImplementedException();
-		}
-		public void Deactivate()
-		{
-			throw new System.NotImplementedException();
+			playerModel.OnCharacterStateChanged += OnCharacterStateChangedHandler;
 		}
 
+		public void Deactivate()
+		{
+			playerModel.OnCharacterStateChanged -= OnCharacterStateChangedHandler;
+		}
+
+		private void OnCharacterStateChangedHandler()
+		{
+			if (playerModel.currentCharacterState == CharacterState.DICE_GAME)
+			{
+				StartDiceGame().Forget();
+			}
+			else
+			{
+				StopDiceGame();
+			}
+		}
 
 		private async UniTask StartDiceGame()
 		{
-			gameControllers = await DiceFactory.GetDiceGameControllers(sceneContext, serviceLocator.Get<IObjectFactory>(), 
-				serviceLocator.Get<ILoggerService>(), diceGameModel);
+			// TODO: Перенести в конфиги.
+			int targetScore = 4000;
+			int betSize = 200;
+			int maxTurnCount = 10;
+
+			diceGameModel.Reset();
+			diceGameModel.SetTargetScore(targetScore);
+			diceGameModel.SetBetSize(betSize);
+			diceGameModel.SetMaxTurnCount(maxTurnCount);
+
+			var objectFactory = serviceLocator.Get<IObjectFactory>();
+			var loggerService = serviceLocator.Get<ILoggerService>();
 			
+			gameControllers = await DiceFactory.GetDiceGameControllers(sceneContext, objectFactory, loggerService,
+				diceGameModel);
+
 			foreach (var controller in gameControllers)
 			{
 				await lifecycleService.RegisterAsync(controller);

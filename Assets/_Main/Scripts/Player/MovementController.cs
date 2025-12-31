@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class MovementController : IBaseController, IActivatable, IUpdatable
 {
+	private readonly PlayerModel playerModel;
 	private readonly CharacterController controller;
 	private readonly PlayerView playerView;
 	private readonly IInputService inputService;
@@ -19,21 +20,25 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	private Transform transform => playerView.transform;
 
-	public MovementController(PlayerView inPlayerView, IInputService inInputService, ICursorService inCursor)
+	public MovementController(PlayerView playerView, PlayerModel playerModel, IInputService inputService,
+		ICursorService cursorService)
 	{
-		playerView = inPlayerView;
-		controller = inPlayerView.CharacterController;
-		inputService = inInputService;
-		cursorService = inCursor;
+		this.playerModel = playerModel;
+		this.playerView = playerView;
+		this.inputService = inputService;
+		this.cursorService = cursorService;
+		controller = playerView.CharacterController;
 	}
 
 	public void Activate()
 	{
+		playerModel.OnCharacterStateChanged += OnCharacterStateChanged;
 		cursorService.LockCursor();
 	}
 
 	public void Deactivate()
 	{
+		playerModel.OnCharacterStateChanged -= OnCharacterStateChanged;
 		cursorService.UnlockCursor();
 	}
 
@@ -57,5 +62,18 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 		rotationX = Mathf.Clamp(rotationX, -playerView.lookXLimit, playerView.lookXLimit);
 		playerView.CameraRoot.localRotation = Quaternion.Euler(rotationX, 0, 0);
 		transform.rotation *= Quaternion.Euler(0, lookInput.x * playerView.mouseSensitivity, 0);
+	}
+
+	private void OnCharacterStateChanged()
+	{
+		if (playerModel.currentCharacterState == CharacterState.DICE_GAME)
+		{
+			ResetCameraRotation();
+		}
+	}
+
+	private void ResetCameraRotation()
+	{
+		playerView.CameraRoot.localRotation = Quaternion.Euler(0, 0, 0);
 	}
 }

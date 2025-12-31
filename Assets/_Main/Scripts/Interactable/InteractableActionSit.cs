@@ -26,7 +26,7 @@ public class InteractableActionSit : InteractionAction
 
     protected override async void StartInteractInternal(IInteractable interactable)
     {
-        Interactor.GetComponent<CharacterStateController>().TryEnterState(CharacterState.TRANSITION);
+        stateController.TryEnterState(CharacterState.TRANSITION);
 
         lastPos = Interactor.transform.position;
 
@@ -37,18 +37,18 @@ public class InteractableActionSit : InteractionAction
 
         await UniTask.WhenAll(moveTask, rotateTask);
 
-        Interactor.GetComponent<CharacterStateController>().TryEnterState(CharacterState.SITTING);
+        stateController.TryEnterState(CharacterState.SITTING);
 
-        Locator.Resolve<IInputService>().OnMoved += OnMoved;
+        inputService.OnMoved += OnMoved;
     }
 
     protected override async void StopInteractInternal(IInteractable interactable)
     {
-        Locator.Resolve<IInputService>().OnMoved -= OnMoved;
+        inputService.OnMoved -= OnMoved;
 
         await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
 
-        Interactor.GetComponent<CharacterStateController>().TryEnterState(CharacterState.DEFAULT);
+        stateController.TryEnterState(CharacterState.DEFAULT);
     }
 
     private void OnMoved(Vector2 dir)

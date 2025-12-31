@@ -25,7 +25,7 @@ public class InteractableActionLay : InteractionAction
 
     protected override async void StartInteractInternal(IInteractable interactable)
     {
-        Interactor.GetComponent<CharacterStateController>().TryEnterState(CharacterState.TRANSITION);
+        stateController.TryEnterState(CharacterState.TRANSITION);
 
         lastPos = Interactor.transform.position;
 
@@ -36,13 +36,13 @@ public class InteractableActionLay : InteractionAction
 
         await UniTask.WhenAll(moveTask, rotateTask);
 
-        Interactor.GetComponent<CharacterStateController>().TryEnterState(CharacterState.LAYING);
-        Locator.Resolve<IInputService>().OnMoved += OnMoved;
+        stateController.TryEnterState(CharacterState.LAYING);
+        inputService.OnMoved += OnMoved;
     }
 
     protected async override void StopInteractInternal(IInteractable interactable)
     {
-        Locator.Resolve<IInputService>().OnMoved -= OnMoved;
+        inputService.OnMoved -= OnMoved;
 
         var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
         var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();

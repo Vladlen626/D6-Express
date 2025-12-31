@@ -3,5 +3,6 @@ public enum CharacterState
     DEFAULT,
     SITTING,
     LAYING,
-    TRANSITION
+    TRANSITION,
+    DICE_GAME
 }

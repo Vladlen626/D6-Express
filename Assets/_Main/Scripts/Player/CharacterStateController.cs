@@ -22,6 +22,14 @@ public class CharacterStateController : MonoBehaviour
         EnterState(CharacterState.DEFAULT);
     }
 
+    private void Start()
+    {
+        foreach (var item in states)
+        {
+            item.Start();
+        }
+    }
+
     public void TryEnterState(CharacterState state)
     {
         EnterState(state);

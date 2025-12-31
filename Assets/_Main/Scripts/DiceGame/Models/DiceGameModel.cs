@@ -8,15 +8,14 @@ namespace _Main.Scripts.Dice
 		public event Action OnGameConditionFailed;
 		public event Action OnBetSizeChanged;
 		public event Action OnTargetPointsChanged;
+		public event Action OnMaxTurnCountChanged;
+		public event Action OnCurrentTurnChanged;
 
 		public int BetSize { get; private set; }
+		public int MaxTurnCount { get; private set; }
+		public int CurrentTurn { get; private set; }
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
-
-		public DiceGameModel()
-		{
-			IsConditionPassed = false;
-		}
 
 		public void SetBetSize(int size)
 		{
@@ -30,6 +29,24 @@ namespace _Main.Scripts.Dice
 			OnTargetPointsChanged?.Invoke();
 		}
 
+		public void SetMaxTurnCount(int turn)
+		{
+			MaxTurnCount = turn;
+			OnMaxTurnCountChanged?.Invoke();
+		}
+
+		public void IncreaseCurrentTurn()
+		{
+			CurrentTurn++;
+			OnCurrentTurnChanged?.Invoke();
+		}
+
+		public void SetCurrentTurn(int turn)
+		{
+			CurrentTurn = turn;
+			OnCurrentTurnChanged?.Invoke();
+		}
+
 		public void SetConditionPassed()
 		{
 			IsConditionPassed = true;
@@ -40,6 +57,12 @@ namespace _Main.Scripts.Dice
 		{
 			IsConditionPassed = false;
 			OnGameConditionFailed?.Invoke();
+		}
+
+		public void Reset()
+		{
+			IsConditionPassed = false;
+			CurrentTurn = 0;
 		}
 	}
 }

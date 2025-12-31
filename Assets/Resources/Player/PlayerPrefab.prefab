@@ -226,6 +226,7 @@ MonoBehaviour:
   - rid: 1463701297492918341
   - rid: 1463701297492918344
   - rid: 1463701355882086646
+  - rid: 8683858885762875635
   interactableLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -242,6 +243,9 @@ MonoBehaviour:
     - rid: 1463701355882086646
       type: {class: InteractableActionSleep, ns: , asm: Assembly-CSharp}
       data: 
+    - rid: 8683858885762875635
+      type: {class: InteractableActionDiceGame, ns: , asm: Assembly-CSharp}
+      data: 
 --- !u!114 &3411494938860463788
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +261,7 @@ MonoBehaviour:
   states:
   - rid: 1463701297492918342
   - rid: 1463701297492918343
+  - rid: 8683858885762875632
   references:
     version: 2
     RefIds:
@@ -265,6 +270,9 @@ MonoBehaviour:
       data: 
     - rid: 1463701297492918343
       type: {class: CharacterStateHandlerLaying, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 8683858885762875632
+      type: {class: CharacterStateHandlerDiceGame, ns: , asm: Assembly-CSharp}
       data: 
 --- !u!114 &3369340536190415365
 MonoBehaviour:

@@ -29,14 +29,15 @@ public static class PlayerFactory
 		return playerView;
 	}
 	
-	public static IBaseController[] GetPlayerBaseControllers(PlayerView playerView, ServiceLocator serviceLocator)
+	public static IBaseController[] GetPlayerBaseControllers(PlayerView playerView, ServiceLocator serviceLocator,
+		PlayerModel playerModel)
 	{
 		var input = serviceLocator.Get<IInputService>();
 		var cursor = serviceLocator.Get<ICursorService>();
 		
 		var playerControllers = new IBaseController[]
 		{
-			new MovementController(playerView, input, cursor),
+			new MovementController(playerView, playerModel, input, cursor),
 		};
 		
 		return playerControllers;
