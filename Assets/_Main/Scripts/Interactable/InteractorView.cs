@@ -27,7 +27,7 @@ public class InteractorView : MonoBehaviour
 		Deactivate();
 	}
 
-	private void OnNoticed(GameObject interactable)
+	private void OnNoticed(Interactable interactable)
 	{
 		if (interactable.TryGetComponent<Hintable>(out var hintable))
 		{
@@ -35,7 +35,7 @@ public class InteractorView : MonoBehaviour
 		}
 	}
 
-	private void OnMissed(GameObject interactable)
+	private void OnMissed(Interactable interactable)
 	{
 		hintText.text = string.Empty;
 	}

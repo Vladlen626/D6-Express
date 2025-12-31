@@ -455,6 +455,7 @@ MonoBehaviour:
   playerSpawnPosition: {fileID: 173345210}
   interactorView: {fileID: 2118531154}
   levelView: {fileID: 1311839884}
+  sleepView: {fileID: 0}
 --- !u!1 &173345209
 GameObject:
   m_ObjectHideFlags: 0

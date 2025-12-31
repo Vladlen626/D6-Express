@@ -96,6 +96,8 @@ namespace _Main.Scripts.Core
 				cameraService.AttachTo(player.CameraRoot);
 
 				controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, levelModel));
+
+				controllersList.AddRange(SleepFactory.GetBaseControllers(player));
 			}
 
 			var baseControllers = new IBaseController[]
