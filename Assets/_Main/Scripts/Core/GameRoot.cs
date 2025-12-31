@@ -92,6 +92,8 @@ namespace _Main.Scripts.Core
 				cameraService.AttachTo(player.CameraRoot);
 			}
 
+			controllersList.AddRange(DebugFactory.GetDebugBaseController(inputService, cursorService));
+
 			foreach (var controller in controllersList)
 			{
 				await _lifecycle.RegisterAsync(controller);

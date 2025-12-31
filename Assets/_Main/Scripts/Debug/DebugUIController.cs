@@ -1,29 +1,32 @@
 using _Main.Scripts.Core.Services;
 using ImGuiNET;
 using PlatformCore.Core;
+using PlatformCore.Infrastructure.Lifecycle;
 using UImGui;
 using UnityEngine;
 
-public class DebugGameWindow : MonoBehaviour
+public class DebugUIController : IBaseController, IActivatable
 {
     private bool opened;
-    private IInputService input;
-    private ICursorService cursor;
+    private readonly IInputService inputService;
+    private readonly ICursorService cursorService;
 
-    private void Awake()
+    public DebugUIController(IInputService inputService, ICursorService cursorService)
     {
-        input = Locator.Resolve<IInputService>();
-        cursor = Locator.Resolve<ICursorService>();
+        this.inputService = inputService;
+        this.cursorService = cursorService;
     }
 
-    private void OnEnable()
+    public void Activate()
     {
-        input.OnDebugSwitchPressed += OnDebugSwitched;
+        inputService.OnDebugSwitchPressed += OnDebugSwitched;
+
     }
 
-    private void OnDisable()
+    public void Deactivate()
     {
-        input.OnDebugSwitchPressed -= OnDebugSwitched;
+        inputService.OnDebugSwitchPressed -= OnDebugSwitched;
+
     }
 
     private void OnDebugSwitched()
@@ -31,16 +34,16 @@ public class DebugGameWindow : MonoBehaviour
         if (opened)
         {
             UImGuiUtility.Layout -= OnLayout;
-            input.EnableCameraInputs();
-            cursor.LockCursor();
+            inputService.EnableCameraInputs();
+            cursorService.LockCursor();
         }
         else
         {
             UImGuiUtility.Layout += OnLayout;
-            input.DisableCameraInputs();
-            cursor.UnlockCursor();
+            inputService.DisableCameraInputs();
+            cursorService.UnlockCursor();
         }
-        
+
         opened = !opened;
     }
 
