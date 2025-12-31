@@ -11,8 +11,8 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	[SerializeField]
 	private InteractorView interactorView;
 
-	[SerializeField]
-	private LevelView levelView;
+	[SerializeField] 
+	private Light sun;
 
 	[SerializeField]
 	private SleepView sleepView;
@@ -20,6 +20,6 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public DiceTableView DiceGameTableView => diceGameTableView;
 	public Transform PlayerSpawnPosition => playerSpawnPosition;
 	public InteractorView InteractorView => interactorView;
-	public LevelView LevelView => levelView;
+	public Light Sun => sun;
 	public SleepView SleepView => sleepView;
 }

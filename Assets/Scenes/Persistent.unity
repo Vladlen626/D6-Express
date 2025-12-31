@@ -130,7 +130,6 @@ GameObject:
   - component: {fileID: 135556005}
   - component: {fileID: 135556007}
   - component: {fileID: 135556006}
-  - component: {fileID: 135556008}
   m_Layer: 0
   m_Name: GameRoot
   m_TagString: Untagged
@@ -181,23 +180,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: PlatformCore::PlatformCore.Core.PersistentSceneContext
   StaticCanvas: {fileID: 713969098}
   DynamicCanvas: {fileID: 875112093}
---- !u!114 &135556008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 135556004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecc099febaeed8942827217011338c1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Game
-  level:
-    segments:
-    - days: 3
-    - days: 3
-    - days: 3
 --- !u!1 &478914268
 GameObject:
   m_ObjectHideFlags: 0
