@@ -1,6 +1,7 @@
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
+using PlatformCore.Services.UI;
 using UImGui;
 
 public class DebugMenuUIController : IBaseController, IActivatable

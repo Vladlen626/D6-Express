@@ -24,6 +24,7 @@ namespace PlatformCore.Services.Factory
 
 		public static class UI
 		{
+			public const string UICursorView = "UI/UICursorView";
 			public const string UILevelView = "UI/UILevelView";
 			public const string UIMainMenu = "UI/UIMainMenu";
 			public const string UISettings = "UI/UISettings";

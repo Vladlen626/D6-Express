@@ -8,8 +8,7 @@ namespace PlatformCore.Services.UI
 	[RequireComponent(typeof(CanvasGroup))]
 	public abstract class UIBaseElement : MonoBehaviour
 	{
-		[SerializeField]
-		private CanvasGroup _group;
+		[SerializeField] protected CanvasGroup _group;
 
 		[Header("Canvas Performance Settings")] [SerializeField]
 		private UICanvasType _canvasType = UICanvasType.Static;

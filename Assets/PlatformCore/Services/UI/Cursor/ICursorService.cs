@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace _Main.Scripts.Core.Services
+namespace PlatformCore.Services.UI
 {
 	public interface ICursorService
 	{
