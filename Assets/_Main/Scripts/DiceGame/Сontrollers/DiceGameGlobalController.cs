@@ -22,6 +22,7 @@ namespace _Main.Scripts.Dice
 
 		private readonly List<DiceModel> diceModelsList = new ();
 		private DiceView[] diceViewsArray;
+		private TableModel tableModel;
 
 		private List<IBaseController> gameControllers = new ();
 
@@ -53,7 +54,7 @@ namespace _Main.Scripts.Dice
 			{
 				StartDiceGame().Forget();
 			}
-			else
+			else if (oldCharacterState == CharacterState.DICE_GAME)
 			{
 				StopDiceGame();
 			}
@@ -66,12 +67,11 @@ namespace _Main.Scripts.Dice
 			int betSize = 200;
 			int maxTurnCount = 10;
 
-			diceGameModel.Reset();
 			diceGameModel.SetTargetScore(targetScore);
 			diceGameModel.SetBetSize(betSize);
 			diceGameModel.SetMaxTurnCount(maxTurnCount);
 
-			var tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
+			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
 			await SetupDiceForGame(tableModel);
 
@@ -122,6 +122,8 @@ namespace _Main.Scripts.Dice
 
 			gameControllers.Clear();
 			diceModelsList.Clear();
+			diceGameModel.Reset();
+			tableModel.Reset();
 		}
 	}
 }

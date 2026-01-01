@@ -83,10 +83,15 @@ namespace _Main.Scripts.Dice
 
 		public void AddBankedPoints(int points)
 		{
-			BankedPoints += points;
+			SetBankedPoints(BankedPoints + points);
+		}
+
+		public void SetBankedPoints(int points)
+		{
+			BankedPoints = points;
 			OnBankedPointsChanged?.Invoke();
 		}
-		
+
 		public void SetPreviewPoints(int points)
 		{
 			PreviewPoints = points;
@@ -103,11 +108,20 @@ namespace _Main.Scripts.Dice
 			OnTurnPointsChanged?.Invoke();
 		}
 
+
 		public void ResetTurn()
 		{
 			ResetAllPositions();
 			SetTurnPoints(0);
 			SetPreviewPoints(0);
+		}
+
+		public void Reset()
+		{
+			ResetAllPositions();
+			SetTurnPoints(0);
+			SetPreviewPoints(0);
+			SetBankedPoints(0);
 		}
 	}
 }
