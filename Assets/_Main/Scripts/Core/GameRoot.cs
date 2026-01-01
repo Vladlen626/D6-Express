@@ -71,18 +71,18 @@ namespace _Main.Scripts.Core
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
 
 			//Load MainMenu Scene
-			var sceneForLoad = SceneNames.MainMenu;
-			await sceneService.LoadSceneAsync(sceneForLoad);
-			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
+			//var sceneForLoad = SceneNames.MainMenu;
+			//await sceneService.LoadSceneAsync(sceneForLoad);
+			//await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
 
-			var mainMenuController = new MainMenuController(uiService);
-			await _lifecycle.RegisterAsync(mainMenuController);
+			//var mainMenuController = new MainMenuController(uiService);
+			//await _lifecycle.RegisterAsync(mainMenuController);
 
-			await mainMenuController.WaitForStartAsync();
-			await sceneService.UnloadSceneAsync(sceneForLoad);
+			//await mainMenuController.WaitForStartAsync();
+			//await sceneService.UnloadSceneAsync(sceneForLoad);
 
 			// Start Game
-			sceneForLoad = SceneNames.Train;
+			var sceneForLoad = SceneNames.Train;
 			await sceneService.LoadSceneAsync(sceneForLoad);
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
 
