@@ -6,13 +6,13 @@ public class UILevelView : UIBaseElement
 {
     [Header("DaynightCycle")]
     [SerializeField]
-    private Light sun;
-
-    [SerializeField]
     private Gradient lightColor;
 
     [SerializeField]
     private AnimationCurve lightIntensity;
+
+    [SerializeField]
+    private AnimationCurve ratioModifier;
 
     [Header("UI")]
     [SerializeField]
@@ -22,6 +22,7 @@ public class UILevelView : UIBaseElement
     private TextMeshProUGUI days;
     public Gradient LightColor => lightColor;
     public AnimationCurve LightIntensity => lightIntensity;
+    public AnimationCurve RatioModifier => ratioModifier;
 
     public void SetTicksText(string text)
     {

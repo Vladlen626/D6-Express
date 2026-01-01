@@ -16,9 +16,9 @@ public class LevelModel
 
     public LevelModel(int ticksPerDay, int days, int cashGoal)
     {
-        this.Days = days;
-        this.TicksPerDay = ticksPerDay;
-        this.CashGoal = cashGoal;
+        Days = days;
+        TicksPerDay = ticksPerDay;
+        CashGoal = cashGoal;
     }
 
     public void IncrementDays()

@@ -1,5 +1,4 @@
 using PlatformCore.Core;
-using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.UI;
 using UnityEngine;
 
@@ -18,6 +17,7 @@ public class LevelViewController : BaseContextController<UILevelView>
     {
         levelModel.TickChanged += OnTickChanged;
         levelModel.DayChanged += OnDaysChanged;
+
         OnTickChanged();
         OnDaysChanged();
     }
@@ -30,11 +30,18 @@ public class LevelViewController : BaseContextController<UILevelView>
 
     private void OnTickChanged()
     {
-        sun.transform.rotation = Quaternion.Euler(levelModel.TickRatio * 360f - 90f, 170f, 0f);
-        sun.color = _context.LightColor.Evaluate(levelModel.TickRatio);
-        sun.intensity = _context.LightIntensity.Evaluate(levelModel.TickRatio);
+        RotateSun();
 
         _context.SetTicksText($"Ticks: {levelModel.Tick} / {levelModel.TicksPerDay}");
+    }
+
+    private void RotateSun()
+    {
+        var currentTickRatio = _context.RatioModifier.Evaluate(levelModel.TickRatio);
+
+        sun.transform.rotation = Quaternion.Euler(currentTickRatio * 360f - 90f, 170f, 0f);
+        sun.color = _context.LightColor.Evaluate(currentTickRatio);
+        sun.intensity = _context.LightIntensity.Evaluate(currentTickRatio);
     }
 
     private void OnDaysChanged()
