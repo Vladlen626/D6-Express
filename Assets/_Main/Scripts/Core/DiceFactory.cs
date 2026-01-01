@@ -18,11 +18,12 @@ namespace _Main.Scripts.Core
 		}
 		
 		
-		public static async UniTask<IBaseController[]> GetDiceGameControllers(
+		public static IBaseController[] GetDiceGameControllers(
 			SceneContext sceneContext,
-			IObjectFactory factory,
 			ILoggerService logger,
-			DiceGameModel diceGameModel)
+			DiceGameModel diceGameModel,
+			TableModel tableModel,
+			List<DiceModel> diceModels)
 		{
 			var controllersList = new List<IBaseController>();
 
@@ -30,27 +31,10 @@ namespace _Main.Scripts.Core
 			{
 				return controllersList.ToArray();
 			}
-			
-			var dicePosHandler = sceneContext.DiceGameTableView.DicePositionsHandler;
-			
-			var diceViews = 
-				await SpawnDiceArrayAsync(factory, dicePosHandler.DicePositions);
 
-			var tableModel = new TableModel(dicePosHandler.DicePositions, dicePosHandler.BankedPositions);
-			var diceModels = new List<DiceModel>();
-			var turnModel = new TurnModel();
-
-			foreach (var diceView in diceViews)
-			{
-				var model = new DiceModel(new LoadedDiceProfileConfig()); 
-				var controller = new DiceController(model, diceView, tableModel);
-				diceModels.Add(model);
-				controllersList.Add(controller);
-			}
-			
 			var diceGameControllers = new IBaseController[]
 			{
-				new DiceGameProcessController(tableModel, turnModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger),
+				new DiceGameProcessController(tableModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger),
 				new DiceGameScoreViewController(tableModel, sceneContext.DiceGameTableView, diceGameModel),
 				new DiceGameResultController(diceGameModel, tableModel)
 			};

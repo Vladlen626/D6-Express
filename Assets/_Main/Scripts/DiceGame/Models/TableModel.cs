@@ -21,9 +21,9 @@ namespace _Main.Scripts.Dice
 		
 		public TableModel(Transform[] activePositions, Transform[] bankedPositions)
 		{
-			Reset();
 			_activePositions = activePositions;
 			_bankedPositions = bankedPositions;
+			ResetAllPositions();
 		}
 		
 		public Transform GetFreeActivePosition()
@@ -103,13 +103,11 @@ namespace _Main.Scripts.Dice
 			OnTurnPointsChanged?.Invoke();
 		}
 
-		public void Reset()
+		public void ResetTurn()
 		{
 			ResetAllPositions();
 			SetTurnPoints(0);
 			SetPreviewPoints(0);
-			BankedPoints = 0;
-			OnBankedPointsChanged?.Invoke();
 		}
 	}
 }

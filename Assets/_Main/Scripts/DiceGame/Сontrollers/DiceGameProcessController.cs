@@ -8,7 +8,6 @@ namespace _Main.Scripts.Dice
 	public class DiceGameProcessController : IBaseController, IActivatable
 	{
 		private readonly TableModel _tableModel;
-		private readonly TurnModel _turnModel;
 
 		private readonly DiceModel[] _diceModels;
 		private readonly DiceTableView _tableView;
@@ -18,13 +17,11 @@ namespace _Main.Scripts.Dice
 
 		public DiceGameProcessController(
 			TableModel tableModel,
-			TurnModel turnModel,
 			DiceModel[] diceModels,
 			DiceTableView tableView,
 			ILoggerService logger)
 		{
 			_tableModel = tableModel;
-			_turnModel = turnModel;
 			_diceModels = diceModels;
 			_tableView = tableView;
 			_logger = logger;
@@ -119,7 +116,7 @@ namespace _Main.Scripts.Dice
 			if (!DiceGameUtils.RollHasAnyScore(rolledValues))
 			{
 				_logger?.Log("[DiceGameController] ❌ BUST! Turn points lost.");
-				_tableModel.Reset();
+				_tableModel.ResetTurn();
 				HandlePass();
 				return;
 			}
@@ -156,8 +153,7 @@ namespace _Main.Scripts.Dice
 				$"[DiceGameController] Banked {_tableModel.TurnPoints} points. Total banked: {_tableModel.BankedPoints}");
 
 			// 3. Сбрасываем ход
-			_tableModel.Reset();
-			_tableModel.ResetAllPositions();
+			_tableModel.ResetTurn();
 			_dicePool.ResetAll();
 
 			// 4. Бросаем все кубы для начала нового хода

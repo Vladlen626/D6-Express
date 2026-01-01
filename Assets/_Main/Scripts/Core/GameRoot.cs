@@ -113,7 +113,7 @@ namespace _Main.Scripts.Core
 			var baseControllers = new IBaseController[]
 			{
 				new SettingsController(uiService, audioService, cursorService, inputService),
-				new DiceGameStartController(diceGameModel, playerModel, sceneContext, _serviceLocator),
+				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator),
 			};
 
 			controllersList.AddRange(baseControllers);

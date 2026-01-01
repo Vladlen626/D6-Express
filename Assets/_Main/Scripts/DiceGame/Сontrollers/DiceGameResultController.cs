@@ -13,7 +13,6 @@ namespace _Main.Scripts.Dice
 			this.diceGameModel = diceGameModel;
 			this.tableModel = tableModel;
 		}
-
 		public void Activate()
 		{
 			tableModel.OnBankedPointsChanged += OnBankedPointsChangedHandler;
