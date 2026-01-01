@@ -6,16 +6,28 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	private DiceTableView diceGameTableView;
 
 	[SerializeField]
-	private Transform playerSpawnPosition;
+	private Transform playerTrainSpawnPosition;
+
+	[SerializeField]
+	private Transform playerStationSpawnPosition;
+
+	[SerializeField]
+	private GameObject stationBlock;
+
+	[SerializeField]
+	private GameObject trainBlock;
 
 	[SerializeField]
 	private InteractorView interactorView;
 
-	[SerializeField] 
+	[SerializeField]
 	private Light sun;
 
 	public DiceTableView DiceGameTableView => diceGameTableView;
-	public Transform PlayerSpawnPosition => playerSpawnPosition;
+	public Transform PlayerTrainSpawnPosition => playerTrainSpawnPosition;
+	public Transform PlayerStationSpawnPosition => playerStationSpawnPosition;
+	public GameObject StationBlock => stationBlock;
+	public GameObject TrainBlock => trainBlock;
 	public InteractorView InteractorView => interactorView;
 	public Light Sun => sun;
 }

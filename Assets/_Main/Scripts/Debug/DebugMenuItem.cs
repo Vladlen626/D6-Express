@@ -1,9 +1,12 @@
+using _Main.Scripts.Core;
+using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Services;
 using PlatformCore.Services.UI;
 
 public abstract class DebugMenuItem
 {
-    public virtual string Path { get; }
+    public abstract string Path { get; }
 
     public abstract void Execute();
 }
@@ -59,5 +62,40 @@ public class DbgMenuItemIncrementWakeUp : DebugMenuItem
     public override void Execute()
     {
         Locator.Resolve<IUIService>().GetWindow<UISleepView>().OpenEyes();
+    }
+}
+
+public class DbgMenuItemSwitchToStation : DebugMenuItem
+{
+    private readonly LevelModel levelModel;
+
+    public override string Path => "Switch to Station";
+
+    public DbgMenuItemSwitchToStation(LevelModel levelModel)
+    {
+        this.levelModel = levelModel;
+    }
+
+    public override void Execute()
+    {
+        levelModel.SetLevelState(LevelState.STATION);
+    }
+}
+
+
+public class DbgMenuItemSwitchToTrain : DebugMenuItem
+{
+    private readonly LevelModel levelModel;
+
+    public override string Path => "Switch to Train";
+
+    public DbgMenuItemSwitchToTrain(LevelModel levelModel)
+    {
+        this.levelModel = levelModel;
+    }
+
+    public override void Execute()
+    {
+        levelModel.SetLevelState(LevelState.TRAIN);
     }
 }
