@@ -66,7 +66,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: c0780fd9f76b0ba4eacfb9c52d930b97, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -288,11 +288,15 @@ MonoBehaviour:
   - rid: 1463701297492918343
   - rid: 8683858885762875632
   - rid: 704733112204525641
+  - rid: 704733112204525642
   references:
     version: 2
     RefIds:
     - rid: 704733112204525641
       type: {class: CharacterStateHandlerSpeaking, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 704733112204525642
+      type: {class: CharacterStateHandlerSleeping, ns: , asm: Assembly-CSharp}
       data: 
     - rid: 1463701297492918342
       type: {class: CharacterStateHandlerSitting, ns: , asm: Assembly-CSharp}

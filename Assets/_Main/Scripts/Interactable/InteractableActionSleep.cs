@@ -22,7 +22,7 @@ public class InteractableActionSleep : InteractionAction
 
     protected override async void StartInteractInternal(IInteractable interactable)
     {
-        stateController.TryEnterState(CharacterState.TRANSITION);
+        stateController.TryEnterState(CharacterState.SLEEPING);
 
         // todo господь прости поправлю позже
         // ПИЗДЕЦ НАСРАЛ ЖОСКА, работает -> терплю
