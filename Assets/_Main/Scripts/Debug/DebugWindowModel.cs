@@ -24,7 +24,7 @@ public abstract class DebugWindowModel
         {
             return;
         }
-        
+
         isOpen = false;
         UImGuiUtility.Layout -= OnLayout;
     }
@@ -36,6 +36,8 @@ public class DebugWindowPlayer : DebugWindowModel
 {
     private readonly PlayerModel playerModel;
     private readonly PlayerView playerView;
+
+    private int cashInputBuffer;
 
     public override string Id => "Player";
 
@@ -58,7 +60,27 @@ public class DebugWindowPlayer : DebugWindowModel
             return;
         }
 
-        // Здесь можно добавить элементы управления для отладки игрока
+        if (ImGui.CollapsingHeader("Cash"))
+        {
+            ImGui.Text($"Cash: {playerModel.InventoryModel.CashCount}");
+
+            ImGui.InputInt("Amount", ref cashInputBuffer);
+
+            if (ImGui.Button("Give cash"))
+            {
+                playerModel.InventoryModel.GiveCash(cashInputBuffer);
+            }
+
+            if (ImGui.Button("Take cash"))
+            {
+                playerModel.InventoryModel.TakeCash(cashInputBuffer);
+            }
+
+            if (ImGui.Button("Set cash"))
+            {
+                playerModel.InventoryModel.SetCash(cashInputBuffer);
+            }
+        }
 
         ImGui.End();
     }

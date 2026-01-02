@@ -35,5 +35,11 @@ public class InventoryModel
 		cashCount -= amount;
 		OnCashCountChanged?.Invoke();
 	}
+
+	public void SetCash(int amount)
+	{
+		cashCount = amount;
+		OnCashCountChanged?.Invoke();
+	}
 }
 
