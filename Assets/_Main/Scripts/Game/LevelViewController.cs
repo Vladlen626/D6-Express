@@ -55,14 +55,18 @@ public class LevelViewController : BaseContextController<UILevelView>
 
         if (levelModel.LevelState == LevelState.STATION)
         {
+            playerView.GetComponent<CharacterController>().enabled = false;
             playerView.GetComponent<Collider>().enabled = false;
             playerView.transform.SetPositionAndRotation(playerStationSpawnPosition.position, playerStationSpawnPosition.rotation);
+            playerView.GetComponent<CharacterController>().enabled = true;
             playerView.GetComponent<Collider>().enabled = true;
         }
         else
         {
+            playerView.GetComponent<CharacterController>().enabled = false;
             playerView.GetComponent<Collider>().enabled = false;
             playerView.transform.SetPositionAndRotation(playerTrainSpawnPosition.position, playerTrainSpawnPosition.rotation);
+            playerView.GetComponent<CharacterController>().enabled = true;
             playerView.GetComponent<Collider>().enabled = true;
         }
     }
