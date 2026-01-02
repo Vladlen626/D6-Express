@@ -5,5 +5,6 @@ public enum CharacterState
     LAYING,
     TRANSITION,
     DICE_GAME,
-    SPEAKING
+    SPEAKING,
+    SLEEPING,
 }
