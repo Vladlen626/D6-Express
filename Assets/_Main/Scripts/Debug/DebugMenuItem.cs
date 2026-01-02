@@ -99,3 +99,20 @@ public class DbgMenuItemSwitchToTrain : DebugMenuItem
         levelModel.SetLevelState(LevelState.TRAIN);
     }
 }
+
+public class DbgMenuItemOpenPlayerWindow : DebugMenuItem
+{
+    private readonly DebugWindowPlayer debugWindowPlayer;
+
+    public override string Path => "Open Player Window";
+
+    public DbgMenuItemOpenPlayerWindow(PlayerModel playerModel, PlayerView playerView)
+    {
+        debugWindowPlayer = new DebugWindowPlayer(playerModel, playerView);
+    }
+
+    public override void Execute()
+    {
+        debugWindowPlayer.Open();
+    }
+}

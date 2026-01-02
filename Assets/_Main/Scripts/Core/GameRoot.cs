@@ -65,8 +65,6 @@ namespace _Main.Scripts.Core
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 			var playerModel = PlayerFactory.CreatePlayerModel();
 
-			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel));
-
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
 
@@ -115,6 +113,8 @@ namespace _Main.Scripts.Core
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator),
 			};
+
+			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel, playerModel, playerView));
 
 			controllersList.AddRange(baseControllers);
 
