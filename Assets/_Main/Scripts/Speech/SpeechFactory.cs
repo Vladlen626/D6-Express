@@ -12,7 +12,7 @@ public static class SpeechFactory
 		speechBuyTicket.SetRootNode(speechNodeConductorSaysHi);
 
 		var speechPassengerGeneric = new Speech(1);
-		var speechNodeRanomText = new SpeechNodeShowTextLineRandom(
+		var speechNodeRandomText = new SpeechNodeShowTextLineRandom(
 			"Какой сегодня прекрасный день для путешествия!",
 			"Надеюсь, поездка будет комфортной и приятной.",
 			"Интересно, какие приключения ждут меня впереди?",
@@ -20,12 +20,17 @@ public static class SpeechFactory
 			"Люблю звук колес по рельсам, он такой успокаивающий.",
 			"Кто-то украл твой сладкий рулетик?"
 		).Init(speechPassengerGeneric);
-		speechPassengerGeneric.SetRootNode(speechNodeRanomText);
+		speechPassengerGeneric.SetRootNode(speechNodeRandomText);
+
+		var speechPassengerComrade = new Speech(2);
+		var speechNodeComradeText = new SpeechNodeShowTextLine("Я вас категорически приветствую!").Init(speechPassengerGeneric);
+		speechPassengerComrade.SetRootNode(speechNodeComradeText);
 
 		var speeches = new Speech[]
 		{
 			speechBuyTicket,
-			speechPassengerGeneric
+			speechPassengerGeneric,
+			speechPassengerComrade
 		};
 
 		var speechModel = new SpeechModel(speeches);

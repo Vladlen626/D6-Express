@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionSpeak : InteractionAction
 {
-	private CharacterStateController stateController;
+    private CharacterStateController stateController;
     private Quaternion lastRot;
 
     public int Id { get; private set; } = -1;
@@ -20,7 +20,7 @@ public class InteractableActionSpeak : InteractionAction
 
     public override bool CanInteract(IInteractable interactable)
     {
-        return interactable is InteractableSpeakable;
+        return interactable is InteractableSpeakable && stateController.State == CharacterState.DEFAULT;
     }
 
     protected override async void StartInteractInternal(IInteractable interactable)
