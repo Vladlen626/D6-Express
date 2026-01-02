@@ -35,10 +35,14 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	{
 		playerModel.OnCharacterStateChanged += OnCharacterStateChanged;
 		cursorService.LockCursor();
+
+		inputService.OnLooked += OnLooked;
 	}
 
 	public void Deactivate()
 	{
+		inputService.OnLooked -= OnLooked;
+		
 		playerModel.OnCharacterStateChanged -= OnCharacterStateChanged;
 		cursorService.UnlockCursor();
 	}
@@ -58,11 +62,14 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 			velocity.y += playerView.gravity * deltaTime;
 			controller.Move(velocity * deltaTime);
 		}
+	}
 
-		rotationX -= lookInput.y * playerView.mouseSensitivity;
+	private void OnLooked(Vector2 input)
+	{
+		rotationX -= input.y * playerView.mouseSensitivity;
 		rotationX = Mathf.Clamp(rotationX, -playerView.lookXLimit, playerView.lookXLimit);
 		playerView.CameraRoot.localRotation = Quaternion.Euler(rotationX, 0, 0);
-		transform.rotation *= Quaternion.Euler(0, lookInput.x * playerView.mouseSensitivity, 0);
+		transform.rotation *= Quaternion.Euler(0, input.x * playerView.mouseSensitivity, 0);
 	}
 
 	private void OnCharacterStateChanged(CharacterState oldCharacterState, CharacterState newCharacterState)

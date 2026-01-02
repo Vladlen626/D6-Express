@@ -287,9 +287,13 @@ MonoBehaviour:
   - rid: 1463701297492918342
   - rid: 1463701297492918343
   - rid: 8683858885762875632
+  - rid: 704733112204525641
   references:
     version: 2
     RefIds:
+    - rid: 704733112204525641
+      type: {class: CharacterStateHandlerSpeaking, ns: , asm: Assembly-CSharp}
+      data: 
     - rid: 1463701297492918342
       type: {class: CharacterStateHandlerSitting, ns: , asm: Assembly-CSharp}
       data: 

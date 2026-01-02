@@ -3,7 +3,7 @@ using PlatformCore.Services.UI;
 
 public static class SpeechFactory
 {
-	public static SpeechController GetSpeechController(IUIService uiService, IInputService inputService, PlayerView playerView, LevelModel levelModel)
+	public static SpeechController GetSpeechController(IUIService uiService, PlayerView playerView, LevelModel levelModel)
 	{
 		// todo бл
 		var speechBuyTicket = new Speech(0);
@@ -20,6 +20,6 @@ public static class SpeechFactory
 
 		var interactor = playerView.GetComponent<Interactor>();
 
-		return new SpeechController(uiService, inputService, interactor, speechModel);
+		return new SpeechController(uiService, interactor, speechModel);
 	}
 }

@@ -10,6 +10,7 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnPausePressed;
 		public event Action OnInteractPressed;
 		public event Action<Vector2> OnMoved;
+		public event Action<Vector2> OnLooked;
 
 		public event Action OnDebugSwitchPressed;
 
@@ -100,7 +101,11 @@ namespace _Main.Scripts.Core.Services
 			_actions.Player.Sprint.performed += _ => { IsSprinting = true; };
 			_actions.Player.Sprint.canceled += _ => { IsSprinting = false; };
 
-			_actions.Player.Look.performed += ctx => { Look = ctx.ReadValue<Vector2>(); };
+			_actions.Player.Look.performed += ctx =>
+			{
+				Look = ctx.ReadValue<Vector2>();
+				OnLooked?.Invoke(Look);
+			};
 			_actions.Player.Look.canceled += _ => { Look = Vector2.zero; };
 
 			_actions.Player.Interact.started += _ =>

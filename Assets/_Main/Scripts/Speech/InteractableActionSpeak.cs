@@ -34,9 +34,10 @@ public class InteractableActionSpeak : InteractionAction
 
         var rotateTarget = targetable == null ? speakable.transform : targetable.CameraTarget;
 
-        await Interactor.transform.DOLookAt(rotateTarget.position, 1).ToUniTask();
-
         stateController.TryEnterState(CharacterState.SPEAKING);
+
+        var playerView = Interactor.GetComponent<PlayerView>();
+        await playerView.CameraRoot.DOLookAt(rotateTarget.position, 1).ToUniTask();
     }
 
     protected override async void StopInteractInternal(IInteractable interactable)
