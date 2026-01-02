@@ -1,7 +1,5 @@
 ﻿using _Main.Scripts.Core.Services;
-using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
-using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Audio;
 using PlatformCore.Services.UI;
 

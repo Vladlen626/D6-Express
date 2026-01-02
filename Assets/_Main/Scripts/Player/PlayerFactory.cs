@@ -1,4 +1,5 @@
 ﻿using _Main.Scripts.Core.Services;
+using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services.Factory;
@@ -35,10 +36,12 @@ public static class PlayerFactory
 	{
 		var input = serviceLocator.Get<IInputService>();
 		var cursor = serviceLocator.Get<ICursorService>();
+		var uiService = serviceLocator.Get<IUIService>();
 		
 		var playerControllers = new IBaseController[]
 		{
 			new MovementController(playerView, playerModel, input, cursor),
+			new PlayerHudController(uiService, playerModel)
 		};
 		
 		return playerControllers;

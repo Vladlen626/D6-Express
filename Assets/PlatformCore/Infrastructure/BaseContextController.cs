@@ -8,7 +8,7 @@ namespace PlatformCore.Core
 	{
 		protected readonly IUIService _uiService;
 		protected T _context;
-		
+
 		protected BaseContextController(IUIService uiService)
 		{
 			_uiService = uiService;

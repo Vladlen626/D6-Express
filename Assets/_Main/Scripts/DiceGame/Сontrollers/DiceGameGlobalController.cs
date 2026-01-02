@@ -85,11 +85,9 @@ namespace _Main.Scripts.Dice
 			diceGameModel.SetMaxBetSize(maxBetSize);
 			diceGameModel.SetTargetScore(targetScore);
 			diceGameModel.SetMaxTurnCount(maxTurnCount);
-
-			await BetProcess();
-
 			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
+			await BetProcess();
 			await SetupDiceForGame();
 
 			gameControllers.AddRange(DiceFactory.GetDiceGameControllers(sceneContext, loggerService,
