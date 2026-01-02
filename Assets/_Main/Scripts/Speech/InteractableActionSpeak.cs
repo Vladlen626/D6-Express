@@ -6,7 +6,8 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionSpeak : InteractionAction
 {
-	private CharacterStateController stateController;
+    private CharacterStateController stateController;
+    private Quaternion lastRot;
 
     public int Id { get; private set; } = -1;
 
@@ -19,7 +20,7 @@ public class InteractableActionSpeak : InteractionAction
 
     public override bool CanInteract(IInteractable interactable)
     {
-        return interactable is InteractableSpeakable;
+        return interactable is InteractableSpeakable && stateController.State == CharacterState.DEFAULT;
     }
 
     protected override async void StartInteractInternal(IInteractable interactable)
@@ -34,16 +35,15 @@ public class InteractableActionSpeak : InteractionAction
 
         var rotateTarget = targetable == null ? speakable.transform : targetable.CameraTarget;
 
-        await Interactor.transform.DOLookAt(rotateTarget.position, 1).ToUniTask();
-
         stateController.TryEnterState(CharacterState.SPEAKING);
+
+        var playerView = Interactor.GetComponent<PlayerView>();
+        await playerView.CameraRoot.DOLookAt(rotateTarget.position, 1).ToUniTask();
     }
 
     protected override async void StopInteractInternal(IInteractable interactable)
     {
         Id = -1;
-
-        await Interactor.transform.DORotateQuaternion(Quaternion.identity, 1).ToUniTask();
 
         stateController.TryEnterState(CharacterState.DEFAULT);
 

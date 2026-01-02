@@ -116,7 +116,7 @@ namespace _Main.Scripts.Core
 			};
 
 			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel, playerModel, playerView));
-			controllersList.Add(SpeechFactory.GetSpeechController(uiService, inputService, playerView, levelModel));
+			controllersList.Add(SpeechFactory.GetSpeechController(uiService, playerView, levelModel));
 
 			controllersList.AddRange(baseControllers);
 

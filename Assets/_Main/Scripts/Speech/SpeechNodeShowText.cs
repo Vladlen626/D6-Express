@@ -1,19 +1,15 @@
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
 using PlatformCore.Services.UI;
+using UnityEngine;
 
-public class SpeechNodeShowText : SpeechNode
+public abstract class SpeechNodeShowText : SpeechNode
 {
-    private readonly string text;
-
-    public SpeechNodeShowText(string text)
-    {
-        this.text = text;
-    }
+    protected abstract string Text { get; }
 
     protected override void StartInternal()
     {
-        Locator.Resolve<IUIService>().GetWindow<UISpeechView>().SetSpeech(text);
+        Locator.Resolve<IUIService>().GetWindow<UISpeechView>().SetSpeech(Text);
         Locator.Resolve<IInputService>().OnSpeechLineSkip += Finish;
     }
 
@@ -21,5 +17,29 @@ public class SpeechNodeShowText : SpeechNode
     {
         Locator.Resolve<IInputService>().OnSpeechLineSkip -= Finish;
         Locator.Resolve<IUIService>().GetWindow<UISpeechView>().SetSpeech(string.Empty);
+    }
+}
+
+public class SpeechNodeShowTextLine : SpeechNodeShowText
+{
+    private readonly string text;
+
+    protected override string Text => text;
+
+    public SpeechNodeShowTextLine(string text)
+    {
+        this.text = text;
+    }
+}
+
+public class SpeechNodeShowTextLineRandom : SpeechNodeShowText
+{
+    private readonly string[] texts;
+
+    protected override string Text => texts[Random.Range(0, texts.Length)];
+
+    public SpeechNodeShowTextLineRandom(params string[] texts)
+    {
+        this.texts = texts;
     }
 }

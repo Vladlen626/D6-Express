@@ -4,16 +4,14 @@ using PlatformCore.Services.UI;
 
 public class SpeechController : BaseContextController<UISpeechView>
 {
-	private readonly IInputService inputService;
 	private readonly Interactor interactor;
 	private readonly SpeechModel speechModel;
 
 	private Speech currentSpeech;
 	private InteractionAction speechAction;
 
-	public SpeechController(IUIService uiService, IInputService inputService, Interactor interactor, SpeechModel speechModel) : base(uiService)
+	public SpeechController(IUIService uiService, Interactor interactor, SpeechModel speechModel) : base(uiService)
 	{
-		this.inputService = inputService;
 		this.interactor = interactor;
 		this.speechModel = speechModel;
 	}
@@ -37,10 +35,6 @@ public class SpeechController : BaseContextController<UISpeechView>
 		if (action is InteractableActionSpeak speechAction)
 		{
 			this.speechAction = speechAction;
-			
-			// todo: возможно должно решаться в стейте персонажа
-			inputService.DisableCameraInputs();
-			inputService.DisablePlayerInputs();
 
 			_context.Show();
 
@@ -57,9 +51,6 @@ public class SpeechController : BaseContextController<UISpeechView>
 		// todo никакого нулл, вообще не стоит в стопе передавать интерактбла
 		// todo плохая идея завершать интеракцию изнутри контроллера
 		speechAction.StopInteract(null);
-
-		inputService.EnableCameraInputs();
-		inputService.EnablePlayerInputs();
 
 		_context.Hide();
 
