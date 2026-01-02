@@ -44,6 +44,28 @@ namespace _Main.Scripts.Core
 			return controllersList.ToArray();
 		}
 
+		public static IBaseController[] GetDiceGameBetControllers(
+			SceneContext sceneContext,
+			DiceGameModel diceGameModel)
+		{
+			var controllersList = new List<IBaseController>();
+
+			if (sceneContext.DiceGameTableView == null)
+			{
+				return controllersList.ToArray();
+			}
+
+			var diceGameControllers = new IBaseController[]
+			{
+				new DiceGameBetController(diceGameModel, sceneContext.DiceGameTableView),
+				new DiceGameBetViewController(diceGameModel, sceneContext.DiceGameTableView),
+			};
+			
+			controllersList.AddRange(diceGameControllers);
+			
+			return controllersList.ToArray();
+		}
+
 		public static async UniTask<DiceView[]> SpawnDiceArrayAsync(
 			IObjectFactory factory,
 			Transform[] spawnPositions)

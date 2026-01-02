@@ -10,18 +10,41 @@ namespace _Main.Scripts.Dice
 		public event Action OnTargetPointsChanged;
 		public event Action OnMaxTurnCountChanged;
 		public event Action OnCurrentTurnChanged;
+		public event Action OnDiceGameStateChanged;
 
+		public DiceGameState DiceGameState { get; private set; } = DiceGameState.DEFAULT;
 		public int BetSize { get; private set; }
+		public int MaxBetSize { get; private set; }
+		public int MinBetSize { get; private set; }
 		public int MaxTurnCount { get; private set; }
 		public int CurrentTurn { get; private set; }
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
+
+		public void ChangeDiceGameState(DiceGameState diceGameState)
+		{
+			DiceGameState = diceGameState;
+			OnDiceGameStateChanged?.Invoke();
+		}
 
 		public void SetBetSize(int size)
 		{
 			BetSize = size;
 			OnBetSizeChanged?.Invoke();
 		}
+
+		public void SetMinBetSize(int size)
+		{
+			MinBetSize = size;
+			OnBetSizeChanged?.Invoke();
+		}
+
+		public void SetMaxBetSize(int size)
+		{
+			MaxBetSize = size;
+			OnBetSizeChanged?.Invoke();
+		}
+
 
 		public void SetTargetScore(int score)
 		{
@@ -61,6 +84,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
+			DiceGameState = DiceGameState.DEFAULT;
 			IsConditionPassed = false;
 			CurrentTurn = 0;
 		}

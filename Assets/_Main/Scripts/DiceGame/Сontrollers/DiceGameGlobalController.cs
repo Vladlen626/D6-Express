@@ -16,15 +16,16 @@ namespace _Main.Scripts.Dice
 		private readonly IObjectFactory objectFactory;
 		private readonly ILoggerService loggerService;
 		private readonly LifecycleService lifecycleService;
-		
+
 		private readonly SceneContext sceneContext;
 		private readonly DicePositionsHandler dicePositionsHandler;
 
-		private readonly List<DiceModel> diceModelsList = new ();
+		private readonly List<DiceModel> diceModelsList = new();
 		private DiceView[] diceViewsArray;
 		private TableModel tableModel;
 
-		private List<IBaseController> gameControllers = new ();
+		private List<IBaseController> gameControllers = new();
+		private List<IBaseController> betControllers = new();
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
 			ServiceLocator serviceLocator)
@@ -41,11 +42,19 @@ namespace _Main.Scripts.Dice
 		public void Activate()
 		{
 			playerModel.OnCharacterStateChanged += OnCharacterStateChangedHandler;
+			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
+			OnDiceGameStateChangedHandler();
 		}
-
+		
 		public void Deactivate()
 		{
 			playerModel.OnCharacterStateChanged -= OnCharacterStateChangedHandler;
+			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
+		}
+
+		private void OnDiceGameStateChangedHandler()
+		{
+			sceneContext.DiceGameTableView.SwitchGameStateView(diceGameModel.DiceGameState);
 		}
 
 		private void OnCharacterStateChangedHandler(CharacterState oldCharacterState, CharacterState newCharacterState)
@@ -62,21 +71,29 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask StartDiceGame()
 		{
-			// TODO: Перенести в конфиги.
+			// TODO: Перенести в конфиги. Тут в целом подумать надо над переработкой
 			int targetScore = 4000;
-			int betSize = 200;
 			int maxTurnCount = 10;
+			
+			// Можем потом прикрутить зависимости от уровня (вагона)
+			int minBetSize = 100;
+			
+			// Нельзя ставить больше чем у нас есть. Надо заранее в долг брать
+			int maxBetSize = playerModel.InventoryModel.CashCount;
 
+			diceGameModel.SetMinBetSize(minBetSize);
+			diceGameModel.SetMaxBetSize(maxBetSize);
 			diceGameModel.SetTargetScore(targetScore);
-			diceGameModel.SetBetSize(betSize);
 			diceGameModel.SetMaxTurnCount(maxTurnCount);
+
+			await BetProcess();
 
 			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
-			await SetupDiceForGame(tableModel);
+			await SetupDiceForGame();
 
 			gameControllers.AddRange(DiceFactory.GetDiceGameControllers(sceneContext, loggerService,
-				diceGameModel, tableModel ,diceModelsList));
+				diceGameModel, tableModel, diceModelsList));
 
 			foreach (var controller in gameControllers)
 			{
@@ -84,7 +101,22 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		private async UniTask SetupDiceForGame(TableModel tableModel)
+		private async UniTask BetProcess()
+		{
+			diceGameModel.ChangeDiceGameState(DiceGameState.BET);
+
+			betControllers.AddRange(DiceFactory.GetDiceGameBetControllers(sceneContext, diceGameModel)); 
+			foreach (var controller in betControllers)
+			{
+				await lifecycleService.RegisterAsync(controller);
+			}
+
+			await UniTask.WaitUntil(() => diceGameModel.DiceGameState != DiceGameState.BET);
+
+			ClenUpBetControllers();
+		}
+
+		private async UniTask SetupDiceForGame()
 		{
 			diceViewsArray =
 				await DiceFactory.SpawnDiceArrayAsync(objectFactory, dicePositionsHandler.DicePositions);
@@ -100,10 +132,22 @@ namespace _Main.Scripts.Dice
 
 		private void StopDiceGame()
 		{
-			CleanUp();
+			ResetModels();
+			CleanUpMainGameControllers();
+			ClenUpBetControllers();
 		}
 
-		private void CleanUp()
+		private void ClenUpBetControllers()
+		{
+			foreach (var controller in betControllers)
+			{
+				lifecycleService.Unregister(controller);
+			}
+
+			betControllers.Clear();
+		}
+
+		private void CleanUpMainGameControllers()
 		{
 			if (diceViewsArray != null)
 			{
@@ -119,8 +163,11 @@ namespace _Main.Scripts.Dice
 			{
 				lifecycleService.Unregister(controller);
 			}
-
 			gameControllers.Clear();
+		}
+		
+		private void ResetModels()
+		{
 			diceModelsList.Clear();
 			diceGameModel.Reset();
 			tableModel.Reset();
