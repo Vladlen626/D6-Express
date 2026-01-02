@@ -16,7 +16,7 @@ public abstract class InteractionAction
 		Interactor = interactor;
 	}
 
-	public virtual void Start()
+	public void Start()
 	{
 		inputService = Locator.Resolve<IInputService>();
 	}
@@ -25,9 +25,9 @@ public abstract class InteractionAction
 
 	public void StartInteract(IInteractable interactable)
 	{
-		Started?.Invoke();
-
 		StartInteractInternal(interactable);
+
+		Started?.Invoke();
 	}
 
 	public void StopInteract(IInteractable interactable)

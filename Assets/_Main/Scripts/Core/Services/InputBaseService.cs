@@ -13,6 +13,8 @@ namespace _Main.Scripts.Core.Services
 
 		public event Action OnDebugSwitchPressed;
 
+		public event Action OnSpeechLineSkip;
+
 		public Vector2 Move { get; private set; }
 		public Vector2 Look { get; private set; }
 		public bool IsJumping { get; private set; }
@@ -128,6 +130,11 @@ namespace _Main.Scripts.Core.Services
 			_actions.Debug.Switch.started += _ =>
 			{
 				OnDebugSwitchPressed?.Invoke();
+			};
+
+			_actions.UI.SpeechLineSkip.started += _ =>
+			{
+				OnSpeechLineSkip?.Invoke();
 			};
 		}
 

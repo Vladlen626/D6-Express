@@ -248,6 +248,7 @@ MonoBehaviour:
   - rid: 1463701297492918344
   - rid: 1463701355882086646
   - rid: 8683858885762875635
+  - rid: 704733112204525640
   interactableLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -255,6 +256,9 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 704733112204525640
+      type: {class: InteractableActionSpeak, ns: , asm: Assembly-CSharp}
+      data: 
     - rid: 1463701297492918341
       type: {class: InteractableActionSit, ns: , asm: Assembly-CSharp}
       data: 

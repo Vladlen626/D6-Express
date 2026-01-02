@@ -5,7 +5,7 @@ using PlatformCore.Services.UI;
 
 public static class DebugFactory
 {
-    public static IEnumerable<IBaseController> GetBaseController(IInputService inputService, ICursorService cursorService, LevelModel levelModel)
+    public static IEnumerable<IBaseController> GetBaseController(IInputService inputService, ICursorService cursorService, LevelModel levelModel, PlayerModel playerModel, PlayerView playerView)
     {
         var incrementTick = new DbgMenuItemIncrementTicks(levelModel);
         var incrementDay = new DbgMenuItemIncrementDays(levelModel);
@@ -13,8 +13,9 @@ public static class DebugFactory
         var wakeUp = new DbgMenuItemIncrementWakeUp();
         var switchToStation = new DbgMenuItemSwitchToStation(levelModel);
         var switchToTrain = new DbgMenuItemSwitchToTrain(levelModel);
+        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(playerModel, playerView);
         
-        var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp, switchToStation, switchToTrain);
+        var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp, switchToStation, switchToTrain, openPlayerWindow);
         var menu = new DebugMenuUIModel(gameMenu);
 
         yield return new DebugMenuUIController(inputService, cursorService, menu);

@@ -1,8 +1,6 @@
 using System;
-using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using PlatformCore.Core;
 using UnityEngine;
 
 [Serializable]
