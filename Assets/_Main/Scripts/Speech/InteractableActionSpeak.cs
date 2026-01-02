@@ -7,6 +7,7 @@ using UnityEngine;
 public class InteractableActionSpeak : InteractionAction
 {
 	private CharacterStateController stateController;
+    private Quaternion lastRot;
 
     public int Id { get; private set; } = -1;
 
@@ -43,8 +44,6 @@ public class InteractableActionSpeak : InteractionAction
     protected override async void StopInteractInternal(IInteractable interactable)
     {
         Id = -1;
-
-        await Interactor.transform.DORotateQuaternion(Quaternion.identity, 1).ToUniTask();
 
         stateController.TryEnterState(CharacterState.DEFAULT);
 
