@@ -53,7 +53,7 @@ public class Interactor : MonoBehaviour
 
 	private void OnDisable()
 	{
-		if (inputService == null)
+		if (inputService != null)
 		{
 			inputService.OnInteractPressed -= OnInteract;
 		}
