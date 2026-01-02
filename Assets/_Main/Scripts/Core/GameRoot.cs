@@ -106,7 +106,7 @@ namespace _Main.Scripts.Core
 			// Level
 			controllersList.AddRange(LevelFactory.GetSleepControllers(levelModel, playerView));
 			controllersList.Add(LevelFactory.GetLevelTransitionController(levelModel, playerView));
-			controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel, 
+			controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel,
 				playerModel, diceGameModel, playerView));
 
 			var baseControllers = new IBaseController[]
@@ -116,6 +116,7 @@ namespace _Main.Scripts.Core
 			};
 
 			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel, playerModel, playerView));
+			controllersList.Add(SpeechFactory.GetSpeechController(uiService, inputService, playerView, levelModel));
 
 			controllersList.AddRange(baseControllers);
 

@@ -25,9 +25,9 @@ public abstract class InteractionAction
 
 	public void StartInteract(IInteractable interactable)
 	{
-		Started?.Invoke();
-
 		StartInteractInternal(interactable);
+
+		Started?.Invoke();
 	}
 
 	public void StopInteract(IInteractable interactable)

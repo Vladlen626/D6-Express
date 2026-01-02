@@ -13,6 +13,8 @@ namespace _Main.Scripts.Core.Services
 
 		public event Action OnDebugSwitchPressed;
 
+		public event Action OnSpeechLineSkip;
+
 		public Vector2 Move { get; }
 		public Vector2 Look { get; }
 

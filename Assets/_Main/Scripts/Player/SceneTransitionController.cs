@@ -32,7 +32,7 @@ public class SceneTransitionController : IBaseController, IActivatable
 
     private void OnInteractionEnded(InteractionAction action)
     {
-        if (action is InteractableActionEnterTrain)
+        if (action is InteractableActionBuyTicket)
         {
             levelModel.SetLevelState(LevelState.TRAIN);
         }

@@ -1,4 +1,4 @@
-public class InteractableTrainEntrance : Interactable
+public class InteractableBuyTicket : Interactable
 {
     public override bool CanInteract(Interactor interactor)
     {
