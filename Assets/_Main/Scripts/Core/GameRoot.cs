@@ -105,6 +105,7 @@ namespace _Main.Scripts.Core
 
 			// Level
 			controllersList.AddRange(LevelFactory.GetSleepControllers(levelModel, playerView));
+			controllersList.Add(LevelFactory.GetLevelTransitionController(levelModel, playerView));
 			controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel, 
 				playerModel, diceGameModel, playerView));
 

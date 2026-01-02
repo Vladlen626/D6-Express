@@ -19,15 +19,16 @@ public static class LevelFactory
     public static IEnumerable<IBaseController> GetBaseControllers(SceneContext sceneContext, IUIService uiService,
         LevelModel levelModel, PlayerModel playerModel, DiceGameModel diceGameModel, PlayerView playerView)
     {
-        var levelControllers = new IBaseController[]
-        {
-            new LevelViewController(uiService, levelModel, sceneContext.Sun, sceneContext.TrainBlock, sceneContext.StationBlock, playerView, sceneContext.PlayerTrainSpawnPosition, sceneContext.PlayerStationSpawnPosition),
-            new LevelController(levelModel, playerModel, diceGameModel)
-        };
-        
-       return levelControllers;
+        yield return new LevelViewController(uiService, levelModel, sceneContext.Sun, sceneContext.TrainBlock, sceneContext.StationBlock, playerView, sceneContext.PlayerTrainSpawnPosition, sceneContext.PlayerStationSpawnPosition);
+        yield return new LevelController(levelModel, playerModel, diceGameModel);
     }
-    
+
+    public static IBaseController GetLevelTransitionController(LevelModel levelModel, PlayerView playerView)
+    {
+        var interactor = playerView.GetComponent<Interactor>();
+        return new SceneTransitionController(interactor, levelModel);
+    }
+
     public static IEnumerable<IBaseController> GetSleepControllers(LevelModel levelModel, PlayerView playerView)
     {
         var sleepView = playerView.GetComponent<SleepView>();

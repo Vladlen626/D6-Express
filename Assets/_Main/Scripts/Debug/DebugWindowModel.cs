@@ -1,6 +1,5 @@
 using ImGuiNET;
 using UImGui;
-using UnityEngine;
 
 public abstract class DebugWindowModel
 {

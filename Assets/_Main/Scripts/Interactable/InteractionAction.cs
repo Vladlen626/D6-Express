@@ -16,7 +16,7 @@ public abstract class InteractionAction
 		Interactor = interactor;
 	}
 
-	public virtual void Start()
+	public void Start()
 	{
 		inputService = Locator.Resolve<IInputService>();
 	}
