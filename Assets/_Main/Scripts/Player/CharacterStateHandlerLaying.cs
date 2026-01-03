@@ -6,13 +6,13 @@ public class CharacterStateHandlerLaying : CharacterStateHandler
 {
     public override CharacterState State => CharacterState.LAYING;
 
-    public override void Enter()
+    protected override void EnterInternal()
     {
         Controller.GetComponent<CharacterController>().enabled = false;
         Controller.GetComponent<Collider>().enabled = false;
     }
 
-    public override void Exit()
+    protected override void ExitInternal()
     {
         Controller.GetComponent<CharacterController>().enabled = true;
         Controller.GetComponent<Collider>().enabled = true;

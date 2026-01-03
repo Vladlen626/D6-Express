@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using PlatformCore.Core;
+using PlatformCore.Services;
 using UnityEngine;
 
 public class CharacterStateController : MonoBehaviour
@@ -38,13 +40,17 @@ public class CharacterStateController : MonoBehaviour
         if (currentStates.Contains(state))
             return;
 
+        currentStates.Add(state);
+        Locator.Resolve<ILoggerService>().Log($"state added: {state}");
+
         if (dictStates.ContainsKey(state))
         {
             var stateHandler = dictStates[state];
+
+            stateHandler.Exited += RemoveState;
+
             stateHandler.Enter();
         }
-
-        currentStates.Add(state);
 
         StateAdded?.Invoke(state);
         StatesChanged?.Invoke();
@@ -57,8 +63,22 @@ public class CharacterStateController : MonoBehaviour
             var stateHandler = dictStates[state];
             stateHandler.Exit();
         }
+        else
+        {
+            RemoveState(state);
+        }
+    }
+
+    private void RemoveState(CharacterState state)
+    {
+        if (dictStates.ContainsKey(state))
+        {
+            var stateHandler = dictStates[state];
+            stateHandler.Exited -= RemoveState;
+        }
 
         currentStates.Remove(state);
+        Locator.Resolve<ILoggerService>().Log($"state removed: {state}");
 
         StateRemoved?.Invoke(state);
         StatesChanged?.Invoke();

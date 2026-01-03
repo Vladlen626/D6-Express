@@ -44,14 +44,14 @@ public class InteractableActionSit : InteractionAction
     {
         inputService.OnMoved -= OnMoved;
 
-        await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
-
-		stateController.TryRemoveState(CharacterState.SITTING);
-		stateController.TryAddState(CharacterState.DEFAULT);
+        stateController.TryRemoveState(CharacterState.SITTING);
+        stateController.TryAddState(CharacterState.DEFAULT);
     }
 
-    private void OnMoved(Vector2 dir)
+    private async void OnMoved(Vector2 dir)
     {
+        await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+
         StopInteract(null);
     }
 }

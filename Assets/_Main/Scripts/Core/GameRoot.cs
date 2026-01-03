@@ -62,6 +62,7 @@ namespace _Main.Scripts.Core
 
 			var playerModel = PlayerFactory.CreatePlayerModel();
 			var levelModel = LevelFactory.CreateLevelModel(playerModel.InventoryModel);
+			playerModel.Init(levelModel);
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 
 			var activeSceneName = sceneService.GetActiveSceneName();

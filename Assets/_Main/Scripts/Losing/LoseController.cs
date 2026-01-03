@@ -41,7 +41,11 @@ public class LoseController : BaseContextController<UILoseView>
 
     private void OnLevelFinishedHandler(bool result)
     {
-        if (!result)
+        if (result)
+        {
+            levelModel.SetLevelState(LevelState.STATION);
+        }
+        else
         {
             if (DebugVariables.ShowLoseView)
             {

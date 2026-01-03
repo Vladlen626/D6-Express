@@ -17,7 +17,7 @@ public class CharacterStateHandlerDiceGame : CharacterStateHandler
 		inputService = Locator.Resolve<IInputService>();
 	}
 
-	public override void Enter()
+	protected override void EnterInternal()
 	{
 		Controller.GetComponent<CharacterController>().enabled = false;
 		Controller.GetComponent<Collider>().enabled = false;
@@ -25,7 +25,7 @@ public class CharacterStateHandlerDiceGame : CharacterStateHandler
 		cursorService.UnlockCursor();
 	}
 
-	public override void Exit()
+    protected override void ExitInternal()
 	{
 		Controller.GetComponent<CharacterController>().enabled = true;
 		Controller.GetComponent<Collider>().enabled = true;

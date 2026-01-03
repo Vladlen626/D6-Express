@@ -7,14 +7,31 @@ public abstract class CharacterStateHandler
 
     protected CharacterStateController Controller { get; private set; }
 
+    public event Action<CharacterState> Entered;
+    public event Action<CharacterState> Exited;
+
     public void Init(CharacterStateController characterStateController)
     {
         Controller = characterStateController;
         OnInit();
     }
 
-    public abstract void Enter();
-    public abstract void Exit();
+    public void Enter()
+    {
+        EnterInternal();
+
+        Entered?.Invoke(State);
+    }
+
+    public void Exit()
+    {
+        ExitInternal();
+
+        Exited?.Invoke(State);
+    }
+
+    protected virtual void EnterInternal() { }
+    protected virtual void ExitInternal() { }
 
     public virtual void OnInit() { }
 }

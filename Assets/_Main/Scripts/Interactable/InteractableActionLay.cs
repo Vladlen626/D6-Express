@@ -43,17 +43,17 @@ public class InteractableActionLay : InteractionAction
     {
         inputService.OnMoved -= OnMoved;
 
+        stateController.TryRemoveState(CharacterState.LAYING);
+        stateController.TryAddState(CharacterState.DEFAULT);
+    }
+
+    private async void OnMoved(Vector2 dir)
+    {
         var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
         var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
 
         await UniTask.WhenAll(moveTask, rotateTask);
 
-		stateController.TryRemoveState(CharacterState.LAYING);
-		stateController.TryAddState(CharacterState.DEFAULT);
-    }
-
-    private void OnMoved(Vector2 dir)
-    {
         StopInteract(null);
     }
 }

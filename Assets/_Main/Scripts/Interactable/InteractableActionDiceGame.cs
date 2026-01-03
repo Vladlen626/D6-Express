@@ -36,7 +36,7 @@ public class InteractableActionDiceGame : InteractionAction
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 
-        stateController.TryRemoveState(CharacterState.TRANSITION);
+		stateController.TryRemoveState(CharacterState.TRANSITION);
 		stateController.TryAddState(CharacterState.DICE_GAME);
 
 		inputService.OnMoved += OnMoved;
@@ -46,17 +46,17 @@ public class InteractableActionDiceGame : InteractionAction
 	{
 		inputService.OnMoved -= OnMoved;
 
-		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
-		var rotateTask = Interactor.transform.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
-	
-		await UniTask.WhenAll(moveTask, rotateTask);
-
 		stateController.TryRemoveState(CharacterState.DICE_GAME);
 		stateController.TryAddState(CharacterState.DEFAULT);
 	}
 
-	private void OnMoved(Vector2 dir)
+	private async void OnMoved(Vector2 dir)
 	{
+		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
+
+		await UniTask.WhenAll(moveTask, rotateTask);
+
 		StopInteract(null);
 	}
 }

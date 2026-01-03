@@ -13,15 +13,14 @@ public static class PlayerFactory
 		int startCash = 300;
 		var playerModel = new PlayerModel();
 		playerModel.InventoryModel.GiveCash(startCash);
-		
-		
+
+
 		return playerModel;
 	}
-	
-	
+
 	public static async UniTask<PlayerView> SpawnPlayerView(SceneContext sceneContext, IObjectFactory factory, IInputService inputService)
 	{
-		var playerView =  await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerPrefab, sceneContext.PlayerTrainSpawnPosition.position,
+		var playerView = await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerPrefab, sceneContext.PlayerTrainSpawnPosition.position,
 			sceneContext.PlayerTrainSpawnPosition.rotation);
 
 		var playerInteractSystem = playerView.GetComponent<Interactor>();
@@ -30,20 +29,21 @@ public static class PlayerFactory
 
 		return playerView;
 	}
-	
+
 	public static IBaseController[] GetPlayerBaseControllers(PlayerView playerView, ServiceLocator serviceLocator,
 		PlayerModel playerModel)
 	{
 		var input = serviceLocator.Get<IInputService>();
 		var cursor = serviceLocator.Get<ICursorService>();
 		var uiService = serviceLocator.Get<IUIService>();
-		
+
 		var playerControllers = new IBaseController[]
 		{
 			new MovementController(playerView, playerModel, input, cursor),
-			new PlayerHudController(uiService, playerModel)
+			new PlayerHudController(uiService, playerModel),
+			new PlayerController(playerModel, playerView)
 		};
-		
+
 		return playerControllers;
 	}
 }

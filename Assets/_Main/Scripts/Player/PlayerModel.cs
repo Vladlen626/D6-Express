@@ -2,18 +2,34 @@
 
 public class PlayerModel
 {
-	public event Action<CharacterState, CharacterState> OnCharacterStateChanged;
-	public InventoryModel InventoryModel {get; private set;}
+	private LevelModel levelModel;
+
+	public InventoryModel InventoryModel { get; private set; }
 	public CharacterState currentCharacterState { get; private set; }
+
+	public event Action<CharacterState, CharacterState> OnCharacterStateChanged;
+
 	public PlayerModel()
 	{
 		InventoryModel = new InventoryModel();
 	}
+
+	public void Init(LevelModel levelModel)
+	{
+		this.levelModel = levelModel;
+		this.levelModel.LevelStateChanged += OnLevelStateChanged;
+	}
+
 	public void SetCharacterState(CharacterState characterState)
 	{
 		var oldCharacterState = currentCharacterState;
 		currentCharacterState = characterState;
 		OnCharacterStateChanged?.Invoke(oldCharacterState, currentCharacterState);
+	}
+
+	private void OnLevelStateChanged()
+	{
+		SetCharacterState(CharacterState.LOCATION_TRANSITIONING);
 	}
 }
 
