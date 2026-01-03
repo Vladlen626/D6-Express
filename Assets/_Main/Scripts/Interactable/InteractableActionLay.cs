@@ -40,16 +40,16 @@ public class InteractableActionLay : InteractionAction
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 
-        stateController.TryRemoveState(CharacterState.LAYING);
-    }
+		PlayerStateModel.TryRemoveState(CharacterState.LAYING);
+	}
 
-    private async void OnMoved(Vector2 dir)
-    {
-        var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
-        var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+	private async void OnMoved(Vector2 dir)
+	{
+		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
 
-        await UniTask.WhenAll(moveTask, rotateTask);
+		await UniTask.WhenAll(moveTask, rotateTask);
 
-        StopInteract(null);
-    }
+		StopInteract(null);
+	}
 }

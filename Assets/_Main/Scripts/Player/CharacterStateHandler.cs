@@ -3,6 +3,8 @@ using System;
 [Serializable]
 public abstract class CharacterStateHandler
 {
+	public event Action<CharacterState> Entered;
+	public event Action<CharacterState> Exited;
 	public abstract CharacterState State { get; }
 
 	protected PlayerView PlayerView { get; private set; }
@@ -12,43 +14,32 @@ public abstract class CharacterStateHandler
 		PlayerView = playerView;
 		OnInit();
 	}
+	
+	public virtual void OnInit()
+	{
+	}
 
-	public virtual void Enter()
+	public void Enter()
+	{
+		EnterInternal();
+
+		Entered?.Invoke(State);
+	}
+
+	public void Exit()
+	{
+		ExitInternal();
+
+		Exited?.Invoke(State);
+	}
+
+	protected virtual void EnterInternal()
 	{
 		PlayerView.SetCharacterGhost(true);
 	}
-    public event Action<CharacterState> Entered;
-    public event Action<CharacterState> Exited;
 
-    public void Init(CharacterStateController characterStateController)
-    {
-        Controller = characterStateController;
-        OnInit();
-    }
-
-    public void Enter()
-    {
-        EnterInternal();
-
-        Entered?.Invoke(State);
-    }
-
-    public void Exit()
-    {
-        ExitInternal();
-
-        Exited?.Invoke(State);
-    }
-
-    protected virtual void EnterInternal() { }
-    protected virtual void ExitInternal() { }
-
-	public virtual void Exit()
+	protected virtual void ExitInternal()
 	{
 		PlayerView.SetCharacterGhost(false);
-	}
-
-	public virtual void OnInit()
-	{
 	}
 }
