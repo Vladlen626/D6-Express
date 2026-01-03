@@ -103,6 +103,7 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.SetMinBetSize(minBetSize);
 			diceGameModel.SetMaxBetSize(maxBetSize);
+			diceGameModel.SetBetSize((minBetSize + maxBetSize)/2);
 			diceGameModel.SetTargetScore(targetScore);
 			diceGameModel.SetMaxTurnCount(maxTurnCount);
 			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);

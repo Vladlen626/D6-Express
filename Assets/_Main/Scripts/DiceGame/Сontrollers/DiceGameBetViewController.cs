@@ -19,6 +19,7 @@ namespace _Main.Scripts.Dice
 			
 			diceTableView.SetMinBet(diceGameModel.MinBetSize);
 			diceTableView.SetMaxBet(diceGameModel.MaxBetSize);
+			diceTableView.SetBet(diceGameModel.BetSize);
 			OnBetSizeChangedHandler();
 		}
 
