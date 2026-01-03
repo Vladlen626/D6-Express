@@ -7,7 +7,6 @@ using UnityEngine;
 public class InteractableActionSpeak : InteractionAction
 {
     private CharacterStateController stateController;
-    private Quaternion lastRot;
 
     public int Id { get; private set; } = -1;
 
@@ -45,6 +44,7 @@ public class InteractableActionSpeak : InteractionAction
     {
         Id = -1;
 
+        stateController.TryRemoveState(CharacterState.SPEAKING);
         stateController.TryAddState(CharacterState.DEFAULT);
 
         base.StopInteractInternal(interactable);
