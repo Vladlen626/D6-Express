@@ -5,14 +5,14 @@ using PlatformCore.Services.UI;
 
 public static class LevelFactory
 {
-	public static LevelModel CreateLevelModel(InventoryModel inventoryModel)
+	public static LevelModel CreateLevelModel()
 	{
 		// TODO: в настройки
 		var ticksPerDay = 3;
 		int days = 3;
 		int cashGoal = 500;
 
-		var levelModel = new LevelModel(ticksPerDay, days, cashGoal, inventoryModel);
+		var levelModel = new LevelModel(ticksPerDay, days, cashGoal);
 		return levelModel;
 	}
 

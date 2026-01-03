@@ -7,9 +7,6 @@ public class LevelModel
 	public readonly int CashGoal;
 	public readonly int TicksPerDay;
 	public readonly int Days;
-
-	private readonly InventoryModel inventoryModel;
-
 	public LevelState LevelState => levelState;
 	public float TickRatio => Tick / (float)TicksPerDay;
 	public int Tick { get; private set; }
@@ -18,15 +15,15 @@ public class LevelModel
 
 	public event Action TickChanged;
 	public event Action DayChanged;
+	public event Action OnFinalDay;
 	public event Action<bool> LevelFinished;
 	public event Action LevelStateChanged;
 
-	public LevelModel(int ticksPerDay, int days, int cashGoal, InventoryModel inventoryModel)
+	public LevelModel(int ticksPerDay, int days, int cashGoal)
 	{
 		Days = days;
 		TicksPerDay = ticksPerDay;
 		CashGoal = cashGoal;
-		this.inventoryModel = inventoryModel;
 	}
 
 	public void SetLevelState(LevelState levelState)
@@ -44,15 +41,7 @@ public class LevelModel
 		{
 			Day = 0;
 			DayChanged?.Invoke();
-
-			if (inventoryModel.CashCount > CashGoal)
-			{
-				LevelFinished?.Invoke(true);
-			}
-			else
-			{
-				LevelFinished?.Invoke(false);
-			}
+			OnFinalDay?.Invoke();
 		}
 		else
 		{
@@ -72,5 +61,12 @@ public class LevelModel
 		{
 			IncrementDays();
 		}
+	}
+
+
+	// ReSharper disable Unity.PerformanceAnalysis
+	public void SetLevelFinished(bool success)
+	{
+		LevelFinished?.Invoke(success);
 	}
 }

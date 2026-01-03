@@ -20,24 +20,31 @@ public class LevelController : IBaseController, IActivatable
 	{
 		levelModel.LevelStateChanged += OnLevelStateChanged;
 		levelModel.LevelFinished += DayLevelFinishedHandler;
+		levelModel.OnFinalDay += OnFinalDayHandler;
 	}
 
 	public void Deactivate()
 	{
 		levelModel.LevelStateChanged -= OnLevelStateChanged;
 		levelModel.LevelFinished -= DayLevelFinishedHandler;
+		levelModel.OnFinalDay -= OnFinalDayHandler;
 	}
-	
+
+	private void OnFinalDayHandler()
+	{
+		levelModel.SetLevelFinished(playerModel.InventoryModel.CashCount >= levelModel.CashGoal);
+	}
+
 
 	private void OnLevelStateChanged()
 	{
+		playerModel.PlayerStateModel.TryAddState(CharacterState.LOCATION_TRANSITIONING);
+
 		switch (levelModel.LevelState)
 		{
 			case LevelState.STATION:
-				
 				break;
 			case LevelState.TRAIN:
-
 				break;
 		}
 	}

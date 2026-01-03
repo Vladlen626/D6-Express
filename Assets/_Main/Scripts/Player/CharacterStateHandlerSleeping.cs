@@ -15,17 +15,15 @@ public class CharacterStateHandlerSleeping : CharacterStateHandler
 		inputService = Locator.Resolve<IInputService>();
 	}
 
-    protected override void EnterInternal()
-    {
-        Controller.GetComponent<CharacterController>().enabled = false;
-        Controller.GetComponent<Collider>().enabled = false;
-        inputService.DisableAllInputs();
-    }
+	protected override void EnterInternal()
+	{
+		base.EnterInternal();
+		inputService.DisableAllInputs();
+	}
 
-    protected override void ExitInternal()
-    {
-        Controller.GetComponent<CharacterController>().enabled = true;
-        Controller.GetComponent<Collider>().enabled = true;
-        inputService.EnableAllInputs();
-    }
+	protected override void ExitInternal()
+	{
+		base.ExitInternal();
+		inputService.EnableAllInputs();
+	}
 }

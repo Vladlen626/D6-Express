@@ -30,6 +30,7 @@ public class PlayerStateModel
 		return currentStates.Contains(state);
 	}
 
+	// ReSharper disable Unity.PerformanceAnalysis
 	public void TryAddState(CharacterState state)
 	{
 		if (currentStates.Contains(state))

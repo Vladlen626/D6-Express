@@ -19,6 +19,9 @@ public class PlayerView : MonoBehaviour
 	public float lookXLimit = 45f;
 
 	[SerializeField] 
+	private Interactor interactor;
+
+	[SerializeField] 
 	private CharacterController characterController;
 	
 	[SerializeField] 
@@ -53,5 +56,10 @@ public class PlayerView : MonoBehaviour
 	public void SetCharacterControllerEnabled(bool isEnabled)
 	{
 		characterController.enabled = isEnabled;
+	}
+
+	public void StopAllActions()
+	{
+		interactor.StopAllActions();
 	}
 }

@@ -7,7 +7,7 @@ public class CharacterStateHandlerLocationTransitioning : CharacterStateHandler
 
 	protected override void EnterInternal()
 	{
-		Controller.GetComponent<Interactor>().StopAllActions();
+		PlayerView.StopAllActions();
 		Exit();
 	}
 }

@@ -46,7 +46,6 @@ public static class PlayerFactory
 		{
 			new MovementController(playerView, playerModel, input, cursor),
 			new PlayerHudController(uiService, playerModel),
-			new PlayerController(playerModel, playerView)
 		};
 
 		return playerControllers;
