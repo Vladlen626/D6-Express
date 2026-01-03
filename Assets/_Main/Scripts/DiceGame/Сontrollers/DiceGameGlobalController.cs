@@ -44,7 +44,8 @@ namespace _Main.Scripts.Dice
 
 		public void Activate()
 		{
-			playerModel.OnCharacterStateChanged += OnCharacterStateChangedHandler;
+			playerModel.PlayerStateModel.StateAdded  += OnCharacterStateAddedHandler;
+			playerModel.PlayerStateModel.StateRemoved  += OnCharacterStateRemovedHandler;
 			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
 			diceGameModel.OnGameConditionPassed += OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed += OnGameConditionFailedHandler;
@@ -53,7 +54,8 @@ namespace _Main.Scripts.Dice
 
 		public void Deactivate()
 		{
-			playerModel.OnCharacterStateChanged -= OnCharacterStateChangedHandler;
+			playerModel.PlayerStateModel.StateAdded -= OnCharacterStateAddedHandler;
+			playerModel.PlayerStateModel.StateRemoved  -= OnCharacterStateRemovedHandler;
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.OnGameConditionPassed -= OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed -= OnGameConditionFailedHandler;
@@ -77,13 +79,17 @@ namespace _Main.Scripts.Dice
 			sceneContext.DiceGameTableView.SwitchGameStateView(diceGameModel.DiceGameState);
 		}
 
-		private void OnCharacterStateChangedHandler(CharacterState oldCharacterState, CharacterState newCharacterState)
+		private void OnCharacterStateAddedHandler(CharacterState state)
 		{
-			if (newCharacterState == CharacterState.DICE_GAME)
+			if (state == CharacterState.DICE_GAME)
 			{
 				StartDiceGame().Forget();
 			}
-			else if (oldCharacterState == CharacterState.DICE_GAME)
+		}
+
+		private void OnCharacterStateRemovedHandler(CharacterState state)
+		{
+			if (state == CharacterState.DICE_GAME)
 			{
 				StopDiceGame();
 			}

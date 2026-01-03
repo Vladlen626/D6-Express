@@ -1,24 +1,21 @@
 using System;
 using _Main.Scripts.Core.Services;
-using PlatformCore.Core;
 
 [Serializable]
 public abstract class InteractionAction
 {
 	protected IInputService inputService;
 	protected Interactor Interactor { get; private set; }
+	protected PlayerStateModel PlayerStateModel { get; private set; }
 
 	public event Action<InteractionAction> Started;
 	public event Action<InteractionAction> Ended;
 
-	public virtual void Init(Interactor interactor)
+	public virtual void Init(Interactor interactor, PlayerStateModel playerStateModel, IInputService inputService)
 	{
 		Interactor = interactor;
-	}
-
-	public void Start()
-	{
-		inputService = Locator.Resolve<IInputService>();
+		PlayerStateModel = playerStateModel;
+		this.inputService = inputService;
 	}
 
 	public abstract bool CanInteract(IInteractable interactable);

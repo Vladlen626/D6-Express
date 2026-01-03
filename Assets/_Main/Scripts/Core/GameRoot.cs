@@ -98,8 +98,9 @@ namespace _Main.Scripts.Core
 			var sceneContext = context as SceneContext;
 
 			//Player
-			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService);
-			playerView.CharacterStateController.Initialize();
+			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService, playerModel);
+			playerView.Initialize();
+			playerModel.PlayerStateModel.FillCharacterStatesDict(playerView.CharacterStateHandlers);
 			cameraService.AttachTo(playerView.CameraRoot);
 			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
 
@@ -110,7 +111,7 @@ namespace _Main.Scripts.Core
 
 			var baseControllers = new IBaseController[]
 			{
-				new LoseController(uiService,inputService, cursorService, levelModel),
+				new LoseScreenController(uiService,inputService, cursorService, levelModel),
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator, levelModel),
 			};

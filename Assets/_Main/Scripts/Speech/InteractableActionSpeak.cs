@@ -6,47 +6,37 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionSpeak : InteractionAction
 {
-    private CharacterStateController stateController;
+	public int Id { get; private set; } = -1;
 
-    public int Id { get; private set; } = -1;
+	public override bool CanInteract(IInteractable interactable)
+	{
+		return interactable is InteractableSpeakable && PlayerStateModel.HasState(CharacterState.DEFAULT);
+	}
 
-    public override void Init(Interactor interactor)
-    {
-        base.Init(interactor);
+	protected override async void StartInteractInternal(IInteractable interactable)
+	{
+		base.StartInteractInternal(interactable);
 
-        stateController = interactor.GetComponent<CharacterStateController>();
-    }
+		// todo: выглядит сомнительно
+		var speakable = interactable as InteractableSpeakable;
+		Id = speakable.Id;
 
-    public override bool CanInteract(IInteractable interactable)
-    {
-        return interactable is InteractableSpeakable && stateController.HasState(CharacterState.DEFAULT);
-    }
+		var targetable = speakable.GetComponent<Targetable>();
 
-    protected override async void StartInteractInternal(IInteractable interactable)
-    {
-        base.StartInteractInternal(interactable);
+		var rotateTarget = targetable == null ? speakable.transform : targetable.CameraTarget;
 
-        // todo: выглядит сомнительно
-        var speakable = interactable as InteractableSpeakable;
-        Id = speakable.Id;
+		PlayerStateModel.TryAddState(CharacterState.SPEAKING);
 
-        var targetable = speakable.GetComponent<Targetable>();
+		var playerView = Interactor.GetComponent<PlayerView>();
+		await playerView.CameraRoot.DOLookAt(rotateTarget.position, 1).ToUniTask();
+	}
 
-        var rotateTarget = targetable == null ? speakable.transform : targetable.CameraTarget;
+	protected override async void StopInteractInternal(IInteractable interactable)
+	{
+		Id = -1;
 
-        stateController.TryAddState(CharacterState.SPEAKING);
+		PlayerStateModel.TryRemoveState(CharacterState.SPEAKING);
 
-        var playerView = Interactor.GetComponent<PlayerView>();
-        await playerView.CameraRoot.DOLookAt(rotateTarget.position, 1).ToUniTask();
-    }
-
-    protected override async void StopInteractInternal(IInteractable interactable)
-    {
-        Id = -1;
-
-        stateController.TryRemoveState(CharacterState.SPEAKING);
-        stateController.TryAddState(CharacterState.DEFAULT);
-
-        base.StopInteractInternal(interactable);
-    }
+		base.StopInteractInternal(interactable);
+	}
 }

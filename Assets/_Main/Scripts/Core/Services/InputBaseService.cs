@@ -9,6 +9,7 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnJumpReleased;
 		public event Action OnPausePressed;
 		public event Action OnInteractPressed;
+		public event Action OnInteractPerformed;
 		public event Action<Vector2> OnMoved;
 		public event Action<Vector2> OnLooked;
 
@@ -117,6 +118,11 @@ namespace _Main.Scripts.Core.Services
 			_actions.Player.Interact.canceled += _ =>
 			{
 				IsInteract = false;
+			};
+			
+			_actions.Player.Interact.performed += _ =>
+			{
+				OnInteractPerformed?.Invoke();
 			};
 
 			_actions.Player.Jump.started += _ =>

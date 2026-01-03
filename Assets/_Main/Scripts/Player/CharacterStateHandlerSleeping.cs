@@ -6,14 +6,14 @@ using UnityEngine;
 [Serializable]
 public class CharacterStateHandlerSleeping : CharacterStateHandler
 {
-    private IInputService inputService;
+	private IInputService inputService;
 
-    public override CharacterState State => CharacterState.SLEEPING;
+	public override CharacterState State => CharacterState.SLEEPING;
 
-    public override void OnInit()
-    {
-        inputService = Locator.Resolve<IInputService>();
-    }
+	public override void OnInit()
+	{
+		inputService = Locator.Resolve<IInputService>();
+	}
 
     protected override void EnterInternal()
     {

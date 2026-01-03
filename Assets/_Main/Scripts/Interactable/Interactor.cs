@@ -6,10 +6,14 @@ using PlatformCore.Services;
 using Unity.VisualScripting;
 using UnityEngine;
 
-// todo: переделать на mvc
-[RequireComponent(typeof(CharacterStateController))]
 public class Interactor : MonoBehaviour
 {
+	public event Action<InteractionAction> InteractionStarted;
+	public event Action<InteractionAction> InteractionEnded;
+
+	public event Action<Interactable> Noticed;
+	public event Action<Interactable> Missed;
+	
 	[SerializeField] private float interactionDistance = 3f;
 
 	[SerializeReference]
@@ -23,32 +27,19 @@ public class Interactor : MonoBehaviour
 	// todo: стэк тут ту мач
 	private readonly Stack<InteractionAction> actionStack = new();
 
+	private PlayerStateModel playerStateModel;
 	private Interactable currentInteractable;
-	private CharacterStateController characterStateController;
-
 	private IInputService inputService;
 
-	public event Action<InteractionAction> InteractionStarted;
-	public event Action<InteractionAction> InteractionEnded;
-
-	public event Action<Interactable> Noticed;
-	public event Action<Interactable> Missed;
-
-	private void Awake()
+	public void Initialize(IInputService inputService, PlayerStateModel playerStateModel)
 	{
+		this.inputService = inputService;
+		this.playerStateModel = playerStateModel;
+		this.inputService.OnInteractPressed += OnInteract;
+		
 		foreach (var item in actions)
 		{
-			item.Init(this);
-		}
-
-		characterStateController = GetComponent<CharacterStateController>();
-	}
-
-	private void Start()
-	{
-		foreach (var item in actions)
-		{
-			item.Start();
+			item.Init(this, this.playerStateModel, this.inputService);
 		}
 	}
 
@@ -58,13 +49,6 @@ public class Interactor : MonoBehaviour
 		{
 			inputService.OnInteractPressed -= OnInteract;
 		}
-	}
-
-	public void Initialize(IInputService inInputService)
-	{
-		inputService = inInputService;
-
-		inputService.OnInteractPressed += OnInteract;
 	}
 
 	public void StopAllActions()
@@ -125,7 +109,10 @@ public class Interactor : MonoBehaviour
 	{
 		if (currentInteractable != null)
 		{
-			TryGetAction(currentInteractable, out var action);
+			if (!TryGetAction(currentInteractable, out var action))
+			{
+				return;
+			};
 
 			actionStack.Push(action);
 

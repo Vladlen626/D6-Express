@@ -6,45 +6,41 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionLay : InteractionAction
 {
-    private CharacterStateController stateController;
-    private Vector3 lastPos;
+	private Vector3 lastPos;
 
-    public override void Init(Interactor interactor)
-    {
-        base.Init(interactor);
+	public override bool CanInteract(IInteractable interactable)
+	{
+		return interactable is InteractableLayable && !PlayerStateModel.HasState(CharacterState.LAYING);
+	}
 
-        stateController = interactor.GetComponent<CharacterStateController>();
-    }
+	protected override async void StartInteractInternal(IInteractable interactable)
+	{
+		PlayerStateModel.TryAddState(CharacterState.TRANSITION);
 
-    public override bool CanInteract(IInteractable interactable)
-    {
-        return interactable is InteractableLayable && !stateController.HasState(CharacterState.LAYING);
-    }
+		lastPos = Interactor.transform.position;
 
-    protected override async void StartInteractInternal(IInteractable interactable)
-    {
-        stateController.TryAddState(CharacterState.TRANSITION);
+		var layable = interactable as InteractableLayable;
 
-        lastPos = Interactor.transform.position;
+		var moveTask = Interactor.transform.DOMove(layable.SitTfm.position, 1).ToUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(layable.SitTfm.rotation, 1).ToUniTask();
 
-        var layable = interactable as InteractableLayable;
+		await UniTask.WhenAll(moveTask, rotateTask);
 
-        var moveTask = Interactor.transform.DOMove(layable.SitTfm.position, 1).ToUniTask();
-        var rotateTask = Interactor.transform.DORotateQuaternion(layable.SitTfm.rotation, 1).ToUniTask();
+		PlayerStateModel.TryRemoveState(CharacterState.TRANSITION);
+		PlayerStateModel.TryAddState(CharacterState.LAYING);
+		inputService.OnMoved += OnMoved;
+	}
 
-        await UniTask.WhenAll(moveTask, rotateTask);
+	protected async override void StopInteractInternal(IInteractable interactable)
+	{
+		inputService.OnMoved -= OnMoved;
 
-        stateController.TryRemoveState(CharacterState.TRANSITION);
-        stateController.TryAddState(CharacterState.LAYING);
-        inputService.OnMoved += OnMoved;
-    }
+		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
 
-    protected async override void StopInteractInternal(IInteractable interactable)
-    {
-        inputService.OnMoved -= OnMoved;
+		await UniTask.WhenAll(moveTask, rotateTask);
 
         stateController.TryRemoveState(CharacterState.LAYING);
-        stateController.TryAddState(CharacterState.DEFAULT);
     }
 
     private async void OnMoved(Vector2 dir)
