@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
 using PlatformCore.Services;
+using Unity.VisualScripting;
 using UnityEngine;
 
 // todo: переделать на mvc
@@ -113,7 +114,7 @@ public class Interactor : MonoBehaviour
 			}
 		}
 
-		if (currentInteractable != null)
+		if (currentInteractable != null || currentInteractable.IsDestroyed())
 		{
 			Missed?.Invoke(currentInteractable);
 			currentInteractable = null;
