@@ -28,7 +28,7 @@ public class LoseScreenController : BaseContextController<UILoseView>
 		_context.ContinueButtonClicked += OnContinueButtonClickedHandler;
 	}
 
-	override protected void OnDeactivate()
+	protected override void OnDeactivate()
 	{
 		_context.ContinueButtonClicked -= OnContinueButtonClickedHandler;
 		_context.ExitButtonClicked -= OnExitButtonClickedHandler;
