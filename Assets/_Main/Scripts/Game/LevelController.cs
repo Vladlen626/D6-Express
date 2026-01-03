@@ -35,7 +35,6 @@ public class LevelController : IBaseController, IActivatable
 		levelModel.SetLevelFinished(playerModel.InventoryModel.CashCount >= levelModel.CashGoal);
 	}
 
-
 	private void OnLevelStateChanged()
 	{
 		playerModel.PlayerStateModel.TryAddState(CharacterState.LOCATION_TRANSITIONING);
@@ -47,6 +46,8 @@ public class LevelController : IBaseController, IActivatable
 			case LevelState.TRAIN:
 				break;
 		}
+
+		playerModel.PlayerStateModel.TryAddState(CharacterState.LOCATION_TRANSITIONING);
 	}
 
 	private void DayLevelFinishedHandler(bool result)

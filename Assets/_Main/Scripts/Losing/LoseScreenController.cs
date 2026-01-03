@@ -23,8 +23,6 @@ public class LoseScreenController : BaseContextController<UILoseView>
 		HideContext();
 
 		levelModel.LevelFinished += LevelFinishedHandler;
-		levelModel.DayChanged += DayChangedHandler;
-
 		_context.ExitButtonClicked += OnExitButtonClickedHandler;
 		_context.ContinueButtonClicked += OnContinueButtonClickedHandler;
 	}
@@ -33,18 +31,11 @@ public class LoseScreenController : BaseContextController<UILoseView>
 	{
 		_context.ContinueButtonClicked -= OnContinueButtonClickedHandler;
 		_context.ExitButtonClicked -= OnExitButtonClickedHandler;
-		levelModel.DayChanged += DayChangedHandler;
-
 		levelModel.LevelFinished -= LevelFinishedHandler;
 
 		HideContext();
 
 		base.OnDeactivate();
-	}
-	
-	private void DayChangedHandler()
-	{
-		
 	}
 
 	private void LevelFinishedHandler(bool result)
