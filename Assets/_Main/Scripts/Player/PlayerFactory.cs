@@ -19,13 +19,17 @@ public static class PlayerFactory
 	}
 	
 	
-	public static async UniTask<PlayerView> SpawnPlayerView(SceneContext sceneContext, IObjectFactory factory, IInputService inputService)
+	public static async UniTask<PlayerView> SpawnPlayerView(
+		SceneContext sceneContext,
+		IObjectFactory factory,
+		IInputService inputService,
+		PlayerModel playerModel)
 	{
 		var playerView =  await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerPrefab, sceneContext.PlayerTrainSpawnPosition.position,
 			sceneContext.PlayerTrainSpawnPosition.rotation);
 
 		var playerInteractSystem = playerView.GetComponent<Interactor>();
-		playerInteractSystem.Initialize(inputService);
+		playerInteractSystem.Initialize(inputService, playerModel.PlayerStateModel);
 		sceneContext?.InteractorView.Initialize(playerInteractSystem);
 
 		return playerView;

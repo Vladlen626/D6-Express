@@ -3,18 +3,29 @@ using System;
 [Serializable]
 public abstract class CharacterStateHandler
 {
-    public abstract CharacterState State { get; }
+	public abstract CharacterState State { get; }
 
-    protected CharacterStateController Controller { get; private set; }
+	protected PlayerView PlayerView { get; private set; }
 
-    public void Init(CharacterStateController characterStateController)
-    {
-        Controller = characterStateController;
-        OnInit();
-    }
+	public void Init(PlayerView playerView)
+	{
+		PlayerView = playerView;
+		OnInit();
+	}
 
-    public abstract void Enter();
-    public abstract void Exit();
+	public virtual void Enter()
+	{
+		PlayerView.SetCharacterControllerEnabled(false);
+		PlayerView.SetColliderEnabled(false);
+	}
 
-    public virtual void OnInit() { }
+	public virtual void Exit()
+	{
+		PlayerView.SetCharacterControllerEnabled(true);
+		PlayerView.SetColliderEnabled(true);
+	}
+
+	public virtual void OnInit()
+	{
+	}
 }

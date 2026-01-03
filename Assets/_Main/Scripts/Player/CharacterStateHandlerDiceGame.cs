@@ -19,16 +19,14 @@ public class CharacterStateHandlerDiceGame : CharacterStateHandler
 
 	public override void Enter()
 	{
-		Controller.GetComponent<CharacterController>().enabled = false;
-		Controller.GetComponent<Collider>().enabled = false;
+		base.Enter();
 		inputService.DisableCameraInputs();
 		cursorService.UnlockCursor();
 	}
 
 	public override void Exit()
 	{
-		Controller.GetComponent<CharacterController>().enabled = true;
-		Controller.GetComponent<Collider>().enabled = true;
+		base.Exit();
 		inputService.EnableCameraInputs();
 		cursorService.LockCursor();
 	}

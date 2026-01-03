@@ -97,8 +97,7 @@ namespace _Main.Scripts.Core
 			var sceneContext = context as SceneContext;
 
 			//Player
-			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService);
-			playerView.CharacterStateController.Initialize();
+			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService, playerModel);
 			cameraService.AttachTo(playerView.CameraRoot);
 			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
 

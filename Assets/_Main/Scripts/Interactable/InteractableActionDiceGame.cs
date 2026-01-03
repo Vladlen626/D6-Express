@@ -6,25 +6,17 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionDiceGame : InteractionAction
 {
-	private CharacterStateController stateController;
 	private Vector3 lastPos;
 	private Quaternion lastRot;
 
-	public override void Init(Interactor interactor)
-	{
-		base.Init(interactor);
-
-		stateController = interactor.GetComponent<CharacterStateController>();
-	}
-
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable is InteractableDiceGame && stateController.HasState(CharacterState.DEFAULT);
+		return interactable is InteractableDiceGame && PlayerStateModel.HasState(CharacterState.DEFAULT);
 	}
 
 	protected override async void StartInteractInternal(IInteractable interactable)
 	{
-		stateController.TryAddState(CharacterState.TRANSITION);
+		PlayerStateModel.TryAddState(CharacterState.TRANSITION);
 
 		lastPos = Interactor.transform.position;
 		lastRot = Interactor.transform.rotation;
@@ -36,8 +28,8 @@ public class InteractableActionDiceGame : InteractionAction
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 
-        stateController.TryRemoveState(CharacterState.TRANSITION);
-		stateController.TryAddState(CharacterState.DICE_GAME);
+		PlayerStateModel.TryRemoveState(CharacterState.TRANSITION);
+		PlayerStateModel.TryAddState(CharacterState.DICE_GAME);
 
 		inputService.OnMoved += OnMoved;
 	}
@@ -48,11 +40,11 @@ public class InteractableActionDiceGame : InteractionAction
 
 		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
 		var rotateTask = Interactor.transform.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
-	
+
 		await UniTask.WhenAll(moveTask, rotateTask);
 
-		stateController.TryRemoveState(CharacterState.DICE_GAME);
-		stateController.TryAddState(CharacterState.DEFAULT);
+		PlayerStateModel.TryRemoveState(CharacterState.DICE_GAME);
+		PlayerStateModel.TryAddState(CharacterState.DEFAULT);
 	}
 
 	private void OnMoved(Vector2 dir)

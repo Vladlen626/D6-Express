@@ -7,18 +7,16 @@ public abstract class InteractionAction
 {
 	protected IInputService inputService;
 	protected Interactor Interactor { get; private set; }
+	protected PlayerStateModel PlayerStateModel { get; private set; }
 
 	public event Action Started;
 	public event Action Ended;
 
-	public virtual void Init(Interactor interactor)
+	public virtual void Init(Interactor interactor, PlayerStateModel playerStateModel, IInputService inputService)
 	{
 		Interactor = interactor;
-	}
-
-	public void Start()
-	{
-		inputService = Locator.Resolve<IInputService>();
+		PlayerStateModel = playerStateModel;
+		this.inputService = inputService;
 	}
 
 	public abstract bool CanInteract(IInteractable interactable);

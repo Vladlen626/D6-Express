@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerView : MonoBehaviour
@@ -7,18 +8,35 @@ public class PlayerView : MonoBehaviour
 	public float runSpeed = 10f;
 	public float jumpHeight = 2f;
 	public float gravity = -20f;
+	
+	[Header("States")]
+	[SerializeReference] [SubclassSelector]
+	private List<CharacterStateHandler> states = new();
+
+	[Header("Look")] 
+	public float mouseSensitivity = 2f;
+	public float lookXLimit = 45f;
 
 	[SerializeField] 
 	private CharacterController characterController;
 	
 	[SerializeField] 
-	private CharacterStateController characterStateController;
+	private Collider characterCollider;
 
-	[Header("Look")] 
-	public float mouseSensitivity = 2f;
-	public float lookXLimit = 45f;
-	[SerializeField] private Transform cameraRoot;
+	[SerializeField] 
+	private Transform cameraRoot;
+
 	public CharacterController CharacterController => characterController;
-	public CharacterStateController CharacterStateController => characterStateController;
 	public Transform CameraRoot => cameraRoot;
+
+
+	public void SetColliderEnabled(bool isEnabled)
+	{
+		characterCollider.enabled = isEnabled;
+	}
+	
+	public void SetCharacterControllerEnabled(bool isEnabled)
+	{
+		characterController.enabled = isEnabled;
+	}
 }
