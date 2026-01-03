@@ -11,6 +11,14 @@ public class PlayerStateModel
 	public event Action<CharacterState> StateRemoved;
 
 	public IReadOnlyList<CharacterState> CurrentStates => currentStates.AsReadOnly();
+
+	public void FillCharacterStatesDict(CharacterStateHandler[] stateHandlers)
+	{
+		foreach (var characterStateHandler in stateHandlers)
+		{
+			dictStates[characterStateHandler.State] = characterStateHandler;
+		}
+	}
 	
 	public bool HasState(CharacterState state)
 	{

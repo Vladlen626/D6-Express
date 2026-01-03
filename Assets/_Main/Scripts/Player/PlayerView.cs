@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,8 +27,17 @@ public class PlayerView : MonoBehaviour
 	[SerializeField] 
 	private Transform cameraRoot;
 
+	public CharacterStateHandler[] CharacterStateHandlers => states.ToArray();
 	public CharacterController CharacterController => characterController;
 	public Transform CameraRoot => cameraRoot;
+
+	public void Initialize()
+	{
+		foreach (var characterStateHandler in states)
+		{
+			characterStateHandler.Init(this);
+		}
+	}
 
 
 	public void SetColliderEnabled(bool isEnabled)

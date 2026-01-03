@@ -135,7 +135,6 @@ GameObject:
   - component: {fileID: 6681934855089884787}
   - component: {fileID: 3369340536190415365}
   - component: {fileID: 8885480304943086778}
-  - component: {fileID: 3411494938860463788}
   - component: {fileID: 4243707368022263982}
   m_Layer: 0
   m_Name: PlayerPrefab
@@ -225,11 +224,35 @@ MonoBehaviour:
   runSpeed: 10
   jumpHeight: 2
   gravity: -20
-  characterController: {fileID: 6681934855089884787}
-  characterStateController: {fileID: 3411494938860463788}
+  states:
+  - rid: 7843034222167326949
+  - rid: 7843034222167326950
+  - rid: 7843034222167326951
+  - rid: 7843034222167326952
+  - rid: 7843034222167326953
   mouseSensitivity: 0.075
   lookXLimit: 45
+  characterController: {fileID: 6681934855089884787}
+  characterCollider: {fileID: 1353585870120323076}
   cameraRoot: {fileID: 3656734799142745478}
+  references:
+    version: 2
+    RefIds:
+    - rid: 7843034222167326949
+      type: {class: CharacterStateHandlerDiceGame, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7843034222167326950
+      type: {class: CharacterStateHandlerLaying, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7843034222167326951
+      type: {class: CharacterStateHandlerSitting, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7843034222167326952
+      type: {class: CharacterStateHandlerSleeping, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7843034222167326953
+      type: {class: CharacterStateHandlerSpeaking, ns: , asm: Assembly-CSharp}
+      data: 
 --- !u!114 &8885480304943086778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,42 +293,6 @@ MonoBehaviour:
       data: 
     - rid: 8683858885762875635
       type: {class: InteractableActionDiceGame, ns: , asm: Assembly-CSharp}
-      data: 
---- !u!114 &3411494938860463788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3864496680010171841}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c17aa619c1a8a9a4e86c629f244a2444, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterStateController
-  states:
-  - rid: 1463701297492918342
-  - rid: 1463701297492918343
-  - rid: 8683858885762875632
-  - rid: 704733112204525641
-  - rid: 704733112204525642
-  references:
-    version: 2
-    RefIds:
-    - rid: 704733112204525641
-      type: {class: CharacterStateHandlerSpeaking, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 704733112204525642
-      type: {class: CharacterStateHandlerSleeping, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 1463701297492918342
-      type: {class: CharacterStateHandlerSitting, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 1463701297492918343
-      type: {class: CharacterStateHandlerLaying, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 8683858885762875632
-      type: {class: CharacterStateHandlerDiceGame, ns: , asm: Assembly-CSharp}
       data: 
 --- !u!114 &4243707368022263982
 MonoBehaviour:

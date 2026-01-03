@@ -9,4 +9,9 @@
 		InventoryModel = new InventoryModel();
 		PlayerStateModel = new PlayerStateModel();
 	}
+
+	public void SetupCharacterStateModel(CharacterStateHandler characterStateHandler)
+	{
+		
+	}
 }
