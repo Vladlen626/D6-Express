@@ -39,6 +39,11 @@ public class PlayerView : MonoBehaviour
 		}
 	}
 
+	public void SetCharacterGhost(bool isGhost)
+	{
+		SetColliderEnabled(!isGhost);
+		SetCharacterControllerEnabled(!isGhost);
+	}
 
 	public void SetColliderEnabled(bool isEnabled)
 	{

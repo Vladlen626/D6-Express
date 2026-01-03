@@ -15,14 +15,12 @@ public abstract class CharacterStateHandler
 
 	public virtual void Enter()
 	{
-		PlayerView.SetCharacterControllerEnabled(false);
-		PlayerView.SetColliderEnabled(false);
+		PlayerView.SetCharacterGhost(true);
 	}
 
 	public virtual void Exit()
 	{
-		PlayerView.SetCharacterControllerEnabled(true);
-		PlayerView.SetColliderEnabled(true);
+		PlayerView.SetCharacterGhost(false);
 	}
 
 	public virtual void OnInit()
