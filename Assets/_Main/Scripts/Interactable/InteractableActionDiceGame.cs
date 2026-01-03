@@ -31,12 +31,12 @@ public class InteractableActionDiceGame : InteractionAction
 		PlayerStateModel.TryRemoveState(CharacterState.TRANSITION);
 		PlayerStateModel.TryAddState(CharacterState.DICE_GAME);
 
-		inputService.OnMoved += OnMoved;
+		inputService.OnInteractPerformed += OnInteractHoldCompleted;
 	}
 
 	protected override async void StopInteractInternal(IInteractable interactable)
 	{
-		inputService.OnMoved -= OnMoved;
+		inputService.OnInteractPerformed -= OnInteractHoldCompleted;
 
 		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
 		var rotateTask = Interactor.transform.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
@@ -46,8 +46,13 @@ public class InteractableActionDiceGame : InteractionAction
 		PlayerStateModel.TryRemoveState(CharacterState.DICE_GAME);
 	}
 
-	private void OnMoved(Vector2 dir)
+	private void OnInteractHoldCompleted()
 	{
+		if (!PlayerStateModel.HasState(CharacterState.DICE_GAME))
+		{
+			return;
+		}
+
 		StopInteract(null);
 	}
 }

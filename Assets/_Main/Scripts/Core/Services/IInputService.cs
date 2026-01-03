@@ -9,6 +9,7 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnJumpReleased;
 		public event Action OnPausePressed;
 		public event Action OnInteractPressed;
+		public event Action OnInteractPerformed;
 		public event Action<Vector2> OnMoved;
 		public event Action<Vector2> OnLooked;
 

@@ -113,7 +113,10 @@ public class Interactor : MonoBehaviour
 	{
 		if (currentInteractable != null)
 		{
-			TryGetAction(currentInteractable, out var action);
+			if (!TryGetAction(currentInteractable, out var action))
+			{
+				return;
+			};
 
 			actionStack.Push(action);
 

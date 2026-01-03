@@ -125,7 +125,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""id"": ""852140f2-7766-474d-8707-702459ba45f3"",
                     ""expectedControlType"": """",
                     ""processors"": """",
-                    ""interactions"": ""Tap(duration=1.401298E-45,pressPoint=1.401298E-45)"",
+                    ""interactions"": ""Tap(duration=1.401298E-45,pressPoint=1.401298E-45),Hold(duration=2)"",
                     ""initialStateCheck"": false
                 },
                 {

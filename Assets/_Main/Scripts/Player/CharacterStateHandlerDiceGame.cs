@@ -2,7 +2,6 @@
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
 using PlatformCore.Services.UI;
-using UnityEngine;
 
 [Serializable]
 public class CharacterStateHandlerDiceGame : CharacterStateHandler
