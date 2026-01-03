@@ -6,6 +6,11 @@ namespace PlatformCore.Services.Factory
 {
 	public static class ResourcePaths
 	{
+		public static class Images
+		{
+			public const string TrainLeaving = "Images/TrainLeaving";
+		}
+
 		public static class Items
 		{
 			public const string DicePrefab = "Items/DicePrefab";
@@ -28,6 +33,7 @@ namespace PlatformCore.Services.Factory
 		{
 			public const string UICursorView = "UI/UICursorView";
 			public const string UILevelView = "UI/UILevelView";
+			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";
 			public const string UIPlayerHud = "UI/UIPlayerHud";
 			public const string UISettings = "UI/UISettings";
