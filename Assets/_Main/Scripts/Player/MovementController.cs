@@ -34,7 +34,8 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	public void Activate()
 	{
-		playerModel.PlayerStateModel.StatesChanged += OnCharacterStateChanged;
+		playerModel.PlayerStateModel.StateAdded += OnCharacterStateChanged;
+		playerModel.PlayerStateModel.StateRemoved += OnCharacterStateChanged;
 		cursorService.LockCursor();
 
 		inputService.OnLooked += OnLooked;
@@ -44,7 +45,8 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	{
 		inputService.OnLooked -= OnLooked;
 		
-		playerModel.PlayerStateModel.StatesChanged  -= OnCharacterStateChanged;
+		playerModel.PlayerStateModel.StateAdded -= OnCharacterStateChanged;
+		playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateChanged;
 		cursorService.UnlockCursor();
 	}
 
@@ -73,13 +75,12 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 		transform.rotation *= Quaternion.Euler(0, input.x * playerView.mouseSensitivity, 0);
 	}
 
-	private void OnCharacterStateChanged()
+	private void OnCharacterStateChanged(CharacterState state)
 	{
-		// Todo: Нужно перенести на новую систему.
-		/*if (oldCharacterState == CharacterState.DICE_GAME || newCharacterState == CharacterState.DICE_GAME)
+		if (state == CharacterState.DICE_GAME)
 		{
 			ResetCameraRotation();
-		}*/
+		}
 	}
 
 	private void ResetCameraRotation()

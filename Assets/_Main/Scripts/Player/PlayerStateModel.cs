@@ -22,6 +22,11 @@ public class PlayerStateModel
 	
 	public bool HasState(CharacterState state)
 	{
+		if (state == CharacterState.DEFAULT && currentStates.Count == 0)
+		{
+			return true;
+		}
+
 		return currentStates.Contains(state);
 	}
 

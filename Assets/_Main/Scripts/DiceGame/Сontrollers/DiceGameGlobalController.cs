@@ -44,7 +44,8 @@ namespace _Main.Scripts.Dice
 
 		public void Activate()
 		{
-			playerModel.PlayerStateModel.StatesChanged  += OnCharacterStateChangedHandler;
+			playerModel.PlayerStateModel.StateAdded  += OnCharacterStateAddedHandler;
+			playerModel.PlayerStateModel.StateRemoved  += OnCharacterStateRemovedHandler;
 			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
 			diceGameModel.OnGameConditionPassed += OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed += OnGameConditionFailedHandler;
@@ -53,7 +54,8 @@ namespace _Main.Scripts.Dice
 
 		public void Deactivate()
 		{
-			playerModel.PlayerStateModel.StatesChanged -= OnCharacterStateChangedHandler;
+			playerModel.PlayerStateModel.StateAdded -= OnCharacterStateAddedHandler;
+			playerModel.PlayerStateModel.StateRemoved  -= OnCharacterStateRemovedHandler;
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.OnGameConditionPassed -= OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed -= OnGameConditionFailedHandler;
@@ -77,17 +79,20 @@ namespace _Main.Scripts.Dice
 			sceneContext.DiceGameTableView.SwitchGameStateView(diceGameModel.DiceGameState);
 		}
 
-		private void OnCharacterStateChangedHandler()
+		private void OnCharacterStateAddedHandler(CharacterState state)
 		{
-			// Todo: Переделать на новую систему стейтов
-			/*if (newCharacterState == CharacterState.DICE_GAME)
+			if (state == CharacterState.DICE_GAME)
 			{
 				StartDiceGame().Forget();
 			}
-			else if (oldCharacterState == CharacterState.DICE_GAME)
+		}
+
+		private void OnCharacterStateRemovedHandler(CharacterState state)
+		{
+			if (state == CharacterState.DICE_GAME)
 			{
 				StopDiceGame();
-			}*/
+			}
 		}
 
 		private async UniTask StartDiceGame()

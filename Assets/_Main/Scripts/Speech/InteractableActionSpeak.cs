@@ -36,7 +36,6 @@ public class InteractableActionSpeak : InteractionAction
 		Id = -1;
 
 		PlayerStateModel.TryRemoveState(CharacterState.SPEAKING);
-		PlayerStateModel.TryAddState(CharacterState.DEFAULT);
 
 		base.StopInteractInternal(interactable);
 	}

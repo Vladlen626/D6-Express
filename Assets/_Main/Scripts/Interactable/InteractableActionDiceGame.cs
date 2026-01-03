@@ -44,7 +44,6 @@ public class InteractableActionDiceGame : InteractionAction
 		await UniTask.WhenAll(moveTask, rotateTask);
 
 		PlayerStateModel.TryRemoveState(CharacterState.DICE_GAME);
-		PlayerStateModel.TryAddState(CharacterState.DEFAULT);
 	}
 
 	private void OnMoved(Vector2 dir)

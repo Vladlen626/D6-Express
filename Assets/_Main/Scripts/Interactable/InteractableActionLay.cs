@@ -41,7 +41,6 @@ public class InteractableActionLay : InteractionAction
 		await UniTask.WhenAll(moveTask, rotateTask);
 
 		PlayerStateModel.TryRemoveState(CharacterState.LAYING);
-		PlayerStateModel.TryAddState(CharacterState.DEFAULT);
 	}
 
 	private void OnMoved(Vector2 dir)
