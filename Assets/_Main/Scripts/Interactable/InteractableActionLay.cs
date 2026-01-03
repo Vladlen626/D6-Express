@@ -18,12 +18,12 @@ public class InteractableActionLay : InteractionAction
 
     public override bool CanInteract(IInteractable interactable)
     {
-        return interactable is InteractableLayable && stateController.State == CharacterState.DEFAULT;
+        return interactable is InteractableLayable && !stateController.HasState(CharacterState.LAYING);
     }
 
     protected override async void StartInteractInternal(IInteractable interactable)
     {
-        stateController.TryEnterState(CharacterState.TRANSITION);
+        stateController.TryAddState(CharacterState.TRANSITION);
 
         lastPos = Interactor.transform.position;
 
@@ -34,7 +34,8 @@ public class InteractableActionLay : InteractionAction
 
         await UniTask.WhenAll(moveTask, rotateTask);
 
-        stateController.TryEnterState(CharacterState.LAYING);
+        stateController.TryRemoveState(CharacterState.TRANSITION);
+        stateController.TryAddState(CharacterState.LAYING);
         inputService.OnMoved += OnMoved;
     }
 
@@ -47,7 +48,8 @@ public class InteractableActionLay : InteractionAction
 
         await UniTask.WhenAll(moveTask, rotateTask);
 
-        Interactor.GetComponent<CharacterStateController>().TryEnterState(CharacterState.DEFAULT);
+		stateController.TryRemoveState(CharacterState.LAYING);
+		stateController.TryAddState(CharacterState.DEFAULT);
     }
 
     private void OnMoved(Vector2 dir)

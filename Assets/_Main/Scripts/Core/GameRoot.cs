@@ -60,9 +60,9 @@ namespace _Main.Scripts.Core
 			var controllersList = new List<IBaseController>();
 			// --------------
 
-			var levelModel = LevelFactory.CreateLevelModel();
-			var diceGameModel = DiceFactory.CreateDiceGameModel();
 			var playerModel = PlayerFactory.CreatePlayerModel();
+			var levelModel = LevelFactory.CreateLevelModel(playerModel.InventoryModel);
+			var diceGameModel = DiceFactory.CreateDiceGameModel();
 
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
@@ -98,13 +98,12 @@ namespace _Main.Scripts.Core
 
 			//Player
 			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService);
-			playerView.CharacterStateController.Initialize(playerModel);
+			playerView.CharacterStateController.Initialize();
 			cameraService.AttachTo(playerView.CameraRoot);
 			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
 
 			// Level
 			controllersList.AddRange(LevelFactory.GetSleepControllers(levelModel, playerView));
-			controllersList.Add(LevelFactory.GetLevelTransitionController(levelModel, playerView));
 			controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel,
 				playerModel, diceGameModel, playerView));
 

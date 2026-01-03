@@ -5,14 +5,14 @@ using PlatformCore.Services.UI;
 
 public static class LevelFactory
 {
-    public static LevelModel CreateLevelModel()
+    public static LevelModel CreateLevelModel(InventoryModel inventoryModel)
     {
         // TODO: в настройки
         var ticksPerDay = 3;
         int days = 3;
         int cashGoal = 500;
 
-        var levelModel = new LevelModel(ticksPerDay, days, cashGoal);
+        var levelModel = new LevelModel(ticksPerDay, days, cashGoal, inventoryModel);
         return levelModel;
     }
 
@@ -21,12 +21,6 @@ public static class LevelFactory
     {
         yield return new LevelViewController(uiService, levelModel, sceneContext.Sun, sceneContext.TrainBlock, sceneContext.StationBlock, playerView, sceneContext.PlayerTrainSpawnPosition, sceneContext.PlayerStationSpawnPosition);
         yield return new LevelController(levelModel, playerModel, diceGameModel);
-    }
-
-    public static IBaseController GetLevelTransitionController(LevelModel levelModel, PlayerView playerView)
-    {
-        var interactor = playerView.GetComponent<Interactor>();
-        return new SceneTransitionController(interactor, levelModel);
     }
 
     public static IEnumerable<IBaseController> GetSleepControllers(LevelModel levelModel, PlayerView playerView)

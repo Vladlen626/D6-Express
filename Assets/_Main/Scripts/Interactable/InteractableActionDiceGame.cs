@@ -19,12 +19,12 @@ public class InteractableActionDiceGame : InteractionAction
 
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable is InteractableDiceGame && stateController.State == CharacterState.DEFAULT;
+		return interactable is InteractableDiceGame && stateController.HasState(CharacterState.DEFAULT);
 	}
 
 	protected override async void StartInteractInternal(IInteractable interactable)
 	{
-		stateController.TryEnterState(CharacterState.TRANSITION);
+		stateController.TryAddState(CharacterState.TRANSITION);
 
 		lastPos = Interactor.transform.position;
 		lastRot = Interactor.transform.rotation;
@@ -36,7 +36,8 @@ public class InteractableActionDiceGame : InteractionAction
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 
-		stateController.TryEnterState(CharacterState.DICE_GAME);
+        stateController.TryRemoveState(CharacterState.TRANSITION);
+		stateController.TryAddState(CharacterState.DICE_GAME);
 
 		inputService.OnMoved += OnMoved;
 	}
@@ -50,7 +51,8 @@ public class InteractableActionDiceGame : InteractionAction
 	
 		await UniTask.WhenAll(moveTask, rotateTask);
 
-		stateController.TryEnterState(CharacterState.DEFAULT);
+		stateController.TryRemoveState(CharacterState.DICE_GAME);
+		stateController.TryAddState(CharacterState.DEFAULT);
 	}
 
 	private void OnMoved(Vector2 dir)

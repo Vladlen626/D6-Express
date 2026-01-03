@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,40 +8,59 @@ public class CharacterStateController : MonoBehaviour
     [SubclassSelector]
     private List<CharacterStateHandler> states = new();
 
+    private readonly List<CharacterState> currentStates = new();
     private readonly Dictionary<CharacterState, CharacterStateHandler> dictStates = new();
 
-    private PlayerModel playerModel;
-    public CharacterState State => playerModel.currentCharacterState;
+    public event Action StatesChanged;
+    public event Action<CharacterState> StateAdded;
+    public event Action<CharacterState> StateRemoved;
 
-    public void Initialize(PlayerModel playerModel)
+    public IReadOnlyList<CharacterState> CurrentStates => currentStates.AsReadOnly();
+
+    public bool HasState(CharacterState state)
     {
-        this.playerModel = playerModel;
-        
+        return currentStates.Contains(state);
+    }
+
+    public void Initialize()
+    {
         foreach (var item in states)
         {
             item.Init(this);
             dictStates[item.State] = item;
         }
 
-        EnterState(CharacterState.DEFAULT);
+        TryAddState(CharacterState.DEFAULT);
     }
 
-    public void TryEnterState(CharacterState state)
+    public void TryAddState(CharacterState state)
     {
-        EnterState(state);
-    }
-
-    private void EnterState(CharacterState state)
-    {
-        if (dictStates.ContainsKey(State))
-        {
-            dictStates[State].Exit();
-        }
+        if (currentStates.Contains(state))
+            return;
 
         if (dictStates.ContainsKey(state))
         {
-            dictStates[state].Enter();
+            var stateHandler = dictStates[state];
+            stateHandler.Enter();
         }
-        playerModel.SetCharacterState(state);
+
+        currentStates.Add(state);
+
+        StateAdded?.Invoke(state);
+        StatesChanged?.Invoke();
+    }
+
+    public void TryRemoveState(CharacterState state)
+    {
+        if (dictStates.ContainsKey(state))
+        {
+            var stateHandler = dictStates[state];
+            stateHandler.Exit();
+        }
+
+        currentStates.Remove(state);
+
+        StateRemoved?.Invoke(state);
+        StatesChanged?.Invoke();
     }
 }

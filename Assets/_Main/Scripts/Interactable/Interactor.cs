@@ -66,6 +66,20 @@ public class Interactor : MonoBehaviour
 		inputService.OnInteractPressed += OnInteract;
 	}
 
+	public void StopCurrentAction()
+	{
+		if (actionStack.Count > 0)
+		{
+			var action = actionStack.Pop();
+
+			action.Ended -= OnInteractionEnded;
+			action.Started -= OnInteractionStarted;
+
+			currentInteractable?.StopInteract(this);
+			action.StopInteract(currentInteractable);
+		}
+	}
+
 	private void Update()
 	{
 		HandleInteraction();

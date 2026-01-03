@@ -18,12 +18,12 @@ public class InteractableActionSit : InteractionAction
 
     public override bool CanInteract(IInteractable interactable)
     {
-        return interactable is InteractableSittable && stateController.State == CharacterState.DEFAULT;
+        return interactable is InteractableSittable && !stateController.HasState(CharacterState.SITTING);
     }
 
     protected override async void StartInteractInternal(IInteractable interactable)
     {
-        stateController.TryEnterState(CharacterState.TRANSITION);
+        stateController.TryAddState(CharacterState.TRANSITION);
 
         lastPos = Interactor.transform.position;
 
@@ -34,7 +34,8 @@ public class InteractableActionSit : InteractionAction
 
         await UniTask.WhenAll(moveTask, rotateTask);
 
-        stateController.TryEnterState(CharacterState.SITTING);
+        stateController.TryRemoveState(CharacterState.TRANSITION);
+        stateController.TryAddState(CharacterState.SITTING);
 
         inputService.OnMoved += OnMoved;
     }
@@ -45,7 +46,8 @@ public class InteractableActionSit : InteractionAction
 
         await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
 
-        stateController.TryEnterState(CharacterState.DEFAULT);
+		stateController.TryRemoveState(CharacterState.SITTING);
+		stateController.TryAddState(CharacterState.DEFAULT);
     }
 
     private void OnMoved(Vector2 dir)

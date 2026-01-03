@@ -9,8 +9,6 @@ public class LevelController : IBaseController, IActivatable
 	private readonly PlayerModel playerModel;
 	private readonly DiceGameModel diceGameModel;
 
-	private InventoryModel inventoryModel => playerModel.InventoryModel;
-
 	public LevelController(LevelModel levelModel, PlayerModel playerModel, DiceGameModel diceGameModel)
 	{
 		this.levelModel = levelModel;
@@ -44,9 +42,9 @@ public class LevelController : IBaseController, IActivatable
 		}
 	}
 
-	private void DayLevelFinishedHandler()
+	private void DayLevelFinishedHandler(bool result)
 	{
-		if (inventoryModel.CashCount >= levelModel.CashGoal)
+		if (result)
 		{
 			Debug.Log("YOU WIN");
 		}
