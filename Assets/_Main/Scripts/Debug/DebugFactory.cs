@@ -14,8 +14,9 @@ public static class DebugFactory
         var switchToStation = new DbgMenuItemSwitchToStation(levelModel);
         var switchToTrain = new DbgMenuItemSwitchToTrain(levelModel);
         var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(playerModel, playerView);
+        var openVariablesWindow = new DbgMenuItemOpenDebugVariablesWindow(playerModel, playerView);
         
-        var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp, switchToStation, switchToTrain, openPlayerWindow);
+        var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp, switchToStation, switchToTrain, openPlayerWindow, openVariablesWindow);
         var menu = new DebugMenuUIModel(gameMenu);
 
         yield return new DebugMenuUIController(inputService, cursorService, menu);

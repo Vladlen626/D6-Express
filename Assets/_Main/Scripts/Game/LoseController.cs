@@ -43,7 +43,14 @@ public class LoseController : BaseContextController<UILoseView>
     {
         if (!result)
         {
-            ShowContext();
+            if (DebugVariables.ShowLoseView)
+            {
+                ShowContext();
+            }
+            else
+            {
+                levelModel.SetLevelState(LevelState.STATION);
+            }
         }
     }
 

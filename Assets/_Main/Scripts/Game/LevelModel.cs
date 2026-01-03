@@ -47,7 +47,6 @@ public class LevelModel
 
             if (inventoryModel.CashCount > CashGoal)
             {
-                SetLevelState(LevelState.STATION);
                 LevelFinished?.Invoke(true);
             }
             else
