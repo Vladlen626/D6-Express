@@ -14,6 +14,9 @@ public class DiceTableView : MonoBehaviour
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
 	[SerializeField] private Transform betStateHandler;
+	
+	[Header("Turn")]
+	[SerializeField] private TextMeshPro turnText;
 
 	[Header("Score")]
 	[SerializeField] private TextMeshPro targetScoreText;
@@ -100,6 +103,11 @@ public class DiceTableView : MonoBehaviour
 	public void SetPreviewPointsText(string text)
 	{
 		previewScoreText.text = text;
+	}
+
+	public void SetTurnText(int currentTurn, int maxTurn)
+	{
+		turnText.text = $"Turns: {currentTurn}/{maxTurn}";
 	}
 
 	public void SetCurrentBetText(string text)

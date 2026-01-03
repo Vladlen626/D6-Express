@@ -34,7 +34,7 @@ namespace _Main.Scripts.Core
 
 			var diceGameControllers = new IBaseController[]
 			{
-				new DiceGameProcessController(tableModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger),
+				new DiceGameProcessController(tableModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger, diceGameModel),
 				new DiceGameScoreViewController(tableModel, sceneContext.DiceGameTableView, diceGameModel),
 				new DiceGameResultController(diceGameModel, tableModel)
 			};

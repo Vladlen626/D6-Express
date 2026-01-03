@@ -20,29 +20,16 @@ public class LevelController : IBaseController, IActivatable
 
 	public void Activate()
 	{
-		levelModel.DayChanged += DayChangedHandler;
-		diceGameModel.OnGameConditionPassed += OnDiceGameConditionPassedHandler;
-		diceGameModel.OnGameConditionFailed += OnDiceGameConditionFailedHandler;
 		levelModel.LevelStateChanged += OnLevelStateChanged;
+		levelModel.LevelFinished += DayLevelFinishedHandler;
 	}
 
 	public void Deactivate()
 	{
 		levelModel.LevelStateChanged -= OnLevelStateChanged;
-		levelModel.DayChanged -= DayChangedHandler;
-		diceGameModel.OnGameConditionPassed -= OnDiceGameConditionPassedHandler;
-		diceGameModel.OnGameConditionFailed += OnDiceGameConditionFailedHandler;
+		levelModel.LevelFinished -= DayLevelFinishedHandler;
 	}
-
-	private void OnDiceGameConditionPassedHandler()
-	{
-		inventoryModel.GiveCash(diceGameModel.BetSize);
-	}
-
-	private void OnDiceGameConditionFailedHandler()
-	{
-		inventoryModel.TakeCash(diceGameModel.BetSize);
-	}
+	
 
 	private void OnLevelStateChanged()
 	{
@@ -57,7 +44,7 @@ public class LevelController : IBaseController, IActivatable
 		}
 	}
 
-	private void DayChangedHandler()
+	private void DayLevelFinishedHandler()
 	{
 		if (inventoryModel.CashCount >= levelModel.CashGoal)
 		{

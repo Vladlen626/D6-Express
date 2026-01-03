@@ -19,6 +19,7 @@ namespace _Main.Scripts.Dice
 		public void Activate()
 		{
 			diceGameModel.OnTargetPointsChanged += OnTargetPointsChangedHandler;
+			diceGameModel.OnCurrentTurnChanged += OnCurrentTurnChangedHandler;
 			tableModel.OnBankedPointsChanged += OnBankedPointsChangedHandler;
 			tableModel.OnTurnPointsChanged += OnTurnPointsChangedHandler;
 			tableModel.OnPreviewPointsChanged += OnPreviewPointsChangedHandler;
@@ -27,11 +28,13 @@ namespace _Main.Scripts.Dice
 			OnTargetPointsChangedHandler();
 			OnTurnPointsChangedHandler();
 			OnPreviewPointsChangedHandler();
+			OnCurrentTurnChangedHandler();
 		}
 
 		public void Deactivate()
 		{
 			diceGameModel.OnTargetPointsChanged -= OnTargetPointsChangedHandler;
+			diceGameModel.OnCurrentTurnChanged -= OnCurrentTurnChangedHandler;
 			tableModel.OnBankedPointsChanged -= OnBankedPointsChangedHandler;
 			tableModel.OnTurnPointsChanged -= OnTurnPointsChangedHandler;
 			tableModel.OnPreviewPointsChanged -= OnPreviewPointsChangedHandler;
@@ -45,6 +48,11 @@ namespace _Main.Scripts.Dice
 		private void OnTargetPointsChangedHandler()
 		{
 			diceTableView.SetTargetPointsText(diceGameModel.TargetPoints.ToString());
+		}
+
+		private void OnCurrentTurnChangedHandler()
+		{
+			diceTableView.SetTurnText(diceGameModel.CurrentTurn, diceGameModel.MaxTurnCount);
 		}
 
 		private void OnTurnPointsChangedHandler()

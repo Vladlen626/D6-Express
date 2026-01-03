@@ -7,24 +7,29 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceGameProcessController : IBaseController, IActivatable
 	{
+		private readonly ILoggerService logger;
+		private readonly DiceGameModel diceGameModel;
 		private readonly TableModel tableModel;
 
 		private readonly DiceModel[] diceModels;
 		private readonly DiceTableView tableView;
 
 		private readonly DicePoolLogic dicePool;
-		private readonly ILoggerService logger;
+
+		private bool isHotDiceRoll;
 
 		public DiceGameProcessController(
 			TableModel tableModel,
 			DiceModel[] diceModels,
 			DiceTableView tableView,
-			ILoggerService logger)
+			ILoggerService logger,
+			DiceGameModel  diceGameModel)
 		{
 			this.tableModel = tableModel;
 			this.diceModels = diceModels;
 			this.tableView = tableView;
 			this.logger = logger;
+			this.diceGameModel = diceGameModel;
 
 			dicePool = new DicePoolLogic(diceModels);
 		}
@@ -61,63 +66,25 @@ namespace _Main.Scripts.Dice
 
 		private void HandleRoll()
 		{
-			logger?.Log("[DiceGameController] 🎲 ReRoll button pressed");
+			logger?.Log("[DiceGameController] Handle roll");
 
-			// 1. Сохраняем выбранные кубы
-			var selectedDice = dicePool.GetSelected();
-			if (selectedDice.Length > 0)
-			{
-				var selectedValues = new int[selectedDice.Length];
-				for (var i = 0; i < selectedDice.Length; i++)
-				{
-					selectedValues[i] = selectedDice[i].CurrentValue;
-				}
-
-				// ИЗМЕНЕНО: проверка через CalculateScore
-				int points = DiceGameUtils.CalculateScore(selectedValues);
-				if (points < 0)
-				{
-					logger?.LogWarning("[DiceGameController] Invalid selection!");
-					return;
-				}
-
-				tableModel.AddTurnPoints(points);
-				logger?.Log($"[DiceGameController] Scored {points} points. Turn total: {tableModel.TurnPoints}");
-
-				dicePool.BankSelected();
-			}
-
-			// 2. Очищаем превью
+			bool isHotDice = TrySaveSelected();
 			tableModel.SetPreviewPoints(0);
 
-			// 3. Проверка на HOT DICE (все кубы забанкованы)
-			if (dicePool.AllBanked())
+			if (isHotDice)
 			{
-				logger?.Log("[DiceGameController] 🔥 HOT DICE! Resetting all dice.");
 				tableModel.ResetAllPositions();
 				dicePool.ResetAll();
 			}
 
-			// 4. Бросаем оставшиеся кубы
-			var unbankedDice = dicePool.GetUnbanked();
-			foreach (var dice in unbankedDice)
+			var diceToRoll = dicePool.GetUnbanked();
+			foreach (var dice in diceToRoll)
 			{
 				dice.Roll();
 			}
 
-			// 5. Проверка на BUST
-			var rolledValues = new int[unbankedDice.Length];
-			for (var i = 0; i < unbankedDice.Length; i++)
+			if (CheckBustAndEndTurn(diceToRoll))
 			{
-				rolledValues[i] = unbankedDice[i].CurrentValue;
-			}
-
-			// ИЗМЕНЕНО: используем RollHasAnyScore вместо IsBust
-			if (!DiceGameUtils.RollHasAnyScore(rolledValues))
-			{
-				logger?.Log("[DiceGameController] ❌ BUST! Turn points lost.");
-				tableModel.ResetTurn();
-				HandlePass();
 				return;
 			}
 
@@ -126,43 +93,75 @@ namespace _Main.Scripts.Dice
 
 		private void HandlePass()
 		{
-			logger?.Log("[DiceGameController] ✋ Pass button pressed");
+			logger?.Log("[DiceGameController] Handle pass");
+			TrySaveSelected();
 
-			// 1. Сохраняем выбранные кубы (если есть)
-			var selectedDice = dicePool.GetSelected();
-			if (selectedDice.Length > 0)
-			{
-				var selectedValues = new int[selectedDice.Length];
-				for (var i = 0; i < selectedDice.Length; i++)
-				{
-					selectedValues[i] = selectedDice[i].CurrentValue;
-				}
-
-				// ИЗМЕНЕНО: проверка через CalculateScore
-				int points = DiceGameUtils.CalculateScore(selectedValues);
-				if (points > 0)
-				{
-					tableModel.AddTurnPoints(points);
-					logger?.Log($"[DiceGameController] Scored {points} points. Turn total: {tableModel.TurnPoints}");
-				}
-			}
-
-			// 2. Банкуем очки хода в общий счет
 			tableModel.AddBankedPoints(tableModel.TurnPoints);
-			logger?.Log(
-				$"[DiceGameController] Banked {tableModel.TurnPoints} points. Total banked: {tableModel.BankedPoints}");
+			diceGameModel.IncreaseCurrentTurn();
 
-			// 3. Сбрасываем ход
 			tableModel.ResetTurn();
 			dicePool.ResetAll();
 
-			// 4. Бросаем все кубы для начала нового хода
 			foreach (var dice in diceModels)
 			{
 				dice.Roll();
 			}
 
 			UpdateUI();
+		}
+
+		private bool CheckBustAndEndTurn(DiceModel[] dice)
+		{
+			var values = new int[dice.Length];
+			for (var i = 0; i < dice.Length; i++)
+			{
+				values[i] = dice[i].CurrentValue;
+			}
+
+			if (DiceGameUtils.RollHasAnyScore(values))
+			{
+				return false;
+			}
+
+			logger?.Log("[DiceGameController] BUST!");
+
+			tableModel.ResetTurn();
+			diceGameModel.IncreaseCurrentTurn();
+			dicePool.ResetAll();
+
+			foreach (var d in diceModels)
+			{
+				d.Roll();
+			}
+
+			UpdateUI();
+			return true;
+		}
+
+		private bool TrySaveSelected()
+		{
+			var selected = dicePool.GetSelected();
+			if (selected.Length == 0)
+			{
+				return false;
+			}
+
+			var values = new int[selected.Length];
+			for (var i = 0; i < selected.Length; i++)
+			{
+				values[i] = selected[i].CurrentValue;
+			}
+
+			int points = DiceGameUtils.CalculateScore(values);
+			if (points <= 0)
+			{
+				return false;
+			}
+
+			tableModel.AddTurnPoints(points);
+			dicePool.BankSelected();
+
+			return dicePool.AllBanked();
 		}
 
 		private void UpdateUI()

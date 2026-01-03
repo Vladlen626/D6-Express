@@ -5,6 +5,7 @@ using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
 using PlatformCore.Services.Factory;
+using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
@@ -12,6 +13,7 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceGameModel diceGameModel;
 		private readonly PlayerModel playerModel;
+		private readonly LevelModel levelModel;
 
 		private readonly IObjectFactory objectFactory;
 		private readonly ILoggerService loggerService;
@@ -28,10 +30,11 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> betControllers = new();
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
-			ServiceLocator serviceLocator)
+			ServiceLocator serviceLocator, LevelModel levelModel)
 		{
 			this.diceGameModel = diceGameModel;
 			this.playerModel = playerModel;
+			this.levelModel = levelModel;
 			this.sceneContext = sceneContext;
 			dicePositionsHandler = sceneContext.DiceGameTableView.DicePositionsHandler;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
@@ -43,13 +46,30 @@ namespace _Main.Scripts.Dice
 		{
 			playerModel.OnCharacterStateChanged += OnCharacterStateChangedHandler;
 			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
+			diceGameModel.OnGameConditionPassed += OnGameConditionPassedHandler;
+			diceGameModel.OnGameConditionFailed += OnGameConditionFailedHandler;
 			OnDiceGameStateChangedHandler();
 		}
-		
+
 		public void Deactivate()
 		{
 			playerModel.OnCharacterStateChanged -= OnCharacterStateChangedHandler;
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
+			diceGameModel.OnGameConditionPassed -= OnGameConditionPassedHandler;
+			diceGameModel.OnGameConditionFailed -= OnGameConditionFailedHandler;
+		}
+
+		private void OnGameConditionPassedHandler()
+		{
+			playerModel.InventoryModel.GiveCash(diceGameModel.BetSize * 2);
+			StopDiceGame();
+			Debug.Log("Ура плюс бабки");
+		}
+		
+		private void OnGameConditionFailedHandler()
+		{
+			StopDiceGame();
+			Debug.Log("Фак минус бабки");
 		}
 
 		private void OnDiceGameStateChangedHandler()
@@ -72,7 +92,7 @@ namespace _Main.Scripts.Dice
 		private async UniTask StartDiceGame()
 		{
 			// TODO: Перенести в конфиги. Тут в целом подумать надо над переработкой
-			int targetScore = 4000;
+			int targetScore = 3000;
 			int maxTurnCount = 10;
 			
 			// Можем потом прикрутить зависимости от уровня (вагона)
@@ -111,6 +131,7 @@ namespace _Main.Scripts.Dice
 
 			await UniTask.WaitUntil(() => diceGameModel.DiceGameState != DiceGameState.BET);
 
+			playerModel.InventoryModel.TakeCash(diceGameModel.BetSize);
 			ClenUpBetControllers();
 		}
 
@@ -130,6 +151,12 @@ namespace _Main.Scripts.Dice
 
 		private void StopDiceGame()
 		{
+			if (!levelModel.IsLevelFinished)
+			{
+				levelModel.IncrementTicks();
+			}
+
+			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
 			ResetModels();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();

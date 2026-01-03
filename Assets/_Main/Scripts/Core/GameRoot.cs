@@ -4,7 +4,6 @@ using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
-using PlatformCore.Infrastructure;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
@@ -112,7 +111,7 @@ namespace _Main.Scripts.Core
 			var baseControllers = new IBaseController[]
 			{
 				new SettingsController(uiService, audioService, cursorService, inputService),
-				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator),
+				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator, levelModel),
 			};
 
 			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel, playerModel, playerView));

@@ -1,4 +1,5 @@
 using _Main.Scripts.Core.Services;
+using DG.Tweening;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.UI;
@@ -82,6 +83,6 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	private void ResetCameraRotation()
 	{
-		playerView.CameraRoot.localRotation = Quaternion.Euler(0, 0, 0);
+		playerView.CameraRoot.DOLocalRotate(Vector3.zero, 0.5f);
 	}
 }
