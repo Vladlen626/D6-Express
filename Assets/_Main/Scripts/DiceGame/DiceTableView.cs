@@ -115,6 +115,11 @@ public class DiceTableView : MonoBehaviour
 		currentBetText.text = text;
 	}
 
+	public void SetBet(int bet)
+	{
+		betSlider.value = bet;
+	}
+
 	public void SetMinBet(int minBet)
 	{
 		minBetText.text = minBet.ToString();

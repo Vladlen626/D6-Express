@@ -225,32 +225,37 @@ MonoBehaviour:
   jumpHeight: 2
   gravity: -20
   states:
-  - rid: 7843034222167326949
-  - rid: 7843034222167326950
-  - rid: 7843034222167326951
-  - rid: 7843034222167326952
-  - rid: 7843034222167326953
+  - rid: 7843034232422137938
+  - rid: 7843034232422137939
+  - rid: 7843034232422137940
+  - rid: 7843034232422137941
+  - rid: 7843034232422137942
+  - rid: 7843034232422137943
   mouseSensitivity: 0.075
   lookXLimit: 45
+  interactor: {fileID: 8885480304943086778}
   characterController: {fileID: 6681934855089884787}
   characterCollider: {fileID: 1353585870120323076}
   cameraRoot: {fileID: 3656734799142745478}
   references:
     version: 2
     RefIds:
-    - rid: 7843034222167326949
+    - rid: 7843034232422137938
       type: {class: CharacterStateHandlerDiceGame, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 7843034222167326950
+    - rid: 7843034232422137939
       type: {class: CharacterStateHandlerLaying, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 7843034222167326951
+    - rid: 7843034232422137940
+      type: {class: CharacterStateHandlerLocationTransitioning, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 7843034232422137941
       type: {class: CharacterStateHandlerSitting, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 7843034222167326952
+    - rid: 7843034232422137942
       type: {class: CharacterStateHandlerSleeping, ns: , asm: Assembly-CSharp}
       data: 
-    - rid: 7843034222167326953
+    - rid: 7843034232422137943
       type: {class: CharacterStateHandlerSpeaking, ns: , asm: Assembly-CSharp}
       data: 
 --- !u!114 &8885480304943086778
@@ -272,6 +277,7 @@ MonoBehaviour:
   - rid: 1463701355882086646
   - rid: 8683858885762875635
   - rid: 704733112204525640
+  - rid: 704733151959449671
   interactableLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -281,6 +287,9 @@ MonoBehaviour:
     RefIds:
     - rid: 704733112204525640
       type: {class: InteractableActionSpeak, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 704733151959449671
+      type: {class: InteractionActionTrade, ns: , asm: Assembly-CSharp}
       data: 
     - rid: 1463701297492918341
       type: {class: InteractableActionSit, ns: , asm: Assembly-CSharp}

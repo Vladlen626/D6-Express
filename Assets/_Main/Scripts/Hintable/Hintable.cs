@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Hintable : MonoBehaviour
+public class Hintable : MonoBehaviour, IHintable
 {
     [SerializeField]
     private string hintText;

@@ -2,75 +2,71 @@ using System;
 
 public class LevelModel
 {
-    private LevelState levelState = LevelState.TRAIN;
+	private LevelState levelState = LevelState.TRAIN;
 
-    public readonly int CashGoal;
-    public readonly int TicksPerDay;
-    public readonly int Days;
+	public readonly int CashGoal;
+	public readonly int TicksPerDay;
+	public readonly int Days;
+	public LevelState LevelState => levelState;
+	public float TickRatio => Tick / (float)TicksPerDay;
+	public int Tick { get; private set; }
+	public int Day { get; private set; }
+	public bool IsLevelFinished => Day + 1 >= Days;
 
-    private readonly InventoryModel inventoryModel;
+	public event Action TickChanged;
+	public event Action DayChanged;
+	public event Action OnFinalDay;
+	public event Action<bool> LevelFinished;
+	public event Action LevelStateChanged;
 
-    public LevelState LevelState => levelState;
-    public float TickRatio => Tick / (float)TicksPerDay;
-    public int Tick { get; private set; }
-    public int Day { get; private set; }
-    public bool IsLevelFinished => Day + 1 >= Days;
+	public LevelModel(int ticksPerDay, int days, int cashGoal)
+	{
+		Days = days;
+		TicksPerDay = ticksPerDay;
+		CashGoal = cashGoal;
+	}
 
-    public event Action TickChanged;
-    public event Action DayChanged;
-    public event Action<bool> LevelFinished;
-    public event Action LevelStateChanged;
+	public void SetLevelState(LevelState levelState)
+	{
+		this.levelState = levelState;
+		LevelStateChanged?.Invoke();
+	}
 
-    public LevelModel(int ticksPerDay, int days, int cashGoal, InventoryModel inventoryModel)
-    {
-        Days = days;
-        TicksPerDay = ticksPerDay;
-        CashGoal = cashGoal;
-        this.inventoryModel = inventoryModel;
-    }
+	public void IncrementDays()
+	{
+		Tick = 0;
+		TickChanged?.Invoke();
 
-    public void SetLevelState(LevelState levelState)
-    {
-        this.levelState = levelState;
-        LevelStateChanged?.Invoke();
-    }
+		if (Day + 1 == Days)
+		{
+			Day = 0;
+			DayChanged?.Invoke();
+			OnFinalDay?.Invoke();
+		}
+		else
+		{
+			Day++;
+			DayChanged?.Invoke();
+		}
+	}
 
-    public void IncrementDays()
-    {
-        Tick = 0;
-        TickChanged?.Invoke();
+	public void IncrementTicks()
+	{
+		if (Tick + 1 < TicksPerDay)
+		{
+			Tick++;
+			TickChanged?.Invoke();
+		}
+		else
+		{
+			IncrementDays();
+		}
+	}
 
-        if (Day + 1 == Days)
-        {
-            Day = 0;
-            DayChanged?.Invoke();
 
-            if (inventoryModel.CashCount > CashGoal)
-            {
-                LevelFinished?.Invoke(true);
-            }
-            else
-            {
-                LevelFinished?.Invoke(false);
-            }
-        }
-        else
-        {
-            Day++;
-            DayChanged?.Invoke();
-        }
-    }
-
-    public void IncrementTicks()
-    {
-        if (Tick + 1 < TicksPerDay)
-        {
-            Tick++;
-            TickChanged?.Invoke();
-        }
-        else
-        {
-            IncrementDays();
-        }
-    }
+	// ReSharper disable Unity.PerformanceAnalysis
+	public void SetLevelFinished(bool success)
+	{
+		LevelFinished?.Invoke(success);
+	}
 }

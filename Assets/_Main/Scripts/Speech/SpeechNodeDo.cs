@@ -14,4 +14,4 @@ public class SpeechNodeDo : SpeechNode
         action?.Invoke();
         Finish();
     }
-}  
+}

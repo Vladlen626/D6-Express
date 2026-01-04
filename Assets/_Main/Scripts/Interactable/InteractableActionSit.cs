@@ -41,8 +41,10 @@ public class InteractableActionSit : InteractionAction
 		PlayerStateModel.TryRemoveState(CharacterState.SITTING);
 	}
 
-	private void OnMoved(Vector2 dir)
+	private async void OnMoved(Vector2 dir)
 	{
+		await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+
 		StopInteract(null);
 	}
 }

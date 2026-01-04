@@ -16,16 +16,16 @@ public class CharacterStateHandlerDiceGame : CharacterStateHandler
 		inputService = Locator.Resolve<IInputService>();
 	}
 
-	public override void Enter()
+	protected override void EnterInternal()
 	{
-		base.Enter();
+		base.EnterInternal();
 		inputService.DisableCameraInputs();
 		cursorService.UnlockCursor();
 	}
 
-	public override void Exit()
+    protected override void ExitInternal()
 	{
-		base.Exit();
+		base.ExitInternal();
 		inputService.EnableCameraInputs();
 		cursorService.LockCursor();
 	}

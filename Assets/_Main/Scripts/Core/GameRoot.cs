@@ -47,7 +47,6 @@ namespace _Main.Scripts.Core
 		protected override async UniTask LaunchGameAsync(PersistentSceneContext persistentSceneContext)
 		{
 			var factory = _serviceLocator.Get<IObjectFactory>();
-			var logger = _serviceLocator.Get<ILoggerService>();
 			var sceneService = _serviceLocator.Get<ISceneService>();
 			var audioService = _serviceLocator.Get<IAudioService>();
 			var uiService = _serviceLocator.Get<IUIService>();
@@ -61,7 +60,7 @@ namespace _Main.Scripts.Core
 			// --------------
 
 			var playerModel = PlayerFactory.CreatePlayerModel();
-			var levelModel = LevelFactory.CreateLevelModel(playerModel.InventoryModel);
+			var levelModel = LevelFactory.CreateLevelModel();
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 
 			var activeSceneName = sceneService.GetActiveSceneName();
@@ -116,7 +115,7 @@ namespace _Main.Scripts.Core
 			};
 
 			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel, playerModel, playerView));
-			controllersList.Add(SpeechFactory.GetSpeechController(uiService, playerView, levelModel));
+			controllersList.Add(SpeechFactory.GetSpeechController(uiService, playerModel, playerView, levelModel));
 
 			controllersList.AddRange(baseControllers);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
 using PlatformCore.Services;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Interactor : MonoBehaviour
@@ -56,9 +57,7 @@ public class Interactor : MonoBehaviour
 		{
 			var action = actionStack.Pop();
 
-			action.Ended -= OnInteractionEnded;
-			action.Started -= OnInteractionStarted;
-
+			// todo: кринж, интерактабл должен быть внутри экшена на момент работы
 			currentInteractable?.StopInteract(this);
 			action.StopInteract(currentInteractable);
 		}
@@ -69,9 +68,6 @@ public class Interactor : MonoBehaviour
 		if (actionStack.Count > 0)
 		{
 			var action = actionStack.Pop();
-
-			action.Ended -= OnInteractionEnded;
-			action.Started -= OnInteractionStarted;
 
 			currentInteractable?.StopInteract(this);
 			action.StopInteract(currentInteractable);
@@ -102,7 +98,7 @@ public class Interactor : MonoBehaviour
 			}
 		}
 
-		if (currentInteractable != null)
+		if (currentInteractable != null || currentInteractable.IsDestroyed())
 		{
 			Missed?.Invoke(currentInteractable);
 			currentInteractable = null;
@@ -149,23 +145,21 @@ public class Interactor : MonoBehaviour
 		return true;
 	}
 
-	private void OnInteractionStarted()
+	private void OnInteractionStarted(InteractionAction interactionAction)
 	{
-		Locator.Resolve<ILoggerService>().Log(actionStack.ToString() + " interaction action started");
+		Locator.Resolve<ILoggerService>().Log(interactionAction + " interaction action started");
 
-		InteractionStarted?.Invoke(actionStack.Peek());
+		InteractionStarted?.Invoke(interactionAction);
 	}
 
-	private void OnInteractionEnded()
+	private void OnInteractionEnded(InteractionAction interactionAction)
 	{
-		Locator.Resolve<ILoggerService>().Log(actionStack.ToString() + " interaction action ended");
+		Locator.Resolve<ILoggerService>().Log(interactionAction + " interaction action ended");
 
-		var action = actionStack.Pop();
+		interactionAction.Ended -= OnInteractionEnded;
+		interactionAction.Started -= OnInteractionStarted;
 
-		action.Ended -= OnInteractionEnded;
-		action.Started -= OnInteractionStarted;
-
-		InteractionEnded.Invoke(action);
+		InteractionEnded.Invoke(interactionAction);
 	}
 
 	private void OnDrawGizmos()

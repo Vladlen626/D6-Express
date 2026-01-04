@@ -8,8 +8,8 @@ public abstract class InteractionAction
 	protected Interactor Interactor { get; private set; }
 	protected PlayerStateModel PlayerStateModel { get; private set; }
 
-	public event Action Started;
-	public event Action Ended;
+	public event Action<InteractionAction> Started;
+	public event Action<InteractionAction> Ended;
 
 	public virtual void Init(Interactor interactor, PlayerStateModel playerStateModel, IInputService inputService)
 	{
@@ -24,14 +24,14 @@ public abstract class InteractionAction
 	{
 		StartInteractInternal(interactable);
 
-		Started?.Invoke();
+		Started?.Invoke(this);
 	}
 
 	public void StopInteract(IInteractable interactable)
 	{
 		StopInteractInternal(interactable);
 
-		Ended?.Invoke();
+		Ended?.Invoke(this);
 	}
 
 	protected virtual void StartInteractInternal(IInteractable interactable) { }
