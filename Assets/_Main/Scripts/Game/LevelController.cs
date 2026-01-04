@@ -47,7 +47,7 @@ public class LevelController : IBaseController, IActivatable
 				break;
 		}
 
-		playerModel.PlayerStateModel.TryAddState(CharacterState.LOCATION_TRANSITIONING);
+		playerModel.PlayerStateModel.TryRemoveState(CharacterState.LOCATION_TRANSITIONING);
 	}
 
 	private void DayLevelFinishedHandler(bool result)
