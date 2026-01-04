@@ -8,11 +8,11 @@ public class InteractionActionTrade : InteractionAction
         return interactable is InteractableTradeable;
     }
 
-    protected override void StartInteractInternal(IInteractable interactable)
+    protected override void StartInteractInternal()
     {
-        base.StartInteractInternal(interactable);
+        base.StartInteractInternal();
 
-        var interactableTradeable = interactable as InteractableTradeable;
+        var interactableTradeable = Interactable as InteractableTradeable;
         interactableTradeable.GetComponent<TradeItem>().Buy(Interactor.gameObject);
     }
 }

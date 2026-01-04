@@ -13,13 +13,13 @@ public class InteractableActionLay : InteractionAction
 		return interactable is InteractableLayable && !PlayerStateModel.HasState(CharacterState.LAYING);
 	}
 
-	protected override async void StartInteractInternal(IInteractable interactable)
+	protected override async void StartInteractInternal()
 	{
 		PlayerStateModel.TryAddState(CharacterState.TRANSITION);
 
 		lastPos = Interactor.transform.position;
 
-		var layable = interactable as InteractableLayable;
+		var layable = Interactable as InteractableLayable;
 
 		var moveTask = Interactor.transform.DOMove(layable.SitTfm.position, 1).ToUniTask();
 		var rotateTask = Interactor.transform.DORotateQuaternion(layable.SitTfm.rotation, 1).ToUniTask();
@@ -31,7 +31,7 @@ public class InteractableActionLay : InteractionAction
 		inputService.OnMoved += OnMoved;
 	}
 
-	protected async override void StopInteractInternal(IInteractable interactable)
+	protected async override void StopInteractInternal()
 	{
 		inputService.OnMoved -= OnMoved;
 
@@ -50,6 +50,6 @@ public class InteractableActionLay : InteractionAction
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 
-		StopInteract(null);
+		StopInteract();
 	}
 }

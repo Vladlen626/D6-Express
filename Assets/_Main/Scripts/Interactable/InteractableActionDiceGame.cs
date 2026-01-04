@@ -14,14 +14,14 @@ public class InteractableActionDiceGame : InteractionAction
 		return interactable is InteractableDiceGame && PlayerStateModel.HasState(CharacterState.DEFAULT);
 	}
 
-	protected override async void StartInteractInternal(IInteractable interactable)
+	protected override async void StartInteractInternal()
 	{
 		PlayerStateModel.TryAddState(CharacterState.TRANSITION);
 
 		lastPos = Interactor.transform.position;
 		lastRot = Interactor.transform.rotation;
 
-		var interactableDiceGame = interactable as InteractableDiceGame;
+		var interactableDiceGame = Interactable as InteractableDiceGame;
 
 		var moveTask = Interactor.transform.DOMove(interactableDiceGame.SitTfm.position, 1).ToUniTask();
 		var rotateTask = Interactor.transform.DORotateQuaternion(interactableDiceGame.SitTfm.rotation, 1).ToUniTask();
@@ -34,7 +34,7 @@ public class InteractableActionDiceGame : InteractionAction
 		inputService.OnInteractPerformed += OnInteractHoldCompleted;
 	}
 
-	protected override async void StopInteractInternal(IInteractable interactable)
+	protected override async void StopInteractInternal()
 	{
 		inputService.OnInteractPerformed -= OnInteractHoldCompleted;
 
@@ -53,6 +53,6 @@ public class InteractableActionDiceGame : InteractionAction
 			return;
 		}
 
-		StopInteract(null);
+		StopInteract();
 	}
 }

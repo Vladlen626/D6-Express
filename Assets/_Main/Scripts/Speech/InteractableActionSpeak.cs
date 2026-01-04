@@ -13,12 +13,12 @@ public class InteractableActionSpeak : InteractionAction
 		return interactable is InteractableSpeakable && PlayerStateModel.HasState(CharacterState.DEFAULT);
 	}
 
-	protected override async void StartInteractInternal(IInteractable interactable)
+	protected override async void StartInteractInternal()
 	{
-		base.StartInteractInternal(interactable);
+		base.StartInteractInternal();
 
 		// todo: выглядит сомнительно
-		var speakable = interactable as InteractableSpeakable;
+		var speakable = Interactable as InteractableSpeakable;
 		Id = speakable.Id;
 
 		var targetable = speakable.GetComponent<Targetable>();
@@ -31,12 +31,12 @@ public class InteractableActionSpeak : InteractionAction
 		await playerView.CameraRoot.DOLookAt(rotateTarget.position, 1).ToUniTask();
 	}
 
-	protected override async void StopInteractInternal(IInteractable interactable)
+	protected override async void StopInteractInternal()
 	{
 		Id = -1;
 
 		PlayerStateModel.TryRemoveState(CharacterState.SPEAKING);
 
-		base.StopInteractInternal(interactable);
+		base.StopInteractInternal();
 	}
 }

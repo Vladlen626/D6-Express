@@ -24,11 +24,12 @@ public class Interactor : MonoBehaviour
 
 	[SerializeField] private Transform viewTransform;
 
+	private Interactable selectedInteractable;
+
 	// todo: стэк тут ту мач
 	private readonly Stack<InteractionAction> actionStack = new();
 
 	private PlayerStateModel playerStateModel;
-	private Interactable currentInteractable;
 	private IInputService inputService;
 
 	public void Initialize(IInputService inputService, PlayerStateModel playerStateModel)
@@ -58,8 +59,7 @@ public class Interactor : MonoBehaviour
 			var action = actionStack.Pop();
 
 			// todo: кринж, интерактабл должен быть внутри экшена на момент работы
-			currentInteractable?.StopInteract(this);
-			action.StopInteract(currentInteractable);
+			action.StopInteract();
 		}
 	}
 
@@ -69,8 +69,7 @@ public class Interactor : MonoBehaviour
 		{
 			var action = actionStack.Pop();
 
-			currentInteractable?.StopInteract(this);
-			action.StopInteract(currentInteractable);
+			action.StopInteract();
 		}
 	}
 
@@ -91,25 +90,25 @@ public class Interactor : MonoBehaviour
 
 				if (interactable != null && interactable.CanInteract(this) && TryGetAction(interactable, out var action))
 				{
-					currentInteractable = interactable;
-					Noticed?.Invoke(currentInteractable);
+					selectedInteractable = interactable;
+					Noticed?.Invoke(selectedInteractable);
 					return;
 				}
 			}
 		}
 
-		if (currentInteractable != null || currentInteractable.IsDestroyed())
+		if (selectedInteractable != null || selectedInteractable.IsDestroyed())
 		{
-			Missed?.Invoke(currentInteractable);
-			currentInteractable = null;
+			Missed?.Invoke(selectedInteractable);
+			selectedInteractable = null;
 		}
 	}
 
 	private void OnInteract()
 	{
-		if (currentInteractable != null)
+		if (selectedInteractable != null)
 		{
-			if (!TryGetAction(currentInteractable, out var action))
+			if (!TryGetAction(selectedInteractable, out var action))
 			{
 				return;
 			};
@@ -119,8 +118,7 @@ public class Interactor : MonoBehaviour
 			action.Started += OnInteractionStarted;
 			action.Ended += OnInteractionEnded;
 
-			currentInteractable.StartInteract(this);
-			action.StartInteract(currentInteractable);
+			action.StartInteract(selectedInteractable);
 		}
 	}
 

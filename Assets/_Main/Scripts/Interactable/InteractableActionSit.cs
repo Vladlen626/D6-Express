@@ -13,13 +13,13 @@ public class InteractableActionSit : InteractionAction
 		return interactable is InteractableSittable && !PlayerStateModel.HasState(CharacterState.SITTING);
 	}
 
-	protected override async void StartInteractInternal(IInteractable interactable)
+	protected override async void StartInteractInternal()
 	{
 		PlayerStateModel.TryAddState(CharacterState.TRANSITION);
 
 		lastPos = Interactor.transform.position;
 
-		var sittable = interactable as InteractableSittable;
+		var sittable = Interactable as InteractableSittable;
 
 		var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 1).ToUniTask();
 		var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 1).ToUniTask();
@@ -32,7 +32,7 @@ public class InteractableActionSit : InteractionAction
 		inputService.OnMoved += OnMoved;
 	}
 
-	protected override async void StopInteractInternal(IInteractable interactable)
+	protected override async void StopInteractInternal()
 	{
 		inputService.OnMoved -= OnMoved;
 
@@ -45,6 +45,6 @@ public class InteractableActionSit : InteractionAction
 	{
 		await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
 
-		StopInteract(null);
+		StopInteract();
 	}
 }

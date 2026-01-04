@@ -11,7 +11,7 @@ public class InteractableActionSleep : InteractionAction
 		return interactable is InteractableSleepable && !PlayerStateModel.HasState(CharacterState.SLEEPING);
 	}
 
-	protected override async void StartInteractInternal(IInteractable interactable)
+	protected override async void StartInteractInternal()
 	{
 		PlayerStateModel.TryAddState(CharacterState.SLEEPING);
 
@@ -21,10 +21,10 @@ public class InteractableActionSleep : InteractionAction
 		await Locator.Resolve<IUIService>().GetWindow<UISleepView>().CloseEyes();
 		await UniTask.WaitForSeconds(1);
 
-		StopInteract(interactable);
+		StopInteract();
 	}
 
-	protected override async void StopInteractInternal(IInteractable interactable)
+	protected override async void StopInteractInternal()
 	{
 		await Locator.Resolve<IUIService>().GetWindow<UISleepView>().OpenEyes();
 

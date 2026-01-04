@@ -48,9 +48,8 @@ public class SpeechController : BaseContextController<UISpeechView>
 	{
 		currentSpeech.Finished -= OnSpeechFinished;
 
-		// todo никакого нулл, вообще не стоит в стопе передавать интерактбла
 		// todo плохая идея завершать интеракцию изнутри контроллера
-		speechAction.StopInteract(null);
+		speechAction.StopInteract();
 
 		_context.Hide();
 
