@@ -18,6 +18,7 @@ namespace _Main.Scripts.Dice
 		private readonly IObjectFactory objectFactory;
 		private readonly ILoggerService loggerService;
 		private readonly LifecycleService lifecycleService;
+		private readonly ConfigService configService;
 
 		private readonly SceneContext sceneContext;
 		private readonly DicePositionsHandler dicePositionsHandler;
@@ -30,12 +31,13 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> betControllers = new();
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
-			ServiceLocator serviceLocator, LevelModel levelModel)
+			ServiceLocator serviceLocator, LevelModel levelModel, ConfigService configService)
 		{
 			this.diceGameModel = diceGameModel;
 			this.playerModel = playerModel;
 			this.levelModel = levelModel;
 			this.sceneContext = sceneContext;
+			this.configService = configService;
 			dicePositionsHandler = sceneContext.DiceGameTableView.DicePositionsHandler;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
 			objectFactory = serviceLocator.Get<IObjectFactory>();
@@ -65,13 +67,13 @@ namespace _Main.Scripts.Dice
 		{
 			playerModel.InventoryModel.GiveCash(diceGameModel.BetSize * 2);
 			StopDiceGame();
-			Debug.Log("Ура плюс бабки");
+			loggerService.Log("Ура плюс бабки");
 		}
 		
 		private void OnGameConditionFailedHandler()
 		{
 			StopDiceGame();
-			Debug.Log("Фак минус бабки");
+			loggerService.Log("Фак минус бабки");
 		}
 
 		private void OnDiceGameStateChangedHandler()
@@ -147,10 +149,12 @@ namespace _Main.Scripts.Dice
 		{
 			diceViewsArray =
 				await DiceFactory.SpawnDiceArrayAsync(objectFactory, dicePositionsHandler.DicePositions);
-			
+
+			var diceConfig = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+
 			foreach (var diceView in diceViewsArray)
 			{
-				var model = new DiceModel(new LoadedDiceProfileConfig()); 
+				var model = new DiceModel(diceConfig); 
 				var controller = new DiceController(model, diceView, tableModel);
 				diceModelsList.Add(model);
 				gameControllers.Add(controller);

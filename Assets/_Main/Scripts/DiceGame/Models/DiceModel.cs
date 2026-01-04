@@ -11,20 +11,21 @@ namespace _Main.Scripts.Dice
 		public int CurrentValue { get; private set; }
 		public bool IsChosen { get; private set; }
 		public bool IsSaved { get; private set; }
-		
 		public Transform CurrentPosition { get; private set; }
 
-		public LoadedDiceProfileConfig Profile { get; private set; }
+		public string Name { get; private set; }
+		public int[] Weights { get; private set; }
 
-		public DiceModel(LoadedDiceProfileConfig profile)
+		public DiceModel(DiceConfig config)
 		{
-			Profile = profile;
+			Name = config.name;
+			Weights = config.weights;
 			Reset();
 		}
 
 		public void Roll()
 		{
-			var newValue = DiceGameUtils.GetWeightedRandomValue(Profile.Weights);
+			var newValue = DiceGameUtils.GetWeightedRandomValue(Weights);
 			SetValue(newValue);
 		}
 

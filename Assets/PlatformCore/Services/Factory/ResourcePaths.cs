@@ -16,11 +16,20 @@ namespace PlatformCore.Services.Factory
 			public const string DicePrefab = "Items/DicePrefab";
 		}
 
+		public static class Json
+		{
+			public const string dice_types = "Json/dice_types";
+		}
+
 		public static class Player
 		{
+			public const string Character = "Player/Character";
 			public const string CinemachineCamera = "Player/CinemachineCamera";
-			public const string Conductor = "Player/Conductor";
-			public const string Passenger = "Player/Passenger";
+			public const string NpcAnim = "Player/NpcAnim";
+			public const string NpcBase = "Player/NpcBase";
+			public const string NpcConductor = "Player/NpcConductor";
+			public const string NpcPassenger = "Player/NpcPassenger";
+			public const string NpcShopKeeper = "Player/NpcShopKeeper";
 			public const string PlayerPrefab = "Player/PlayerPrefab";
 		}
 

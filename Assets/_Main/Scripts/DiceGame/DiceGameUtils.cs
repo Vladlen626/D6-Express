@@ -129,7 +129,7 @@ namespace _Main.Scripts.Dice
 			return false;
 		}
 
-		public static int GetWeightedRandomValue(float[] weights)
+		public static int GetWeightedRandomValue(int[] weights)
 		{
 			float totalWeight = 0f;
 			foreach (float weight in weights)
