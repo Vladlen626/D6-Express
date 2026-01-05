@@ -31,7 +31,7 @@ namespace _Main.Scripts.Dice
 			diceModel.OnDiceChosenChanged += OnDiceChosenChangedHandler;
 			diceModel.OnDiceSavedChanged += OnDiceSavedChangedHandler;
 
-			diceView.OnDiceClicked += OnDiceClickedHandler;
+			diceView.OnDiceClicked.AddListener(OnDiceClickedHandler);
 
 			InitializePosition();
 			diceModel.Roll();
@@ -43,9 +43,9 @@ namespace _Main.Scripts.Dice
 			diceModel.OnDiceChosenChanged -= OnDiceChosenChangedHandler;
 			diceModel.OnDiceSavedChanged -= OnDiceSavedChangedHandler;
 
-			if (diceView != null)
+			if (diceView)
 			{
-				diceView.OnDiceClicked -= OnDiceClickedHandler;
+				diceView.OnDiceClicked.RemoveListener(OnDiceClickedHandler);
 			}
 
 			ReleaseCurrentPosition();
@@ -68,7 +68,7 @@ namespace _Main.Scripts.Dice
 		
 		private void OnDiceValueChangedHandler()
 		{
-			diceView.SetSideMesh(diceModel.CurrentValue);
+			diceView.SetRotation(diceModel.CurrentValue);
 		}
 
 		private void OnDiceSavedChangedHandler()

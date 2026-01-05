@@ -44,28 +44,34 @@ namespace PlatformCore.Infrastructure.Lifecycle
 
 		public void Unregister(object obj)
 		{
-			switch (obj)
+			if (obj == null)
 			{
-				case null:
-					return;
-				case IActivatable activatable:
-					activatable.Deactivate();
-					break;
+				return;
+			}
+
+			if (_managedObjects.Contains(obj) == false)
+			{
+				return;
+			}
+
+			if (obj is IActivatable activatable)
+			{
+				activatable.Deactivate();
 			}
 
 			_managedObjects.Remove(obj);
 
-			switch (obj)
+			if (obj is IUpdatable updatable)
 			{
-				case IUpdatable updatable:
-					_updatables.Remove(updatable);
-					break;
-				case IFixedUpdatable fixedUpdatable:
-					_fixedUpdatables.Remove(fixedUpdatable);
-					break;
-				case ILateUpdatable lateUpdatable:
-					_lateUpdatables.Remove(lateUpdatable);
-					break;
+				_updatables.Remove(updatable);
+			}
+			if (obj is IFixedUpdatable fixedUpdatable)
+			{
+				_fixedUpdatables.Remove(fixedUpdatable);
+			}
+			if (obj is ILateUpdatable lateUpdatable)
+			{
+				_lateUpdatables.Remove(lateUpdatable);
 			}
 		}
 

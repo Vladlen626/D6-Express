@@ -10,10 +10,12 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnRollClicked;
 	public event Action OnPassClicked;
 	public event Action OnBetClicked;
+	public event Action OnPlayClicked;
 	
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
 	[SerializeField] private Transform betStateHandler;
+	[SerializeField] private Transform selectStateHandler;
 	
 	[Header("Turn")]
 	[SerializeField] private TextMeshPro turnText;
@@ -28,6 +30,7 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private ButtonView rollButton;
 	[SerializeField] private ButtonView passButton;
 	[SerializeField] private ButtonView betButton;
+	[SerializeField] private ButtonView playButton;
 
 	[Header("Bet")]
 	[SerializeField] private Slider betSlider;
@@ -35,14 +38,17 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshPro minBetText;
 	[SerializeField] private TextMeshPro maxBetText;
 
-	[SerializeField] private DicePositionsHandler dicePositionsHandler;
-	public DicePositionsHandler DicePositionsHandler => dicePositionsHandler;
+	[SerializeField] private DicePositionsHandler gameStatePosHandler;
+	[SerializeField] private DicePositionsHandler selectionStatePosHandler;
+	public DicePositionsHandler GameStatePosHandler => gameStatePosHandler;
+	public DicePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
 
 	private void Start()
 	{
 		rollButton.OnClicked += () => OnRollClicked?.Invoke();
 		passButton.OnClicked += () => OnPassClicked?.Invoke();
 		betButton.OnClicked += () => OnBetClicked?.Invoke();
+		playButton.OnClicked += () => OnPlayClicked?.Invoke();
 		betSlider.onValueChanged.AddListener(OnSliderChanged);
 	}
 
@@ -56,6 +62,7 @@ public class DiceTableView : MonoBehaviour
 		OnBetSliderChange?.Invoke((int)value);
 	}
 
+	//Todo: когда-то здесь будут не строки, обязательно....
 	public void SetButtonInteractable(string buttonName, bool interactable)
 	{
 		switch (buttonName)
@@ -66,6 +73,9 @@ public class DiceTableView : MonoBehaviour
 			case "Pass":
 				passButton.SetInteractable(interactable);
 				break;
+			case "Play":
+				playButton.SetInteractable(interactable);
+				break;
 		}
 	}
 
@@ -73,6 +83,7 @@ public class DiceTableView : MonoBehaviour
 	{
 		gameStateHandler.gameObject.SetActive(false);
 		betStateHandler.gameObject.SetActive(false);
+		selectStateHandler.gameObject.SetActive(false);
 		
 		switch (state)
 		{
@@ -81,6 +92,9 @@ public class DiceTableView : MonoBehaviour
 				break;
 			case DiceGameState.BET:
 				betStateHandler.gameObject.SetActive(true);
+				break;
+			case DiceGameState.SELECT_DICE:
+				selectStateHandler.gameObject.SetActive(true);
 				break;
 		}
 	}

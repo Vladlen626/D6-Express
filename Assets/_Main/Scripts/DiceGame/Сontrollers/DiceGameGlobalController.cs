@@ -29,6 +29,7 @@ namespace _Main.Scripts.Dice
 
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
+		private List<IBaseController> selectionControllers = new();
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
 			ServiceLocator serviceLocator, LevelModel levelModel, ConfigService configService)
@@ -38,7 +39,7 @@ namespace _Main.Scripts.Dice
 			this.levelModel = levelModel;
 			this.sceneContext = sceneContext;
 			this.configService = configService;
-			dicePositionsHandler = sceneContext.DiceGameTableView.DicePositionsHandler;
+			dicePositionsHandler = sceneContext.DiceGameTableView.GameStatePosHandler;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
 			objectFactory = serviceLocator.Get<IObjectFactory>();
 			loggerService = serviceLocator.Get<ILoggerService>();
@@ -46,8 +47,8 @@ namespace _Main.Scripts.Dice
 
 		public void Activate()
 		{
-			playerModel.PlayerStateModel.StateAdded  += OnCharacterStateAddedHandler;
-			playerModel.PlayerStateModel.StateRemoved  += OnCharacterStateRemovedHandler;
+			playerModel.PlayerStateModel.StateAdded += OnCharacterStateAddedHandler;
+			playerModel.PlayerStateModel.StateRemoved += OnCharacterStateRemovedHandler;
 			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
 			diceGameModel.OnGameConditionPassed += OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed += OnGameConditionFailedHandler;
@@ -57,7 +58,7 @@ namespace _Main.Scripts.Dice
 		public void Deactivate()
 		{
 			playerModel.PlayerStateModel.StateAdded -= OnCharacterStateAddedHandler;
-			playerModel.PlayerStateModel.StateRemoved  -= OnCharacterStateRemovedHandler;
+			playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateRemovedHandler;
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.OnGameConditionPassed -= OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed -= OnGameConditionFailedHandler;
@@ -69,7 +70,7 @@ namespace _Main.Scripts.Dice
 			StopDiceGame();
 			loggerService.Log("Ура плюс бабки");
 		}
-		
+
 		private void OnGameConditionFailedHandler()
 		{
 			StopDiceGame();
@@ -100,25 +101,20 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask StartDiceGame()
 		{
-			// TODO: Перенести в конфиги. Тут в целом подумать надо над переработкой
-			int targetScore = 3000;
-			int maxTurnCount = 10;
-			
-			// Можем потом прикрутить зависимости от уровня (вагона)
-			int minBetSize = 100;
-			
-			// Нельзя ставить больше чем у нас есть. Надо заранее в долг брать
+			var diceGameConfig =
+				await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
+
 			int maxBetSize = playerModel.InventoryModel.CashCount;
 
-			diceGameModel.SetMinBetSize(minBetSize);
+			diceGameModel.SetMinBetSize(diceGameConfig.min_bet_size);
 			diceGameModel.SetMaxBetSize(maxBetSize);
-			diceGameModel.SetBetSize((minBetSize + maxBetSize)/2);
-			diceGameModel.SetTargetScore(targetScore);
-			diceGameModel.SetMaxTurnCount(maxTurnCount);
+			diceGameModel.SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
+			diceGameModel.SetTargetScore(diceGameConfig.target_score);
+			diceGameModel.SetMaxTurnCount(diceGameConfig.max_turn_count);
 			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
+			await SelectionProcess();
 			await BetProcess();
-			await SetupDiceForGame();
 
 			gameControllers.AddRange(DiceFactory.GetDiceGameControllers(sceneContext, loggerService,
 				diceGameModel, tableModel, diceModelsList));
@@ -129,11 +125,47 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
+		private async UniTask SelectionProcess()
+		{
+			diceGameModel.ChangeDiceGameState(DiceGameState.SELECT_DICE);
+			
+			var selectionController = new DiceSelectionController(
+				playerModel.InventoryModel, sceneContext.DiceGameTableView,
+				objectFactory, configService);
+			
+			selectionControllers.Add(selectionController);
+
+			await lifecycleService.RegisterAsync(selectionController);
+			await selectionController.WaitSelection();
+
+			var selectedModels = selectionController.GetSelectedModels();
+			var dicePairs = selectionController.GetDicePairs();
+			selectionController.Cleanup();
+
+			diceViewsArray = new DiceView[selectedModels.Count];
+			diceModelsList.AddRange(selectedModels);
+
+			for (int i = 0; i < selectedModels.Count; i++)
+			{
+				var model = selectedModels[i];
+				var view = dicePairs[model];
+				var gamePos = dicePositionsHandler.DicePositions[i];
+
+				view.transform.SetParent(gamePos);
+				view.MoveToPosition(gamePos.position);
+				model.SetCurrentPosition(gamePos);
+				diceViewsArray[i] = view;
+				gameControllers.Add(new DiceController(model, view, tableModel));
+			}
+
+			ClenUpSelectionControllers();
+		}
+
 		private async UniTask BetProcess()
 		{
 			diceGameModel.ChangeDiceGameState(DiceGameState.BET);
 
-			betControllers.AddRange(DiceFactory.GetDiceGameBetControllers(sceneContext, diceGameModel)); 
+			betControllers.AddRange(DiceFactory.GetDiceGameBetControllers(sceneContext, diceGameModel));
 			foreach (var controller in betControllers)
 			{
 				await lifecycleService.RegisterAsync(controller);
@@ -141,35 +173,24 @@ namespace _Main.Scripts.Dice
 
 			await UniTask.WaitUntil(() => diceGameModel.DiceGameState != DiceGameState.BET);
 
-			playerModel.InventoryModel.TakeCash(diceGameModel.BetSize);
-			ClenUpBetControllers();
-		}
-
-		private async UniTask SetupDiceForGame()
-		{
-			diceViewsArray =
-				await DiceFactory.SpawnDiceArrayAsync(objectFactory, dicePositionsHandler.DicePositions);
-
-			var diceConfig = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_types);
-
-			foreach (var diceView in diceViewsArray)
+			if (diceGameModel.DiceGameState == DiceGameState.GAME)
 			{
-				var model = new DiceModel(diceConfig); 
-				var controller = new DiceController(model, diceView, tableModel);
-				diceModelsList.Add(model);
-				gameControllers.Add(controller);
+				playerModel.InventoryModel.TakeCash(diceGameModel.BetSize);
 			}
+
+			ClenUpBetControllers();
 		}
 
 		private void StopDiceGame()
 		{
-			if (!levelModel.IsLevelFinished)
+			if (!levelModel.IsLevelFinished && diceGameModel.IsDiceGameStarted)
 			{
 				levelModel.IncrementTicks();
 			}
 
 			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
 			ResetModels();
+			ClenUpSelectionControllers();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
 		}
@@ -183,6 +204,16 @@ namespace _Main.Scripts.Dice
 
 			betControllers.Clear();
 		}
+		
+		private void ClenUpSelectionControllers()
+		{
+			foreach (var controller in selectionControllers)
+			{
+				lifecycleService.Unregister(controller);
+			}
+
+			selectionControllers.Clear();
+		}
 
 		private void CleanUpMainGameControllers()
 		{
@@ -192,7 +223,7 @@ namespace _Main.Scripts.Dice
 				{
 					objectFactory.Destroy(dice.gameObject);
 				}
-				
+
 				diceViewsArray = null;
 			}
 
@@ -200,9 +231,10 @@ namespace _Main.Scripts.Dice
 			{
 				lifecycleService.Unregister(controller);
 			}
+
 			gameControllers.Clear();
 		}
-		
+
 		private void ResetModels()
 		{
 			diceModelsList.Clear();
