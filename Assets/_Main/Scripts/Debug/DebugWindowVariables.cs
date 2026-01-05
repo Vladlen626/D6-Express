@@ -27,6 +27,7 @@ public class DebugWindowVariables : DebugWindowModel
         }
 
         ImGui.Checkbox("Show Lose View", ref DebugVariables.ShowLoseView);
+        ImGui.Checkbox("Show Win View", ref DebugVariables.ShowWinView);
 
         ImGui.End();
     }

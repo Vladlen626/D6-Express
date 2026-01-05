@@ -8,6 +8,7 @@ namespace PlatformCore.Services.Factory
 	{
 		public static class Images
 		{
+			public const string TrainArriving = "Images/TrainArriving";
 			public const string TrainLeaving = "Images/TrainLeaving";
 		}
 
@@ -49,6 +50,7 @@ namespace PlatformCore.Services.Factory
 			public const string UISettings = "UI/UISettings";
 			public const string UISleepView = "UI/UISleepView";
 			public const string UISpeechView = "UI/UISpeechView";
+			public const string UIWinView = "UI/UIWinView";
 		}
 
 	}

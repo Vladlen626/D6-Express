@@ -112,6 +112,7 @@ namespace _Main.Scripts.Core
 
 			var baseControllers = new IBaseController[]
 			{
+				new WinScreenController(uiService,inputService, cursorService, levelModel),
 				new LoseScreenController(uiService,inputService, cursorService, levelModel),
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
