@@ -2,5 +2,6 @@
 {
 	DEFAULT = 0,
 	GAME,
-	BET
+	BET,
+	SELECT_DICE
 }

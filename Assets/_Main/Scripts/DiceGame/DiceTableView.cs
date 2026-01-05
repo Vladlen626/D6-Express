@@ -79,6 +79,7 @@ public class DiceTableView : MonoBehaviour
 	{
 		gameStateHandler.gameObject.SetActive(false);
 		betStateHandler.gameObject.SetActive(false);
+		selectionStatePosHandler.gameObject.SetActive(false);
 		
 		switch (state)
 		{
@@ -87,6 +88,9 @@ public class DiceTableView : MonoBehaviour
 				break;
 			case DiceGameState.BET:
 				betStateHandler.gameObject.SetActive(true);
+				break;
+			case DiceGameState.SELECT_DICE:
+				selectionStatePosHandler.gameObject.SetActive(true);
 				break;
 		}
 	}
