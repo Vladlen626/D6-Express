@@ -32,7 +32,6 @@
 			<destination>{df6af676-ca3e-4bbe-a8c8-0dfd2f8969ab}</destination>
 		</relationship>
 		<relationship name="banks">
-			<destination>{5c4172a1-7d76-407f-a128-23038e41f698}</destination>
 			<destination>{5430a85d-3a6f-4478-bbda-133fc47c1789}</destination>
 		</relationship>
 	</object>
