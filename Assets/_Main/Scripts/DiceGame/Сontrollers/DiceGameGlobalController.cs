@@ -38,7 +38,7 @@ namespace _Main.Scripts.Dice
 			this.levelModel = levelModel;
 			this.sceneContext = sceneContext;
 			this.configService = configService;
-			dicePositionsHandler = sceneContext.DiceGameTableView.DicePositionsHandler;
+			dicePositionsHandler = sceneContext.DiceGameTableView.GameStatePosHandler;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
 			objectFactory = serviceLocator.Get<IObjectFactory>();
 			loggerService = serviceLocator.Get<ILoggerService>();
