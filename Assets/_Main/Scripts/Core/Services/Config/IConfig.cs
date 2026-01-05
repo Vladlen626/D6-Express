@@ -1,4 +1,4 @@
 ﻿public interface IConfig
 {
-	string id { get; }
+	string id { get; set; }
 }

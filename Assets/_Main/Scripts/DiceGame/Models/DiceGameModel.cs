@@ -20,10 +20,15 @@ namespace _Main.Scripts.Dice
 		public int CurrentTurn { get; private set; }
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
+		public bool IsDiceGameStarted { get; private set; }
 
 		public void ChangeDiceGameState(DiceGameState diceGameState)
 		{
 			DiceGameState = diceGameState;
+			if (diceGameState == DiceGameState.GAME)
+			{
+				IsDiceGameStarted = true;
+			}
 			OnDiceGameStateChanged?.Invoke();
 		}
 
@@ -85,6 +90,7 @@ namespace _Main.Scripts.Dice
 		public void Reset()
 		{
 			DiceGameState = DiceGameState.DEFAULT;
+			IsDiceGameStarted = false;
 			IsConditionPassed = false;
 			CurrentTurn = 0;
 		}

@@ -1,13 +1,16 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using DG.Tweening;
+using UnityEngine.Events;
 
 namespace _Main.Scripts.Dice
 {
 	public class DiceView : MonoBehaviour
 	{
-		[SerializeField] private MeshRenderer[] sideMeshes;
+		[SerializeField] 
+		private List<DiceVisualEntry> diceVisuals;
+		
 		[SerializeField] private Transform model;
 		[SerializeField] private Outline outline;
 		[SerializeField] private Collider diceCollider;
@@ -15,14 +18,26 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private float animSpeed = 0.15f;
 		[SerializeField] private float yOffset = 0.02f;
 
-		public event Action OnDiceClicked;
+		[HideInInspector]
+		public UnityEvent OnDiceClicked;
 
+		private Dictionary<string, Transform> _diceVisualMap;
 		private Camera _mainCamera;
 		private bool _isPressed;
 
-		public void Initialize()
+		public void Initialize(string diceConfigId)
 		{
+			_diceVisualMap = new Dictionary<string, Transform>();
+			foreach (var entry in diceVisuals)
+			{
+				if (!_diceVisualMap.ContainsKey(entry.id))
+				{
+					_diceVisualMap.Add(entry.id, entry.visual);
+				}
+			}
+
 			_mainCamera = Camera.main;
+			SetupVisual(diceConfigId);
 		}
 
 		private void Update()
@@ -66,17 +81,45 @@ namespace _Main.Scripts.Dice
 			return false;
 		}
 
-		public void SetSideMesh(int value)
+		private void SetupVisual(string diceViewId)
 		{
-			foreach (var mesh in sideMeshes)
+			foreach (var visual in _diceVisualMap.Values)
 			{
-				mesh.enabled = false;
+				visual.gameObject.SetActive(false);
 			}
 
-			if (value > 0 && value <= sideMeshes.Length)
+			if (_diceVisualMap.TryGetValue(diceViewId, out var target))
 			{
-				sideMeshes[value - 1].enabled = true;
+				target.gameObject.SetActive(true);
 			}
+		}
+
+		public void SetRotation(int value)
+		{
+			var rotation = Vector3.zero;
+			switch (value)
+			{
+				case 1:
+					rotation = new Vector3(0, 0, 0);
+					break;
+				case 2:
+					rotation = new Vector3(90, 0, 0);
+					break;
+				case 3:
+					rotation = new Vector3(0, 0, -90);
+					break;
+				case 4:
+					rotation = new Vector3(0, 0, 90);
+					break;
+				case 5:
+					rotation = new Vector3(-90, 0, 0);
+					break;
+				case 6:
+					rotation = new Vector3(-180, 0, 0);
+					break;
+			}
+
+			model.localRotation = Quaternion.Euler(rotation);
 		}
 
 		public void UpdateChosenVisual(bool isChosen)
@@ -100,12 +143,12 @@ namespace _Main.Scripts.Dice
 
 		public void PlayPressAnimation()
 		{
-			transform.DOScale(0.9f, animSpeed);
+			model.transform.DOScale(0.9f, animSpeed);
 		}
 
 		public void PlayReleaseAnimation()
 		{
-			transform.DOScale(1f, animSpeed);
+			model.transform.DOScale(1f, animSpeed);
 		}
 
 		public void MoveToPosition(Vector3 position)

@@ -10,9 +10,6 @@ public class ConfigService : IService
 	private readonly IResourceService _resourceService;
 	private readonly ILoggerService _loggerService;
 
-	// словарь для быстрого доступа по id
-	private readonly Dictionary<System.Type, Dictionary<string, IConfig>> _configsDict = new();
-
 	// список для сохранения порядка JSON
 	private readonly Dictionary<System.Type, List<IConfig>> _configsList = new();
 
@@ -25,9 +22,6 @@ public class ConfigService : IService
 	public async UniTask<Dictionary<string, T>> GetConfigsAsync<T>(string resourcePath) where T : IConfig
 	{
 		var type = typeof(T);
-
-		if (_configsDict.ContainsKey(type))
-			return _configsDict[type] as Dictionary<string, T>;
 
 		var jsonTextAsset = await _resourceService.LoadAsync<TextAsset>(resourcePath);
 		if (jsonTextAsset == null)
@@ -54,10 +48,6 @@ public class ConfigService : IService
 			var key = string.IsNullOrEmpty(item.id) ? "default" : item.id;
 			dict[key] = item;
 		}
-
-		_configsDict[type] = new Dictionary<string, IConfig>();
-		foreach (var kvp in dict)
-			_configsDict[type][kvp.Key] = kvp.Value;
 
 		_configsList[type] = list.Cast<IConfig>().ToList();
 

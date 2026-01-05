@@ -3,5 +3,5 @@
 [Serializable]
 public class BaseConfig : IConfig
 {
-	public string id { get; }
+	public string id { get; set; }
 }

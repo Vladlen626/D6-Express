@@ -48,7 +48,7 @@ public class DiceTableView : MonoBehaviour
 		rollButton.OnClicked += () => OnRollClicked?.Invoke();
 		passButton.OnClicked += () => OnPassClicked?.Invoke();
 		betButton.OnClicked += () => OnBetClicked?.Invoke();
-		betButton.OnClicked += () => OnPlayClicked?.Invoke();
+		playButton.OnClicked += () => OnPlayClicked?.Invoke();
 		betSlider.onValueChanged.AddListener(OnSliderChanged);
 	}
 
@@ -62,6 +62,7 @@ public class DiceTableView : MonoBehaviour
 		OnBetSliderChange?.Invoke((int)value);
 	}
 
+	//Todo: когда-то здесь будут не строки, обязательно....
 	public void SetButtonInteractable(string buttonName, bool interactable)
 	{
 		switch (buttonName)
@@ -71,6 +72,9 @@ public class DiceTableView : MonoBehaviour
 				break;
 			case "Pass":
 				passButton.SetInteractable(interactable);
+				break;
+			case "Play":
+				playButton.SetInteractable(interactable);
 				break;
 		}
 	}
