@@ -2550,7 +2550,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DiceGameTableView
   gameStateHandler: {fileID: 5009877806223120308}
   betStateHandler: {fileID: 6817963035103701041}
-  diceSelectionHandler: {fileID: 1268640629025784159}
+  selectStateHandler: {fileID: 1268640629025784159}
   turnText: {fileID: 3423960173497241984}
   targetScoreText: {fileID: 456721948573459609}
   bankedScoreText: {fileID: 810642768173740293}
@@ -2559,11 +2559,13 @@ MonoBehaviour:
   rollButton: {fileID: 8435649008412668659}
   passButton: {fileID: 8786268935120299843}
   betButton: {fileID: 2435971550072432769}
+  playButton: {fileID: 6042153123918951912}
   betSlider: {fileID: 5701037900633156359}
   currentBetText: {fileID: 339012043514198436}
   minBetText: {fileID: 7593737878625107288}
   maxBetText: {fileID: 5818472621453455883}
-  dicePositionsHandler: {fileID: 8818887974081468422}
+  gameStatePosHandler: {fileID: 8818887974081468422}
+  selectionStatePosHandler: {fileID: 244888744760455558}
 --- !u!65 &6565419455448806131
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3967,6 +3969,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9216672201497590251, guid: cd4006590ece0be41abd59ffc7798edc, type: 3}
   m_PrefabInstance: {fileID: 4770681618418355780}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6042153123918951912 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1292207530373249964, guid: cd4006590ece0be41abd59ffc7798edc, type: 3}
+  m_PrefabInstance: {fileID: 4770681618418355780}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af248873ba4b40f494217dbf5c451dc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_Main.Scripts.Game.Views.ButtonView
 --- !u!1001 &5235965795540611312
 PrefabInstance:
   m_ObjectHideFlags: 0

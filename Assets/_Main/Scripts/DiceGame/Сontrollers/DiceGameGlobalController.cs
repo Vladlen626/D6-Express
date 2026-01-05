@@ -100,21 +100,16 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask StartDiceGame()
 		{
-			// TODO: Перенести в конфиги. Тут в целом подумать надо над переработкой
-			int targetScore = 3000;
-			int maxTurnCount = 10;
-			
-			// Можем потом прикрутить зависимости от уровня (вагона)
-			int minBetSize = 100;
-			
-			// Нельзя ставить больше чем у нас есть. Надо заранее в долг брать
+			var diceGameConfig =
+				await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
+
 			int maxBetSize = playerModel.InventoryModel.CashCount;
 
-			diceGameModel.SetMinBetSize(minBetSize);
+			diceGameModel.SetMinBetSize(diceGameConfig.min_bet_size);
 			diceGameModel.SetMaxBetSize(maxBetSize);
-			diceGameModel.SetBetSize((minBetSize + maxBetSize)/2);
-			diceGameModel.SetTargetScore(targetScore);
-			diceGameModel.SetMaxTurnCount(maxTurnCount);
+			diceGameModel.SetBetSize((diceGameConfig.min_bet_size + maxBetSize)/2);
+			diceGameModel.SetTargetScore(diceGameConfig.target_score);
+			diceGameModel.SetMaxTurnCount(diceGameConfig.max_turn_count);
 			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
 			await BetProcess();

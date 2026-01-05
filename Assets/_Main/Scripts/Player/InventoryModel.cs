@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public class InventoryModel
 {
 	public event Action OnCashCountChanged;
 	public int CashCount => cashCount;
-
+	public IReadOnlyList<string> DiceIdList => diceIdList;
+	
+	private readonly List<string> diceIdList = new();
 	private int cashCount;
 
 	public void GiveCash(int amount)
@@ -23,5 +26,10 @@ public class InventoryModel
 	{
 		cashCount = amount;
 		OnCashCountChanged?.Invoke();
+	}
+
+	public void AddDice(string diceId)
+	{
+		diceIdList.Add(diceId);
 	}
 }

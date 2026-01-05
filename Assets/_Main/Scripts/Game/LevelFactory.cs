@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using _Main.Scripts.Dice;
+using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
 public static class LevelFactory
 {
-	public static LevelModel CreateLevelModel()
+	public static async UniTask<LevelModel> CreateLevelModel(ConfigService configService)
 	{
-		// TODO: в настройки
-		var ticksPerDay = 3;
-		int days = 3;
-		int cashGoal = 500;
+		var levelConfig = await configService.GetFirstOrDefaultAsync<LevelConfig>(ResourcePaths.Json.level_rules);
 
-		var levelModel = new LevelModel(ticksPerDay, days, cashGoal);
+		var levelModel = new LevelModel(levelConfig.ticks_per_day, levelConfig.days, levelConfig.cash_goal);
 		return levelModel;
 	}
 

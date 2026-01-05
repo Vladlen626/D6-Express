@@ -15,7 +15,7 @@ public class DiceTableView : MonoBehaviour
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
 	[SerializeField] private Transform betStateHandler;
-	[SerializeField] private Transform diceSelectionHandler;
+	[SerializeField] private Transform selectStateHandler;
 	
 	[Header("Turn")]
 	[SerializeField] private TextMeshPro turnText;
@@ -79,7 +79,7 @@ public class DiceTableView : MonoBehaviour
 	{
 		gameStateHandler.gameObject.SetActive(false);
 		betStateHandler.gameObject.SetActive(false);
-		selectionStatePosHandler.gameObject.SetActive(false);
+		selectStateHandler.gameObject.SetActive(false);
 		
 		switch (state)
 		{
@@ -90,7 +90,7 @@ public class DiceTableView : MonoBehaviour
 				betStateHandler.gameObject.SetActive(true);
 				break;
 			case DiceGameState.SELECT_DICE:
-				selectionStatePosHandler.gameObject.SetActive(true);
+				selectStateHandler.gameObject.SetActive(true);
 				break;
 		}
 	}

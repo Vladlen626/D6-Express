@@ -62,8 +62,8 @@ namespace _Main.Scripts.Core
 			var controllersList = new List<IBaseController>();
 			// --------------
 
-			var playerModel = PlayerFactory.CreatePlayerModel();
-			var levelModel = LevelFactory.CreateLevelModel();
+			var playerModel = await PlayerFactory.CreatePlayerModel(configService);
+			var levelModel = await LevelFactory.CreateLevelModel(configService);
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 
 			var activeSceneName = sceneService.GetActiveSceneName();

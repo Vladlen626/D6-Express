@@ -7,12 +7,19 @@ using PlatformCore.Services.UI;
 
 public static class PlayerFactory
 {
-	public static PlayerModel CreatePlayerModel()
+	public static async UniTask<PlayerModel> CreatePlayerModel(ConfigService configService)
 	{
-		// TODO: Перенести в конфиги
-		int startCash = 300;
 		var playerModel = new PlayerModel();
+
+		var playerConfig = await configService.GetFirstOrDefaultAsync<PlayerConfig>(ResourcePaths.Json.player);
+		int startCash = playerConfig.cash;
+	
 		playerModel.InventoryModel.GiveCash(startCash);
+
+		foreach (var playerConfigDice in playerConfig.dices)
+		{
+			playerModel.InventoryModel.AddDice(playerConfigDice);
+		}
 
 
 		return playerModel;
