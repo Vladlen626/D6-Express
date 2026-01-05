@@ -68,32 +68,72 @@ namespace _Main.Scripts.Dice
 		{
 			logger?.Log("[DiceGameController] Handle roll");
 
+			// Сохраняем выбранные кубы, если есть
 			bool isHotDice = TrySaveSelected();
 			tableModel.SetPreviewPoints(0);
 
+			// Если все кубы забанкированы после сохранения, сбросить пул
 			if (isHotDice)
 			{
 				tableModel.ResetAllPositions();
 				dicePool.ResetAll();
 			}
 
+			// Роллим актуальные кубы
 			var diceToRoll = dicePool.GetUnbanked();
 			foreach (var dice in diceToRoll)
 			{
 				dice.Roll();
 			}
 
-			if (CheckBustAndEndTurn(diceToRoll))
+			// Проверка на bust: если бросок не дал очков, сразу перебрасываем (так же как обычный фейл)
+			if (CheckBust())
 			{
+				// CheckBust сразу делает Roll всех кубов и UpdateUI
 				return;
 			}
 
 			UpdateUI();
 		}
 
+// Универсальный метод проверки на Bust и переброса кубов
+		private bool CheckBust()
+		{
+			var diceToRoll = dicePool.GetUnbanked();
+			if (!DiceGameUtils.RollHasAnyScore(GetValues(diceToRoll)))
+			{
+				logger?.Log("[DiceGameController] BUST!");
+
+				tableModel.ResetTurn();
+				diceGameModel.IncreaseCurrentTurn();
+				dicePool.ResetAll();
+				tableModel.ResetAllPositions();
+
+				RollAllDice(); // переброс всех кубов
+				UpdateUI();
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private void RollAllDice()
+		{
+			foreach (var dice in diceModels) dice.Roll();
+		}
+
+		private int[] GetValues(DiceModel[] dice)
+		{
+			var values = new int[dice.Length];
+			for (int i = 0; i < dice.Length; i++) values[i] = dice[i].CurrentValue;
+			return values;
+		}
+
 		private void HandlePass()
 		{
 			logger?.Log("[DiceGameController] Handle pass");
+
 			TrySaveSelected();
 
 			tableModel.AddBankedPoints(tableModel.TurnPoints);
@@ -101,41 +141,14 @@ namespace _Main.Scripts.Dice
 
 			tableModel.ResetTurn();
 			dicePool.ResetAll();
-
-			foreach (var dice in diceModels)
+			
+			var allDice = dicePool.GetUnbanked();
+			foreach (var dice in allDice)
 			{
 				dice.Roll();
 			}
 
 			UpdateUI();
-		}
-
-		private bool CheckBustAndEndTurn(DiceModel[] dice)
-		{
-			var values = new int[dice.Length];
-			for (var i = 0; i < dice.Length; i++)
-			{
-				values[i] = dice[i].CurrentValue;
-			}
-
-			if (DiceGameUtils.RollHasAnyScore(values))
-			{
-				return false;
-			}
-
-			logger?.Log("[DiceGameController] BUST!");
-
-			tableModel.ResetTurn();
-			diceGameModel.IncreaseCurrentTurn();
-			dicePool.ResetAll();
-
-			foreach (var d in diceModels)
-			{
-				d.Roll();
-			}
-
-			UpdateUI();
-			return true;
 		}
 
 		private bool TrySaveSelected()
@@ -176,11 +189,12 @@ namespace _Main.Scripts.Dice
 			int scorePreview = DiceGameUtils.CalculateScore(selectedValues);
 			bool hasValidComboSelected = scorePreview > 0;
 			bool canPass = hasValidComboSelected || (tableModel.TurnPoints > 0 && selectedDice.Length == 0);
+			bool canRoll = selectedDice.Length == 0 || hasValidComboSelected;
 
 			int previewPoints = hasValidComboSelected ? scorePreview : 0;
 			tableModel.SetPreviewPoints(previewPoints);
 
-			tableView.SetButtonInteractable("Roll", hasValidComboSelected);
+			tableView.SetButtonInteractable("Roll", canRoll);
 			tableView.SetButtonInteractable("Pass", canPass);
 		}
 	}
