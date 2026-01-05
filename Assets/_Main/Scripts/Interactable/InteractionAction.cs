@@ -5,13 +5,13 @@ using _Main.Scripts.Core.Services;
 public abstract class InteractionAction
 {
 	protected IInputService inputService;
-	protected Interactor Interactor { get; private set; }
+
+	public IInteractable Interactable { get; private set; }
+	public Interactor Interactor { get; private set; }
 	protected PlayerStateModel PlayerStateModel { get; private set; }
 
 	public event Action<InteractionAction> Started;
 	public event Action<InteractionAction> Ended;
-
-	public IInteractable Interactable { get; private set; }
 
 	public virtual void Init(Interactor interactor, PlayerStateModel playerStateModel, IInputService inputService)
 	{

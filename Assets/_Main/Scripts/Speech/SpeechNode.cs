@@ -1,15 +1,16 @@
 using System;
 
+
 public abstract class SpeechNode
 {
-    protected Speech speech;
+    protected Speech Speech { get; private set; }
 
     public event Action Started;
     public event Action Finished;
 
     public SpeechNode Init(Speech speech)
     {
-        this.speech = speech;
+        this.Speech = speech;
 
         return this;
     }
@@ -35,7 +36,7 @@ public abstract class SpeechNode
     {
         right.Finished += () =>
         {
-            speech.SetNextNode(this);
+            Speech.SetNextNode(this);
         };
 
         return this;

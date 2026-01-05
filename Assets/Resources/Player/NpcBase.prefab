@@ -875,6 +875,7 @@ GameObject:
   - component: {fileID: 3846627723556643445}
   - component: {fileID: 3928184055611694162}
   - component: {fileID: 7730824348964566677}
+  - component: {fileID: 2930504609898574184}
   m_Layer: 0
   m_Name: NpcBase
   m_TagString: Untagged
@@ -979,6 +980,20 @@ MonoBehaviour:
   - {fileID: 8237756250262387427}
   - {fileID: 8070367890735682220}
   - {fileID: 7345852418752466642}
+--- !u!114 &2930504609898574184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6183470353876266074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5f1dc4265468034cb21f42277de2ab0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VoiceUser
+  type: 0
+  voiceTfm: {fileID: 235345200912624112}
 --- !u!1 &6272596743382983600
 GameObject:
   m_ObjectHideFlags: 0

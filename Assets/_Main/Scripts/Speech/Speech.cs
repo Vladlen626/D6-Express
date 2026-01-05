@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 
 public class Speech
 {
+    private readonly Dictionary<string, object> blackboard = new();
+
     private SpeechNode root;
     private SpeechNode current;
     private SpeechNode next;
@@ -13,6 +16,8 @@ public class Speech
 
     public event Action<SpeechNode> NodeStarted;
     public event Action<SpeechNode> NodeFinished;
+
+    public Dictionary<string, object> Blackboard => blackboard;
 
     public Speech(int id)
     {
@@ -54,6 +59,8 @@ public class Speech
 
         if (next == null)
         {
+            blackboard.Clear();
+            
             Finished?.Invoke();
             return;
         }

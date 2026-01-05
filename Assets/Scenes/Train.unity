@@ -749,6 +749,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainBlock
       objectReference: {fileID: 0}
+    - target: {fileID: 7817584905002893411, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: id
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -826,6 +830,10 @@ PrefabInstance:
     - target: {fileID: 1355620770823827789, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       propertyPath: m_Name
       value: StationBlock
+      objectReference: {fileID: 0}
+    - target: {fileID: 1355620770823827789, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6534526955451835041, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       propertyPath: m_LocalPosition.x

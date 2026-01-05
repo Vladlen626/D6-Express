@@ -32,6 +32,7 @@ public class SpeechController : BaseContextController<UISpeechView>
 
 	private void OnInteractionStarted(InteractionAction action)
 	{
+		// TODO: запуск спича не должен быть тут
 		if (action is InteractableActionSpeak speechAction)
 		{
 			this.speechAction = speechAction;
@@ -39,6 +40,11 @@ public class SpeechController : BaseContextController<UISpeechView>
 			_context.Show();
 
 			currentSpeech = speechModel.GetSpeech(speechAction.Id);
+
+			currentSpeech.Blackboard[SpeechBlackboardBaseKeys.USER] = action.Interactor.gameObject;
+			// todo: ты охуел?
+			currentSpeech.Blackboard[SpeechBlackboardBaseKeys.TARGET] = (action.Interactable as InteractableSpeakable).gameObject;
+
 			currentSpeech.Finished += OnSpeechFinished;
 			currentSpeech.RequestStart();
 		}

@@ -30,7 +30,7 @@ public class SpeechNodeConditional : SpeechNode
     {
         True += () =>
         {
-            speech.SetNextNode(node);
+            Speech.SetNextNode(node);
         };
 
         return this;
@@ -40,7 +40,7 @@ public class SpeechNodeConditional : SpeechNode
     {
         False += () =>
         {
-            speech.SetNextNode(node);
+            Speech.SetNextNode(node);
         };
 
         return this;

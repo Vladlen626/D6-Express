@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{928c7fe0-f2f9-43d3-9f16-808987e04fe9}">
+		<property name="assetPath">
+			<value>gibberish_med_2.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>1</value>
+		</property>
+		<property name="length">
+			<value>0.50145124716553291</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{2982e4c4-74fa-4b14-9bac-3351b6233cb2}</destination>
+		</relationship>
+	</object>
+</objects>
