@@ -3,10 +3,12 @@
 	public InventoryModel InventoryModel { get; private set; }
 
 	public PlayerStateModel PlayerStateModel { get; private set; }
+	public Quests Quests { get; private set; }
 
 	public PlayerModel()
 	{
 		InventoryModel = new InventoryModel();
 		PlayerStateModel = new PlayerStateModel();
+		Quests = new Quests();
 	}
 }

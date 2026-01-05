@@ -1,4 +1,5 @@
 using ImGuiNET;
+using UnityEngine;
 
 public class DebugWindowPlayer : DebugWindowModel
 {
@@ -6,6 +7,7 @@ public class DebugWindowPlayer : DebugWindowModel
 	private readonly PlayerView playerView;
 
 	private int cashInputBuffer;
+	private int questIdBuffer;
 
 	public override string Id => "Player";
 
@@ -22,6 +24,8 @@ public class DebugWindowPlayer : DebugWindowModel
 			Close();
 			return;
 		}
+
+		ImGui.SetNextWindowSize(new Vector2(420, 300), 0);
 
 		if (!ImGui.Begin(Id, ref isOpen, ImGuiWindowFlags.MenuBar))
 		{
@@ -57,6 +61,21 @@ public class DebugWindowPlayer : DebugWindowModel
 			foreach (var item in playerModel.PlayerStateModel.CurrentStates)
 			{
 				ImGui.Text(item.ToString());
+			}
+		}
+
+		if (ImGui.CollapsingHeader("Quests"))
+		{
+			if (ImGui.Button("Add random"))
+			{
+                var quest = QuestFactory.GenerateRandomQuest(playerView);
+				quest.RequestStart();
+                playerModel.Quests.Add(quest);
+			}
+
+			if (ImGui.Button("Clear"))
+			{
+				playerModel.Quests.Clear();
 			}
 		}
 

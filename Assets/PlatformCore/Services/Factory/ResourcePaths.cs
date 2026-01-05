@@ -18,9 +18,13 @@ namespace PlatformCore.Services.Factory
 
 		public static class Player
 		{
+			public const string Character = "Player/Character";
 			public const string CinemachineCamera = "Player/CinemachineCamera";
-			public const string Conductor = "Player/Conductor";
-			public const string Passenger = "Player/Passenger";
+			public const string NpcAnim = "Player/NpcAnim";
+			public const string NpcBase = "Player/NpcBase";
+			public const string NpcConductor = "Player/NpcConductor";
+			public const string NpcPassenger = "Player/NpcPassenger";
+			public const string NpcShopKeeper = "Player/NpcShopKeeper";
 			public const string PlayerPrefab = "Player/PlayerPrefab";
 		}
 
@@ -36,6 +40,7 @@ namespace PlatformCore.Services.Factory
 			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";
 			public const string UIPlayerHud = "UI/UIPlayerHud";
+			public const string UIQuestsView = "UI/UIQuestsView";
 			public const string UISettings = "UI/UISettings";
 			public const string UISleepView = "UI/UISleepView";
 			public const string UISpeechView = "UI/UISpeechView";
