@@ -29,6 +29,7 @@ namespace _Main.Scripts.Core
 				persistentSceneContext.DynamicCanvas);
 			var cameraService = new CameraService(objectFactory);
 			var cursorService = new CursorService(uiService);
+			var configService = new ConfigService(resourceService, logger);
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
 			_serviceLocator.Register<IResourceService, ResourceService>(resourceService);
@@ -40,6 +41,7 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<ICameraShakeService, CameraService>(cameraService);
 			_serviceLocator.Register<ICameraService, CameraService>(cameraService);
 			_serviceLocator.Register<ICursorService, CursorService>(cursorService);
+			_serviceLocator.Register<ConfigService, ConfigService>(configService);
 
 			Debug.Log("[GameRoot] Services registered!");
 		}
@@ -53,6 +55,7 @@ namespace _Main.Scripts.Core
 			var cameraService = _serviceLocator.Get<ICameraService>();
 			var cursorService = _serviceLocator.Get<ICursorService>();
 			var inputService = _serviceLocator.Get<IInputService>();
+			var configService = _serviceLocator.Get<ConfigService>();
 
 			cursorService.UnlockCursor();
 			// Controllers list
@@ -111,7 +114,8 @@ namespace _Main.Scripts.Core
 			{
 				new LoseScreenController(uiService,inputService, cursorService, levelModel),
 				new SettingsController(uiService, audioService, cursorService, inputService),
-				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator, levelModel),
+				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
+					levelModel, configService),
 			};
 
 			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel, playerModel, playerView));

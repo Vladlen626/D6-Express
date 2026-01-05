@@ -16,6 +16,11 @@ namespace PlatformCore.Services.Factory
 			public const string DicePrefab = "Items/DicePrefab";
 		}
 
+		public static class Json
+		{
+			public const string dice_types = "Json/dice_types";
+		}
+
 		public static class Player
 		{
 			public const string Character = "Player/Character";

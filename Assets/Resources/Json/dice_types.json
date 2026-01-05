@@ -1,0 +1,57 @@
+﻿[
+  {
+    "id": "default",
+    "name": "Простой куб",
+    "weights": [1, 1, 1, 1, 1, 1]
+  },
+  {
+    "id": "gen_1_focus",
+    "name": "Куб единиц",
+    "weights": [3, 1, 1, 1, 1, 1]
+  },
+  {
+    "id": "gen_2_focus",
+    "name": "Куб двоек",
+    "weights": [1, 3, 1, 1, 1, 1]
+  },
+  {
+    "id": "gen_3_focus",
+    "name": "Куб троек",
+    "weights": [1, 1, 3, 1, 1, 1]
+  },
+  {
+    "id": "gen_4_focus",
+    "name": "Куб четвёрок",
+    "weights": [1, 1, 1, 3, 1, 1]
+  },
+  {
+    "id": "gen_5_focus",
+    "name": "Куб пятёрок",
+    "weights": [1, 1, 1, 1, 3, 1]
+  },
+  {
+    "id": "gen_6_focus",
+    "name": "Куб шестёрок",
+    "weights": [1, 1, 1, 1, 1, 3]
+  },
+  {
+    "id": "strat_safe_ones_fives",
+    "name": "Страховочный куб",
+    "weights": [3, 1, 1, 1, 3, 1]
+  },
+  {
+    "id": "strat_straight_1_6_hunter",
+    "name": "Стритовый куб (1–6)",
+    "weights": [1, 2, 2, 2, 2, 1]
+  },
+  {
+    "id": "strat_straight_2_6_hunter",
+    "name": "Стритовый куб (2–6)",
+    "weights": [1, 2, 2, 2, 2, 2]
+  },
+  {
+    "id": "strat_polar_ends",
+    "name": "Полярный куб",
+    "weights": [3, 1, 1, 1, 1, 3]
+  }
+]
