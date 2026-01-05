@@ -29,6 +29,7 @@ namespace _Main.Scripts.Dice
 
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
+		private List<IBaseController> selectionControllers = new();
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
 			ServiceLocator serviceLocator, LevelModel levelModel, ConfigService configService)
@@ -127,10 +128,12 @@ namespace _Main.Scripts.Dice
 		private async UniTask SelectionProcess()
 		{
 			diceGameModel.ChangeDiceGameState(DiceGameState.SELECT_DICE);
-
+			
 			var selectionController = new DiceSelectionController(
-				playerModel.InventoryModel, diceGameModel, sceneContext.DiceGameTableView,
+				playerModel.InventoryModel, sceneContext.DiceGameTableView,
 				objectFactory, configService);
+			
+			selectionControllers.Add(selectionController);
 
 			await lifecycleService.RegisterAsync(selectionController);
 			await selectionController.WaitSelection();
@@ -139,7 +142,7 @@ namespace _Main.Scripts.Dice
 			var dicePairs = selectionController.GetDicePairs();
 			selectionController.Cleanup();
 
-			diceViewsArray = new DiceView[dicePairs.Values.Count];
+			diceViewsArray = new DiceView[selectedModels.Count];
 			diceModelsList.AddRange(selectedModels);
 
 			for (int i = 0; i < selectedModels.Count; i++)
@@ -155,7 +158,7 @@ namespace _Main.Scripts.Dice
 				gameControllers.Add(new DiceController(model, view, tableModel));
 			}
 
-			lifecycleService.Unregister(selectionController);
+			ClenUpSelectionControllers();
 		}
 
 		private async UniTask BetProcess()
@@ -187,6 +190,7 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
 			ResetModels();
+			ClenUpSelectionControllers();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
 		}
@@ -199,6 +203,16 @@ namespace _Main.Scripts.Dice
 			}
 
 			betControllers.Clear();
+		}
+		
+		private void ClenUpSelectionControllers()
+		{
+			foreach (var controller in selectionControllers)
+			{
+				lifecycleService.Unregister(controller);
+			}
+
+			selectionControllers.Clear();
 		}
 
 		private void CleanUpMainGameControllers()

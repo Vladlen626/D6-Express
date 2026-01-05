@@ -22,7 +22,7 @@ namespace _Main.Scripts.Dice
 		private DicePositionsHandler _posHandler;
 		private bool _isFinished;
 
-		public DiceSelectionController(InventoryModel inventory, DiceGameModel gameModel,
+		public DiceSelectionController(InventoryModel inventory,
 			DiceTableView view, IObjectFactory factory, ConfigService configService)
 		{
 			_inventory = inventory;
