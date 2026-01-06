@@ -5,14 +5,14 @@ using PlatformCore.Services.UI;
 
 public static class DebugFactory
 {
-    public static IEnumerable<IBaseController> GetBaseController(IInputService inputService, ICursorService cursorService, LevelModel levelModel, PlayerModel playerModel, PlayerView playerView)
+    public static IEnumerable<IBaseController> GetBaseController(IInputService inputService, ICursorService cursorService, RunModel runModel, PlayerModel playerModel, PlayerView playerView)
     {
-        var incrementTick = new DbgMenuItemIncrementTicks(levelModel);
-        var incrementDay = new DbgMenuItemIncrementDays(levelModel);
+        var incrementTick = new DbgMenuItemIncrementTicks(runModel);
+        var incrementDay = new DbgMenuItemIncrementDays(runModel);
         var sleep = new DbgMenuItemIncrementSleep();
         var wakeUp = new DbgMenuItemIncrementWakeUp();
-        var switchToStation = new DbgMenuItemSwitchToStation(levelModel);
-        var switchToTrain = new DbgMenuItemSwitchToTrain(levelModel);
+        var switchToStation = new DbgMenuItemSwitchToStation(runModel);
+        var switchToTrain = new DbgMenuItemSwitchToTrain(runModel);
         var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(playerModel, playerView);
         var openVariablesWindow = new DbgMenuItemOpenDebugVariablesWindow(playerModel, playerView);
         

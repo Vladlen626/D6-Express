@@ -13,35 +13,35 @@ public abstract class DebugMenuItem
 
 public class DbgMenuItemIncrementDays : DebugMenuItem
 {
-    private readonly LevelModel levelModel;
+    private readonly RunModel runModel;
 
     public override string Path => "Increment Day";
 
-    public DbgMenuItemIncrementDays(LevelModel levelModel)
+    public DbgMenuItemIncrementDays(RunModel runModel)
     {
-        this.levelModel = levelModel;
+        this.runModel = runModel;
     }
 
     public override void Execute()
     {
-        levelModel.IncrementDays();
+        runModel.LevelModel.IncrementDays();
     }
 }
 
 public class DbgMenuItemIncrementTicks : DebugMenuItem
 {
-    private readonly LevelModel levelModel;
+    private readonly RunModel runModel;
 
     public override string Path => "Increment Tick";
 
-    public DbgMenuItemIncrementTicks(LevelModel levelModel)
+    public DbgMenuItemIncrementTicks(RunModel runModel)
     {
-        this.levelModel = levelModel;
+        this.runModel = runModel;
     }
 
     public override void Execute()
     {
-        levelModel.IncrementTicks();
+        runModel.LevelModel.IncrementTicks();
     }
 }
 
@@ -67,36 +67,36 @@ public class DbgMenuItemIncrementWakeUp : DebugMenuItem
 
 public class DbgMenuItemSwitchToStation : DebugMenuItem
 {
-    private readonly LevelModel levelModel;
+    private readonly RunModel runModel;
 
     public override string Path => "Switch to Station";
 
-    public DbgMenuItemSwitchToStation(LevelModel levelModel)
+    public DbgMenuItemSwitchToStation(RunModel runModel)
     {
-        this.levelModel = levelModel;
+        this.runModel = runModel;
     }
 
     public override void Execute()
     {
-        levelModel.SetLevelState(LevelState.STATION);
+        runModel.SetLevelState(LevelState.STATION);
     }
 }
 
 
 public class DbgMenuItemSwitchToTrain : DebugMenuItem
 {
-    private readonly LevelModel levelModel;
+    private readonly RunModel runModel;
 
     public override string Path => "Switch to Train";
 
-    public DbgMenuItemSwitchToTrain(LevelModel levelModel)
+    public DbgMenuItemSwitchToTrain(RunModel runModel)
     {
-        this.levelModel = levelModel;
+        this.runModel = runModel;
     }
 
     public override void Execute()
     {
-        levelModel.SetLevelState(LevelState.TRAIN);
+        runModel.SetLevelState(LevelState.TRAIN);
     }
 }
 

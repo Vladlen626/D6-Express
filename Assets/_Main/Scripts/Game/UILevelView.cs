@@ -16,13 +16,25 @@ public class UILevelView : UIBaseElement
 
     [Header("UI")]
     [SerializeField]
+    private TextMeshProUGUI run;
+
+    [SerializeField]
     private TextMeshProUGUI ticks;
 
     [SerializeField]
     private TextMeshProUGUI days;
+
+    [SerializeField]
+    private TextMeshProUGUI cashProgress;
+
     public Gradient LightColor => lightColor;
     public AnimationCurve LightIntensity => lightIntensity;
     public AnimationCurve RatioModifier => ratioModifier;
+
+    public void SetRunText(string text)
+    {
+        run.text = text;
+    }
 
     public void SetTicksText(string text)
     {
@@ -32,5 +44,10 @@ public class UILevelView : UIBaseElement
     public void SetDaysText(string text)
     {
         days.text = text;
+    }
+
+    public void SetCashProgress(string text)
+    {
+        cashProgress.text = text;
     }
 }

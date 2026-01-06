@@ -6,14 +6,14 @@ public class WinScreenController : BaseContextController<UIWinView>
 {
 	private readonly IInputService inputService;
 	private readonly ICursorService cursorService;
-	private readonly LevelModel levelModel;
+	private readonly RunModel runModel;
 
 	public WinScreenController(IUIService uiService, IInputService inputService, ICursorService cursorService,
-		LevelModel levelModel) : base(uiService)
+		RunModel runModel) : base(uiService)
 	{
 		this.inputService = inputService;
 		this.cursorService = cursorService;
-		this.levelModel = levelModel;
+		this.runModel = runModel;
 	}
 
 	protected override void OnActivate()
@@ -22,33 +22,33 @@ public class WinScreenController : BaseContextController<UIWinView>
 
 		HideContext();
 
-		levelModel.LevelFinished += LevelFinishedHandler;
+		runModel.Finished += RunFinished;
 		_context.ExitButtonClicked += OnExitButtonClickedHandler;
 	}
 
 	protected override void OnDeactivate()
 	{
 		_context.ExitButtonClicked -= OnExitButtonClickedHandler;
-		levelModel.LevelFinished -= LevelFinishedHandler;
+		runModel.Finished -= RunFinished;
 
 		HideContext();
 
 		base.OnDeactivate();
 	}
 
-	private void LevelFinishedHandler(bool result)
+	private void RunFinished(bool result)
 	{
-		// if (result)
-		// {
-		// 	if (DebugVariables.ShowWinView)
-		// 	{
-		// 		ShowContext();
-		// 	}
-		// 	else
-		// 	{
-		// 		levelModel.SetLevelState(LevelState.STATION);
-		// 	}
-		// }
+		if (result)
+		{
+			if (DebugVariables.ShowWinView)
+			{
+				ShowContext();
+			}
+			else
+			{
+				runModel.SetLevelState(LevelState.STATION);
+			}
+		}
 	}
 
 	private void ShowContext()
@@ -67,7 +67,7 @@ public class WinScreenController : BaseContextController<UIWinView>
 
 	private void OnExitButtonClickedHandler()
 	{
-		levelModel.SetLevelState(LevelState.STATION);
+		runModel.SetLevelState(LevelState.STATION);
 		_context.Hide();
 	}
 }

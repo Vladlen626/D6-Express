@@ -5,41 +5,41 @@ using UnityEngine;
 
 public class LevelController : IBaseController, IActivatable
 {
-	private readonly LevelModel levelModel;
+	private readonly RunModel runModel;
 	private readonly PlayerModel playerModel;
 	private readonly DiceGameModel diceGameModel;
 
-	public LevelController(LevelModel levelModel, PlayerModel playerModel, DiceGameModel diceGameModel)
+	public LevelController(RunModel runModel, PlayerModel playerModel, DiceGameModel diceGameModel)
 	{
-		this.levelModel = levelModel;
+		this.runModel = runModel;
 		this.playerModel = playerModel;
 		this.diceGameModel = diceGameModel;
 	}
 
 	public void Activate()
 	{
-		levelModel.LevelStateChanged += OnLevelStateChanged;
-		levelModel.LevelFinished += DayLevelFinishedHandler;
-		levelModel.OnFinalDay += OnFinalDayHandler;
+		runModel.StateChanged += OnLevelStateChanged;
+		runModel.LevelModel.LevelFinished += DayLevelFinishedHandler;
+		runModel.LevelModel.OnFinalDay += OnFinalDayHandler;
 	}
 
 	public void Deactivate()
 	{
-		levelModel.LevelStateChanged -= OnLevelStateChanged;
-		levelModel.LevelFinished -= DayLevelFinishedHandler;
-		levelModel.OnFinalDay -= OnFinalDayHandler;
+		runModel.StateChanged -= OnLevelStateChanged;
+		runModel.LevelModel.LevelFinished -= DayLevelFinishedHandler;
+		runModel.LevelModel.OnFinalDay -= OnFinalDayHandler;
 	}
 
 	private void OnFinalDayHandler()
 	{
-		levelModel.SetLevelFinished(playerModel.InventoryModel.CashCount >= levelModel.CashGoal);
+		runModel.LevelModel.SetLevelFinished(playerModel.InventoryModel.CashCount >= runModel.LevelModel.CashGoal);
 	}
 
 	private void OnLevelStateChanged()
 	{
 		playerModel.PlayerStateModel.TryAddState(CharacterState.LOCATION_TRANSITIONING);
 
-		switch (levelModel.LevelState)
+		switch (runModel.LevelState)
 		{
 			case LevelState.STATION:
 				break;

@@ -63,7 +63,7 @@ namespace _Main.Scripts.Core
 			// --------------
 
 			var playerModel = await PlayerFactory.CreatePlayerModel(configService);
-			var levelModel = await LevelFactory.CreateLevelModel(configService);
+			var runModel = await RunFactory.CreateRunModel(configService);
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 
 			var activeSceneName = sceneService.GetActiveSceneName();
@@ -106,21 +106,21 @@ namespace _Main.Scripts.Core
 			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
 
 			// Level
-			controllersList.AddRange(LevelFactory.GetSleepControllers(levelModel, playerView));
-			controllersList.AddRange(LevelFactory.GetBaseControllers(sceneContext, uiService, levelModel,
+			controllersList.AddRange(RunFactory.GetSleepControllers(runModel.LevelModel, playerView));
+			controllersList.AddRange(RunFactory.GetBaseControllers(sceneContext, uiService, runModel,
 				playerModel, diceGameModel, playerView));
 
 			var baseControllers = new IBaseController[]
 			{
-				new WinScreenController(uiService,inputService, cursorService, levelModel),
-				new LoseScreenController(uiService,inputService, cursorService, levelModel),
+				new WinScreenController(uiService,inputService, cursorService, runModel),
+				new LoseScreenController(uiService,inputService, cursorService, runModel),
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
-					levelModel, configService),
+					runModel.LevelModel, configService),
 			};
 
-			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, levelModel, playerModel, playerView));
-			controllersList.Add(SpeechFactory.GetSpeechController(uiService, playerModel, playerView, levelModel));
+			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView));
+			controllersList.Add(SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel));
 			controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
 
 			controllersList.AddRange(baseControllers);

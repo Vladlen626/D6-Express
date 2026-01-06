@@ -2,34 +2,30 @@ using System;
 
 public class LevelModel
 {
-	private LevelState levelState = LevelState.TRAIN;
-
-	public readonly int CashGoal;
-	public readonly int TicksPerDay;
-	public readonly int Days;
-	public LevelState LevelState => levelState;
-	public float TickRatio => Tick / (float)TicksPerDay;
-	public int Tick { get; private set; }
+	public int Days { get; private set; }
+	public int Ticks { get; private set; }
+	public int CashGoal { get; private set; }
+	public int TicketPrice { get; private set; }
 	public int Day { get; private set; }
+	public int Tick { get; private set; }
+	public float TickRatio => Tick / (float)Ticks;
 	public bool IsLevelFinished => Day + 1 >= Days;
 
 	public event Action TickChanged;
 	public event Action DayChanged;
 	public event Action OnFinalDay;
 	public event Action<bool> LevelFinished;
-	public event Action LevelStateChanged;
 
-	public LevelModel(int ticksPerDay, int days, int cashGoal)
+	public void UpdateLevel(LevelData levelData, int ticketPrice)
 	{
-		Days = days;
-		TicksPerDay = ticksPerDay;
-		CashGoal = cashGoal;
-	}
+		Tick = 0;
+		Day = 0;
 
-	public void SetLevelState(LevelState levelState)
-	{
-		this.levelState = levelState;
-		LevelStateChanged?.Invoke();
+		Days = levelData.days;
+		Ticks = levelData.ticks;
+		CashGoal = levelData.cashGoal;
+
+		TicketPrice = ticketPrice; 
 	}
 
 	public void IncrementDays()
@@ -52,7 +48,7 @@ public class LevelModel
 
 	public void IncrementTicks()
 	{
-		if (Tick + 1 < TicksPerDay)
+		if (Tick + 1 < Ticks)
 		{
 			Tick++;
 			TickChanged?.Invoke();

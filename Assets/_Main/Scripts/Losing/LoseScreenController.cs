@@ -6,14 +6,14 @@ public class LoseScreenController : BaseContextController<UILoseView>
 {
 	private readonly IInputService inputService;
 	private readonly ICursorService cursorService;
-	private readonly LevelModel levelModel;
+	private readonly RunModel runModel;
 
 	public LoseScreenController(IUIService uiService, IInputService inputService, ICursorService cursorService,
-		LevelModel levelModel) : base(uiService)
+		RunModel runModel) : base(uiService)
 	{
 		this.inputService = inputService;
 		this.cursorService = cursorService;
-		this.levelModel = levelModel;
+		this.runModel = runModel;
 	}
 
 	protected override void OnActivate()
@@ -22,7 +22,7 @@ public class LoseScreenController : BaseContextController<UILoseView>
 
 		HideContext();
 
-		levelModel.LevelFinished += LevelFinishedHandler;
+		runModel.LevelModel.LevelFinished += LevelFinishedHandler;
 		_context.ExitButtonClicked += OnExitButtonClickedHandler;
 		_context.ContinueButtonClicked += OnContinueButtonClickedHandler;
 	}
@@ -31,7 +31,7 @@ public class LoseScreenController : BaseContextController<UILoseView>
 	{
 		_context.ContinueButtonClicked -= OnContinueButtonClickedHandler;
 		_context.ExitButtonClicked -= OnExitButtonClickedHandler;
-		levelModel.LevelFinished -= LevelFinishedHandler;
+		runModel.LevelModel.LevelFinished -= LevelFinishedHandler;
 
 		HideContext();
 
@@ -48,7 +48,7 @@ public class LoseScreenController : BaseContextController<UILoseView>
 			}
 			else
 			{
-				levelModel.SetLevelState(LevelState.STATION);
+				runModel.SetLevelState(LevelState.STATION);
 			}
 		}
 	}
@@ -69,13 +69,13 @@ public class LoseScreenController : BaseContextController<UILoseView>
 
 	private void OnExitButtonClickedHandler()
 	{
-		levelModel.SetLevelState(LevelState.STATION);
+		runModel.SetLevelState(LevelState.STATION);
 		_context.Hide();
 	}
 
 	private void OnContinueButtonClickedHandler()
 	{
-		levelModel.SetLevelState(LevelState.STATION);
+		runModel.SetLevelState(LevelState.STATION);
 		_context.Hide();
 	}
 }

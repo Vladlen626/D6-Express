@@ -6,9 +6,9 @@ public static class SpeechFactory
         IUIService uiService,
         PlayerModel playerModel,
         PlayerView playerView,
-        LevelModel levelModel)
+        RunModel runModel)
     {
-        var speechBuyTicket = GetConductorSpeech(playerModel, levelModel);
+        var speechBuyTicket = GetConductorSpeech(playerModel, runModel);
         var speechPassengerGeneric = GetGenericPassengerSpeech();
         var speechPassengerComrade = GetComradeSpeech();
         var speechPassengerAnecdote = GetAnecdoteSpeech();
@@ -53,7 +53,7 @@ public static class SpeechFactory
         return parallel;
     }
 
-    private static Speech GetConductorSpeech(PlayerModel playerModel, LevelModel levelModel)
+    private static Speech GetConductorSpeech(PlayerModel playerModel, RunModel runModel)
     {
         var speechBuyTicket = new Speech(0);
 
@@ -62,7 +62,7 @@ public static class SpeechFactory
         var speechNodeHasNoMoney = Say(speechBuyTicket, "Проваливай, нищий обрыган!");
 
         var speechNodeConditional = new SpeechNodeConditional(
-                () => playerModel.InventoryModel.CashCount >= levelModel.CashGoal)
+                () => playerModel.InventoryModel.CashCount >= runModel.LevelModel.TicketPrice)
             .OnTrue(speechNodeHasMoney)
             .OnFalse(speechNodeHasNoMoney)
             .After(speechNodeConductorSaysHi)
@@ -70,8 +70,8 @@ public static class SpeechFactory
 
         var speechNodeMoveToTrain = new SpeechNodeDo(() =>
             {
-                levelModel.SetLevelState(LevelState.TRAIN);
-                playerModel.InventoryModel.TakeCash(levelModel.CashGoal);
+                runModel.SetLevelState(LevelState.TRAIN);
+                playerModel.InventoryModel.TakeCash(runModel.LevelModel.TicketPrice);
             })
             .After(speechNodeHasMoney)
             .Init(speechBuyTicket);
