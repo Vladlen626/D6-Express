@@ -59,7 +59,7 @@ public class LevelViewController : BaseContextController<UILevelView>
 
 	private void OnLevelStateChanged()
 	{
-		_context.SetRunText($"Run: {runModel.LevelIndex} / {runModel.MaxLevels}");
+		_context.SetRunText($"Run: {runModel.LevelIndex + 1} / {runModel.MaxLevels}");
 
 		trainBlock.SetActive(runModel.LevelState == LevelState.TRAIN);
 		stationBlock.SetActive(runModel.LevelState == LevelState.STATION);
