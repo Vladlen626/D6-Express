@@ -67,14 +67,14 @@ public class LevelViewController : BaseContextController<UILevelView>
 		if (runModel.LevelState == LevelState.STATION)
 		{
 			playerView.SetCharacterGhost(true);
-			playerView.transform.SetPositionAndRotation(playerStationSpawnPosition.position,
+			playerView.Body.SetPositionAndRotation(playerStationSpawnPosition.position,
 				playerStationSpawnPosition.rotation);
 			playerView.SetCharacterGhost(false);
 		}
 		else
 		{
 			playerView.SetCharacterGhost(true);
-			playerView.transform.SetPositionAndRotation(playerTrainSpawnPosition.position,
+			playerView.Body.SetPositionAndRotation(playerTrainSpawnPosition.position,
 				playerTrainSpawnPosition.rotation);
 			playerView.SetCharacterGhost(false);
 		}

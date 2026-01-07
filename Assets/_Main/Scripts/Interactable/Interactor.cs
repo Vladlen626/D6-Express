@@ -8,36 +8,45 @@ using UnityEngine;
 
 public class Interactor : MonoBehaviour
 {
-	public event Action<InteractionAction> InteractionStarted;
-	public event Action<InteractionAction> InteractionEnded;
-
-	public event Action<Interactable> Noticed;
-	public event Action<Interactable> Missed;
-	
-	[SerializeField] private float interactionDistance = 3f;
+	[SerializeField]
+	private float interactionDistance = 3f;
 
 	[SerializeReference]
 	[SubclassSelector]
 	private List<InteractionAction> actions = new();
 
-	[SerializeField] private LayerMask interactableLayerMask;
+	[SerializeField]
+	private LayerMask interactableLayerMask;
 
-	[SerializeField] private Transform viewTransform;
+	[SerializeField]
+	private Transform viewTransform;
 
-	private Interactable selectedInteractable;
+	[SerializeField]
+	private Transform interactionRoot;
 
 	// todo: стэк тут ту мач
 	private readonly Stack<InteractionAction> actionStack = new();
 
+	private Interactable selectedInteractable;
+
 	private PlayerStateModel playerStateModel;
 	private IInputService inputService;
+
+	public Transform InteractionRoot => interactionRoot;
+
+	public event Action<InteractionAction> InteractionStarted;
+	public event Action<InteractionAction> InteractionEnded;
+
+	public event Action<Interactable> Noticed;
+	public event Action<Interactable> Missed;
+
 
 	public void Initialize(IInputService inputService, PlayerStateModel playerStateModel)
 	{
 		this.inputService = inputService;
 		this.playerStateModel = playerStateModel;
 		this.inputService.OnInteractPressed += OnInteract;
-		
+
 		foreach (var item in actions)
 		{
 			item.Init(this, this.playerStateModel, this.inputService);
@@ -57,8 +66,6 @@ public class Interactor : MonoBehaviour
 		while (actionStack.Count > 0)
 		{
 			var action = actionStack.Pop();
-
-			// todo: кринж, интерактабл должен быть внутри экшена на момент работы
 			action.StopInteract();
 		}
 	}
@@ -111,7 +118,8 @@ public class Interactor : MonoBehaviour
 			if (!TryGetAction(selectedInteractable, out var action))
 			{
 				return;
-			};
+			}
+			;
 
 			actionStack.Push(action);
 

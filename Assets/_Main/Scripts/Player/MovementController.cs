@@ -21,7 +21,7 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	private Vector2 MoveInput => inputService.Move;
 	private Vector2 LookInput => inputService.Look;
 	private bool IsSprint => inputService.IsSprinting;
-	private Transform Transform => playerView.transform;
+	private Transform Transform => playerView.Body;
 
 	public MovementController(PlayerView playerView, PlayerModel playerModel, IInputService inputService,
 		ICursorService cursorService)
@@ -67,7 +67,7 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 		if (controller.enabled)
 		{
-			Vector3 move = playerView.transform.right * MoveInput.x + Transform.forward * MoveInput.y;
+			Vector3 move = Transform.right * MoveInput.x + Transform.forward * MoveInput.y;
 			controller.Move((IsSprint ? playerView.runSpeed : playerView.walkSpeed) * deltaTime * move);
 
 			velocity.y += playerView.gravity * deltaTime;

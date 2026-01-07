@@ -17,12 +17,12 @@ public class InteractableActionSit : InteractionAction
 	{
 		PlayerStateModel.TryAddState(CharacterState.TRANSITION);
 
-		lastPos = Interactor.transform.position;
+		lastPos = Interactor.InteractionRoot.position;
 
 		var sittable = Interactable as InteractableSittable;
 
-		var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 1).ToUniTask();
-		var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 1).ToUniTask();
+		var moveTask = Interactor.InteractionRoot.DOMove(sittable.SitTfm.position, 1).ToUniTask();
+		var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(sittable.SitTfm.rotation, 1).ToUniTask();
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 
@@ -36,14 +36,14 @@ public class InteractableActionSit : InteractionAction
 	{
 		inputService.OnMoved -= OnMoved;
 
-		await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		await Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
 
 		PlayerStateModel.TryRemoveState(CharacterState.SITTING);
 	}
 
 	private async void OnMoved(Vector2 dir)
 	{
-		await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		await Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
 
 		StopInteract();
 	}

@@ -18,13 +18,13 @@ public class InteractableActionDiceGame : InteractionAction
 	{
 		PlayerStateModel.TryAddState(CharacterState.TRANSITION);
 
-		lastPos = Interactor.transform.position;
-		lastRot = Interactor.transform.rotation;
+		lastPos = Interactor.InteractionRoot.position;
+		lastRot = Interactor.InteractionRoot.rotation;
 
 		var interactableDiceGame = Interactable as InteractableDiceGame;
 
-		var moveTask = Interactor.transform.DOMove(interactableDiceGame.SitTfm.position, 1).ToUniTask();
-		var rotateTask = Interactor.transform.DORotateQuaternion(interactableDiceGame.SitTfm.rotation, 1).ToUniTask();
+		var moveTask = Interactor.InteractionRoot.DOMove(interactableDiceGame.SitTfm.position, 1).ToUniTask();
+		var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(interactableDiceGame.SitTfm.rotation, 1).ToUniTask();
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 
@@ -38,8 +38,8 @@ public class InteractableActionDiceGame : InteractionAction
 	{
 		inputService.OnInteractPerformed -= OnInteractHoldCompleted;
 
-		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
-		var rotateTask = Interactor.transform.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
+		var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
+		var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 

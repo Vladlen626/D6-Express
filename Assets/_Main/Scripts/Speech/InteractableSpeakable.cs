@@ -15,12 +15,12 @@ public class InteractableSpeakable : Interactable
 
     public override async void StartInteract(Interactor interactor)
     {
-        lastRot = transform.rotation;
+        lastRot = interactor.InteractionRoot.rotation;
 
         rotTween?.Kill();
 
         rotTween = transform
-            .DOLookAt(interactor.transform.position, 0.25f, AxisConstraint.Y) // rotate to face target position [web:1]
+            .DOLookAt(interactor.InteractionRoot.position, 0.25f, AxisConstraint.Y) // rotate to face target position [web:1]
             .SetUpdate(true);
 
         await rotTween.ToUniTask(); // await tween completion [web:1]
