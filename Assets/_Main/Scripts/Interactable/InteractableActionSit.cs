@@ -21,8 +21,6 @@ public class InteractableActionSit : InteractionAction
 
 		var sittable = Interactable as InteractableSittable;
 
-		Interactor.GetComponent<MovementController>().LookLock(45, 45);
-
 		var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 1).ToUniTask();
 		var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 1).ToUniTask();
 
@@ -39,8 +37,6 @@ public class InteractableActionSit : InteractionAction
 		inputService.OnMoved -= OnMoved;
 
 		await Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
-
-		Interactor.GetComponent<MovementController>().UnlockLook();
 
 		PlayerStateModel.TryRemoveState(CharacterState.SITTING);
 	}
