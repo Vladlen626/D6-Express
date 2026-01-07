@@ -34,9 +34,9 @@ public static class RunFactory
 		return new IBaseController[]
 		{
 			new LevelViewController(uiService, playerModel, runModel, sceneContext.Sun, sceneContext.TrainBlock,
-				sceneContext.StationBlock, playerView, sceneContext.PlayerTrainSpawnPosition,
-				sceneContext.PlayerStationSpawnPosition),
-			new LevelController(runModel, playerModel, diceGameModel)
+				sceneContext.StationBlock),
+			new LevelController(runModel, playerModel, diceGameModel,playerView, sceneContext.PlayerTrainSpawnPosition,
+				sceneContext.PlayerStationSpawnPosition)
 		};
 	}
 

@@ -236,6 +236,7 @@ MonoBehaviour:
   cameraRoot: {fileID: 6011523122689109184}
   head: {fileID: 7737307164269436022}
   body: {fileID: 688328327417072490}
+  character: {fileID: 688328327417072490}
   defaultCameraState:
     characterState: 0
     rotationType: 0

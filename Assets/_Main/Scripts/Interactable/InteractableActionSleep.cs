@@ -29,6 +29,5 @@ public class InteractableActionSleep : InteractionAction
 		await Locator.Resolve<IUIService>().GetWindow<UISleepView>().OpenEyes();
 
 		PlayerStateModel.TryRemoveState(CharacterState.SLEEPING);
-		PlayerStateModel.TryAddState(CharacterState.LAYING);
 	}
 }

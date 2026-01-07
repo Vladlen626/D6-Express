@@ -20,7 +20,7 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	private Vector2 MoveInput => inputService.Move;
 	private Vector2 LookInput => inputService.Look;
 	private bool IsSprint => inputService.IsSprinting;
-	private Transform Transform => playerView.Body;
+	private Transform Transform => playerView.Character;
 
 	public MovementController(PlayerView playerView, PlayerModel playerModel, IInputService inputService,
 		ICursorService cursorService)

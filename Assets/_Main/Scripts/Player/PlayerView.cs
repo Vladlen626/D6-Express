@@ -37,6 +37,9 @@ public class PlayerView : MonoBehaviour
 	private Transform body;
 
 	[SerializeField]
+	private Transform character;
+
+	[SerializeField]
 	private CameraState defaultCameraState;
 
 	[SerializeField]
@@ -49,6 +52,7 @@ public class PlayerView : MonoBehaviour
 	public Transform CameraRoot => cameraRoot;
 	public Transform Head => head;
 	public Transform Body => body;
+	public Transform Character => character;
 
 	private void Awake()
 	{
@@ -97,6 +101,7 @@ public class PlayerView : MonoBehaviour
 		characterController.enabled = isEnabled;
 	}
 
+	// todo: здесь этой функции быть не должно
 	public void StopAllActions()
 	{
 		interactor.StopAllActions();

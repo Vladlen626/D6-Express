@@ -8,19 +8,28 @@ public class LevelController : IBaseController, IActivatable
 	private readonly RunModel runModel;
 	private readonly PlayerModel playerModel;
 	private readonly DiceGameModel diceGameModel;
+	private readonly PlayerView playerView;
+    private readonly Transform playerTrainSpawnPosition;
+    private readonly Transform playerStationSpawnPosition;
 
-	public LevelController(RunModel runModel, PlayerModel playerModel, DiceGameModel diceGameModel)
+    public LevelController(RunModel runModel, PlayerModel playerModel, DiceGameModel diceGameModel, PlayerView playerView, Transform playerTrainSpawnPosition,
+		Transform playerStationSpawnPosition)
 	{
 		this.runModel = runModel;
 		this.playerModel = playerModel;
 		this.diceGameModel = diceGameModel;
-	}
+		this.playerView = playerView;
+        this.playerTrainSpawnPosition = playerTrainSpawnPosition;
+        this.playerStationSpawnPosition = playerStationSpawnPosition;
+    }
 
 	public void Activate()
 	{
 		runModel.StateChanged += OnLevelStateChanged;
 		runModel.LevelModel.LevelFinished += DayLevelFinishedHandler;
 		runModel.LevelModel.OnFinalDay += OnFinalDayHandler;
+
+		OnLevelStateChanged();
 	}
 
 	public void Deactivate()
@@ -39,12 +48,19 @@ public class LevelController : IBaseController, IActivatable
 	{
 		playerModel.PlayerStateModel.TryAddState(CharacterState.LOCATION_TRANSITIONING);
 
-		switch (runModel.LevelState)
+		if (runModel.LevelState == LevelState.STATION)
 		{
-			case LevelState.STATION:
-				break;
-			case LevelState.TRAIN:
-				break;
+			playerView.SetCharacterGhost(true);
+			playerView.Character.SetPositionAndRotation(playerStationSpawnPosition.position,
+				playerStationSpawnPosition.rotation);
+			playerView.SetCharacterGhost(false);
+		}
+		else
+		{
+			playerView.SetCharacterGhost(true);
+			playerView.Character.SetPositionAndRotation(playerTrainSpawnPosition.position,
+				playerTrainSpawnPosition.rotation);
+			playerView.SetCharacterGhost(false);
 		}
 
 		playerModel.PlayerStateModel.TryRemoveState(CharacterState.LOCATION_TRANSITIONING);

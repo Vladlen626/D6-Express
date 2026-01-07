@@ -9,22 +9,15 @@ public class LevelViewController : BaseContextController<UILevelView>
 	private readonly Light sun;
 	private readonly GameObject trainBlock;
 	private readonly GameObject stationBlock;
-	private readonly PlayerView playerView;
-	private readonly Transform playerTrainSpawnPosition;
-	private readonly Transform playerStationSpawnPosition;
 
 	public LevelViewController(IUIService uiService, PlayerModel playerModel, RunModel runModel, Light sun, GameObject trainBlock,
-		GameObject stationBlock, PlayerView playerView, Transform playerTrainSpawnPosition,
-		Transform playerStationSpawnPosition) : base(uiService)
+		GameObject stationBlock) : base(uiService)
 	{
 		this.playerModel = playerModel;
 		this.runModel = runModel;
 		this.sun = sun;
 		this.trainBlock = trainBlock;
 		this.stationBlock = stationBlock;
-		this.playerView = playerView;
-		this.playerTrainSpawnPosition = playerTrainSpawnPosition;
-		this.playerStationSpawnPosition = playerStationSpawnPosition;
 	}
 
 	protected override void OnActivate()
@@ -63,21 +56,6 @@ public class LevelViewController : BaseContextController<UILevelView>
 
 		trainBlock.SetActive(runModel.LevelState == LevelState.TRAIN);
 		stationBlock.SetActive(runModel.LevelState == LevelState.STATION);
-
-		if (runModel.LevelState == LevelState.STATION)
-		{
-			playerView.SetCharacterGhost(true);
-			playerView.Body.SetPositionAndRotation(playerStationSpawnPosition.position,
-				playerStationSpawnPosition.rotation);
-			playerView.SetCharacterGhost(false);
-		}
-		else
-		{
-			playerView.SetCharacterGhost(true);
-			playerView.Body.SetPositionAndRotation(playerTrainSpawnPosition.position,
-				playerTrainSpawnPosition.rotation);
-			playerView.SetCharacterGhost(false);
-		}
 	}
 
 	private void RotateSun()
