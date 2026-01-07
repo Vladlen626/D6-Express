@@ -4,35 +4,59 @@ using UnityEngine;
 
 public class PlayerView : MonoBehaviour
 {
-	[Header("Movement")] 
+	[Header("Movement")]
 	public float walkSpeed = 5f;
 	public float runSpeed = 10f;
 	public float jumpHeight = 2f;
 	public float gravity = -20f;
-	
+
 	[Header("States")]
-	[SerializeReference] [SubclassSelector]
+	[SerializeReference]
+	[SubclassSelector]
 	private List<CharacterStateHandler> states = new();
 
-	[Header("Look")] 
+	[Header("Look")]
 	public float mouseSensitivity = 2f;
-	public float lookXLimit = 45f;
 
-	[SerializeField] 
+	[SerializeField]
 	private Interactor interactor;
 
-	[SerializeField] 
+	[SerializeField]
 	private CharacterController characterController;
-	
-	[SerializeField] 
+
+	[SerializeField]
 	private Collider characterCollider;
 
-	[SerializeField] 
+	[SerializeField]
 	private Transform cameraRoot;
+
+	[SerializeField]
+	private Transform head;
+
+	[SerializeField]
+	private Transform body;
+
+	[SerializeField]
+	private CameraState defaultCameraState;
+
+	[SerializeField]
+	private CameraState[] cameraStates;
+
+	private readonly Dictionary<CharacterState, CameraState> cameraStatesDict = new();
 
 	public CharacterStateHandler[] CharacterStateHandlers => states.ToArray();
 	public CharacterController CharacterController => characterController;
 	public Transform CameraRoot => cameraRoot;
+	public Transform Head => head;
+	public Transform Body => body;
+
+	private void Awake()
+	{
+		foreach (var item in cameraStates)
+		{
+			cameraStatesDict.Add(item.characterState, item);
+		}
+	}
 
 	public void Initialize()
 	{
@@ -40,6 +64,16 @@ public class PlayerView : MonoBehaviour
 		{
 			characterStateHandler.Init(this);
 		}
+	}
+
+	public CameraState GetCameraState(CharacterState characterState)
+	{
+		if (characterState == CharacterState.DEFAULT || !cameraStatesDict.ContainsKey(characterState))
+		{
+			return defaultCameraState;
+		}
+
+		return cameraStatesDict[characterState];
 	}
 
 	public void SetCharacterGhost(bool isGhost)
@@ -52,7 +86,7 @@ public class PlayerView : MonoBehaviour
 	{
 		characterCollider.enabled = isEnabled;
 	}
-	
+
 	public void SetCharacterControllerEnabled(bool isEnabled)
 	{
 		characterController.enabled = isEnabled;
@@ -62,4 +96,21 @@ public class PlayerView : MonoBehaviour
 	{
 		interactor.StopAllActions();
 	}
+}
+
+public enum RotationType
+{
+	BODY,
+	HEAD
+}
+
+[Serializable]
+public struct CameraState
+{
+	public CharacterState characterState;
+	public RotationType rotationType;
+	public float minPitch;
+	public float maxPitch;
+	public float minYaw;
+	public float maxYaw;
 }

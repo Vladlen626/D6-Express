@@ -1,3 +1,4 @@
+using System;
 using _Main.Scripts.Core.Services;
 using DG.Tweening;
 using PlatformCore.Core;
@@ -13,14 +14,14 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	private readonly IInputService inputService;
 	private readonly ICursorService cursorService;
 
-	Vector3 velocity;
-	Vector2 moveInput => inputService.Move;
-	Vector2 lookInput => inputService.Look;
-	bool isSprint => inputService.IsSprinting;
-	bool isGrounded;
-	float rotationX;
-
-	private Transform transform => playerView.transform;
+	private CameraState cameraState;
+	private float pitch;
+	private float yaw;
+	private Vector3 velocity;
+	private Vector2 MoveInput => inputService.Move;
+	private Vector2 LookInput => inputService.Look;
+	private bool IsSprint => inputService.IsSprinting;
+	private Transform Transform => playerView.transform;
 
 	public MovementController(PlayerView playerView, PlayerModel playerModel, IInputService inputService,
 		ICursorService cursorService)
@@ -34,8 +35,12 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	public void Activate()
 	{
+		cameraState = playerView.GetCameraState(CharacterState.DEFAULT);
+
+		playerModel.PlayerStateModel.StateAdded += OnCharacterStateAdded;
 		playerModel.PlayerStateModel.StateAdded += OnCharacterStateChanged;
 		playerModel.PlayerStateModel.StateRemoved += OnCharacterStateChanged;
+		playerModel.PlayerStateModel.StateRemoved += OnCharacterStateRemoved;
 		cursorService.LockCursor();
 
 		inputService.OnLooked += OnLooked;
@@ -44,9 +49,12 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	public void Deactivate()
 	{
 		inputService.OnLooked -= OnLooked;
-		
-		playerModel.PlayerStateModel.StateAdded -= OnCharacterStateChanged;
+
+		playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateRemoved;
 		playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateChanged;
+		playerModel.PlayerStateModel.StateAdded -= OnCharacterStateChanged;
+		playerModel.PlayerStateModel.StateAdded -= OnCharacterStateAdded;
+
 		cursorService.UnlockCursor();
 	}
 
@@ -59,8 +67,8 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 		if (controller.enabled)
 		{
-			Vector3 move = playerView.transform.right * moveInput.x + transform.forward * moveInput.y;
-			controller.Move((isSprint ? playerView.runSpeed : playerView.walkSpeed) * deltaTime * move);
+			Vector3 move = playerView.transform.right * MoveInput.x + Transform.forward * MoveInput.y;
+			controller.Move((IsSprint ? playerView.runSpeed : playerView.walkSpeed) * deltaTime * move);
 
 			velocity.y += playerView.gravity * deltaTime;
 			controller.Move(velocity * deltaTime);
@@ -69,10 +77,20 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	private void OnLooked(Vector2 input)
 	{
-		rotationX -= input.y * playerView.mouseSensitivity;
-		rotationX = Mathf.Clamp(rotationX, -playerView.lookXLimit, playerView.lookXLimit);
-		playerView.CameraRoot.localRotation = Quaternion.Euler(rotationX, 0, 0);
-		transform.rotation *= Quaternion.Euler(0, input.x * playerView.mouseSensitivity, 0);
+		pitch -= input.y * playerView.mouseSensitivity;
+		if (cameraState.minPitch != -1 || cameraState.maxPitch != -1)
+		{
+			pitch = Mathf.Clamp(pitch, cameraState.minPitch, cameraState.maxPitch);
+		}
+		playerView.CameraRoot.localRotation = Quaternion.Euler(pitch, 0, 0);
+
+		yaw += input.x * playerView.mouseSensitivity;
+		if (cameraState.minYaw != -1 || cameraState.maxYaw != -1)
+		{
+			yaw = Mathf.Clamp(yaw, cameraState.minYaw, cameraState.maxYaw);
+		}
+		var rotationTransform = cameraState.rotationType == RotationType.HEAD ? playerView.Head : playerView.Body;
+		rotationTransform.localRotation = Quaternion.Euler(0, yaw, 0);
 	}
 
 	private void OnCharacterStateChanged(CharacterState state)
@@ -81,6 +99,25 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 		{
 			ResetCameraRotation();
 		}
+	}
+
+	private void OnCharacterStateAdded(CharacterState state)
+	{
+		ChangeCameraState(state);
+	}
+
+	private void OnCharacterStateRemoved(CharacterState state)
+	{
+		if (state == cameraState.characterState)
+		{
+			ChangeCameraState(CharacterState.DEFAULT);
+		}
+	}
+
+	private void ChangeCameraState(CharacterState state)
+	{
+		cameraState = playerView.GetCameraState(state);
+		playerView.Head.localRotation = Quaternion.identity;
 	}
 
 	private void ResetCameraRotation()
