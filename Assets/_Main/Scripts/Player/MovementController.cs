@@ -15,9 +15,8 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	private readonly ICursorService cursorService;
 
 	private CameraState cameraState;
-	private float pitch;
-	private float yaw;
 	private Vector3 velocity;
+
 	private Vector2 MoveInput => inputService.Move;
 	private Vector2 LookInput => inputService.Look;
 	private bool IsSprint => inputService.IsSprinting;
@@ -42,14 +41,10 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 		playerModel.PlayerStateModel.StateRemoved += OnCharacterStateChanged;
 		playerModel.PlayerStateModel.StateRemoved += OnCharacterStateRemoved;
 		cursorService.LockCursor();
-
-		inputService.OnLooked += OnLooked;
 	}
 
 	public void Deactivate()
 	{
-		inputService.OnLooked -= OnLooked;
-
 		playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateRemoved;
 		playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateChanged;
 		playerModel.PlayerStateModel.StateAdded -= OnCharacterStateChanged;
@@ -73,24 +68,24 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 			velocity.y += playerView.gravity * deltaTime;
 			controller.Move(velocity * deltaTime);
 		}
-	}
 
-	private void OnLooked(Vector2 input)
-	{
-		pitch -= input.y * playerView.mouseSensitivity;
-		if (cameraState.minPitch != -1 || cameraState.maxPitch != -1)
-		{
-			pitch = Mathf.Clamp(pitch, cameraState.minPitch, cameraState.maxPitch);
-		}
-		playerView.CameraRoot.localRotation = Quaternion.Euler(pitch, 0, 0);
-
-		yaw += input.x * playerView.mouseSensitivity;
-		if (cameraState.minYaw != -1 || cameraState.maxYaw != -1)
-		{
-			yaw = Mathf.Clamp(yaw, cameraState.minYaw, cameraState.maxYaw);
-		}
 		var rotationTransform = cameraState.rotationType == RotationType.HEAD ? playerView.Head : playerView.Body;
-		rotationTransform.localRotation = Quaternion.Euler(0, yaw, 0);
+
+		float pitch = Mathf.DeltaAngle(0f, playerView.CameraRoot.localEulerAngles.x);
+		pitch -= LookInput.y * playerView.mouseSensitivity;
+
+		if (cameraState.minPitch != -1 && cameraState.maxPitch != -1)
+			pitch = Mathf.Clamp(pitch, cameraState.minPitch, cameraState.maxPitch);
+
+		playerView.CameraRoot.localEulerAngles = new Vector3(pitch, 0f, 0f);
+
+		float yaw = Mathf.DeltaAngle(0f, rotationTransform.localEulerAngles.y);
+		yaw += LookInput.x * playerView.mouseSensitivity;
+
+		if (cameraState.minYaw != -1 && cameraState.maxYaw != -1)
+			yaw = Mathf.Clamp(yaw, cameraState.minYaw, cameraState.maxYaw);
+
+		rotationTransform.localEulerAngles = new Vector3(0f, yaw, 0f);
 	}
 
 	private void OnCharacterStateChanged(CharacterState state)
