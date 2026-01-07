@@ -49,6 +49,7 @@ public class PlayerView : MonoBehaviour
 
 	public CharacterStateHandler[] CharacterStateHandlers => states.ToArray();
 	public CharacterController CharacterController => characterController;
+	public Interactor Interactor => interactor;
 	public Transform CameraRoot => cameraRoot;
 	public Transform Head => head;
 	public Transform Body => body;
@@ -99,12 +100,6 @@ public class PlayerView : MonoBehaviour
 	public void SetCharacterControllerEnabled(bool isEnabled)
 	{
 		characterController.enabled = isEnabled;
-	}
-
-	// todo: здесь этой функции быть не должно
-	public void StopAllActions()
-	{
-		interactor.StopAllActions();
 	}
 }
 
