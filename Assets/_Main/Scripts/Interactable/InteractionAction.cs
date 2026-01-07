@@ -20,7 +20,10 @@ public abstract class InteractionAction
 		this.inputService = inputService;
 	}
 
-	public abstract bool CanInteract(IInteractable interactable);
+	public virtual bool CanInteract(IInteractable interactable)
+	{
+		return !PlayerStateModel.HasState(CharacterState.TRANSITION) && !PlayerStateModel.HasState(CharacterState.LOCATION_TRANSITIONING);
+	}
 
 	public void StartInteract(IInteractable interactable)
 	{

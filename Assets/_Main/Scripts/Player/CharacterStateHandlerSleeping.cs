@@ -17,13 +17,15 @@ public class CharacterStateHandlerSleeping : CharacterStateHandler
 
 	protected override void EnterInternal()
 	{
-		base.EnterInternal();
+		// todo: это хак чтобы не включать капсулу
+		// base.EnterInternal();
 		inputService.DisableAllInputs();
 	}
 
 	protected override void ExitInternal()
 	{
-		base.ExitInternal();
+		// todo: это хак
+		// base.ExitInternal();
 		inputService.EnableAllInputs();
 	}
 }

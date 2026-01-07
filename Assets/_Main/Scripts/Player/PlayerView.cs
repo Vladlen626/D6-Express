@@ -66,6 +66,11 @@ public class PlayerView : MonoBehaviour
 		}
 	}
 
+	public bool HasCameraState(CharacterState characterState)
+	{
+		return characterState == CharacterState.DEFAULT || cameraStatesDict.ContainsKey(characterState);
+	}
+
 	public CameraState GetCameraState(CharacterState characterState)
 	{
 		if (characterState == CharacterState.DEFAULT || !cameraStatesDict.ContainsKey(characterState))

@@ -8,7 +8,7 @@ public class InteractableActionSleep : InteractionAction
 {
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable is InteractableSleepable && !PlayerStateModel.HasState(CharacterState.SLEEPING);
+		return interactable is InteractableSleepable && !PlayerStateModel.HasState(CharacterState.SLEEPING) && base.CanInteract(interactable);
 	}
 
 	protected override async void StartInteractInternal()

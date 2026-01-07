@@ -11,7 +11,7 @@ public class InteractableActionDiceGame : InteractionAction
 
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable is InteractableDiceGame && PlayerStateModel.HasState(CharacterState.DEFAULT);
+		return interactable is InteractableDiceGame && PlayerStateModel.HasState(CharacterState.DEFAULT) && base.CanInteract(interactable);
 	}
 
 	protected override async void StartInteractInternal()
@@ -23,10 +23,11 @@ public class InteractableActionDiceGame : InteractionAction
 
 		var interactableDiceGame = Interactable as InteractableDiceGame;
 
-		var moveTask = Interactor.InteractionRoot.DOMove(interactableDiceGame.SitTfm.position, 1).ToUniTask();
-		var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(interactableDiceGame.SitTfm.rotation, 1).ToUniTask();
+		// var moveTask = Interactor.InteractionRoot.DOMove(interactableDiceGame.SitTfm.position, 1).ToUniTask();
+		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(interactableDiceGame.SitTfm.rotation, 1).ToUniTask();
 
-		await UniTask.WhenAll(moveTask, rotateTask);
+		// await UniTask.WhenAll(moveTask, rotateTask);
+		Interactor.InteractionRoot.SetPositionAndRotation(interactableDiceGame.SitTfm.position, interactableDiceGame.SitTfm.rotation);
 
 		PlayerStateModel.TryRemoveState(CharacterState.TRANSITION);
 		PlayerStateModel.TryAddState(CharacterState.DICE_GAME);
@@ -38,10 +39,11 @@ public class InteractableActionDiceGame : InteractionAction
 	{
 		inputService.OnInteractPerformed -= OnInteractHoldCompleted;
 
-		var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
-		var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
+		// var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
+		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
 
-		await UniTask.WhenAll(moveTask, rotateTask);
+		// await UniTask.WhenAll(moveTask, rotateTask);
+		Interactor.InteractionRoot.SetPositionAndRotation(lastPos, lastRot);
 
 		PlayerStateModel.TryRemoveState(CharacterState.DICE_GAME);
 	}

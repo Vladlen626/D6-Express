@@ -10,7 +10,7 @@ public class InteractableActionLay : InteractionAction
 
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable is InteractableLayable && !PlayerStateModel.HasState(CharacterState.LAYING);
+		return interactable is InteractableLayable && !PlayerStateModel.HasState(CharacterState.LAYING) && base.CanInteract(interactable);
 	}
 
 	protected override async void StartInteractInternal()
@@ -21,10 +21,11 @@ public class InteractableActionLay : InteractionAction
 
 		var layable = Interactable as InteractableLayable;
 
-		var moveTask = Interactor.InteractionRoot.DOMove(layable.SitTfm.position, 1).ToUniTask();
-		var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(layable.SitTfm.rotation, 1).ToUniTask();
+		// var moveTask = Interactor.InteractionRoot.DOMove(layable.SitTfm.position, 1).ToUniTask();
+		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(layable.SitTfm.rotation, 1).ToUniTask();
 
-		await UniTask.WhenAll(moveTask, rotateTask);
+		// await UniTask.WhenAll(moveTask, rotateTask);
+		Interactor.InteractionRoot.SetPositionAndRotation(layable.SitTfm.position, layable.SitTfm.rotation);
 
 		PlayerStateModel.TryRemoveState(CharacterState.TRANSITION);
 		PlayerStateModel.TryAddState(CharacterState.LAYING);
@@ -35,20 +36,22 @@ public class InteractableActionLay : InteractionAction
 	{
 		inputService.OnMoved -= OnMoved;
 
-		var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
-		var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+		// var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
+		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
 
-		await UniTask.WhenAll(moveTask, rotateTask);
+		// await UniTask.WhenAll(moveTask, rotateTask);
+		Interactor.InteractionRoot.SetPositionAndRotation(lastPos, Quaternion.identity);
 
 		PlayerStateModel.TryRemoveState(CharacterState.LAYING);
 	}
 
 	private async void OnMoved(Vector2 dir)
 	{
-		var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
-		var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+		// var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
+		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
 
-		await UniTask.WhenAll(moveTask, rotateTask);
+		// await UniTask.WhenAll(moveTask, rotateTask);
+		Interactor.InteractionRoot.SetPositionAndRotation(lastPos, Quaternion.identity);
 
 		StopInteract();
 	}
