@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="Event" id="{3b10f312-7304-406b-ab6d-cd72b3e9ec01}">
 		<property name="name">
-			<value>GameplayEvent</value>
+			<value>GameplayEvent1</value>
 		</property>
 		<property name="outputFormat">
 			<value>1</value>
@@ -32,7 +32,7 @@
 			<destination>{173ce4bd-dc6c-49c6-97b2-b9df99fa4781}</destination>
 		</relationship>
 		<relationship name="banks">
-			<destination>{5c4172a1-7d76-407f-a128-23038e41f698}</destination>
+			<destination>{408e60a0-891f-4d7f-aa9b-3b448e1f3c73}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixer" id="{ab160ab3-a7a2-444e-acb8-0627d776c7b6}">
@@ -41,6 +41,9 @@
 		</relationship>
 	</object>
 	<object class="MasterTrack" id="{2c65e648-02cd-4f40-b70a-b32444de9447}">
+		<relationship name="modules">
+			<destination>{dc580d04-047f-4004-a271-e04d878e2ac6}</destination>
+		</relationship>
 		<relationship name="mixerGroup">
 			<destination>{db0cb6f4-a8ca-45eb-9392-d7d80d7ae910}</destination>
 		</relationship>
@@ -69,6 +72,7 @@
 	<object class="Timeline" id="{173ce4bd-dc6c-49c6-97b2-b9df99fa4781}">
 		<relationship name="modules">
 			<destination>{21fdb796-c684-4d80-9ca1-c170aeba414e}</destination>
+			<destination>{dc580d04-047f-4004-a271-e04d878e2ac6}</destination>
 		</relationship>
 		<relationship name="markers">
 			<destination>{823bc074-0df6-4f59-a2e0-1e556ad271fc}</destination>
@@ -83,6 +87,17 @@
 		</relationship>
 		<relationship name="mixer">
 			<destination>{ab160ab3-a7a2-444e-acb8-0627d776c7b6}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{dc580d04-047f-4004-a271-e04d878e2ac6}">
+		<property name="start">
+			<value>34</value>
+		</property>
+		<property name="length">
+			<value>200.6465306122449</value>
+		</property>
+		<relationship name="audioFile">
+			<destination>{a6196603-74a6-4a5f-992c-5d2acec1a211}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{46f9ffac-cc63-439f-8543-78d16f2b3115}">
