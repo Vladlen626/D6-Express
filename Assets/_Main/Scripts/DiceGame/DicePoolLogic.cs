@@ -4,36 +4,36 @@ namespace _Main.Scripts.Dice
 {
 	public class DicePoolLogic
 	{
-		private readonly DiceModel[] _diceModels;
+		private readonly DiceGameModel diceGameModel;
 
-		public DicePoolLogic(DiceModel[] diceModels)
+		public DicePoolLogic(DiceGameModel diceGameModel)
 		{
-			_diceModels = diceModels;
+			this.diceGameModel = diceGameModel;
 		}
 
 		public DiceModel[] GetSelected()
 		{
-			return _diceModels.Where(d => d.IsChosen && !d.IsSaved).ToArray();
+			return diceGameModel.DiceModelsList.Where(d => d.IsChosen && !d.IsSaved).ToArray();
 		}
 
 		public DiceModel[] GetUnbanked()
 		{
-			return _diceModels.Where(d => !d.IsSaved).ToArray();
+			return diceGameModel.DiceModelsList.Where(d => !d.IsSaved).ToArray();
 		}
 
 		public DiceModel[] GetBanked()
 		{
-			return _diceModels.Where(d => d.IsSaved).ToArray();
+			return diceGameModel.DiceModelsList.Where(d => d.IsSaved).ToArray();
 		}
 
 		public bool HasUnbanked()
 		{
-			return _diceModels.Any(d => !d.IsSaved);
+			return diceGameModel.DiceModelsList.Any(d => !d.IsSaved);
 		}
 
 		public bool AllBanked()
 		{
-			return _diceModels.All(d => d.IsSaved);
+			return diceGameModel.DiceModelsList.All(d => d.IsSaved);
 		}
 
 		public void BankSelected()
@@ -48,7 +48,7 @@ namespace _Main.Scripts.Dice
 
 		public void ResetAll()
 		{
-			foreach (var dice in _diceModels)
+			foreach (var dice in diceGameModel.DiceModelsList)
 			{
 				dice.Reset();
 			}

@@ -10,25 +10,27 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceSelectionController : IBaseController, IActivatable
 	{
+		private readonly DiceGameModel _diceGameModel;
 		private readonly InventoryModel _inventory;
 		private readonly DiceTableView _view;
 		private readonly IObjectFactory _factory;
 		private readonly ConfigService _configService;
 
 		private readonly List<DiceModel> _allModels = new();
-		private readonly Dictionary<DiceModel, DiceView> _dicePairs = new();
-		private readonly List<DiceModel> _selectedModels = new();
+		private Dictionary<DiceModel, DiceView> _dicePairs => _diceGameModel.DicePairs;
+		private List<DiceModel> _selectedModels => _diceGameModel.DiceModelsList;
 
 		private DicePositionsHandler _posHandler;
 		private bool _isFinished;
 
-		public DiceSelectionController(InventoryModel inventory,
-			DiceTableView view, IObjectFactory factory, ConfigService configService)
+		public DiceSelectionController(InventoryModel inventory, DiceTableView view, IObjectFactory factory, 
+			ConfigService configService, DiceGameModel diceGameModel)
 		{
 			_inventory = inventory;
 			_view = view;
 			_factory = factory;
 			_configService = configService;
+			_diceGameModel = diceGameModel;
 			_posHandler = view.SelectionStatePosHandler;
 		}
 
@@ -40,6 +42,7 @@ namespace _Main.Scripts.Dice
 
 		public void Deactivate()
 		{
+			CleanupUnselectedDices();
 			_view.OnPlayClicked -= OnPlayClickedHandler;
 
 			foreach (var pair in _dicePairs)
@@ -131,10 +134,9 @@ namespace _Main.Scripts.Dice
 		}
 
 		public async UniTask WaitSelection() => await UniTask.WaitUntil(() => _isFinished);
-		public List<DiceModel> GetSelectedModels() => _selectedModels;
 		public Dictionary<DiceModel, DiceView> GetDicePairs() => _dicePairs;
 
-		public void Cleanup()
+		public void CleanupUnselectedDices()
 		{
 			foreach (var model in _allModels)
 			{

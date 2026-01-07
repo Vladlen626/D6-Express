@@ -705,6 +705,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1976500688489328098, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 1976500688489328098, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2420539403528350232, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.3800001
+      objectReference: {fileID: 0}
     - target: {fileID: 5704129669163623561, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -748,6 +760,18 @@ PrefabInstance:
     - target: {fileID: 5875971813687885191, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: m_Name
       value: TrainBlock
+      objectReference: {fileID: 0}
+    - target: {fileID: 6130012346143482058, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6130012346143482058, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6130012346143482058, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.4500003
       objectReference: {fileID: 0}
     - target: {fileID: 7817584905002893411, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: id

@@ -97,33 +97,33 @@ namespace _Main.Scripts.Dice
 		}
 
 		/// <summary>
-		/// Валидна ли комбинация? (для проверки перед банком)
-		/// </summary>
-		public static bool IsValidCombo(int[] values)
-		{
-			return CalculateScore(values) > 0;
-		}
-
-		/// <summary>
 		/// Есть ли в броске хоть одна очковая кость? (для BUST)
 		/// </summary>
 		public static bool RollHasAnyScore(int[] values)
 		{
 			if (values == null || values.Length == 0)
+			{
 				return false;
+			}
 
 			var info = AnalyzeValues(values);
 
 			if (info.IsStraight_1_6 || info.IsStraight_1_5 || info.IsStraight_2_6)
+			{
 				return true;
+			}
 
 			if (values.Contains(1) || values.Contains(5))
+			{
 				return true;
+			}
 
 			for (int face = 1; face <= 6; face++)
 			{
 				if (info.Counts[face] >= 3)
+				{
 					return true;
+				}
 			}
 
 			return false;
@@ -133,7 +133,10 @@ namespace _Main.Scripts.Dice
 		{
 			float totalWeight = 0f;
 			foreach (float weight in weights)
+			{
 				totalWeight += weight;
+			}
+				
 
 			float randomValue = Random.Range(0f, totalWeight);
 			float cumulativeWeight = 0f;
@@ -142,7 +145,9 @@ namespace _Main.Scripts.Dice
 			{
 				cumulativeWeight += weights[i];
 				if (randomValue <= cumulativeWeight)
+				{
 					return i + 1;
+				}
 			}
 
 			return 1;

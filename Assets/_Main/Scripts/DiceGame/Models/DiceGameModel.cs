@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace _Main.Scripts.Dice
 {
@@ -21,6 +22,8 @@ namespace _Main.Scripts.Dice
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
+		public readonly List<DiceModel> DiceModelsList = new();
+		public readonly Dictionary<DiceModel, DiceView> DicePairs = new();
 
 		public void ChangeDiceGameState(DiceGameState diceGameState)
 		{
@@ -30,6 +33,22 @@ namespace _Main.Scripts.Dice
 				IsDiceGameStarted = true;
 			}
 			OnDiceGameStateChanged?.Invoke();
+		}
+
+		public void HideAllDiceGameModels()
+		{
+			foreach (var diceModel in DiceModelsList)
+			{
+				diceModel.SetHide(true);
+			}
+		}
+		
+		public void ShowAllDiceGameModels()
+		{
+			foreach (var diceModel in DiceModelsList)
+			{
+				diceModel.SetHide(false);
+			}
 		}
 
 		public void SetBetSize(int size)
@@ -89,6 +108,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
+			DiceModelsList.Clear();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;

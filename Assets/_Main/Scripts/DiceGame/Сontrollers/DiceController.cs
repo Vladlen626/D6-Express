@@ -16,25 +16,14 @@ namespace _Main.Scripts.Dice
 			_tableModel = inTableModel;
 		}
 
-		private void InitializePosition()
-		{
-			var startPos = _tableModel.GetFreeActivePosition();
-			if (startPos != null)
-			{
-				diceModel.SetCurrentPosition(startPos);
-				diceView.transform.position = startPos.position;
-			}
-		}
 		public void Activate()
 		{
 			diceModel.OnValueChanged += OnDiceValueChangedHandler;
 			diceModel.OnDiceChosenChanged += OnDiceChosenChangedHandler;
 			diceModel.OnDiceSavedChanged += OnDiceSavedChangedHandler;
+			diceModel.OnDiceHiddenChanged += OnDiceHiddenChangedHandler;
 
 			diceView.OnDiceClicked.AddListener(OnDiceClickedHandler);
-
-			InitializePosition();
-			diceModel.Roll();
 		}
 
 		public void Deactivate()
@@ -42,6 +31,7 @@ namespace _Main.Scripts.Dice
 			diceModel.OnValueChanged -= OnDiceValueChangedHandler;
 			diceModel.OnDiceChosenChanged -= OnDiceChosenChangedHandler;
 			diceModel.OnDiceSavedChanged -= OnDiceSavedChangedHandler;
+			diceModel.OnDiceHiddenChanged -= OnDiceHiddenChangedHandler;
 
 			if (diceView)
 			{
@@ -82,10 +72,15 @@ namespace _Main.Scripts.Dice
 			diceModel.SetCurrentPosition(newPos);
 			diceView.MoveToPosition(newPos.position);
 		}
+
+		private void OnDiceHiddenChangedHandler()
+		{
+			diceView.gameObject.SetActive(!diceModel.IsHide);
+		}
 		
 		private void ReleaseCurrentPosition()
 		{
-			if (diceModel.CurrentPosition == null)
+			if (!diceModel.CurrentPosition)
 			{
 				return;
 			}
