@@ -21,8 +21,8 @@ namespace PlatformCore.Services.Factory
 		{
 			public const string dice_game_rules = "Json/dice_game_rules";
 			public const string dice_types = "Json/dice_types";
-			public const string run_rules = "Json/run_rules";
 			public const string player = "Json/player";
+			public const string run_rules = "Json/run_rules";
 		}
 
 		public static class Player
@@ -34,7 +34,7 @@ namespace PlatformCore.Services.Factory
 			public const string NpcConductor = "Player/NpcConductor";
 			public const string NpcPassenger = "Player/NpcPassenger";
 			public const string NpcShopKeeper = "Player/NpcShopKeeper";
-			public const string PlayerPrefab = "Player/PlayerPrefab";
+			public const string PlayerBase = "Player/PlayerBase";
 		}
 
 		public static class Root

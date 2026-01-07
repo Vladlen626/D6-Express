@@ -32,7 +32,7 @@ public static class PlayerFactory
 		IInputService inputService,
 		PlayerModel playerModel)
 	{
-		var playerView = await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerPrefab, sceneContext.PlayerTrainSpawnPosition.position,
+		var playerView = await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerBase, sceneContext.PlayerTrainSpawnPosition.position,
 			sceneContext.PlayerTrainSpawnPosition.rotation);
 
 		var playerInteractSystem = playerView.GetComponent<Interactor>();
