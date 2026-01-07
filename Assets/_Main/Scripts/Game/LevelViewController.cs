@@ -54,7 +54,7 @@ public class LevelViewController : BaseContextController<UILevelView>
 	{
 		RotateSun();
 
-		_context.SetTicksText($"Ticks: {runModel.LevelModel.Tick} / {runModel.LevelModel.Ticks}");
+		_context.SetTicksText($"Ticks: {runModel.LevelModel.Tick + 1} / {runModel.LevelModel.Ticks}");
 	}
 
 	private void OnLevelStateChanged()
@@ -96,6 +96,6 @@ public class LevelViewController : BaseContextController<UILevelView>
 
 	private void OnCashChanged()
 	{
-		_context.SetCashProgress($"Progress: {playerModel.InventoryModel.CashCount + 1}$ / {runModel.LevelModel.CashGoal}$");
+		_context.SetCashProgress($"Progress: {playerModel.InventoryModel.CashCount}$ / {runModel.LevelModel.CashGoal}$");
 	}
 }
