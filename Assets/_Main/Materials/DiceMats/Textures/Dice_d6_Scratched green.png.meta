@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 3a09e65ce50e13b488fe7e7ce710f91a
+guid: 0679caf6bcb5d964b9a2bcb0474fad91
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -94,10 +94,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 200151
-  packageName: Dice d6 game ready PBR
-  packageVersion: 2.0
-  assetPath: Assets/Dice_6/Textures/512/Plastic Glossy Pure red/Dice_d6_Albedo.png
-  uploadId: 450042

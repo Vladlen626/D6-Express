@@ -15,6 +15,7 @@ namespace _Main.Scripts.Dice
 
 		private IReadOnlyDictionary<string, DiceConfig> diceConfigsDict;
 		
+		private DiceModel currentDiceModel;
 		private Camera mainCamera;
 		
 		public DiceTooltipsController(IUIService uiService, DiceGameModel diceGameModel, ConfigService configService,
@@ -36,13 +37,29 @@ namespace _Main.Scripts.Dice
 			base.OnActivate();
 
 			_context.Hide();
-
+			_context.HideTooltip();
+			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
 			diceGameModel.ScreenDiceDictChanged += ScreenDiceDictChangedHandler;
 			ScreenDiceDictChangedHandler();
+			OnDiceGameStateChangedHandler();
+		}
+
+		private void OnDiceGameStateChangedHandler()
+		{
+			if (diceGameModel.DiceGameState is DiceGameState.GAME or DiceGameState.BET)
+			{
+				_context.Hide();
+				_context.HideTooltip();
+			}
+			else
+			{
+				_context.Show();
+			}
 		}
 
 		protected override void OnDeactivate()
 		{
+			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.ScreenDiceDictChanged -= ScreenDiceDictChangedHandler;
 			
 			base.OnDeactivate();
@@ -78,9 +95,11 @@ namespace _Main.Scripts.Dice
 			{
 				return;
 			}
+			currentDiceModel = diceModel;
 
 			_context.SetHeaderText(diceConfig.name);
 			_context.SetDescriptionText(diceConfig.description);
+			_context.SetRarity(diceConfig.rarityEnum);
 
 			_context.SetPositionFromWorld(
 				diceModel.CurrentPosition,
@@ -88,12 +107,15 @@ namespace _Main.Scripts.Dice
 				mainCamera
 			);
 
-			_context.Show();
+			_context.ShowTooltip();
 		}
 		
 		private void OnDiceHoverExit(DiceModel diceModel)
 		{
-			_context.Hide();
+			if (diceModel == currentDiceModel)
+			{
+				_context.HideTooltip();
+			}
 		}
 	}
 }

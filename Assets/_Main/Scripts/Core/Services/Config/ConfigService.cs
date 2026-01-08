@@ -46,6 +46,7 @@ public class ConfigService : IService
 		foreach (var item in list)
 		{
 			var key = string.IsNullOrEmpty(item.id) ? "default" : item.id;
+			item.ParseConfig();
 			dict[key] = item;
 		}
 

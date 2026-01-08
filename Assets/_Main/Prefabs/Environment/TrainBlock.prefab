@@ -428,9 +428,9 @@ MonoBehaviour:
   landScapePrefabs:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
-  maxSpawnedObjects: 100
-  spawnCooldownMin: 0.8
-  spawnCooldownMax: 1.2
+  maxSpawnedObjects: 300
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
   speed: 5
 --- !u!1 &5024559560671379170
 GameObject:
@@ -514,9 +514,9 @@ MonoBehaviour:
   landScapePrefabs:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
-  maxSpawnedObjects: 50
-  spawnCooldownMin: 0.8
-  spawnCooldownMax: 1.2
+  maxSpawnedObjects: 200
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
   speed: 10
 --- !u!1 &5739871183830274647
 GameObject:
@@ -566,9 +566,9 @@ MonoBehaviour:
   landScapePrefabs:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
-  maxSpawnedObjects: 10
-  spawnCooldownMin: 0.8
-  spawnCooldownMax: 1.2
+  maxSpawnedObjects: 100
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
   speed: 20
 --- !u!1 &5875971813687885191
 GameObject:
@@ -817,9 +817,9 @@ MonoBehaviour:
   landScapePrefabs:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
-  maxSpawnedObjects: 50
-  spawnCooldownMin: 0.8
-  spawnCooldownMax: 1.2
+  maxSpawnedObjects: 200
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
   speed: 10
 --- !u!1 &6974993568785688973
 GameObject:
@@ -981,9 +981,9 @@ MonoBehaviour:
   landScapePrefabs:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
-  maxSpawnedObjects: 100
-  spawnCooldownMin: 0.8
-  spawnCooldownMax: 1.2
+  maxSpawnedObjects: 300
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
   speed: 5
 --- !u!1 &8988830558829408267
 GameObject:
@@ -1033,9 +1033,9 @@ MonoBehaviour:
   landScapePrefabs:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
-  maxSpawnedObjects: 10
-  spawnCooldownMin: 0.8
-  spawnCooldownMax: 1.2
+  maxSpawnedObjects: 100
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
   speed: 20
 --- !u!1001 &527407650611371678
 PrefabInstance:

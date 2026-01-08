@@ -1,4 +1,7 @@
-﻿using PlatformCore.Services.UI;
+﻿using System;
+using System.Collections.Generic;
+using DG.Tweening;
+using PlatformCore.Services.UI;
 using TMPro;
 using UnityEngine;
 
@@ -6,11 +9,30 @@ namespace _Main.Scripts.UI
 {
 	public class UITooltip : UIBaseElement
 	{
-		[SerializeField] private TextMeshProUGUI header;
+		[SerializeField]
+		private Transform tooltipTransform;
 
-		[SerializeField] private TextMeshProUGUI description;
+		[SerializeField] 
+		private TextMeshProUGUI header;
 
-		[SerializeField] private RectTransform tooltipRectTransform;
+		[SerializeField] 
+		private TextMeshProUGUI description;
+
+		[SerializeField] 
+		private RectTransform tooltipRectTransform;
+		
+		[SerializeField]
+		private List<TooltipSeparatorEntry> tooltipEntries;
+ 
+		public void ShowTooltip()
+		{
+			tooltipTransform.DOScale(Vector3.one, 0.15f);
+		}
+
+		public void HideTooltip()
+		{
+			tooltipTransform.DOScale(Vector3.zero, 0.1f);
+		}
 
 		public void SetHeaderText(string text)
 		{
@@ -20,6 +42,14 @@ namespace _Main.Scripts.UI
 		public void SetDescriptionText(string text)
 		{
 			description.text = text;
+		}
+
+		public void SetRarity(Rarity rarity)
+		{
+			foreach (var tooltipSeparatorEntry in tooltipEntries)
+			{
+				tooltipSeparatorEntry.GameObject.SetActive(tooltipSeparatorEntry.Rarity == rarity);
+			}
 		}
 
 		public void SetPositionFromWorld(
@@ -43,5 +73,12 @@ namespace _Main.Scripts.UI
 
 			tooltipRectTransform.position = screenPos;
 		}
+	}
+
+	[Serializable]
+	public class TooltipSeparatorEntry
+	{
+		public Rarity Rarity;
+		public GameObject GameObject;
 	}
 }
