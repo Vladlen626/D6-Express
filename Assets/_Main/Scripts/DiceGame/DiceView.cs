@@ -52,6 +52,8 @@ namespace _Main.Scripts.Dice
 
 		private void OnDestroy()
 		{
+			_isHovered = false;
+			OnDiceHoverExit.Invoke();
 			OnDiceClicked.RemoveAllListeners();
 			OnDiceHoverEnter.RemoveAllListeners();
 			OnDiceHoverExit.RemoveAllListeners();

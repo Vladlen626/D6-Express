@@ -16,7 +16,7 @@ namespace _Main.Scripts.Dice
 		private readonly IObjectFactory _factory;
 		private readonly ConfigService _configService;
 
-		private readonly List<DiceModel> _allModels = new();
+		private List<DiceModel> _allModels => _diceGameModel.ScreenDiceDict.Keys.ToList();
 		private List<DiceModel> _selectedModels => _diceGameModel.GameSelectedDiceModelsList;
 
 		private DicePositionsHandler _posHandler;
@@ -41,13 +41,13 @@ namespace _Main.Scripts.Dice
 
 		public void Deactivate()
 		{
-			CleanupUnselectedDices();
-			_view.OnPlayClicked -= OnPlayClickedHandler;
-
 			foreach (var pair in _diceGameModel.ScreenDiceDict)
 			{
 				pair.Value.OnDiceClicked.RemoveAllListeners();
 			}
+
+			CleanupUnselectedDices();
+			_view.OnPlayClicked -= OnPlayClickedHandler;
 		}
 
 		private async UniTaskVoid SetupSelectionStage()
@@ -79,8 +79,7 @@ namespace _Main.Scripts.Dice
 
 			DiceModel model = new DiceModel(config);
 			model.SetCurrentPosition(startPos);
-
-			_allModels.Add(model);
+			
 			_diceGameModel.AddDiceOnScreen(model, view);
 
 			view.OnDiceClicked.AddListener(() => OnDiceClickedHandler(model));
