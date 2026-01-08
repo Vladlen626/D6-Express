@@ -181,9 +181,8 @@ namespace _Main.Scripts.Dice
 
 		private void StopDiceGame()
 		{
-			if (!gamePreviousStoped)
+			if (gamePreviousStoped)
 			{
-				gamePreviousStoped = true;
 				return;
 			}
 			
@@ -198,6 +197,7 @@ namespace _Main.Scripts.Dice
 			ClenUpSelectionControllers();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
+			gamePreviousStoped = true;
 		}
 
 		private void ClenUpBetControllers()
