@@ -15,9 +15,11 @@ namespace _Main.Scripts.Dice
 		public bool IsSaved { get; private set; }
 		public Transform CurrentPosition { get; private set; }
 		public int[] Weights { get; private set; }
+		public string ConfigId { get; private set; }
 
 		public DiceModel(DiceConfig config)
 		{
+			ConfigId = config.id;
 			Weights = config.weights;
 			Reset();
 		}

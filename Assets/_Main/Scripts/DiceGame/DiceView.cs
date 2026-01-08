@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,6 +9,15 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceView : MonoBehaviour
 	{
+		[HideInInspector]
+		public UnityEvent OnDiceClicked;
+
+		[HideInInspector]
+		public UnityEvent OnDiceHoverEnter;
+
+		[HideInInspector]
+		public UnityEvent OnDiceHoverExit;
+
 		[SerializeField] 
 		private List<DiceVisualEntry> diceVisuals;
 		
@@ -18,12 +28,11 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private float animSpeed = 0.15f;
 		[SerializeField] private float yOffset = 0.02f;
 
-		[HideInInspector]
-		public UnityEvent OnDiceClicked;
-
 		private Dictionary<string, Transform> _diceVisualMap;
 		private Camera _mainCamera;
 		private bool _isPressed;
+		private bool isActive;
+		private bool _isHovered;
 
 		public void Initialize(string diceConfigId)
 		{
@@ -37,7 +46,15 @@ namespace _Main.Scripts.Dice
 			}
 
 			_mainCamera = Camera.main;
+			isActive = true;
 			SetupVisual(diceConfigId);
+		}
+
+		private void OnDestroy()
+		{
+			OnDiceClicked.RemoveAllListeners();
+			OnDiceHoverEnter.RemoveAllListeners();
+			OnDiceHoverExit.RemoveAllListeners();
 		}
 
 		private void Update()
@@ -46,10 +63,28 @@ namespace _Main.Scripts.Dice
 			{
 				return;
 			}
-			
+			bool isMouseOver = IsMouseOverDice();
+
+			if (isMouseOver && !_isHovered)
+			{
+				_isHovered = true;
+				OnDiceHoverEnter?.Invoke();
+			}
+
+			if (!isMouseOver && _isHovered)
+			{
+				_isHovered = false;
+				OnDiceHoverExit?.Invoke();
+			}
+
+			if (!isActive)
+			{
+				return;
+			}
+
 			if (Mouse.current.leftButton.wasPressedThisFrame)
 			{
-				if (IsMouseOverDice())
+				if (isMouseOver)
 				{
 					_isPressed = true;
 					PlayPressAnimation();
@@ -61,7 +96,7 @@ namespace _Main.Scripts.Dice
 				_isPressed = false;
 				PlayReleaseAnimation();
 
-				if (IsMouseOverDice())
+				if (isMouseOver)
 				{
 					OnDiceClicked?.Invoke();
 				}
@@ -154,6 +189,18 @@ namespace _Main.Scripts.Dice
 		public void MoveToPosition(Vector3 position)
 		{
 			transform.DOMove(position, animSpeed);
+		}
+
+		public void Hide()
+		{
+			model.transform.DOScale(Vector3.zero, animSpeed/2);
+			isActive = false;
+		}
+
+		public void Show()
+		{
+			model.transform.DOScale(Vector3.one, animSpeed/2);
+			isActive = true;
 		}
 	}
 }

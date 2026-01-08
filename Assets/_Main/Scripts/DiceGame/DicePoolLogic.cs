@@ -13,27 +13,27 @@ namespace _Main.Scripts.Dice
 
 		public DiceModel[] GetSelected()
 		{
-			return diceGameModel.DiceModelsList.Where(d => d.IsChosen && !d.IsSaved).ToArray();
+			return diceGameModel.GameSelectedDiceModelsList.Where(d => d.IsChosen && !d.IsSaved).ToArray();
 		}
 
 		public DiceModel[] GetUnbanked()
 		{
-			return diceGameModel.DiceModelsList.Where(d => !d.IsSaved).ToArray();
+			return diceGameModel.GameSelectedDiceModelsList.Where(d => !d.IsSaved).ToArray();
 		}
 
 		public DiceModel[] GetBanked()
 		{
-			return diceGameModel.DiceModelsList.Where(d => d.IsSaved).ToArray();
+			return diceGameModel.GameSelectedDiceModelsList.Where(d => d.IsSaved).ToArray();
 		}
 
 		public bool HasUnbanked()
 		{
-			return diceGameModel.DiceModelsList.Any(d => !d.IsSaved);
+			return diceGameModel.GameSelectedDiceModelsList.Any(d => !d.IsSaved);
 		}
 
 		public bool AllBanked()
 		{
-			return diceGameModel.DiceModelsList.All(d => d.IsSaved);
+			return diceGameModel.GameSelectedDiceModelsList.All(d => d.IsSaved);
 		}
 
 		public void BankSelected()
@@ -48,7 +48,7 @@ namespace _Main.Scripts.Dice
 
 		public void ResetAll()
 		{
-			foreach (var dice in diceGameModel.DiceModelsList)
+			foreach (var dice in diceGameModel.GameSelectedDiceModelsList)
 			{
 				dice.Reset();
 			}

@@ -5,4 +5,5 @@ public class DiceConfig : BaseConfig
 {
 	public string name;
 	public int[] weights;
+	public string description;
 }

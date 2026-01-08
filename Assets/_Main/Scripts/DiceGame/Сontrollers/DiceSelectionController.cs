@@ -17,8 +17,7 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService _configService;
 
 		private readonly List<DiceModel> _allModels = new();
-		private Dictionary<DiceModel, DiceView> _dicePairs => _diceGameModel.DicePairs;
-		private List<DiceModel> _selectedModels => _diceGameModel.DiceModelsList;
+		private List<DiceModel> _selectedModels => _diceGameModel.GameSelectedDiceModelsList;
 
 		private DicePositionsHandler _posHandler;
 		private bool _isFinished;
@@ -45,7 +44,7 @@ namespace _Main.Scripts.Dice
 			CleanupUnselectedDices();
 			_view.OnPlayClicked -= OnPlayClickedHandler;
 
-			foreach (var pair in _dicePairs)
+			foreach (var pair in _diceGameModel.ScreenDiceDict)
 			{
 				pair.Value.OnDiceClicked.RemoveAllListeners();
 			}
@@ -82,7 +81,7 @@ namespace _Main.Scripts.Dice
 			model.SetCurrentPosition(startPos);
 
 			_allModels.Add(model);
-			_dicePairs.Add(model, view);
+			_diceGameModel.AddDiceOnScreen(model, view);
 
 			view.OnDiceClicked.AddListener(() => OnDiceClickedHandler(model));
 		}
@@ -122,7 +121,7 @@ namespace _Main.Scripts.Dice
 		private void MoveToSlot(DiceModel model, Transform slot)
 		{
 			model.SetCurrentPosition(slot);
-			_dicePairs[model].MoveToPosition(slot.position);
+			_diceGameModel.ScreenDiceDict[model].MoveToPosition(slot.position);
 		}
 
 		private void OnPlayClickedHandler()
@@ -134,7 +133,6 @@ namespace _Main.Scripts.Dice
 		}
 
 		public async UniTask WaitSelection() => await UniTask.WaitUntil(() => _isFinished);
-		public Dictionary<DiceModel, DiceView> GetDicePairs() => _dicePairs;
 
 		public void CleanupUnselectedDices()
 		{
@@ -142,7 +140,9 @@ namespace _Main.Scripts.Dice
 			{
 				if (!_selectedModels.Contains(model))
 				{
-					_factory.Destroy(_dicePairs[model].gameObject);
+					var dice = _diceGameModel.ScreenDiceDict[model];
+					_diceGameModel.RemoveDiceOnScreen(model);
+					_factory.Destroy(dice.gameObject);
 				}
 			}
 		}

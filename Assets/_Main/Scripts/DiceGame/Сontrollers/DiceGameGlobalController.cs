@@ -26,7 +26,6 @@ namespace _Main.Scripts.Dice
 		
 		private DiceView[] diceViewsArray;
 		private TableModel tableModel;
-	
 
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
@@ -138,16 +137,14 @@ namespace _Main.Scripts.Dice
 
 			await lifecycleService.RegisterAsync(selectionController);
 			await selectionController.WaitSelection();
-			
-			var dicePairs = selectionController.GetDicePairs();
 
-			var selectedModels = diceGameModel.DiceModelsList;
+			var selectedModels = diceGameModel.GameSelectedDiceModelsList;
 			diceViewsArray = new DiceView[selectedModels.Count];
 
 			for (int i = 0; i < selectedModels.Count; i++)
 			{
 				var model = selectedModels[i];
-				var view = dicePairs[model];
+				var view = diceGameModel.ScreenDiceDict[model];
 				var gamePos = dicePositionsHandler.DicePositions[i];
 
 				view.transform.SetParent(gamePos);
@@ -237,9 +234,11 @@ namespace _Main.Scripts.Dice
 
 		private void ResetModels()
 		{
-			foreach (var model in diceGameModel.DiceModelsList)
+			foreach (var model in diceGameModel.GameSelectedDiceModelsList)
 			{
-				objectFactory.Destroy(diceGameModel.DicePairs[model].gameObject);
+				var dice = diceGameModel.ScreenDiceDict[model];
+				diceGameModel.RemoveDiceOnScreen(model);
+				objectFactory.Destroy(dice.gameObject);
 			}
 
 			diceGameModel.Reset();

@@ -5,6 +5,7 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceGameModel
 	{
+		public event Action ScreenDiceDictChanged;
 		public event Action OnGameConditionPassed;
 		public event Action OnGameConditionFailed;
 		public event Action OnBetSizeChanged;
@@ -22,8 +23,9 @@ namespace _Main.Scripts.Dice
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
-		public readonly List<DiceModel> DiceModelsList = new();
-		public readonly Dictionary<DiceModel, DiceView> DicePairs = new();
+		public readonly List<DiceModel> GameSelectedDiceModelsList = new();
+		public IReadOnlyDictionary<DiceModel, DiceView> ScreenDiceDict => screenDiceDict;
+		public Dictionary<DiceModel, DiceView> screenDiceDict = new ();
 
 		public void ChangeDiceGameState(DiceGameState diceGameState)
 		{
@@ -37,7 +39,7 @@ namespace _Main.Scripts.Dice
 
 		public void HideAllDiceGameModels()
 		{
-			foreach (var diceModel in DiceModelsList)
+			foreach (var diceModel in GameSelectedDiceModelsList)
 			{
 				diceModel.SetHide(true);
 			}
@@ -45,7 +47,7 @@ namespace _Main.Scripts.Dice
 		
 		public void ShowAllDiceGameModels()
 		{
-			foreach (var diceModel in DiceModelsList)
+			foreach (var diceModel in GameSelectedDiceModelsList)
 			{
 				diceModel.SetHide(false);
 			}
@@ -106,9 +108,21 @@ namespace _Main.Scripts.Dice
 			OnGameConditionFailed?.Invoke();
 		}
 
+		public void AddDiceOnScreen(DiceModel diceModel, DiceView diceView)
+		{
+			screenDiceDict.Add(diceModel, diceView);
+			ScreenDiceDictChanged?.Invoke();
+		}
+
+		public void RemoveDiceOnScreen(DiceModel diceModel)
+		{
+			screenDiceDict.Remove(diceModel);
+			ScreenDiceDictChanged?.Invoke();
+		}
+
 		public void Reset()
 		{
-			DiceModelsList.Clear();
+			GameSelectedDiceModelsList.Clear();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;

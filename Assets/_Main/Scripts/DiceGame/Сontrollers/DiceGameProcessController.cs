@@ -36,7 +36,7 @@ namespace _Main.Scripts.Dice
 			tableView.OnRollClicked += HandleRoll;
 			tableView.OnPassClicked += HandlePass;
 
-			foreach (var diceModel in diceGameModel.DiceModelsList)
+			foreach (var diceModel in diceGameModel.GameSelectedDiceModelsList)
 			{
 				diceModel.OnDiceChosenChanged += UpdateUI;
 			}
@@ -51,7 +51,7 @@ namespace _Main.Scripts.Dice
 			tableView.OnRollClicked -= HandleRoll;
 			tableView.OnPassClicked -= HandlePass;
 
-			foreach (var diceModel in diceGameModel.DiceModelsList)
+			foreach (var diceModel in diceGameModel.GameSelectedDiceModelsList)
 			{
 				diceModel.OnDiceChosenChanged -= UpdateUI;
 			}

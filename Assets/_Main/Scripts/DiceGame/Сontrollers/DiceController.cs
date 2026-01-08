@@ -75,7 +75,14 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceHiddenChangedHandler()
 		{
-			diceView.gameObject.SetActive(!diceModel.IsHide);
+			if (diceModel.IsHide)
+			{
+				diceView.Hide();
+			}
+			else
+			{
+				diceView.Show();
+			}
 		}
 		
 		private void ReleaseCurrentPosition()
