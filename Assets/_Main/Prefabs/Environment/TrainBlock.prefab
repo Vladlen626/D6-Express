@@ -1345,6 +1345,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1494581720569769837, guid: c8800b79a4d59aa499fb3b7afa5d5de1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 85
+      objectReference: {fileID: 0}
     - target: {fileID: 6211701169420844977, guid: c8800b79a4d59aa499fb3b7afa5d5de1, type: 3}
       propertyPath: m_Name
       value: DiceTable
@@ -1692,6 +1696,10 @@ PrefabInstance:
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6736098947388740489, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: id
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalPosition.x
