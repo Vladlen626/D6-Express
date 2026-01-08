@@ -31,6 +31,7 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> betControllers = new();
 		private List<IBaseController> selectionControllers = new();
 
+		private bool gamePreviousStoped = false;
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
 			ServiceLocator serviceLocator, LevelModel levelModel, ConfigService configService)
 		{
@@ -100,6 +101,7 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask StartDiceGame()
 		{
+			gamePreviousStoped = false;
 			diceTableView.EnableCamera();
 			var diceGameConfig =
 				await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
@@ -179,6 +181,12 @@ namespace _Main.Scripts.Dice
 
 		private void StopDiceGame()
 		{
+			if (!gamePreviousStoped)
+			{
+				gamePreviousStoped = true;
+				return;
+			}
+			
 			diceTableView.DisableCamera();
 			if (!levelModel.IsLevelFinished && diceGameModel.IsDiceGameStarted)
 			{

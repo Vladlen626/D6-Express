@@ -22,11 +22,7 @@ public class InteractableActionDiceGame : InteractionAction
 		lastRot = Interactor.InteractionRoot.rotation;
 
 		var interactableDiceGame = Interactable as InteractableDiceGame;
-
-		// var moveTask = Interactor.InteractionRoot.DOMove(interactableDiceGame.SitTfm.position, 1).ToUniTask();
-		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(interactableDiceGame.SitTfm.rotation, 1).ToUniTask();
-
-		// await UniTask.WhenAll(moveTask, rotateTask);
+		
 		Interactor.InteractionRoot.SetPositionAndRotation(interactableDiceGame.SitTfm.position, interactableDiceGame.SitTfm.rotation);
 
 		PlayerStateModel.TryRemoveState(CharacterState.TRANSITION);
@@ -38,11 +34,7 @@ public class InteractableActionDiceGame : InteractionAction
 	protected override async void StopInteractInternal()
 	{
 		inputService.OnInteractPerformed -= OnInteractHoldCompleted;
-
-		// var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
-		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
-
-		// await UniTask.WhenAll(moveTask, rotateTask);
+		
 		Interactor.InteractionRoot.SetPositionAndRotation(lastPos, lastRot);
 
 		PlayerStateModel.TryRemoveState(CharacterState.DICE_GAME);
