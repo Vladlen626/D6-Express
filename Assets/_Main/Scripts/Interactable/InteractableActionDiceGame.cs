@@ -24,33 +24,25 @@ public class InteractableActionDiceGame : InteractionAction
 		lastRot = Interactor.transform.rotation;
 
 		var interactableDiceGame = Interactable as InteractableDiceGame;
-
-		// var moveTask = Interactor.transform.DOMove(interactableDiceGame.SitTfm.position, 1).ToUniTask();
-		// var rotateTask = Interactor.transform.DORotateQuaternion(interactableDiceGame.SitTfm.rotation, 1).ToUniTask();
-
-		// await UniTask.WhenAll(moveTask, rotateTask);
+		
 		Interactor.transform.SetPositionAndRotation(interactableDiceGame.SitTfm.position, interactableDiceGame.SitTfm.rotation);
 
 		StateModel.TryRemoveState(CharacterState.TRANSITION);
 		StateModel.TryAddState(CharacterState.DICE_GAME);
 
-		Locator.Resolve<IInputService>().OnInteractPerformed += OnInteractHoldCompleted;
+		Locator.Resolve<IInputService>().OnInteractPressed += OnInteract;
 	}
 
 	protected override async void StopInteractInternal()
 	{
-		Locator.Resolve<IInputService>().OnInteractPerformed -= OnInteractHoldCompleted;
-
-		// var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
-		// var rotateTask = Interactor.transform.DORotateQuaternion(lastRot, 0.25f).ToUniTask();
-
-		// await UniTask.WhenAll(moveTask, rotateTask);
+		Locator.Resolve<IInputService>().OnInteractPressed -= OnInteract;
+		
 		Interactor.transform.SetPositionAndRotation(lastPos, lastRot);
 
 		StateModel.TryRemoveState(CharacterState.DICE_GAME);
 	}
 
-	private void OnInteractHoldCompleted()
+	private void OnInteract()
 	{
 		if (!StateModel.HasState(CharacterState.DICE_GAME))
 		{
