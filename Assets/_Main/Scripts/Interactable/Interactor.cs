@@ -11,14 +11,9 @@ public class Interactor : MonoBehaviour
 	[SubclassSelector]
 	private List<InteractionAction> actions = new();
 
-	[SerializeField]
-	private Transform interactionRoot;
-
 	// todo: стэк тут ту мач
 	protected readonly Stack<InteractionAction> actionStack = new();
 	protected Interactable selectedInteractable;
-
-	public Transform InteractionRoot => interactionRoot;
 
 	public event Action<InteractionAction> InteractionStarted;
 	public event Action<InteractionAction> InteractionEnded;

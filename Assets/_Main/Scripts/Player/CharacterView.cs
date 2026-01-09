@@ -36,6 +36,7 @@ public class CharacterView : MonoBehaviour
 	protected Collider CharacterCollider => characterCollider;
 	public Transform CameraRoot => cameraRoot;
 	public Transform Head => head;
+	public Interactor Interactor => interactor;
 
 	private void Awake()
 	{
@@ -76,11 +77,5 @@ public class CharacterView : MonoBehaviour
 	public virtual void SetCharacterGhost(bool isGhost)
 	{
 		SetColliderEnabled(!isGhost);
-	}
-
-	// todo: здесь этой функции быть не должно
-	public void StopAllActions()
-	{
-		interactor.StopAllActions();
 	}
 }
