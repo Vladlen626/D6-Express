@@ -41,10 +41,12 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshPro minBetText;
 	[SerializeField] private TextMeshPro maxBetText;
 
+	[SerializeField] private CinemachineCamera tableCamera;
 	[SerializeField] private DicePositionsHandler gameStatePosHandler;
 	[SerializeField] private DicePositionsHandler selectionStatePosHandler;
 	public DicePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public DicePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
+	public CinemachineCamera TableCamera => tableCamera;
 
 	private void Awake()
 	{
