@@ -26,7 +26,6 @@ public class LevelController : IBaseController, IActivatable
 	public void Activate()
 	{
 		runModel.StateChanged += OnLevelStateChanged;
-		runModel.LevelModel.LevelFinished += DayLevelFinishedHandler;
 		runModel.LevelModel.OnFinalDay += OnFinalDayHandler;
 
 		OnLevelStateChanged();
@@ -35,7 +34,6 @@ public class LevelController : IBaseController, IActivatable
 	public void Deactivate()
 	{
 		runModel.StateChanged -= OnLevelStateChanged;
-		runModel.LevelModel.LevelFinished -= DayLevelFinishedHandler;
 		runModel.LevelModel.OnFinalDay -= OnFinalDayHandler;
 	}
 
@@ -64,17 +62,5 @@ public class LevelController : IBaseController, IActivatable
 		}
 
 		playerModel.PlayerStateModel.TryRemoveState(CharacterState.LOCATION_TRANSITIONING);
-	}
-
-	private void DayLevelFinishedHandler(bool result)
-	{
-		if (result)
-		{
-			Debug.Log("YOU WIN");
-		}
-		else
-		{
-			Debug.Log("YOU LOSE");
-		}
 	}
 }

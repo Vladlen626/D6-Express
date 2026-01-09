@@ -21,9 +21,9 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService configService;
 
 		private readonly SceneContext sceneContext;
-		private readonly DicePositionsHandler dicePositionsHandler;
-
-		private readonly List<DiceModel> diceModelsList = new();
+		private DicePositionsHandler dicePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
+		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
+		
 		private DiceView[] diceViewsArray;
 		private TableModel tableModel;
 
@@ -31,6 +31,7 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> betControllers = new();
 		private List<IBaseController> selectionControllers = new();
 
+		private bool gamePreviousStoped = false;
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
 			ServiceLocator serviceLocator, LevelModel levelModel, ConfigService configService)
 		{
@@ -39,7 +40,6 @@ namespace _Main.Scripts.Dice
 			this.levelModel = levelModel;
 			this.sceneContext = sceneContext;
 			this.configService = configService;
-			dicePositionsHandler = sceneContext.DiceGameTableView.GameStatePosHandler;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
 			objectFactory = serviceLocator.Get<IObjectFactory>();
 			loggerService = serviceLocator.Get<ILoggerService>();
@@ -101,6 +101,8 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask StartDiceGame()
 		{
+			gamePreviousStoped = false;
+			diceTableView.EnableCamera();
 			var diceGameConfig =
 				await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
 
@@ -117,7 +119,7 @@ namespace _Main.Scripts.Dice
 			await BetProcess();
 
 			gameControllers.AddRange(DiceFactory.GetDiceGameControllers(sceneContext, loggerService,
-				diceGameModel, tableModel, diceModelsList));
+				diceGameModel, tableModel));
 
 			foreach (var controller in gameControllers)
 			{
@@ -131,24 +133,20 @@ namespace _Main.Scripts.Dice
 			
 			var selectionController = new DiceSelectionController(
 				playerModel.InventoryModel, sceneContext.DiceGameTableView,
-				objectFactory, configService);
+				objectFactory, configService, diceGameModel);
 			
 			selectionControllers.Add(selectionController);
 
 			await lifecycleService.RegisterAsync(selectionController);
 			await selectionController.WaitSelection();
 
-			var selectedModels = selectionController.GetSelectedModels();
-			var dicePairs = selectionController.GetDicePairs();
-			selectionController.Cleanup();
-
+			var selectedModels = diceGameModel.GameSelectedDiceModelsList;
 			diceViewsArray = new DiceView[selectedModels.Count];
-			diceModelsList.AddRange(selectedModels);
 
 			for (int i = 0; i < selectedModels.Count; i++)
 			{
 				var model = selectedModels[i];
-				var view = dicePairs[model];
+				var view = diceGameModel.ScreenDiceDict[model];
 				var gamePos = dicePositionsHandler.DicePositions[i];
 
 				view.transform.SetParent(gamePos);
@@ -183,6 +181,12 @@ namespace _Main.Scripts.Dice
 
 		private void StopDiceGame()
 		{
+			if (gamePreviousStoped)
+			{
+				return;
+			}
+			
+			diceTableView.DisableCamera();
 			if (!levelModel.IsLevelFinished && diceGameModel.IsDiceGameStarted)
 			{
 				levelModel.IncrementTicks();
@@ -193,6 +197,7 @@ namespace _Main.Scripts.Dice
 			ClenUpSelectionControllers();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
+			gamePreviousStoped = true;
 		}
 
 		private void ClenUpBetControllers()
@@ -237,7 +242,13 @@ namespace _Main.Scripts.Dice
 
 		private void ResetModels()
 		{
-			diceModelsList.Clear();
+			foreach (var model in diceGameModel.GameSelectedDiceModelsList)
+			{
+				var dice = diceGameModel.ScreenDiceDict[model];
+				diceGameModel.RemoveDiceOnScreen(model);
+				objectFactory.Destroy(dice.gameObject);
+			}
+
 			diceGameModel.Reset();
 			tableModel.Reset();
 		}

@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using _Main.Scripts.Dice;
-using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services;
-using PlatformCore.Services.Factory;
-using UnityEngine;
 
 namespace _Main.Scripts.Core
 {
@@ -16,14 +13,12 @@ namespace _Main.Scripts.Core
 
 			return diceGameModel;
 		}
-		
-		
+
 		public static IBaseController[] GetDiceGameControllers(
 			SceneContext sceneContext,
 			ILoggerService logger,
 			DiceGameModel diceGameModel,
-			TableModel tableModel,
-			List<DiceModel> diceModels)
+			TableModel tableModel)
 		{
 			var controllersList = new List<IBaseController>();
 
@@ -34,7 +29,7 @@ namespace _Main.Scripts.Core
 
 			var diceGameControllers = new IBaseController[]
 			{
-				new DiceGameProcessController(tableModel, diceModels.ToArray(), sceneContext.DiceGameTableView, logger, diceGameModel),
+				new DiceGameProcessController(tableModel, sceneContext.DiceGameTableView, logger, diceGameModel),
 				new DiceGameScoreViewController(tableModel, sceneContext.DiceGameTableView, diceGameModel),
 				new DiceGameResultController(diceGameModel, tableModel)
 			};

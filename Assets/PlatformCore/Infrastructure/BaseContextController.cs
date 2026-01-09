@@ -14,9 +14,10 @@ namespace PlatformCore.Core
 			_uiService = uiService;
 		}
 
-		public UniTask PreloadAsync()
+		public async UniTask PreloadAsync()
 		{
-			return _uiService.PreloadAsync<T>();
+			await _uiService.PreloadAsync<T>();
+			await OnPreloadAsync();
 		}
 		public void Activate()
 		{
@@ -32,5 +33,9 @@ namespace PlatformCore.Core
 		protected virtual void OnActivate(){}
 		protected virtual void OnDeactivate(){}
 
+		protected virtual UniTask OnPreloadAsync()
+		{
+			return UniTask.CompletedTask;
+		}
 	}
 }

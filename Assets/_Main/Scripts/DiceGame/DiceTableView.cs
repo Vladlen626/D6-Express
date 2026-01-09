@@ -1,6 +1,7 @@
 ﻿using System;
 using _Main.Scripts.Game.Views;
 using TMPro;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,8 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnPassClicked;
 	public event Action OnBetClicked;
 	public event Action OnPlayClicked;
+	
+	[SerializeField] private CinemachineCamera cinemachineCamera;
 	
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
@@ -42,6 +45,11 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private DicePositionsHandler selectionStatePosHandler;
 	public DicePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public DicePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
+
+	private void Awake()
+	{
+		DisableCamera();
+	}
 
 	private void Start()
 	{
@@ -97,6 +105,16 @@ public class DiceTableView : MonoBehaviour
 				selectStateHandler.gameObject.SetActive(true);
 				break;
 		}
+	}
+
+	public void EnableCamera()
+	{
+		cinemachineCamera.gameObject.SetActive(true);
+	}
+
+	public void DisableCamera()
+	{
+		cinemachineCamera.gameObject.SetActive(false);
 	}
 
 	public void SetBankedPointsText(string text)

@@ -13,6 +13,8 @@ namespace _Main.Scripts.Dice
 		public int PreviewPoints { get; private set; }
 		public int BankedPoints { get; private set; }
 
+		public bool isFirstRoll { get; set; } = true;
+
 		private Transform[] _activePositions;
 		private Transform[] _bankedPositions;
 
@@ -111,6 +113,7 @@ namespace _Main.Scripts.Dice
 
 		public void ResetTurn()
 		{
+			isFirstRoll = true;
 			ResetAllPositions();
 			SetTurnPoints(0);
 			SetPreviewPoints(0);

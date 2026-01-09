@@ -117,6 +117,7 @@ namespace _Main.Scripts.Core
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
 					runModel.LevelModel, configService),
+				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main)
 			};
 
 			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView));

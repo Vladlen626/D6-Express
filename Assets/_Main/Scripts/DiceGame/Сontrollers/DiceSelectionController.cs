@@ -10,25 +10,26 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceSelectionController : IBaseController, IActivatable
 	{
+		private readonly DiceGameModel _diceGameModel;
 		private readonly InventoryModel _inventory;
 		private readonly DiceTableView _view;
 		private readonly IObjectFactory _factory;
 		private readonly ConfigService _configService;
 
-		private readonly List<DiceModel> _allModels = new();
-		private readonly Dictionary<DiceModel, DiceView> _dicePairs = new();
-		private readonly List<DiceModel> _selectedModels = new();
+		private List<DiceModel> _allModels => _diceGameModel.ScreenDiceDict.Keys.ToList();
+		private List<DiceModel> _selectedModels => _diceGameModel.GameSelectedDiceModelsList;
 
 		private DicePositionsHandler _posHandler;
 		private bool _isFinished;
 
-		public DiceSelectionController(InventoryModel inventory,
-			DiceTableView view, IObjectFactory factory, ConfigService configService)
+		public DiceSelectionController(InventoryModel inventory, DiceTableView view, IObjectFactory factory, 
+			ConfigService configService, DiceGameModel diceGameModel)
 		{
 			_inventory = inventory;
 			_view = view;
 			_factory = factory;
 			_configService = configService;
+			_diceGameModel = diceGameModel;
 			_posHandler = view.SelectionStatePosHandler;
 		}
 
@@ -40,12 +41,13 @@ namespace _Main.Scripts.Dice
 
 		public void Deactivate()
 		{
-			_view.OnPlayClicked -= OnPlayClickedHandler;
-
-			foreach (var pair in _dicePairs)
+			foreach (var pair in _diceGameModel.ScreenDiceDict)
 			{
 				pair.Value.OnDiceClicked.RemoveAllListeners();
 			}
+
+			CleanupUnselectedDices();
+			_view.OnPlayClicked -= OnPlayClickedHandler;
 		}
 
 		private async UniTaskVoid SetupSelectionStage()
@@ -77,9 +79,8 @@ namespace _Main.Scripts.Dice
 
 			DiceModel model = new DiceModel(config);
 			model.SetCurrentPosition(startPos);
-
-			_allModels.Add(model);
-			_dicePairs.Add(model, view);
+			
+			_diceGameModel.AddDiceOnScreen(model, view);
 
 			view.OnDiceClicked.AddListener(() => OnDiceClickedHandler(model));
 		}
@@ -119,7 +120,7 @@ namespace _Main.Scripts.Dice
 		private void MoveToSlot(DiceModel model, Transform slot)
 		{
 			model.SetCurrentPosition(slot);
-			_dicePairs[model].MoveToPosition(slot.position);
+			_diceGameModel.ScreenDiceDict[model].MoveToPosition(slot.position);
 		}
 
 		private void OnPlayClickedHandler()
@@ -131,16 +132,16 @@ namespace _Main.Scripts.Dice
 		}
 
 		public async UniTask WaitSelection() => await UniTask.WaitUntil(() => _isFinished);
-		public List<DiceModel> GetSelectedModels() => _selectedModels;
-		public Dictionary<DiceModel, DiceView> GetDicePairs() => _dicePairs;
 
-		public void Cleanup()
+		public void CleanupUnselectedDices()
 		{
 			foreach (var model in _allModels)
 			{
 				if (!_selectedModels.Contains(model))
 				{
-					_factory.Destroy(_dicePairs[model].gameObject);
+					var dice = _diceGameModel.ScreenDiceDict[model];
+					_diceGameModel.RemoveDiceOnScreen(model);
+					_factory.Destroy(dice.gameObject);
 				}
 			}
 		}
