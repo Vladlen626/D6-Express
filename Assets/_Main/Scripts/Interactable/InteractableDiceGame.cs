@@ -5,6 +5,8 @@ public class InteractableDiceGame : Interactable
 	[SerializeField]
 	private Transform sitTfm;
 
+    public override InteractionType Type => InteractionType.PLAY_DICE;
+
 	public Transform SitTfm => sitTfm;
 
 	public override bool CanInteract(Interactor interactor)

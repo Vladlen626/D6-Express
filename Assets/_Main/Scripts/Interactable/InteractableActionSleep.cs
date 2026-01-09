@@ -8,12 +8,12 @@ public class InteractableActionSleep : InteractionAction
 {
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable is InteractableSleepable && !PlayerStateModel.HasState(CharacterState.SLEEPING) && base.CanInteract(interactable);
+		return interactable.Type == InteractionType.SLEEP && !StateModel.HasState(CharacterState.SLEEPING) && base.CanInteract(interactable);
 	}
 
 	protected override async void StartInteractInternal()
 	{
-		PlayerStateModel.TryAddState(CharacterState.SLEEPING);
+		StateModel.TryAddState(CharacterState.SLEEPING);
 
 		// todo господь прости поправлю позже
 		// ПИЗДЕЦ НАСРАЛ ЖОСКА, работает -> терплю
@@ -28,6 +28,6 @@ public class InteractableActionSleep : InteractionAction
 	{
 		await Locator.Resolve<IUIService>().GetWindow<UISleepView>().OpenEyes();
 
-		PlayerStateModel.TryRemoveState(CharacterState.SLEEPING);
+		StateModel.TryRemoveState(CharacterState.SLEEPING);
 	}
 }

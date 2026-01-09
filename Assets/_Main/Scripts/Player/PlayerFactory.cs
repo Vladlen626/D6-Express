@@ -35,7 +35,7 @@ public static class PlayerFactory
 		var playerView = await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerBase, sceneContext.PlayerTrainSpawnPosition.position,
 			sceneContext.PlayerTrainSpawnPosition.rotation);
 
-		var playerInteractSystem = playerView.GetComponent<Interactor>();
+		var playerInteractSystem = playerView.GetComponent<InteractorPlayer>();
 		playerInteractSystem.Initialize(inputService, playerModel.PlayerStateModel);
 		sceneContext?.InteractorView.Initialize(playerInteractSystem);
 

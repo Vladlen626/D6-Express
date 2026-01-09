@@ -5,7 +5,7 @@ public class InteractionActionTrade : InteractionAction
 {
     public override bool CanInteract(IInteractable interactable)
     {
-        return interactable is InteractableTradeable;
+        return interactable.Type == InteractionType.TRADE;
     }
 
     protected override void StartInteractInternal()

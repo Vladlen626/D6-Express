@@ -5,18 +5,24 @@ public class InteractableLayable : Interactable
     [SerializeField]
     private Transform sitTfm;
 
+    private bool occupied;
+
+    public override InteractionType Type => InteractionType.LAY;
+
     public Transform SitTfm => sitTfm;
 
     public override bool CanInteract(Interactor interactor)
     {
-        return true;
+        return !occupied;
     }
 
     public override void StartInteract(Interactor interactor)
     {
+        occupied = true;
     }
 
     public override void StopInteract(Interactor interactor)
     {
+        occupied = false;
     }
 }

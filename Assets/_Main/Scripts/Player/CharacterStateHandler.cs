@@ -7,11 +7,11 @@ public abstract class CharacterStateHandler
 	public event Action<CharacterState> Exited;
 	public abstract CharacterState State { get; }
 
-	protected PlayerView PlayerView { get; private set; }
+	protected CharacterView CharacterView { get; private set; }
 
-	public void Init(PlayerView playerView)
+	public void Init(CharacterView characterView)
 	{
-		PlayerView = playerView;
+		CharacterView = characterView;
 		OnInit();
 	}
 	
@@ -35,11 +35,11 @@ public abstract class CharacterStateHandler
 
 	protected virtual void EnterInternal()
 	{
-		PlayerView.SetCharacterGhost(true);
+		CharacterView.SetCharacterGhost(true);
 	}
 
 	protected virtual void ExitInternal()
 	{
-		PlayerView.SetCharacterGhost(false);
+		CharacterView.SetCharacterGhost(false);
 	}
 }

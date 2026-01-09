@@ -8,6 +8,7 @@ public abstract class Interactable : MonoBehaviour, IInteractable
         gameObject.layer = LayerMask.NameToLayer("Interactable");
     }
 
+    public abstract InteractionType Type { get; }
     public abstract bool CanInteract(Interactor interactor);
     public abstract void StartInteract(Interactor interactor);
     public abstract void StopInteract(Interactor interactor);

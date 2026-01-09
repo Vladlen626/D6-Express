@@ -6,48 +6,36 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionSit : InteractionAction
 {
-	private Vector3 lastPos;
+	protected Vector3 lastPos;
 
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable is InteractableSittable && !PlayerStateModel.HasState(CharacterState.SITTING) && base.CanInteract(interactable);
+		return interactable.Type == InteractionType.SIT && !StateModel.HasState(CharacterState.SITTING) && base.CanInteract(interactable);
 	}
 
 	protected override async void StartInteractInternal()
 	{
-		PlayerStateModel.TryAddState(CharacterState.TRANSITION);
+		StateModel.TryAddState(CharacterState.TRANSITION);
 
-		lastPos = Interactor.InteractionRoot.position;
+		lastPos = Interactor.transform.position;
 
 		var sittable = Interactable as InteractableSittable;
 
-		// var moveTask = Interactor.InteractionRoot.DOMove(sittable.SitTfm.position, 1).ToUniTask();
-		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(sittable.SitTfm.rotation, 1).ToUniTask();
-		Interactor.InteractionRoot.SetPositionAndRotation(sittable.SitTfm.position, sittable.SitTfm.rotation);
+		// var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position - Interactor.OffsetFromOrigin, 10).ToUniTask();
+		// var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 10).ToUniTask();
+		Interactor.transform.SetPositionAndRotation(sittable.SitTfm.position, sittable.SitTfm.rotation);
 
-        // await UniTask.WhenAll(moveTask, rotateTask);
+		// await UniTask.WhenAll(moveTask, rotateTask);
 
-        PlayerStateModel.TryRemoveState(CharacterState.TRANSITION);
-		PlayerStateModel.TryAddState(CharacterState.SITTING);
-
-		inputService.OnMoved += OnMoved;
+		StateModel.TryRemoveState(CharacterState.TRANSITION);
+		StateModel.TryAddState(CharacterState.SITTING);
 	}
 
 	protected override async void StopInteractInternal()
 	{
-		inputService.OnMoved -= OnMoved;
-
 		// await Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
-		Interactor.InteractionRoot.position = lastPos;
+		Interactor.transform.position = lastPos;
 
-		PlayerStateModel.TryRemoveState(CharacterState.SITTING);
-	}
-
-	private async void OnMoved(Vector2 dir)
-	{
-		// await Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
-		Interactor.InteractionRoot.position = lastPos;
-
-		StopInteract();
+		StateModel.TryRemoveState(CharacterState.SITTING);
 	}
 }

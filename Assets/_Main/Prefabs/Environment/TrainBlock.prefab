@@ -1098,6 +1098,39 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+--- !u!114 &2501319954963413820 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2731366421009474978, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 527407650611371678}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c96d00e205c9b64aba6968a94101231, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableSittable
+--- !u!114 &3121115924677716712 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3171048792522323062, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 527407650611371678}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
+--- !u!114 &3510260266068251158 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4028269119486364808, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 527407650611371678}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
 --- !u!4 &5602554617535557034 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5373357079760073524, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
@@ -1164,6 +1197,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+--- !u!114 &3130723054428129821 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3171048792522323062, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 536847636346044011}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
+--- !u!114 &3500437650832159459 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4028269119486364808, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 536847636346044011}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
 --- !u!4 &5612254655339040095 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5373357079760073524, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
@@ -1177,13 +1232,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 3510260266068251158}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (2)
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.58
+      value: -0.835
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1191,23 +1250,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -19.26
+      value: -19.223
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8621216
+      value: 0.95533
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.50670147
+      value: 0.29554132
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1215,7 +1274,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -60.889
+      value: 34.38
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -1292,6 +1351,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+--- !u!114 &2460411629379428663 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3171048792522323062, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 1019211288093381953}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
 --- !u!4 &4950872776974149237 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5373357079760073524, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
@@ -1367,6 +1437,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 1591560496239874973}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (9)
@@ -1429,6 +1503,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 2460411629379428663}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (15)
@@ -1693,6 +1771,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NpcPassenger (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 6736098947388740489, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: id
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.065
@@ -1751,6 +1833,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 9179615875123793269}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (12)
@@ -1875,6 +1961,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 6159831115211951491}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (11)
@@ -1990,6 +2080,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+--- !u!114 &1810586189704260440 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3171048792522323062, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 3828528730657365806}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
+--- !u!114 &9179615875123793269 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5351726167156052571, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 3828528730657365806}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
 --- !u!4 &9200947857670564890 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5373357079760073524, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
@@ -2003,6 +2115,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 3500437650832159459}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (13)
@@ -2065,6 +2181,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 1810586189704260440}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (5)
@@ -2127,6 +2247,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 5051044942815395382}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (6)
@@ -2193,6 +2317,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 3130723054428129821}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (14)
@@ -2464,6 +2592,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 8210479204538095112}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (10)
@@ -2579,6 +2711,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+--- !u!114 &1591560496239874973 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5351726167156052571, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 6652798852419273158}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
 --- !u!4 &1640016724726002418 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5373357079760073524, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
@@ -2592,6 +2735,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 7442528207981919554}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (8)
@@ -2712,6 +2859,28 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5373357079760073524, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
   m_PrefabInstance: {fileID: 7105365920795738379}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6159831115211951491 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4028269119486364808, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 7105365920795738379}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
+--- !u!114 &8210479204538095112 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1398983399435917059, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 7105365920795738379}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
 --- !u!1001 &7119981330448199446
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2844,6 +3013,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 2501319954963413820}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger
@@ -2959,6 +3132,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97414b9673af88d4fa537a0e9edbf476, type: 3}
+--- !u!114 &5051044942815395382 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3665197225379383258, guid: 97414b9673af88d4fa537a0e9edbf476, type: 3}
+  m_PrefabInstance: {fileID: 8414289706270276076}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c96d00e205c9b64aba6968a94101231, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableSittable
 --- !u!4 &6797606031801260001 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3067089075168488973, guid: 97414b9673af88d4fa537a0e9edbf476, type: 3}
@@ -2972,6 +3156,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5704129669163623561}
     m_Modifications:
+    - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: interactable
+      value: 
+      objectReference: {fileID: 3121115924677716712}
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger (3)
@@ -3096,3 +3284,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5373357079760073524, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
   m_PrefabInstance: {fileID: 8884725539515367824}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7442528207981919554 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2019241246512495826, guid: 1e78ffa32e855ea44a07b6be2f97818b, type: 3}
+  m_PrefabInstance: {fileID: 8884725539515367824}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c96d00e205c9b64aba6968a94101231, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableSittable

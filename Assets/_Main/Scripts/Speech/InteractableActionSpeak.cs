@@ -11,7 +11,7 @@ public class InteractableActionSpeak : InteractionAction
 
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable is InteractableSpeakable && PlayerStateModel.HasState(CharacterState.DEFAULT);
+		return interactable.Type == InteractionType.SPEAK && StateModel.HasState(CharacterState.DEFAULT);
 	}
 
 	protected override async void StartInteractInternal()
@@ -26,7 +26,7 @@ public class InteractableActionSpeak : InteractionAction
 
 		var rotateTarget = targetable == null ? speakable.transform : targetable.CameraTarget;
 
-		PlayerStateModel.TryAddState(CharacterState.SPEAKING);
+		StateModel.TryAddState(CharacterState.SPEAKING);
 
 		var playerView = Interactor.GetComponent<PlayerView>();
 		// await playerView.CameraRoot.DOLookAt(rotateTarget.position, 1).ToUniTask();
@@ -37,7 +37,7 @@ public class InteractableActionSpeak : InteractionAction
 	{
 		Id = -1;
 
-		PlayerStateModel.TryRemoveState(CharacterState.SPEAKING);
+		StateModel.TryRemoveState(CharacterState.SPEAKING);
 
 		base.StopInteractInternal();
 	}

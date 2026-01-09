@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &21602802602889688
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8893003149497267325}
+  m_Layer: 0
+  m_Name: CameraTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8893003149497267325
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21602802602889688}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.001, y: 1.357, z: 0.15393335}
+  m_LocalScale: {x: 0.6666667, y: 0.6666667, z: 0.6666667}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8810711435395879953}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3765889556777397656
 GameObject:
   m_ObjectHideFlags: 0
@@ -40,7 +71,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 688328327417072490}
-  - component: {fileID: 4083026119032613037}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -65,31 +95,6 @@ Transform:
   - {fileID: 779771751874706737}
   m_Father: {fileID: 8810711435395879953}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!143 &4083026119032613037
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5982148564482623161}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 1.5
-  m_Radius: 0.2
-  m_SlopeLimit: 45
-  m_StepOffset: 0.1
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.13, z: 0}
 --- !u!1 &6475699069692846556
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,8 +186,10 @@ GameObject:
   m_Component:
   - component: {fileID: 8810711435395879953}
   - component: {fileID: 8236337453089949122}
-  - component: {fileID: 4254670384489532123}
   - component: {fileID: 4593777238845939744}
+  - component: {fileID: 8010741247850893055}
+  - component: {fileID: 7107346300069552847}
+  - component: {fileID: 7085261717966828229}
   m_Layer: 0
   m_Name: PlayerBase
   m_TagString: Untagged
@@ -204,6 +211,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 688328327417072490}
+  - {fileID: 8893003149497267325}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8236337453089949122
@@ -218,10 +226,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f575a01f64afa824dbc3806be5860016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerView
-  walkSpeed: 5
-  runSpeed: 10
-  jumpHeight: 2
-  gravity: -20
   states:
   - rid: 704733243231436877
   - rid: 704733243231436878
@@ -230,13 +234,10 @@ MonoBehaviour:
   - rid: 704733243231436881
   - rid: 704733243231436882
   mouseSensitivity: 0.075
-  interactor: {fileID: 4254670384489532123}
-  characterController: {fileID: 4083026119032613037}
-  characterCollider: {fileID: 4083026119032613037}
+  interactor: {fileID: 8010741247850893055}
+  characterCollider: {fileID: 7085261717966828229}
   cameraRoot: {fileID: 6011523122689109184}
   head: {fileID: 7737307164269436022}
-  body: {fileID: 688328327417072490}
-  character: {fileID: 688328327417072490}
   defaultCameraState:
     characterState: 0
     rotationType: 0
@@ -257,6 +258,11 @@ MonoBehaviour:
     maxPitch: 45
     minYaw: -90
     maxYaw: 90
+  characterController: {fileID: 7085261717966828229}
+  walkSpeed: 5
+  runSpeed: 10
+  jumpHeight: 2
+  gravity: -20
   references:
     version: 2
     RefIds:
@@ -278,52 +284,6 @@ MonoBehaviour:
     - rid: 704733243231436882
       type: {class: CharacterStateHandlerSpeaking, ns: , asm: Assembly-CSharp}
       data: 
---- !u!114 &4254670384489532123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7989510194384723556}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20ea44d893e58d542a2ac496ffc74c2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Interactor
-  interactionDistance: 3
-  actions:
-  - rid: 1463701297492918341
-  - rid: 1463701297492918344
-  - rid: 1463701355882086646
-  - rid: 8683858885762875635
-  - rid: 704733112204525640
-  - rid: 704733151959449671
-  interactableLayerMask:
-    serializedVersion: 2
-    m_Bits: 64
-  viewTransform: {fileID: 6011523122689109184}
-  interactionRoot: {fileID: 688328327417072490}
-  references:
-    version: 2
-    RefIds:
-    - rid: 704733112204525640
-      type: {class: InteractableActionSpeak, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 704733151959449671
-      type: {class: InteractionActionTrade, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 1463701297492918341
-      type: {class: InteractableActionSit, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 1463701297492918344
-      type: {class: InteractableActionLay, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 1463701355882086646
-      type: {class: InteractableActionSleep, ns: , asm: Assembly-CSharp}
-      data: 
-    - rid: 8683858885762875635
-      type: {class: InteractableActionDiceGame, ns: , asm: Assembly-CSharp}
-      data: 
 --- !u!114 &4593777238845939744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,6 +297,90 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SleepView
   sleepObject: {fileID: 6475699069692846556}
+--- !u!114 &8010741247850893055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7989510194384723556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c928b4faade27f46a59af6920c57fa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractorPlayer
+  actions:
+  - rid: 704733269922676807
+  - rid: 704733269922676810
+  - rid: 704733269922676811
+  - rid: 704733269922676815
+  - rid: 704733269922676816
+  - rid: 704733269922676817
+  interactionRoot: {fileID: 688328327417072490}
+  interactionDistance: 3
+  interactableLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  viewTransform: {fileID: 6011523122689109184}
+  references:
+    version: 2
+    RefIds:
+    - rid: 704733269922676807
+      type: {class: InteractableActionDiceGame, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 704733269922676810
+      type: {class: InteractableActionSleep, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 704733269922676811
+      type: {class: InteractableActionSpeak, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 704733269922676815
+      type: {class: InteractableActionLayPlayer, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 704733269922676816
+      type: {class: InteractableActionSitPlayer, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 704733269922676817
+      type: {class: InteractionActionTrade, ns: , asm: Assembly-CSharp}
+      data: 
+--- !u!114 &7107346300069552847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7989510194384723556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b30a657bfdb39214fac9b3ce2bca4359, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Targetable
+  cameraTarget: {fileID: 8893003149497267325}
+--- !u!143 &7085261717966828229
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7989510194384723556}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1.5
+  m_Radius: 0.2
+  m_SlopeLimit: 45
+  m_StepOffset: 0.1
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.79, z: 0}
 --- !u!1001 &445062584812894494
 PrefabInstance:
   m_ObjectHideFlags: 0

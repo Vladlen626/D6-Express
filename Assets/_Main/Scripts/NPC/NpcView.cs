@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NpcView : MonoBehaviour
+public class NpcView : CharacterView
 {
 	[SerializeField]
 	private List<Transform> hatsTransforms;
+
 	void Start()
 	{
 		if (hatsTransforms.Count == 0)

@@ -1,28 +1,24 @@
 using System;
-using _Main.Scripts.Core.Services;
 
 [Serializable]
 public abstract class InteractionAction
 {
-	protected IInputService inputService;
-
 	public IInteractable Interactable { get; private set; }
 	public Interactor Interactor { get; private set; }
-	protected PlayerStateModel PlayerStateModel { get; private set; }
+	protected PlayerStateModel StateModel { get; private set; }
 
 	public event Action<InteractionAction> Started;
 	public event Action<InteractionAction> Ended;
 
-	public virtual void Init(Interactor interactor, PlayerStateModel playerStateModel, IInputService inputService)
+	public virtual void Init(Interactor interactor, PlayerStateModel playerStateModel)
 	{
 		Interactor = interactor;
-		PlayerStateModel = playerStateModel;
-		this.inputService = inputService;
+		StateModel = playerStateModel;
 	}
 
 	public virtual bool CanInteract(IInteractable interactable)
 	{
-		return !PlayerStateModel.HasState(CharacterState.TRANSITION) && !PlayerStateModel.HasState(CharacterState.LOCATION_TRANSITIONING);
+		return !StateModel.HasState(CharacterState.TRANSITION) && !StateModel.HasState(CharacterState.LOCATION_TRANSITIONING);
 	}
 
 	public void StartInteract(IInteractable interactable)

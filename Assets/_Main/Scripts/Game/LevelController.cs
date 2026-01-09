@@ -51,14 +51,14 @@ public class LevelController : IBaseController, IActivatable
 		if (runModel.LevelState == LevelState.STATION)
 		{
 			playerView.SetCharacterGhost(true);
-			playerView.Character.SetPositionAndRotation(playerStationSpawnPosition.position,
+			playerView.transform.SetPositionAndRotation(playerStationSpawnPosition.position,
 				playerStationSpawnPosition.rotation);
 			playerView.SetCharacterGhost(false);
 		}
 		else
 		{
 			playerView.SetCharacterGhost(true);
-			playerView.Character.SetPositionAndRotation(playerTrainSpawnPosition.position,
+			playerView.transform.SetPositionAndRotation(playerTrainSpawnPosition.position,
 				playerTrainSpawnPosition.rotation);
 			playerView.SetCharacterGhost(false);
 		}

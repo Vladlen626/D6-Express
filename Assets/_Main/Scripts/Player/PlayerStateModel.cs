@@ -19,7 +19,7 @@ public class PlayerStateModel
 			dictStates[characterStateHandler.State] = characterStateHandler;
 		}
 	}
-	
+
 	public bool HasState(CharacterState state)
 	{
 		if (state == CharacterState.DEFAULT && currentStates.Count == 0)

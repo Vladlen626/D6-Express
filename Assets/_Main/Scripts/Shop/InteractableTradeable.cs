@@ -1,5 +1,7 @@
 public class InteractableTradeable : Interactable
 {
+    public override InteractionType Type => InteractionType.TRADE;
+
     public override bool CanInteract(Interactor interactor)
     {
         return true;
