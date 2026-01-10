@@ -44,10 +44,7 @@ public class CharacterView : MonoBehaviour
 		{
 			cameraStatesDict.Add(item.characterState, item);
 		}
-	}
 
-	public void Initialize()
-	{
 		foreach (var characterStateHandler in states)
 		{
 			characterStateHandler.Init(this);
