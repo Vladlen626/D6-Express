@@ -37,7 +37,6 @@ public static class PlayerFactory
 
 		var playerInteractSystem = playerView.GetComponent<InteractorPlayer>();
 		playerInteractSystem.Initialize(inputService, playerModel.PlayerStateModel);
-		sceneContext?.InteractorView.Initialize(playerInteractSystem);
 
 		return playerView;
 	}
@@ -53,6 +52,7 @@ public static class PlayerFactory
 		{
 			new MovementController(playerView, playerModel, input, cursor),
 			new PlayerHudController(uiService, playerModel),
+			new HintController(uiService, playerView)
 		};
 
 		return playerControllers;

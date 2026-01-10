@@ -10,7 +10,6 @@ namespace _Main.Scripts.Dice
 		public event Action OnGameConditionFailed;
 		public event Action OnBetSizeChanged;
 		public event Action OnTargetPointsChanged;
-		public event Action OnMaxTurnCountChanged;
 		public event Action OnCurrentTurnChanged;
 		public event Action OnDiceGameStateChanged;
 
@@ -18,15 +17,26 @@ namespace _Main.Scripts.Dice
 		public int BetSize { get; private set; }
 		public int MaxBetSize { get; private set; }
 		public int MinBetSize { get; private set; }
-		public int MaxTurnCount { get; private set; }
 		public int CurrentTurn { get; private set; }
+		public bool IsPlayerTurn { get; private set; }
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
-		public readonly List<DiceModel> GameSelectedDiceModelsList = new();
+		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
+		public readonly List<DiceModel> EnemyDiceModelList = new();
+		public readonly List<DiceModel> PlayerDiceModelList = new();
 		public IReadOnlyDictionary<DiceModel, DiceView> ScreenDiceDict => screenDiceDict;
 		public Dictionary<DiceModel, DiceView> screenDiceDict = new ();
 
+		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize)
+		{
+			SetMinBetSize(diceGameConfig.min_bet_size);
+			SetMaxBetSize(maxBetSize);
+			SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
+			SetTargetScore(diceGameConfig.target_score);
+			SetCurrentTurn(1, true);
+		}
+		
 		public void ChangeDiceGameState(DiceGameState diceGameState)
 		{
 			DiceGameState = diceGameState;
@@ -39,7 +49,12 @@ namespace _Main.Scripts.Dice
 
 		public void HideAllDiceGameModels()
 		{
-			foreach (var diceModel in GameSelectedDiceModelsList)
+			foreach (var diceModel in PlayerDiceModelList)
+			{
+				diceModel.SetHide(true);
+			}
+			
+			foreach (var diceModel in EnemyDiceModelList)
 			{
 				diceModel.SetHide(true);
 			}
@@ -47,7 +62,7 @@ namespace _Main.Scripts.Dice
 		
 		public void ShowAllDiceGameModels()
 		{
-			foreach (var diceModel in GameSelectedDiceModelsList)
+			foreach (var diceModel in CurrentDiceModelList)
 			{
 				diceModel.SetHide(false);
 			}
@@ -78,21 +93,20 @@ namespace _Main.Scripts.Dice
 			OnTargetPointsChanged?.Invoke();
 		}
 
-		public void SetMaxTurnCount(int turn)
-		{
-			MaxTurnCount = turn;
-			OnMaxTurnCountChanged?.Invoke();
-		}
-
 		public void IncreaseCurrentTurn()
 		{
 			CurrentTurn++;
+			if (IsPlayerTurn)
+			{
+				IsPlayerTurn = false;
+			}
 			OnCurrentTurnChanged?.Invoke();
 		}
 
-		public void SetCurrentTurn(int turn)
+		public void SetCurrentTurn(int turn, bool isPlayerTurn)
 		{
 			CurrentTurn = turn;
+			IsPlayerTurn = isPlayerTurn;
 			OnCurrentTurnChanged?.Invoke();
 		}
 
@@ -122,7 +136,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
-			GameSelectedDiceModelsList.Clear();
+			CurrentDiceModelList.Clear();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;

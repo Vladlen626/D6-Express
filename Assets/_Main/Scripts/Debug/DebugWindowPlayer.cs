@@ -1,20 +1,38 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using ImGuiNET;
+using PlatformCore.Services.Factory;
 using UnityEngine;
 
+// todo нужно не хранить все категории в одном файле
 public class DebugWindowPlayer : DebugWindowModel
 {
 	private readonly PlayerModel playerModel;
 	private readonly PlayerView playerView;
+	private readonly ConfigService configService;
 
 	private int cashInputBuffer;
 	private int questIdBuffer;
+	private string diceIdBuffer;
+	private int diceIdxBuffer;
+
+	private Dictionary<string, DiceConfig> diceConfig;
 
 	public override string Id => "Player";
 
-	public DebugWindowPlayer(PlayerModel playerModel, PlayerView playerView)
+	public override async Task Preload()
+	{
+		await base.Preload();
+
+		diceConfig = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+	}
+
+	public DebugWindowPlayer(PlayerModel playerModel, PlayerView playerView, ConfigService configService)
 	{
 		this.playerModel = playerModel;
 		this.playerView = playerView;
+		this.configService = configService;
 	}
 
 	protected override void OnLayout(UImGui.UImGui uImGui)
@@ -25,7 +43,7 @@ public class DebugWindowPlayer : DebugWindowModel
 			return;
 		}
 
-		ImGui.SetNextWindowSize(new Vector2(420, 300), 0);
+		ImGui.SetNextWindowSizeConstraints(new Vector2(420, 600), new Vector2(float.MaxValue, float.MaxValue));
 
 		if (!ImGui.Begin(Id, ref isOpen, ImGuiWindowFlags.MenuBar))
 		{
@@ -68,14 +86,51 @@ public class DebugWindowPlayer : DebugWindowModel
 		{
 			if (ImGui.Button("Add random"))
 			{
-                var quest = QuestFactory.GenerateRandomQuest(playerView);
+				var quest = QuestFactory.GenerateRandomQuest(playerView);
 				quest.RequestStart();
-                playerModel.Quests.Add(quest);
+				playerModel.Quests.Add(quest);
 			}
 
 			if (ImGui.Button("Clear"))
 			{
 				playerModel.Quests.Clear();
+			}
+		}
+
+
+		if (ImGui.CollapsingHeader("Inventory"))
+		{
+			var configsArray = diceConfig.Keys.ToArray();
+
+			if (ImGui.TreeNode("Dices"))
+			{
+				foreach (var item in playerModel.InventoryModel.DiceIdList)
+				{
+					ImGui.Text(item);
+				}
+
+				ImGui.Separator();
+				ImGui.TreePop();
+			}
+
+			if (ImGui.Combo("DiceId", ref diceIdxBuffer, configsArray, diceConfig.Count))
+			{
+				diceIdBuffer = configsArray[diceIdxBuffer];
+			}
+
+			if (ImGui.Button("Add Dice"))
+			{
+				playerModel.InventoryModel.AddDice(diceIdBuffer);
+			}
+
+			if (ImGui.Button("Remove Dice"))
+			{
+				playerModel.InventoryModel.RemoveDice(diceIdBuffer);
+			}
+
+			if (ImGui.Button("Remove All Dices"))
+			{
+				playerModel.InventoryModel.RemoveAllDices();
 			}
 		}
 

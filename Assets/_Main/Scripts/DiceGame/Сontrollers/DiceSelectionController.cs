@@ -17,7 +17,7 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService _configService;
 
 		private List<DiceModel> _allModels => _diceGameModel.ScreenDiceDict.Keys.ToList();
-		private List<DiceModel> _selectedModels => _diceGameModel.GameSelectedDiceModelsList;
+		private List<DiceModel> SelectedModel => _diceGameModel.PlayerDiceModelList;
 
 		private DicePositionsHandler _posHandler;
 		private bool _isFinished;
@@ -74,7 +74,7 @@ namespace _Main.Scripts.Dice
 			DiceView view = await _factory.CreateAsync<DiceView>(
 				ResourcePaths.Items.DicePrefab, startPos.position, Quaternion.identity);
 
-			view.Initialize(config.id);
+			view.Initialize(config.id, true);
 			view.transform.SetParent(startPos);
 
 			DiceModel model = new DiceModel(config);
@@ -87,16 +87,16 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceClickedHandler(DiceModel model)
 		{
-			if (_selectedModels.Contains(model))
+			if (SelectedModel.Contains(model))
 			{
-				_selectedModels.Remove(model);
+				SelectedModel.Remove(model);
 			}
-			else if (_selectedModels.Count < 6)
+			else if (SelectedModel.Count < 6)
 			{
-				_selectedModels.Add(model);
+				SelectedModel.Add(model);
 			}
 
-			_view.SetButtonInteractable("Play", _selectedModels.Count == 6);
+			_view.SetButtonInteractable("Play", SelectedModel.Count == 6);
 
 			UpdateVisualPositions();
 		}
@@ -104,13 +104,13 @@ namespace _Main.Scripts.Dice
 		private void UpdateVisualPositions()
 		{
 			// 1. Расставляем выбранные кубы в забанкированные слоты
-			for (int i = 0; i < _selectedModels.Count; i++)
+			for (int i = 0; i < SelectedModel.Count; i++)
 			{
-				MoveToSlot(_selectedModels[i], _posHandler.BankedPositions[i]);
+				MoveToSlot(SelectedModel[i], _posHandler.BankedPositions[i]);
 			}
 
 			// 2. Все остальные кубы расставляем по порядку в основные слоты стола
-			var unselected = _allModels.Where(m => !_selectedModels.Contains(m)).ToList();
+			var unselected = _allModels.Where(m => !SelectedModel.Contains(m)).ToList();
 			for (int i = 0; i < unselected.Count; i++)
 			{
 				MoveToSlot(unselected[i], _posHandler.DicePositions[i]);
@@ -125,7 +125,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnPlayClickedHandler()
 		{
-			if (_selectedModels.Count == 6)
+			if (SelectedModel.Count == 6)
 			{
 				_isFinished = true;
 			}
@@ -137,7 +137,7 @@ namespace _Main.Scripts.Dice
 		{
 			foreach (var model in _allModels)
 			{
-				if (!_selectedModels.Contains(model))
+				if (!SelectedModel.Contains(model))
 				{
 					var dice = _diceGameModel.ScreenDiceDict[model];
 					_diceGameModel.RemoveDiceOnScreen(model);

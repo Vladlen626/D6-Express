@@ -18,9 +18,6 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	private GameObject trainBlock;
 
 	[SerializeField]
-	private InteractorView interactorView;
-
-	[SerializeField]
 	private Light sun;
 
 	public DiceTableView DiceGameTableView => diceGameTableView;
@@ -28,6 +25,5 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public Transform PlayerStationSpawnPosition => playerStationSpawnPosition;
 	public GameObject StationBlock => stationBlock;
 	public GameObject TrainBlock => trainBlock;
-	public InteractorView InteractorView => interactorView;
 	public Light Sun => sun;
 }

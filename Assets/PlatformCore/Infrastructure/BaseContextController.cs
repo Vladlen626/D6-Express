@@ -19,11 +19,13 @@ namespace PlatformCore.Core
 			await _uiService.PreloadAsync<T>();
 			await OnPreloadAsync();
 		}
+
 		public void Activate()
 		{
 			_context = _uiService.GetWindow<T>();
 			OnActivate();
 		}
+		
 		public void Deactivate()
 		{
 			_uiService.Unload<T>();

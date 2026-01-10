@@ -23,6 +23,8 @@ namespace PlatformCore.Services.Factory
 			public const string dice_types = "Json/dice_types";
 			public const string player = "Json/player";
 			public const string run_rules = "Json/run_rules";
+			public const string texts_eng = "Json/texts_eng";
+			public const string texts_ru = "Json/texts_ru";
 		}
 
 		public static class Player
@@ -32,9 +34,12 @@ namespace PlatformCore.Services.Factory
 			public const string NpcAnim = "Player/NpcAnim";
 			public const string NpcBase = "Player/NpcBase";
 			public const string NpcConductor = "Player/NpcConductor";
+			public const string NpcEnemy = "Player/NpcEnemy";
 			public const string NpcPassenger = "Player/NpcPassenger";
 			public const string NpcShopKeeper = "Player/NpcShopKeeper";
 			public const string PlayerBase = "Player/PlayerBase";
+			public const string Sit = "Player/Sit";
+			public const string Strings = "Player/Strings";
 		}
 
 		public static class Root
@@ -53,6 +58,7 @@ namespace PlatformCore.Services.Factory
 			public const string UISettings = "UI/UISettings";
 			public const string UISleepView = "UI/UISleepView";
 			public const string UISpeechView = "UI/UISpeechView";
+			public const string UITooltip = "UI/UITooltip";
 			public const string UIWinView = "UI/UIWinView";
 		}
 

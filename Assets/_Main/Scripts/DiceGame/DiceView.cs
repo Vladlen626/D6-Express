@@ -34,9 +34,10 @@ namespace _Main.Scripts.Dice
 		private Camera _mainCamera;
 		private bool _isPressed;
 		private bool isActive;
+		private bool isPlayerDice;
 		private bool _isHovered;
 
-		public void Initialize(string diceConfigId)
+		public void Initialize(string diceConfigId, bool isPlayerDice)
 		{
 			_diceVisualMap = new Dictionary<string, Transform>();
 			foreach (var entry in diceVisuals)
@@ -46,6 +47,8 @@ namespace _Main.Scripts.Dice
 					_diceVisualMap.Add(entry.id, entry.visual);
 				}
 			}
+
+			this.isPlayerDice = isPlayerDice;
 
 			_mainCamera = Camera.main;
 			isActive = true;
@@ -63,10 +66,11 @@ namespace _Main.Scripts.Dice
 
 		private void Update()
 		{
-			if (!_mainCamera)
+			if (!_mainCamera || !isPlayerDice)
 			{
 				return;
 			}
+
 			bool isMouseOver = IsMouseOverDice();
 
 			if (isMouseOver && !_isHovered)

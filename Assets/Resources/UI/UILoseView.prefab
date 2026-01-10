@@ -107,8 +107,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UILoseView
   _group: {fileID: 5757383391103201708}
   _canvasType: 0
+  loseText: {fileID: 3856232176145262932}
   exitButton: {fileID: 6311967534640046643}
+  exitButtonText: {fileID: 263903198339210770}
   continueButton: {fileID: 1662752212234967219}
+  continueButtonText: {fileID: 7876414058221437950}
 --- !u!1 &3017645921740961560
 GameObject:
   m_ObjectHideFlags: 0

@@ -165,6 +165,40 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1190685877689425283
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 747783020847035241}
+  m_Layer: 0
+  m_Name: Left
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &747783020847035241
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1190685877689425283}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -13, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 1, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7934014678573171265}
+  - {fileID: 6642329505371897550}
+  - {fileID: 8730089319257451089}
+  m_Father: {fileID: 7729712657725122830}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1355620770823827789
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,10 +228,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7729712657725122830}
   - {fileID: 4628997041145091821}
   - {fileID: 4903351770140637880}
   - {fileID: 568192472526910677}
-  - {fileID: 1445286292221254833}
   - {fileID: 4221893188445186444}
   - {fileID: 1118675049347159739}
   - {fileID: 3652793381476809643}
@@ -263,6 +297,305 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2051766135331287185
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5641166122293288003}
+  m_Layer: 0
+  m_Name: Right
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5641166122293288003
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2051766135331287185}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 20, y: 0, z: 0}
+  m_LocalScale: {x: 10, y: 1, z: 10}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 5239649883613431007}
+  - {fileID: 5655061594984804410}
+  - {fileID: 7712118994149543624}
+  m_Father: {fileID: 7729712657725122830}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3410338793548503548
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7934014678573171265}
+  - component: {fileID: 8024649026845023592}
+  m_Layer: 0
+  m_Name: LandscapeTrackClose
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7934014678573171265
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3410338793548503548}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -2, y: 0, z: 0}
+  m_LocalScale: {x: 20, y: 1, z: 500}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 747783020847035241}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8024649026845023592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3410338793548503548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d4b0b2f9ab18f49a9614a0d1453d1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandscapeGenerator
+  instantiatedObjectsParent: {fileID: 2578530671970877264}
+  landScapePrefabs:
+  - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
+  - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
+  maxSpawnedObjects: 300
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
+  speed: 20
+  movable: 0
+--- !u!1 &3505362337794643174
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6642329505371897550}
+  - component: {fileID: 329677474657445114}
+  m_Layer: 0
+  m_Name: LandscapeTrackMiddle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6642329505371897550
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3505362337794643174}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -7.98, y: 0, z: 0}
+  m_LocalScale: {x: 40, y: 1, z: 500}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 747783020847035241}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &329677474657445114
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3505362337794643174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d4b0b2f9ab18f49a9614a0d1453d1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandscapeGenerator
+  instantiatedObjectsParent: {fileID: 2578530671970877264}
+  landScapePrefabs:
+  - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
+  - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
+  maxSpawnedObjects: 300
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
+  speed: 10
+  movable: 0
+--- !u!1 &3547844557437050612
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8730089319257451089}
+  - component: {fileID: 677143149525871869}
+  m_Layer: 0
+  m_Name: LandscapeTrackFar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8730089319257451089
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3547844557437050612}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -19.95, y: 0, z: 0}
+  m_LocalScale: {x: 80, y: 1, z: 500}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 747783020847035241}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &677143149525871869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3547844557437050612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d4b0b2f9ab18f49a9614a0d1453d1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandscapeGenerator
+  instantiatedObjectsParent: {fileID: 2578530671970877264}
+  landScapePrefabs:
+  - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
+  - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
+  maxSpawnedObjects: 300
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
+  speed: 5
+  movable: 0
+--- !u!1 &3694264715556362333
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7712118994149543624}
+  - component: {fileID: 4706336169977812552}
+  m_Layer: 0
+  m_Name: LandscapeTrackFar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7712118994149543624
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3694264715556362333}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 19.07, y: 0, z: 0}
+  m_LocalScale: {x: 80, y: 1, z: 500}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5641166122293288003}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4706336169977812552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3694264715556362333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d4b0b2f9ab18f49a9614a0d1453d1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandscapeGenerator
+  instantiatedObjectsParent: {fileID: 2578530671970877264}
+  landScapePrefabs:
+  - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
+  - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
+  maxSpawnedObjects: 300
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
+  speed: 5
+  movable: 0
+--- !u!1 &3883616258998767350
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5655061594984804410}
+  - component: {fileID: 1080085985341143404}
+  m_Layer: 0
+  m_Name: LandscapeTrackMiddle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5655061594984804410
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3883616258998767350}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 7.01, y: 0, z: 0}
+  m_LocalScale: {x: 40, y: 1, z: 500}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5641166122293288003}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1080085985341143404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3883616258998767350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d4b0b2f9ab18f49a9614a0d1453d1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandscapeGenerator
+  instantiatedObjectsParent: {fileID: 2578530671970877264}
+  landScapePrefabs:
+  - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
+  - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
+  maxSpawnedObjects: 300
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
+  speed: 10
+  movable: 0
 --- !u!1 &4908828368382802611
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,7 +792,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 530296643540684055}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7778650726783334972
+--- !u!1 &6679681087177130309
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -467,53 +800,34 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8080658399573567595}
-  - component: {fileID: 2329825998418602634}
+  - component: {fileID: 7729712657725122830}
   m_Layer: 0
-  m_Name: Border
+  m_Name: Landscape
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8080658399573567595
+--- !u!4 &7729712657725122830
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7778650726783334972}
+  m_GameObject: {fileID: 6679681087177130309}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 4.7, z: 0.5}
-  m_LocalScale: {x: 0.1, y: 0.03333333, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4903351770140637880}
-  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!64 &2329825998418602634
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7778650726783334972}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &7910956829486529045
+  m_Children:
+  - {fileID: 747783020847035241}
+  - {fileID: 5641166122293288003}
+  - {fileID: 7041941182505054619}
+  - {fileID: 2578530671970877264}
+  m_Father: {fileID: 530296643540684055}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6980208716514575914
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -521,10 +835,63 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1445286292221254833}
-  - component: {fileID: 653628861259389657}
-  - component: {fileID: 1955093102734267984}
-  - component: {fileID: 2017379545612838006}
+  - component: {fileID: 5239649883613431007}
+  - component: {fileID: 8723437222086482034}
+  m_Layer: 0
+  m_Name: LandscapeTrackClose
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5239649883613431007
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6980208716514575914}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2, y: 0, z: 0}
+  m_LocalScale: {x: 20, y: 1, z: 500}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5641166122293288003}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8723437222086482034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6980208716514575914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d4b0b2f9ab18f49a9614a0d1453d1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandscapeGenerator
+  instantiatedObjectsParent: {fileID: 2578530671970877264}
+  landScapePrefabs:
+  - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
+  - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
+  maxSpawnedObjects: 300
+  spawnCooldownMin: 0.3
+  spawnCooldownMax: 1
+  speed: 20
+  movable: 0
+--- !u!1 &7627135884121829776
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7041941182505054619}
+  - component: {fileID: 4156252172990755840}
+  - component: {fileID: 1226399269489624241}
+  - component: {fileID: 2056865111301024590}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -532,36 +899,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1445286292221254833
+--- !u!4 &7041941182505054619
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7910956829486529045}
+  m_GameObject: {fileID: 7627135884121829776}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 200, y: 1, z: 200}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 530296643540684055}
+  m_Father: {fileID: 7729712657725122830}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &653628861259389657
+--- !u!33 &4156252172990755840
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7910956829486529045}
+  m_GameObject: {fileID: 7627135884121829776}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1955093102734267984
+--- !u!23 &1226399269489624241
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7910956829486529045}
+  m_GameObject: {fileID: 7627135884121829776}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -603,13 +970,67 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &2017379545612838006
+--- !u!64 &2056865111301024590
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7910956829486529045}
+  m_GameObject: {fileID: 7627135884121829776}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &7778650726783334972
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8080658399573567595}
+  - component: {fileID: 2329825998418602634}
+  m_Layer: 0
+  m_Name: Border
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8080658399573567595
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7778650726783334972}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 4.7, z: 0.5}
+  m_LocalScale: {x: 0.1, y: 0.03333333, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4903351770140637880}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!64 &2329825998418602634
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7778650726783334972}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -740,6 +1161,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &8979254348070253743
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2578530671970877264}
+  m_Layer: 0
+  m_Name: Objects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2578530671970877264
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8979254348070253743}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7729712657725122830}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &17787824579999882
 PrefabInstance:
   m_ObjectHideFlags: 0

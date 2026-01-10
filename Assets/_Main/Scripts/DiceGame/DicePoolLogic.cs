@@ -13,32 +13,32 @@ namespace _Main.Scripts.Dice
 
 		public DiceModel[] GetSelected()
 		{
-			return diceGameModel.GameSelectedDiceModelsList.Where(d => d.IsChosen && !d.IsSaved).ToArray();
+			return diceGameModel.CurrentDiceModelList.Where(d => d.IsChosen && !d.IsSaved).ToArray();
 		}
 
 		public DiceModel[] GetUnbanked()
 		{
-			return diceGameModel.GameSelectedDiceModelsList.Where(d => !d.IsSaved).ToArray();
+			return diceGameModel.CurrentDiceModelList.Where(d => !d.IsSaved).ToArray();
 		}
 
 		public DiceModel[] GetBanked()
 		{
-			return diceGameModel.GameSelectedDiceModelsList.Where(d => d.IsSaved).ToArray();
+			return diceGameModel.CurrentDiceModelList.Where(d => d.IsSaved).ToArray();
 		}
 
 		public bool HasUnbanked()
 		{
-			return diceGameModel.GameSelectedDiceModelsList.Any(d => !d.IsSaved);
+			return diceGameModel.CurrentDiceModelList.Any(d => !d.IsSaved);
 		}
 
 		public bool AllBanked()
 		{
-			return diceGameModel.GameSelectedDiceModelsList.All(d => d.IsSaved);
+			return diceGameModel.CurrentDiceModelList.All(d => d.IsSaved);
 		}
 
 		public void ResetAll()
 		{
-			foreach (var dice in diceGameModel.GameSelectedDiceModelsList)
+			foreach (var dice in diceGameModel.CurrentDiceModelList)
 			{
 				dice.Reset();
 			}

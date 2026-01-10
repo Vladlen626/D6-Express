@@ -1,48 +1,60 @@
 using _Main.Scripts.Core.Services;
+using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
-public class LoseScreenController : BaseContextController<UILoseView>
+public class WinViewController : BaseContextController<UIWinView>
 {
 	private readonly IInputService inputService;
 	private readonly ICursorService cursorService;
 	private readonly RunModel runModel;
+	private readonly ConfigService configService;
 
-	public LoseScreenController(IUIService uiService, IInputService inputService, ICursorService cursorService,
-		RunModel runModel) : base(uiService)
+	private TextsConfig textsConfig;
+
+	public WinViewController(IUIService uiService, IInputService inputService, ICursorService cursorService,
+		RunModel runModel, ConfigService configService) : base(uiService)
 	{
 		this.inputService = inputService;
 		this.cursorService = cursorService;
 		this.runModel = runModel;
+		this.configService = configService;
+	}
+
+	protected override async UniTask OnPreloadAsync()
+	{
+		textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 	}
 
 	protected override void OnActivate()
 	{
 		base.OnActivate();
 
+		_context.SetWinText(textsConfig.texts["win_header"]);
+		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
+
 		HideContext();
 
-		runModel.LevelModel.LevelFinished += LevelFinishedHandler;
+		runModel.Finished += RunFinished;
 		_context.ExitButtonClicked += OnExitButtonClickedHandler;
-		_context.ContinueButtonClicked += OnContinueButtonClickedHandler;
 	}
 
 	protected override void OnDeactivate()
 	{
-		_context.ContinueButtonClicked -= OnContinueButtonClickedHandler;
 		_context.ExitButtonClicked -= OnExitButtonClickedHandler;
-		runModel.LevelModel.LevelFinished -= LevelFinishedHandler;
+		runModel.Finished -= RunFinished;
 
 		HideContext();
 
 		base.OnDeactivate();
 	}
 
-	private void LevelFinishedHandler(bool result)
+	private void RunFinished(bool result)
 	{
-		if (!result)
+		if (result)
 		{
-			if (DebugVariables.ShowLoseView)
+			if (DebugVariables.ShowWinView)
 			{
 				ShowContext();
 			}
@@ -68,12 +80,6 @@ public class LoseScreenController : BaseContextController<UILoseView>
 	}
 
 	private void OnExitButtonClickedHandler()
-	{
-		runModel.SetLevelState(LevelState.STATION);
-		_context.Hide();
-	}
-
-	private void OnContinueButtonClickedHandler()
 	{
 		runModel.SetLevelState(LevelState.STATION);
 		_context.Hide();
