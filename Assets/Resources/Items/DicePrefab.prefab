@@ -783,7 +783,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3362445673493656372}
@@ -801,6 +801,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1be6ef734996d44a9ff27eaddc33bb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Main.Scripts.Dice.DiceView
+  OnDiceClicked:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDiceHoverEnter:
+    m_PersistentCalls:
+      m_Calls: []
+  OnDiceHoverExit:
+    m_PersistentCalls:
+      m_Calls: []
   diceVisuals:
   - id: default
     visual: {fileID: 8281917427591884747}
@@ -829,9 +838,6 @@ MonoBehaviour:
   diceCollider: {fileID: 3459348804150879815}
   animSpeed: 0.15
   yOffset: 0.02
-  OnDiceClicked:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &1808630530691819604
 MonoBehaviour:
   m_ObjectHideFlags: 0

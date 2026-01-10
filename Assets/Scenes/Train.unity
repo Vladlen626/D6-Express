@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca138d27da52904b8334370eb0c1709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneContext
-  diceGameTableView: {fileID: 0}
+  diceGameTableView: {fileID: 1223556069}
   playerTrainSpawnPosition: {fileID: 173345210}
   playerStationSpawnPosition: {fileID: 1994989543}
   stationBlock: {fileID: 1235700352}
@@ -482,6 +482,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1223556069 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2511050290599862863, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+  m_PrefabInstance: {fileID: 5741847972874531002}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a482f3d4abd4a2180a7841c810447aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DiceGameTableView
 --- !u!1 &1235700352 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1355620770823827789, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
@@ -505,9 +516,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2253645147664242891, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 3206598979174530059, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 3206598979174530059, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5704129669163623561, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: m_LocalPosition.x
@@ -556,7 +571,37 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 781571982296021936, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2158639734275428793, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2990238639973998860, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 9211148543297394017, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 6027940968755827482, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4583626074025535168, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4560902003307789372, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7342509668607707337, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7123905676137602030, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7936285275211632222, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
 --- !u!1001 &7205606119079278648
 PrefabInstance:

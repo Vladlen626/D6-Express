@@ -207,7 +207,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 688328327417072490}
@@ -268,22 +268,28 @@ MonoBehaviour:
     RefIds:
     - rid: 704733243231436877
       type: {class: CharacterStateHandlerDiceGame, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        switchGhost: 1
     - rid: 704733243231436878
       type: {class: CharacterStateHandlerLaying, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        switchGhost: 1
     - rid: 704733243231436879
       type: {class: CharacterStateHandlerLocationTransitioning, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        switchGhost: 1
     - rid: 704733243231436880
       type: {class: CharacterStateHandlerSitting, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        switchGhost: 1
     - rid: 704733243231436881
       type: {class: CharacterStateHandlerSleeping, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        switchGhost: 1
     - rid: 704733243231436882
       type: {class: CharacterStateHandlerSpeaking, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        switchGhost: 1
 --- !u!114 &4593777238845939744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,7 +322,6 @@ MonoBehaviour:
   - rid: 704733269922676815
   - rid: 704733269922676816
   - rid: 704733269922676817
-  interactionRoot: {fileID: 688328327417072490}
   interactionDistance: 3
   interactableLayerMask:
     serializedVersion: 2

@@ -801,7 +801,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2815988732449897442
 Transform:
   m_ObjectHideFlags: 0
@@ -2273,8 +2273,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCamera
   Priority:
-    Enabled: 0
-    m_Value: 0
+    Enabled: 1
+    m_Value: 1
   OutputChannel: 1
   StandbyUpdate: 2
   m_StreamingVersion: 20241001
@@ -3033,7 +3033,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 740278718700182516}
@@ -3063,6 +3063,7 @@ MonoBehaviour:
   bankTransform: {fileID: 1176861481982857086}
   targetScoreText: {fileID: 456721948573459609}
   bankedScoreText: {fileID: 810642768173740293}
+  enemyBankedScoreText: {fileID: 7047878900561248888}
   currentScoreText: {fileID: 720442126171599491}
   previewScoreText: {fileID: 4451862155519606115}
   rollButton: {fileID: 8435649008412668659}
