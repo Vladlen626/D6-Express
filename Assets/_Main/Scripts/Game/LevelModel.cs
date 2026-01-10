@@ -8,9 +8,9 @@ public class LevelModel
 	public int TicketPrice { get; private set; }
 	public int Day { get; private set; }
 	public int Tick { get; private set; }
+	public bool IsLevelFinished { get; private set; }
 	public float TickRatio => Tick / (float)Ticks;
-	public bool IsLevelFinished => Day + 1 >= Days;
-
+	public bool IsFinalDay => Day + 1 >= Days;
 	public event Action TickChanged;
 	public event Action DayChanged;
 	public event Action OnFinalDay;
@@ -26,6 +26,8 @@ public class LevelModel
 		CashGoal = levelData.cashGoal;
 
 		TicketPrice = ticketPrice; 
+		
+		IsLevelFinished = false;
 	}
 
 	public void IncrementDays()
@@ -63,6 +65,7 @@ public class LevelModel
 	// ReSharper disable Unity.PerformanceAnalysis
 	public void SetLevelFinished(bool success)
 	{
+		IsLevelFinished = true;
 		LevelFinished?.Invoke(success);
 	}
 }

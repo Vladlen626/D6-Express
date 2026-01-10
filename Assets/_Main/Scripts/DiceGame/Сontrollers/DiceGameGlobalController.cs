@@ -15,6 +15,7 @@ namespace _Main.Scripts.Dice
 		private readonly PlayerModel playerModel;
 		private readonly LevelModel levelModel;
 
+		private readonly ICameraShakeService cameraShakeService;
 		private readonly IObjectFactory objectFactory;
 		private readonly ILoggerService loggerService;
 		private readonly LifecycleService lifecycleService;
@@ -43,6 +44,7 @@ namespace _Main.Scripts.Dice
 			lifecycleService = serviceLocator.Get<LifecycleService>();
 			objectFactory = serviceLocator.Get<IObjectFactory>();
 			loggerService = serviceLocator.Get<ILoggerService>();
+			cameraShakeService = serviceLocator.Get<ICameraShakeService>();
 		}
 
 		public void Activate()
@@ -119,7 +121,7 @@ namespace _Main.Scripts.Dice
 			await BetProcess();
 
 			gameControllers.AddRange(DiceFactory.GetDiceGameControllers(sceneContext, loggerService,
-				diceGameModel, tableModel));
+				diceGameModel, tableModel, cameraShakeService));
 
 			foreach (var controller in gameControllers)
 			{

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
@@ -8,23 +11,26 @@ namespace _Main.Scripts.Dice
 	public class DiceGameProcessController : IBaseController, IActivatable
 	{
 		private readonly ILoggerService logger;
+		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
 		private readonly TableModel tableModel;
 
 		private readonly DiceTableView tableView;
 		private readonly DicePoolLogic dicePool;
 
-
+		private bool isProcessing;
 		public DiceGameProcessController(
 			TableModel tableModel,
 			DiceTableView tableView,
 			ILoggerService logger,
-			DiceGameModel  diceGameModel)
+			DiceGameModel diceGameModel,
+			ICameraShakeService cameraShakeService)
 		{
 			this.tableModel = tableModel;
 			this.tableView = tableView;
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
+			this.cameraShakeService = cameraShakeService;
 
 			dicePool = new DicePoolLogic(diceGameModel);
 		}
@@ -61,34 +67,64 @@ namespace _Main.Scripts.Dice
 
 		private void HandleRoll()
 		{
-			logger?.Log("[DiceGameController] Handle roll");
-
-			if (tableModel.isFirstRoll)
+			if (isProcessing)
 			{
-				tableModel.isFirstRoll = false;
-				diceGameModel.ShowAllDiceGameModels();
+				return;
 			}
 
-			// Сохраняем выбранные кубы, если есть
-			bool isHotDice = TrySaveSelected();
-			tableModel.SetPreviewPoints(0);
+			_ = HandleRollAsync();
+		}
 
-			// Если все кубы забанкированы после сохранения, сбросить пул
-			if (isHotDice)
-			{
-				tableModel.ResetAllPositions();
-				dicePool.ResetAll();
-			}
+		// ReSharper disable Unity.PerformanceAnalysis
+		private async UniTask HandleRollAsync()
+		{
+			isProcessing = true;
 
-			// Роллим актуальные кубы
-			var diceToRoll = dicePool.GetUnbanked();
-			foreach (var dice in diceToRoll)
+			try
 			{
-				dice.Roll();
+				logger?.Log("[DiceGameController] Handle roll");
+
+				DisableButtons();
+
+				await cameraShakeService.ShakeAsync(tableView.TableCamera,0.75f, 0.075f);
+				if (tableModel.isFirstRoll)
+				{
+					tableModel.isFirstRoll = false;
+					diceGameModel.ShowAllDiceGameModels();
+				}
+
+				// Сохраняем выбранные кубы, если есть
+				bool isHotDice = await TrySaveSelected();
+				tableModel.SetPreviewPoints(0);
+
+				// Если все кубы забанкированы после сохранения, сбросить пул
+				if (isHotDice)
+				{
+					await ResetAllDiceToActiveAsync();
+					dicePool.ResetAll();
+				}
+
+				// Роллим актуальные кубы
+				var tasks = new List<UniTask>();
+				var diceToRoll = dicePool.GetUnbanked();
+				foreach (var dice in diceToRoll)
+				{
+					dice.Roll();
+					var view = diceGameModel.ScreenDiceDict[dice];
+					tasks.Add(view.PlayRollAnimationAsync());
+				}
+
+				await UniTask.WhenAll(tasks);
+				
+				await cameraShakeService.ShakeAsync(tableView.TableCamera,1.5f, 0.1f);
+
+				CheckBust();
+				UpdateUI();
 			}
-			
-			CheckBust();
-			UpdateUI();
+			finally
+			{
+				isProcessing = false;
+			}
 		}
 
 		private void CheckBust()
@@ -112,10 +148,28 @@ namespace _Main.Scripts.Dice
 
 		private void HandlePass()
 		{
-			logger?.Log("[DiceGameController] Handle pass");
+			if (isProcessing)
+			{
+				return;
+			}
 
-			TrySaveSelected();
-			EndTurn(true);
+			_ = HandlePassAsync();
+		}
+
+		private async UniTask HandlePassAsync()
+		{
+			isProcessing = true;
+
+			try
+			{
+				DisableButtons();
+				await TrySaveSelected();
+				EndTurn(true);
+			}
+			finally
+			{
+				isProcessing = false;
+			}
 		}
 
 		private void EndTurn(bool success)
@@ -125,13 +179,18 @@ namespace _Main.Scripts.Dice
 				tableModel.AddBankedPoints(tableModel.TurnPoints);
 			}
 
+			
 			diceGameModel.IncreaseCurrentTurn();
 			tableModel.ResetTurn();
 			dicePool.ResetAll();
+			foreach (var diceModel in diceGameModel.GameSelectedDiceModelsList)
+			{
+				diceGameModel.ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
+			}
 			UpdateUI();
 		}
 
-		private bool TrySaveSelected()
+		private async UniTask<bool> TrySaveSelected()
 		{
 			var selected = dicePool.GetSelected();
 			if (selected.Length == 0)
@@ -152,9 +211,39 @@ namespace _Main.Scripts.Dice
 			}
 
 			tableModel.AddTurnPoints(points);
-			dicePool.BankSelected();
+			var tweenList = new List<Tween>();
+			foreach (var diceModel in selected)
+			{
+				diceModel.SetSaved(true);
+				diceModel.SetChosen(false);
+
+				var position = tableModel.GetFreeBankedPosition();
+				diceModel.SetCurrentPosition(position);
+
+				var view = diceGameModel.ScreenDiceDict[diceModel];
+				tweenList.Add(view.MoveToPosition(position.position));
+			}
+
+			await UniTaskUtils.WaitAllTweens(tweenList.ToArray());
 
 			return dicePool.AllBanked();
+		}
+
+		private async UniTask ResetAllDiceToActiveAsync()
+		{
+			var tweens = new List<Tween>();
+
+			foreach (var diceModel in diceGameModel.GameSelectedDiceModelsList)
+			{
+				var pos = tableModel.GetFreeActivePosition();
+				diceModel.SetSaved(false);
+				diceModel.SetCurrentPosition(pos);
+
+				var view = diceGameModel.ScreenDiceDict[diceModel];
+				tweens.Add(view.MoveToPosition(pos.position));
+			}
+
+			await UniTaskUtils.WaitAllTweens(tweens.ToArray());
 		}
 
 		private void UpdateUI()
@@ -185,6 +274,12 @@ namespace _Main.Scripts.Dice
 
 			tableView.SetButtonInteractable("Roll", canRoll);
 			tableView.SetButtonInteractable("Pass", canPass);
+		}
+
+		public void DisableButtons()
+		{
+			tableView.SetButtonInteractable("Roll", false);
+			tableView.SetButtonInteractable("Pass", false);
 		}
 	}
 }

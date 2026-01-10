@@ -61,16 +61,14 @@ namespace _Main.Scripts.Dice
 			diceView.SetRotation(diceModel.CurrentValue);
 		}
 
-		private void OnDiceSavedChangedHandler()
+		private void OnDiceSavedChangedHandler(bool oldValue, bool newValue)
 		{
-			ReleaseCurrentPosition();
+			if (oldValue == newValue)
+			{
+				return;
+			}
 
-			var newPos = diceModel.IsSaved
-				? _tableModel.GetFreeBankedPosition()
-				: _tableModel.GetFreeActivePosition();
-			
-			diceModel.SetCurrentPosition(newPos);
-			diceView.MoveToPosition(newPos.position);
+			ReleaseCurrentPosition();
 		}
 
 		private void OnDiceHiddenChangedHandler()

@@ -116,6 +116,18 @@ namespace PlatformCore.Services
 				StopShake();
 			}
 		}
+		
+		public async UniTask ShakeAsync(CinemachineCamera camera, float intensity, float duration)
+		{
+			var noise = (CinemachineBasicMultiChannelPerlin)camera.GetCinemachineComponent(CinemachineCore.Stage.Noise);
+			noise.AmplitudeGain = intensity;
+			noise.FrequencyGain = intensity * 1.5f;
+
+			await UniTask.Delay(TimeSpan.FromSeconds(duration));
+
+			noise.AmplitudeGain = 0;
+			noise.FrequencyGain = 0;
+		}
 
 		public void StopShake()
 		{

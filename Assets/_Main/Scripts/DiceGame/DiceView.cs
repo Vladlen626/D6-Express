@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using DG.Tweening;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 namespace _Main.Scripts.Dice
 {
@@ -25,7 +27,7 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private Outline outline;
 		[SerializeField] private Collider diceCollider;
 
-		[SerializeField] private float animSpeed = 0.15f;
+		[SerializeField] private float animSpeed = 0.3f;
 		[SerializeField] private float yOffset = 0.02f;
 
 		private Dictionary<string, Transform> _diceVisualMap;
@@ -188,9 +190,9 @@ namespace _Main.Scripts.Dice
 			model.transform.DOScale(1f, animSpeed);
 		}
 
-		public void MoveToPosition(Vector3 position)
+		public Tween MoveToPosition(Vector3 position, float speedMultiplier = 1)
 		{
-			transform.DOMove(position, animSpeed);
+			return transform.DOMove(position, animSpeed * speedMultiplier);
 		}
 
 		public void Hide()
@@ -203,6 +205,32 @@ namespace _Main.Scripts.Dice
 		{
 			model.transform.DOScale(Vector3.one, animSpeed/2);
 			isActive = true;
+		}
+
+		// ReSharper disable Unity.PerformanceAnalysis
+		public async UniTask PlayRollAnimationAsync(float rollTime = 2f)
+		{
+			var randomOffset = new Vector3(Random.Range(-0.02f, 0.02f), 0, Random.Range(-0.02f, 0.02f));
+
+			var startPos = transform.position;
+			var targetPos = startPos + randomOffset;
+
+			float step = rollTime / 10f;
+			float moveUpTime = step;
+			float rotateTime = step * 8;
+			float moveDownTime = step;
+
+			var seq = DOTween.Sequence();
+
+			seq.Append(transform.DOMove(targetPos + Vector3.up * 0.2f, moveUpTime).SetEase(Ease.Linear))
+				.Join(transform.DORotate(Vector3.one * 180f, moveUpTime, RotateMode.FastBeyond360).SetEase(Ease.Linear))
+				.Append(transform.DORotate(Vector3.one * (Random.Range(360f, 720f) * 5f), rotateTime, RotateMode.FastBeyond360)
+					.SetEase(Ease.InOutQuad))
+				.Append(transform.DOMove(targetPos, moveDownTime).SetEase(Ease.Linear))
+				.Join(transform.DORotate(new Vector3(0f, Random.Range(0f, 360f), 0f), moveDownTime, RotateMode.FastBeyond360)
+					.SetEase(Ease.Linear));
+
+			await seq.ToUniTask();
 		}
 	}
 }

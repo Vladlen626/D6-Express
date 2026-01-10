@@ -7,7 +7,7 @@ namespace _Main.Scripts.Dice
 	{
 		public event Action OnDiceHiddenChanged;
 		public event Action OnDiceChosenChanged;
-		public event Action OnDiceSavedChanged;
+		public event Action<bool, bool> OnDiceSavedChanged;
 		public event Action OnValueChanged;
 		public int CurrentValue { get; private set; }
 		public bool IsHide { get; private set; }
@@ -44,8 +44,9 @@ namespace _Main.Scripts.Dice
 
 		public void SetSaved(bool saved)
 		{
+			var oldIsSaved = IsSaved;
 			IsSaved = saved;
-			OnDiceSavedChanged?.Invoke();
+			OnDiceSavedChanged?.Invoke(oldIsSaved, IsSaved);
 		}
 
 		public void SetHide(bool hide)

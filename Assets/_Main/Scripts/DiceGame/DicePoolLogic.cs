@@ -36,16 +36,6 @@ namespace _Main.Scripts.Dice
 			return diceGameModel.GameSelectedDiceModelsList.All(d => d.IsSaved);
 		}
 
-		public void BankSelected()
-		{
-			var selected = GetSelected();
-			foreach (var dice in selected)
-			{
-				dice.SetSaved(true);
-				dice.SetChosen(false);
-			}
-		}
-
 		public void ResetAll()
 		{
 			foreach (var dice in diceGameModel.GameSelectedDiceModelsList)
