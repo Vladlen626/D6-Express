@@ -23,6 +23,8 @@ public class RunModel
 
 	public RunModel()
 	{
+		state = DebugVariables.StartSpawnLocation;
+		
 		LevelModel.LevelFinished += OnLevelFinished;
 	}
 

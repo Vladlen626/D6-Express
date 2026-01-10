@@ -116,20 +116,3 @@ public class DbgMenuItemOpenPlayerWindow : DebugMenuItem
         debugWindowPlayer.Open();
     }
 }
-
-public class DbgMenuItemOpenDebugVariablesWindow : DebugMenuItem
-{
-    private readonly DebugWindowVariables debugWindowVariables;
-
-    public override string Path => "Open Debug Variables Window";
-
-    public DbgMenuItemOpenDebugVariablesWindow(PlayerModel playerModel, PlayerView playerView)
-    {
-        debugWindowVariables = new DebugWindowVariables(playerModel, playerView);
-    }
-
-    public override void Execute()
-    {
-        debugWindowVariables.Open();
-    }
-}
