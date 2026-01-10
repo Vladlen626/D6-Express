@@ -22,9 +22,16 @@ public class NpcInitializer : MonoBehaviour
 
 		npcRotationController = GetComponent<NpcRotationController>();
 		npcRotationController.Initialize(npcView, playerStateModel);
+	}
+
+	void Start()
+	{
+		var npcView = GetComponent<NpcView>();
+		playerStateModel.FillCharacterStatesDict(npcView.CharacterStateHandlers);
 
 		if (interactable != null)
 		{
+			var interactor = GetComponent<Interactor>();
 			interactor.Interact(interactable);
 		}
 	}
