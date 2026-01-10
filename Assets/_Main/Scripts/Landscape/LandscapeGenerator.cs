@@ -21,6 +21,9 @@ public class LandscapeGenerator : MonoBehaviour
     [SerializeField]
     private float speed;
 
+    [SerializeField]
+    private bool movable;
+
     private readonly List<GameObject> activeObjects = new();
 
     private float lastSpawnTime;
@@ -48,7 +51,7 @@ public class LandscapeGenerator : MonoBehaviour
 
     private float GetWidth()
     {
-        return transform.localScale.x / 2;
+        return transform.localScale.x;
     }
 
     private void TrySpawnLandScapeObject()
@@ -67,7 +70,7 @@ public class LandscapeGenerator : MonoBehaviour
         spawnPos.x += Random.Range(-GetWidth(), GetWidth());
 
         GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity, instantiatedObjectsParent);
-        obj.AddComponent<LandscapeObject>().Initialize(speed);
+        obj.AddComponent<LandscapeObject>().Initialize(speed, movable);
         activeObjects.Add(obj);
     }
 
@@ -77,6 +80,7 @@ public class LandscapeGenerator : MonoBehaviour
 
         for (var i = 0; i < maxSpawnedObjects; i++)
         {
+            Debug.Log(spawnPos);
             SpawnLandscapeObject(spawnPos);
             spawnPos.z -= Random.Range(spawnCooldownMin, spawnCooldownMax) * speed;
 
@@ -113,7 +117,7 @@ public class LandscapeGenerator : MonoBehaviour
         Matrix4x4 oldMatrix = Gizmos.matrix;
         Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 
-        Gizmos.DrawWireCube(Vector3.zero, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, Vector3.one * 2);
 
         Gizmos.matrix = oldMatrix;
     }

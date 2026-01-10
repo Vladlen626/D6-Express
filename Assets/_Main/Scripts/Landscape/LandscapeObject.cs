@@ -3,14 +3,19 @@ using UnityEngine;
 public class LandscapeObject : MonoBehaviour
 {
     private float speed;
+    private bool movable;
 
     private void Update()
     {
-        transform.Translate(speed * Time.deltaTime * Vector3.back, Space.World);
+        if (movable)
+        {
+            transform.Translate(speed * Time.deltaTime * Vector3.back, Space.World);
+        }
     }
 
-    public void Initialize(float moveSpeed)
+    public void Initialize(float speed, bool movable)
     {
-        speed = moveSpeed;
+        this.speed = speed;
+        this.movable = movable;
     }
 }
