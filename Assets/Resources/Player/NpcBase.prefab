@@ -1328,6 +1328,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NpcView
   states:
   - rid: 704733298099486812
+  - rid: 704733311959302233
   mouseSensitivity: 200
   interactor: {fileID: 4766783984472293209}
   characterCollider: {fileID: 1412554539663941586}
@@ -1370,7 +1371,12 @@ MonoBehaviour:
     RefIds:
     - rid: 704733298099486812
       type: {class: CharacterStateHandlerSitting, ns: , asm: Assembly-CSharp}
-      data: 
+      data:
+        switchGhost: 0
+    - rid: 704733311959302233
+      type: {class: CharacterStateHandlerLaying, ns: , asm: Assembly-CSharp}
+      data:
+        switchGhost: 0
 --- !u!114 &2930504609898574184
 MonoBehaviour:
   m_ObjectHideFlags: 0

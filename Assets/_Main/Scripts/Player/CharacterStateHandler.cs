@@ -1,8 +1,12 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public abstract class CharacterStateHandler
 {
+	[SerializeField]
+	private bool switchGhost = true;
+
 	public event Action<CharacterState> Entered;
 	public event Action<CharacterState> Exited;
 	public abstract CharacterState State { get; }
@@ -14,7 +18,7 @@ public abstract class CharacterStateHandler
 		CharacterView = characterView;
 		OnInit();
 	}
-	
+
 	public virtual void OnInit()
 	{
 	}
@@ -35,11 +39,17 @@ public abstract class CharacterStateHandler
 
 	protected virtual void EnterInternal()
 	{
-		CharacterView.SetCharacterGhost(true);
+		if (switchGhost)
+		{
+			CharacterView.SetCharacterGhost(true);
+		}
 	}
 
 	protected virtual void ExitInternal()
 	{
-		CharacterView.SetCharacterGhost(false);
+		if (switchGhost)
+		{
+			CharacterView.SetCharacterGhost(false);
+		}
 	}
 }
