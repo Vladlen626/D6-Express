@@ -1,0 +1,29 @@
+{
+    "texts": {
+        "conductor_enter_hi": "Well, well",
+        "conductor_enter_positive": "Welcome aboard D6-Express",
+        "conductor_enter_negative": "Get lost, you filthy beggar!",
+        "passenger_random_0": "What a beautiful day for a trip!",
+        "passenger_random_1": "I hope the journey will be comfortable and pleasant.",
+        "passenger_random_2": "Wonder what adventures await me ahead?",
+        "passenger_random_3": "I've always dreamed of visiting new places by train.",
+        "passenger_random_4": "I love the sound of wheels on the rails—it's so soothing.",
+        "passenger_random_5": "Did someone steal your sweet roll?",
+        "comrade_passenger": "I greet you most categorically!",
+        "anecdote_0_0": "A patient walks into the doctor's and says",
+        "anecdote_0_1": "Doc, my dick is itchy",
+        "anecdote_0_2": "The doctor replies, \"Mine itches more\"",
+        "anecdote_0_3": "And the patient goes, \"No, mine\"",
+        "anecdote_0_4": "Ha-ha-ha-ha!",
+        "shopkeeper_rich_random_0": "Oh, the lord arrived in his fancy ride? Take whatever you want, just don't jingle your coins",
+        "shopkeeper_rich_random_1": "For folks like you, I've got champagne at airplane prices. Can you even afford it?",
+        "shopkeeper_rich_random_2": "Your Excellency, a pack of smokes? Or do you prefer gold ones with diamonds?",
+        "shopkeeper_rich_random_3": "Rich guy, pour some from your wallet for me too—I'm scraping by on pennies here",
+        "shopkeeper_rich_random_4": "Millionaire, don't multiply around here, pay up and head back to your mansion",
+        "shopkeeper_poor_random_0": "You again, you bum? Stop begging for pennies, go get a job",
+        "shopkeeper_poor_random_1": "Hobo, can't even scrape together bread money? Get outta here, don't stink up the place",
+        "shopkeeper_poor_random_2": "Five rubles? With that budget, dig in the dumpster, loser",
+        "shopkeeper_poor_random_3": "Another starving wretch. We don't give freebies—go beg for alms",
+        "shopkeeper_poor_random_4": "My poor fellow, have you ever looked in a mirror? Pay up or scram"
+    }
+}

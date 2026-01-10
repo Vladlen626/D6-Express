@@ -100,7 +100,6 @@ namespace _Main.Scripts.Core
 
 			//Player
 			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService, playerModel);
-			playerView.Initialize();
 			playerModel.PlayerStateModel.FillCharacterStatesDict(playerView.CharacterStateHandlers);
 			cameraService.AttachTo(playerView.CameraRoot);
 			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
@@ -121,7 +120,7 @@ namespace _Main.Scripts.Core
 			};
 
 			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView));
-			controllersList.Add(SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel));
+			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel, configService));
 			controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
 
 			controllersList.AddRange(baseControllers);

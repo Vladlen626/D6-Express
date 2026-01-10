@@ -1,18 +1,23 @@
+using System.Threading.Tasks;
+using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
 public static class SpeechFactory
 {
-    public static SpeechController GetSpeechController(
+    public static async Task<SpeechController> GetSpeechController(
         IUIService uiService,
         PlayerModel playerModel,
         PlayerView playerView,
-        RunModel runModel)
+        RunModel runModel,
+        ConfigService configService)
     {
-        var speechBuyTicket = GetConductorSpeech(playerModel, runModel);
-        var speechPassengerGeneric = GetGenericPassengerSpeech();
-        var speechPassengerComrade = GetComradeSpeech();
-        var speechPassengerAnecdote = GetAnecdoteSpeech();
-        var speechShopkeeper = GetShopkeeperSpeech(playerModel);
+        var textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
+
+        var speechBuyTicket = GetConductorSpeech(playerModel, runModel, textsConfig);
+        var speechPassengerGeneric = GetGenericPassengerSpeech(textsConfig);
+        var speechPassengerComrade = GetComradeSpeech(textsConfig);
+        var speechPassengerAnecdote = GetAnecdoteSpeech(textsConfig);
+        var speechShopkeeper = GetShopkeeperSpeech(playerModel, textsConfig);
 
         var speeches = new Speech[]
         {
@@ -53,13 +58,13 @@ public static class SpeechFactory
         return parallel;
     }
 
-    private static Speech GetConductorSpeech(PlayerModel playerModel, RunModel runModel)
+    private static Speech GetConductorSpeech(PlayerModel playerModel, RunModel runModel, TextsConfig textsConfig)
     {
         var speechBuyTicket = new Speech(0);
 
-        var speechNodeConductorSaysHi = Say(speechBuyTicket, "Так-так");
-        var speechNodeHasMoney = Say(speechBuyTicket, "Добро пожаловать на борт D6-Express.");
-        var speechNodeHasNoMoney = Say(speechBuyTicket, "Проваливай, нищий обрыган!");
+        var speechNodeConductorSaysHi = Say(speechBuyTicket, textsConfig.texts["conductor_enter_hi"]);
+        var speechNodeHasMoney = Say(speechBuyTicket, textsConfig.texts["conductor_enter_positive"]);
+        var speechNodeHasNoMoney = Say(speechBuyTicket, textsConfig.texts["conductor_enter_negative"]);
 
         var speechNodeConditional = new SpeechNodeConditional(
                 () => playerModel.InventoryModel.CashCount >= runModel.LevelModel.TicketPrice)
@@ -80,69 +85,69 @@ public static class SpeechFactory
         return speechBuyTicket;
     }
 
-    private static Speech GetGenericPassengerSpeech()
+    private static Speech GetGenericPassengerSpeech(TextsConfig textsConfig)
     {
         var speechPassengerGeneric = new Speech(1);
 
         // Single node that does (random text + voice) in parallel:
         var root = SayRandom(
             speechPassengerGeneric,
-            "Какой сегодня прекрасный день для путешествия!",
-            "Надеюсь, поездка будет комфортной и приятной.",
-            "Интересно, какие приключения ждут меня впереди?",
-            "Я всегда мечтал посетить новые места на поезде.",
-            "Люблю звук колес по рельсам, он такой успокаивающий.",
-            "Кто-то украл твой сладкий рулетик?"
+            textsConfig.texts["passenger_random_0"],
+            textsConfig.texts["passenger_random_1"],
+            textsConfig.texts["passenger_random_2"],
+            textsConfig.texts["passenger_random_3"],
+            textsConfig.texts["passenger_random_4"],
+            textsConfig.texts["passenger_random_5"]
         );
 
         speechPassengerGeneric.SetRootNode(root);
         return speechPassengerGeneric;
     }
 
-    private static Speech GetComradeSpeech()
+    private static Speech GetComradeSpeech(TextsConfig textsConfig)
     {
         var speechPassengerComrade = new Speech(2);
 
-        var root = Say(speechPassengerComrade, "Я вас категорически приветствую!");
+        var root = Say(speechPassengerComrade, textsConfig.texts["comrade_passenger"]);
         speechPassengerComrade.SetRootNode(root);
 
         return speechPassengerComrade;
     }
 
-    private static Speech GetAnecdoteSpeech()
+    private static Speech GetAnecdoteSpeech(TextsConfig textsConfig)
     {
         var speechPassengerAnecdote = new Speech(3);
 
-        var n1 = Say(speechPassengerAnecdote, "Заходит пациент к доктору и говорит");
-        var n2 = Say(speechPassengerAnecdote, "Доктор, у меня член чешется").After(n1);
-        var n3 = Say(speechPassengerAnecdote, "Доктор отвечает \"Мой чаще\"").After(n2);
-        var n4 = Say(speechPassengerAnecdote, "А пациент такой \"Нет, мой\"").After(n3);
-        var n5 = Say(speechPassengerAnecdote, "Ха-ха-ха-ха!").After(n4);
+        var n1 = Say(speechPassengerAnecdote, textsConfig.texts["anecdote_0_0"]);
+        var n2 = Say(speechPassengerAnecdote, textsConfig.texts["anecdote_0_1"]).After(n1);
+        var n3 = Say(speechPassengerAnecdote, textsConfig.texts["anecdote_0_2"]).After(n2);
+        var n4 = Say(speechPassengerAnecdote, textsConfig.texts["anecdote_0_3"]).After(n3);
+        var n5 = Say(speechPassengerAnecdote, textsConfig.texts["anecdote_0_4"]).After(n4);
 
         speechPassengerAnecdote.SetRootNode(n1);
         return speechPassengerAnecdote;
     }
 
-    private static Speech GetShopkeeperSpeech(PlayerModel playerModel)
+    private static Speech GetShopkeeperSpeech(PlayerModel playerModel, TextsConfig textsConfig)
     {
         var speechShopkeeper = new Speech(4);
 
         var speechNodeRich = SayRandom(
             speechShopkeeper,
-            "О, барин прикатил на своей тачке? Бери всё, что хочешь, только монетами не шурши",
-            "Для таких, как вы, у меня шампанское по цене самолёта. Не разоришься?",
-            "Ваше сиятельство, пачку сигарет? Или предпочитаете золотые с бриллиантами?",
-            "Богатенький, налейте мне тоже из вашего кошелька, а то я тут на копейках сижу",
-            "Миллионер, не множьтесь тут, платите и валите в свой особняк"
+            textsConfig.texts["shopkeeper_rich_random_0"],
+            textsConfig.texts["shopkeeper_rich_random_1"],
+            textsConfig.texts["shopkeeper_rich_random_2"],
+            textsConfig.texts["shopkeeper_rich_random_3"],
+            textsConfig.texts["shopkeeper_rich_random_4"]
         );
 
         var speechNodePoor = SayRandom(
             speechShopkeeper,
-            "Опять ты, нищеброд? Хватит на копейки клянчить, иди работай",
-            "Бомжара, даже на хлеб не наскрёб? Вали отсюда, не порти воздух",
-            "Пять рублей? С таким бюджетом только в помойке копайся, лузер",
-            "Ещё один голодранец. Бесплатно не даём, вали просить милостыню",
-            "Мой бедолага, ты хоть раз в зеркало смотрел? Плати или проваливай"
+            textsConfig.texts["shopkeeper_poor_random_0"],
+            textsConfig.texts["shopkeeper_poor_random_1"],
+            textsConfig.texts["shopkeeper_poor_random_2"],
+            textsConfig.texts["shopkeeper_poor_random_3"],
+            textsConfig.texts["shopkeeper_poor_random_4"]
         );
 
         var speechNodeRichCondition = new SpeechNodeConditional(() => playerModel.InventoryModel.CashCount >= 500)
