@@ -43,7 +43,7 @@ public class DebugWindowPlayer : DebugWindowModel
 			return;
 		}
 
-		ImGui.SetNextWindowSize(new Vector2(420, 300), 0);
+		ImGui.SetNextWindowSizeConstraints(new Vector2(420, 600), new Vector2(float.MaxValue, float.MaxValue));
 
 		if (!ImGui.Begin(Id, ref isOpen, ImGuiWindowFlags.MenuBar))
 		{
@@ -102,12 +102,15 @@ public class DebugWindowPlayer : DebugWindowModel
 		{
 			var configsArray = diceConfig.Keys.ToArray();
 
-			if (ImGui.CollapsingHeader("Dices"))
+			if (ImGui.TreeNode("Dices"))
 			{
 				foreach (var item in playerModel.InventoryModel.DiceIdList)
 				{
 					ImGui.Text(item);
 				}
+
+				ImGui.Separator();
+				ImGui.TreePop();
 			}
 
 			if (ImGui.Combo("DiceId", ref diceIdxBuffer, configsArray, diceConfig.Count))
