@@ -119,7 +119,7 @@ MonoBehaviour:
   spawnCooldownMin: 0.3
   spawnCooldownMax: 1
   speed: 20
-  movable: 0
+  movable: 1
 --- !u!1 &967234854689226090
 GameObject:
   m_ObjectHideFlags: 0
@@ -172,7 +172,7 @@ MonoBehaviour:
   spawnCooldownMin: 0.3
   spawnCooldownMax: 1
   speed: 10
-  movable: 0
+  movable: 1
 --- !u!1 &1133383597000598611
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,7 +301,7 @@ MonoBehaviour:
   spawnCooldownMin: 0.3
   spawnCooldownMax: 1
   speed: 10
-  movable: 0
+  movable: 1
 --- !u!1 &2455906128212016360
 GameObject:
   m_ObjectHideFlags: 0
@@ -448,7 +448,7 @@ MonoBehaviour:
   spawnCooldownMin: 0.3
   spawnCooldownMax: 1
   speed: 5
-  movable: 0
+  movable: 1
 --- !u!1 &3774252296030022960
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,7 +644,7 @@ MonoBehaviour:
   spawnCooldownMin: 0.3
   spawnCooldownMax: 1
   speed: 5
-  movable: 0
+  movable: 1
 --- !u!1 &5875971813687885191
 GameObject:
   m_ObjectHideFlags: 0
@@ -1007,7 +1007,7 @@ MonoBehaviour:
   spawnCooldownMin: 0.3
   spawnCooldownMax: 1
   speed: 20
-  movable: 0
+  movable: 1
 --- !u!1 &8694702908571754480
 GameObject:
   m_ObjectHideFlags: 0
