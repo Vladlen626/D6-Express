@@ -20,11 +20,12 @@ namespace _Main.Scripts.Dice
 		{
 			diceGameModel.OnTargetPointsChanged += OnTargetPointsChangedHandler;
 			diceGameModel.OnCurrentTurnChanged += OnCurrentTurnChangedHandler;
-			tableModel.OnBankedPointsChanged += OnBankedPointsChangedHandler;
+			tableModel.OnPlayerBankedPointsChanged += OnPlayerBankedPointsChangedHandler;
+			tableModel.OnEnemyBankedPointsChanged += OnEnemyBankedPointsChangedHandler;
 			tableModel.OnTurnPointsChanged += OnTurnPointsChangedHandler;
 			tableModel.OnPreviewPointsChanged += OnPreviewPointsChangedHandler;
 
-			OnBankedPointsChangedHandler();
+			OnPlayerBankedPointsChangedHandler();
 			OnTargetPointsChangedHandler();
 			OnTurnPointsChangedHandler();
 			OnPreviewPointsChangedHandler();
@@ -35,24 +36,30 @@ namespace _Main.Scripts.Dice
 		{
 			diceGameModel.OnTargetPointsChanged -= OnTargetPointsChangedHandler;
 			diceGameModel.OnCurrentTurnChanged -= OnCurrentTurnChangedHandler;
-			tableModel.OnBankedPointsChanged -= OnBankedPointsChangedHandler;
+			tableModel.OnPlayerBankedPointsChanged -= OnPlayerBankedPointsChangedHandler;
+			tableModel.OnEnemyBankedPointsChanged -= OnEnemyBankedPointsChangedHandler;
 			tableModel.OnTurnPointsChanged -= OnTurnPointsChangedHandler;
 			tableModel.OnPreviewPointsChanged -= OnPreviewPointsChangedHandler;
 		}
 
-		private void OnBankedPointsChangedHandler()
+		private void OnPlayerBankedPointsChangedHandler()
 		{
-			diceTableView.SetBankedPointsText(tableModel.BankedPoints.ToString());
+			diceTableView.SetPlayerBankedPointsText(tableModel.PlayerBankedPoints.ToString());
+		}
+		
+		private void OnEnemyBankedPointsChangedHandler()
+		{
+			diceTableView.SetEnemyBankedPointsText(tableModel.EnemyBankedPoints.ToString());
 		}
 
 		private void OnTargetPointsChangedHandler()
 		{
-			diceTableView.SetTargetPointsText(diceGameModel.TargetPoints.ToString());
+			diceTableView.SetTargetPointsText(diceGameModel.TargetPoints);
 		}
 
 		private void OnCurrentTurnChangedHandler()
 		{
-			diceTableView.SetTurnText(diceGameModel.CurrentTurn, diceGameModel.MaxTurnCount);
+			diceTableView.SetTurnText(diceGameModel.CurrentTurn);
 		}
 
 		private void OnTurnPointsChangedHandler()

@@ -42,7 +42,7 @@ namespace _Main.Scripts.Dice
 			tableView.OnRollClicked += HandleRoll;
 			tableView.OnPassClicked += HandlePass;
 
-			foreach (var diceModel in diceGameModel.GameSelectedDiceModelsList)
+			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				diceModel.OnDiceChosenChanged += UpdateUI;
 			}
@@ -57,7 +57,7 @@ namespace _Main.Scripts.Dice
 			tableView.OnRollClicked -= HandleRoll;
 			tableView.OnPassClicked -= HandlePass;
 
-			foreach (var diceModel in diceGameModel.GameSelectedDiceModelsList)
+			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				diceModel.OnDiceChosenChanged -= UpdateUI;
 			}
@@ -176,14 +176,21 @@ namespace _Main.Scripts.Dice
 		{
 			if (success)
 			{
-				tableModel.AddBankedPoints(tableModel.TurnPoints);
+				if (diceGameModel.IsPlayerTurn)
+				{
+					tableModel.AddBankedPointsForPlayer(tableModel.TurnPoints);
+				}
+				else
+				{
+					tableModel.AddBankedPointsForEnemy(tableModel.TurnPoints);
+				}
 			}
 
 			
 			diceGameModel.IncreaseCurrentTurn();
 			tableModel.ResetTurn();
 			dicePool.ResetAll();
-			foreach (var diceModel in diceGameModel.GameSelectedDiceModelsList)
+			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				diceGameModel.ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
 			}
@@ -233,7 +240,7 @@ namespace _Main.Scripts.Dice
 		{
 			var tweens = new List<Tween>();
 
-			foreach (var diceModel in diceGameModel.GameSelectedDiceModelsList)
+			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				var pos = tableModel.GetFreeActivePosition();
 				diceModel.SetSaved(false);

@@ -19,13 +19,15 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private Transform gameStateHandler;
 	[SerializeField] private Transform betStateHandler;
 	[SerializeField] private Transform selectStateHandler;
-	
-	[Header("Turn")]
+
+	[Header("Turn")] 
 	[SerializeField] private TextMeshPro turnText;
+	[SerializeField] private Transform bankTransform;
 
 	[Header("Score")]
 	[SerializeField] private TextMeshPro targetScoreText;
 	[SerializeField] private TextMeshPro bankedScoreText;
+	[SerializeField] private TextMeshPro enemyBankedScoreText;
 	[SerializeField] private TextMeshPro currentScoreText;
 	[SerializeField] private TextMeshPro previewScoreText;
 
@@ -109,6 +111,11 @@ public class DiceTableView : MonoBehaviour
 		}
 	}
 
+	public void SwitchTurn(bool isPlayerTurn)
+	{
+		bankTransform.rotation = Quaternion.Euler(0f, isPlayerTurn? 0f : 180f, 0f);
+	}
+
 	public void EnableCamera()
 	{
 		cinemachineCamera.gameObject.SetActive(true);
@@ -119,14 +126,19 @@ public class DiceTableView : MonoBehaviour
 		cinemachineCamera.gameObject.SetActive(false);
 	}
 
-	public void SetBankedPointsText(string text)
+	public void SetPlayerBankedPointsText(string text)
 	{
 		bankedScoreText.text = text;
 	}
 
-	public void SetTargetPointsText(string text)
+	public void SetEnemyBankedPointsText(string text)
 	{
-		targetScoreText.text = text;
+		bankedScoreText.text = text;
+	}
+
+	public void SetTargetPointsText(int points)
+	{
+		targetScoreText.text = $"Target: {points}";
 	}
 
 	public void SetCurrentPointsText(string text)
@@ -139,9 +151,9 @@ public class DiceTableView : MonoBehaviour
 		previewScoreText.text = text;
 	}
 
-	public void SetTurnText(int currentTurn, int maxTurn)
+	public void SetTurnText(int currentTurn)
 	{
-		turnText.text = $"Turns: {currentTurn}/{maxTurn}";
+		turnText.text = $"Turn: {currentTurn}";
 	}
 
 	public void SetCurrentBetText(string text)

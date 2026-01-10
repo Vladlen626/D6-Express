@@ -6,12 +6,15 @@ namespace _Main.Scripts.Dice
 {
 	public class TableModel
 	{
-		public event Action OnBankedPointsChanged;
+		public event Action OnPlayerBankedPointsChanged;
+		public event Action OnEnemyBankedPointsChanged;
 		public event Action OnTurnPointsChanged;
 		public event Action OnPreviewPointsChanged;
 		public int TurnPoints { get; private set; }
 		public int PreviewPoints { get; private set; }
-		public int BankedPoints { get; private set; }
+		public int PlayerBankedPoints { get; private set; }
+		
+		public int EnemyBankedPoints {get; private set;}
 
 		public bool isFirstRoll { get; set; } = true;
 
@@ -83,15 +86,26 @@ namespace _Main.Scripts.Dice
 			_occupiedBankedPositions.Clear();
 		}
 
-		public void AddBankedPoints(int points)
+		public void AddBankedPointsForPlayer(int points)
 		{
-			SetBankedPoints(BankedPoints + points);
+			SetPlayerBankedPoints(PlayerBankedPoints + points);
+		}
+		
+		public void AddBankedPointsForEnemy(int points)
+		{
+			SetEnemyBankedPoints(EnemyBankedPoints + points);
 		}
 
-		public void SetBankedPoints(int points)
+		public void SetPlayerBankedPoints(int points)
 		{
-			BankedPoints = points;
-			OnBankedPointsChanged?.Invoke();
+			PlayerBankedPoints = points;
+			OnPlayerBankedPointsChanged?.Invoke();
+		}
+		
+		public void SetEnemyBankedPoints(int points)
+		{
+			EnemyBankedPoints = points;
+			OnEnemyBankedPointsChanged?.Invoke();
 		}
 
 		public void SetPreviewPoints(int points)
@@ -124,7 +138,7 @@ namespace _Main.Scripts.Dice
 			ResetAllPositions();
 			SetTurnPoints(0);
 			SetPreviewPoints(0);
-			SetBankedPoints(0);
+			SetPlayerBankedPoints(0);
 		}
 	}
 }

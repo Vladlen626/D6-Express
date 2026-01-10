@@ -15,26 +15,26 @@ namespace _Main.Scripts.Dice
 		}
 		public void Activate()
 		{
-			tableModel.OnBankedPointsChanged += OnBankedPointsChangedHandler;
-			diceGameModel.OnCurrentTurnChanged += OnCurrentTurnChangedHandler;
+			tableModel.OnPlayerBankedPointsChanged += OnPlayerBankedPointsChangedHandler;
+			tableModel.OnEnemyBankedPointsChanged += OnEnemyBankedPointsChangedHandler;
 		}
 
 		public void Deactivate()
 		{
-			tableModel.OnBankedPointsChanged -= OnBankedPointsChangedHandler;
-			diceGameModel.OnCurrentTurnChanged -= OnCurrentTurnChangedHandler;
+			tableModel.OnPlayerBankedPointsChanged -= OnPlayerBankedPointsChangedHandler;
+			tableModel.OnEnemyBankedPointsChanged -= OnEnemyBankedPointsChangedHandler;
 		}
-		private void OnBankedPointsChangedHandler()
+		private void OnPlayerBankedPointsChangedHandler()
 		{
-			if (tableModel.BankedPoints >= diceGameModel.TargetPoints)
+			if (tableModel.PlayerBankedPoints >= diceGameModel.TargetPoints)
 			{
 				diceGameModel.SetConditionPassed();
 			}
 		}
 		
-		private void OnCurrentTurnChangedHandler()
+		private void OnEnemyBankedPointsChangedHandler()
 		{
-			if (diceGameModel.CurrentTurn > diceGameModel.MaxTurnCount)
+			if (tableModel.EnemyBankedPoints >= diceGameModel.TargetPoints)
 			{
 				diceGameModel.SetConditionFailed();
 			}

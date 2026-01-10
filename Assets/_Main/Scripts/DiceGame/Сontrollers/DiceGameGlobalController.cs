@@ -25,7 +25,8 @@ namespace _Main.Scripts.Dice
 		private DicePositionsHandler dicePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
 		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
 		
-		private DiceView[] diceViewsArray;
+		private DiceView[] playerDiceViewsArray;
+		private DiceView[] enemyDiceViewsArray;
 		private TableModel tableModel;
 
 		private List<IBaseController> gameControllers = new();
@@ -70,13 +71,11 @@ namespace _Main.Scripts.Dice
 		{
 			playerModel.InventoryModel.GiveCash(diceGameModel.BetSize * 2);
 			StopDiceGame();
-			loggerService.Log("Ура плюс бабки");
 		}
 
 		private void OnGameConditionFailedHandler()
 		{
 			StopDiceGame();
-			loggerService.Log("Фак минус бабки");
 		}
 
 		private void OnDiceGameStateChangedHandler()
@@ -110,13 +109,10 @@ namespace _Main.Scripts.Dice
 
 			int maxBetSize = playerModel.InventoryModel.CashCount;
 
-			diceGameModel.SetMinBetSize(diceGameConfig.min_bet_size);
-			diceGameModel.SetMaxBetSize(maxBetSize);
-			diceGameModel.SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
-			diceGameModel.SetTargetScore(diceGameConfig.target_score);
-			diceGameModel.SetMaxTurnCount(diceGameConfig.max_turn_count);
+			diceGameModel.Setup(diceGameConfig, maxBetSize);
 			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
+			await SetupEnemyDiceList();
 			await SelectionProcess();
 			await BetProcess();
 
@@ -142,8 +138,8 @@ namespace _Main.Scripts.Dice
 			await lifecycleService.RegisterAsync(selectionController);
 			await selectionController.WaitSelection();
 
-			var selectedModels = diceGameModel.GameSelectedDiceModelsList;
-			diceViewsArray = new DiceView[selectedModels.Count];
+			var selectedModels = diceGameModel.PlayerDiceModelList;
+			playerDiceViewsArray = new DiceView[selectedModels.Count];
 
 			for (int i = 0; i < selectedModels.Count; i++)
 			{
@@ -154,11 +150,47 @@ namespace _Main.Scripts.Dice
 				view.transform.SetParent(gamePos);
 				view.MoveToPosition(gamePos.position);
 				model.SetCurrentPosition(gamePos);
-				diceViewsArray[i] = view;
+				playerDiceViewsArray[i] = view;
 				gameControllers.Add(new DiceController(model, view, tableModel));
 			}
 
 			ClenUpSelectionControllers();
+		}
+		
+		private async UniTask SetupEnemyDiceList()
+		{
+			var config = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_game_rules);
+			for (int i = 0; i < 6; i++)
+			{
+				var startPos = diceTableView.GameStatePosHandler.BankedPositions[i];
+				DiceView view = await objectFactory.CreateAsync<DiceView>(
+					ResourcePaths.Items.DicePrefab, Vector3.zero, Quaternion.identity);
+
+				view.Initialize(config.id, false);
+				view.transform.SetParent(startPos);
+				view.Hide();
+
+				DiceModel model = new DiceModel(config);
+				model.SetCurrentPosition(startPos);
+				diceGameModel.EnemyDiceModelList.Add(model);
+				diceGameModel.AddDiceOnScreen(model, view);
+			}
+
+			var enemyModels = diceGameModel.EnemyDiceModelList;
+			enemyDiceViewsArray = new DiceView[enemyModels.Count];
+
+			for (int i = 0; i < enemyModels.Count; i++)
+			{
+				var model = enemyModels[i];
+				var view = diceGameModel.ScreenDiceDict[model];
+				var gamePos = dicePositionsHandler.DicePositions[i];
+
+				view.transform.SetParent(gamePos);
+				view.MoveToPosition(gamePos.position);
+				model.SetCurrentPosition(gamePos);
+				enemyDiceViewsArray[i] = view;
+				gameControllers.Add(new DiceController(model, view, tableModel));
+			}
 		}
 
 		private async UniTask BetProcess()
@@ -224,14 +256,24 @@ namespace _Main.Scripts.Dice
 
 		private void CleanUpMainGameControllers()
 		{
-			if (diceViewsArray != null)
+			if (playerDiceViewsArray != null)
 			{
-				foreach (var dice in diceViewsArray)
+				foreach (var dice in playerDiceViewsArray)
 				{
 					objectFactory.Destroy(dice.gameObject);
 				}
 
-				diceViewsArray = null;
+				playerDiceViewsArray = null;
+			}
+			
+			if (enemyDiceViewsArray != null)
+			{
+				foreach (var dice in enemyDiceViewsArray)
+				{
+					objectFactory.Destroy(dice.gameObject);
+				}
+
+				enemyDiceViewsArray = null;
 			}
 
 			foreach (var controller in gameControllers)
@@ -244,7 +286,7 @@ namespace _Main.Scripts.Dice
 
 		private void ResetModels()
 		{
-			foreach (var model in diceGameModel.GameSelectedDiceModelsList)
+			foreach (var model in diceGameModel.CurrentDiceModelList)
 			{
 				var dice = diceGameModel.ScreenDiceDict[model];
 				diceGameModel.RemoveDiceOnScreen(model);
