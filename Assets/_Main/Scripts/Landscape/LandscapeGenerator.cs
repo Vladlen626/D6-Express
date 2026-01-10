@@ -80,7 +80,6 @@ public class LandscapeGenerator : MonoBehaviour
 
         for (var i = 0; i < maxSpawnedObjects; i++)
         {
-            Debug.Log(spawnPos);
             SpawnLandscapeObject(spawnPos);
             spawnPos.z -= Random.Range(spawnCooldownMin, spawnCooldownMax) * speed;
 
