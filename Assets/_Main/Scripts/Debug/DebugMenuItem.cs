@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using _Main.Scripts.Core;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
@@ -7,6 +8,8 @@ using PlatformCore.Services.UI;
 public abstract class DebugMenuItem
 {
     public abstract string Path { get; }
+
+    public virtual async Task Preload() { }
 
     public abstract void Execute();
 }
@@ -106,9 +109,16 @@ public class DbgMenuItemOpenPlayerWindow : DebugMenuItem
 
     public override string Path => "Open Player Window";
 
-    public DbgMenuItemOpenPlayerWindow(PlayerModel playerModel, PlayerView playerView)
+    public DbgMenuItemOpenPlayerWindow(PlayerModel playerModel, PlayerView playerView, ConfigService configService)
     {
-        debugWindowPlayer = new DebugWindowPlayer(playerModel, playerView);
+        debugWindowPlayer = new DebugWindowPlayer(playerModel, playerView, configService);
+    }
+
+    public override async Task Preload()
+    {
+        await base.Preload();
+
+        await debugWindowPlayer.Preload();
     }
 
     public override void Execute()

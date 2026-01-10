@@ -119,7 +119,7 @@ namespace _Main.Scripts.Core
 				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main)
 			};
 
-			controllersList.AddRange(DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView));
+			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView, configService));
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel, configService));
 			controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
 

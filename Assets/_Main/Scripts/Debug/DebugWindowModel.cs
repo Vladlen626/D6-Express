@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UImGui;
 
 public abstract class DebugWindowModel
@@ -5,6 +6,8 @@ public abstract class DebugWindowModel
     protected bool isOpen;
 
     public abstract string Id { get; }
+
+    public virtual async Task Preload() { }
 
     public void Open()
     {

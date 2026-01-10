@@ -1,11 +1,16 @@
-using System.Collections.Generic;
+using System.Threading.Tasks;
 using _Main.Scripts.Core.Services;
-using PlatformCore.Core;
 using PlatformCore.Services.UI;
 
 public static class DebugFactory
 {
-    public static IEnumerable<IBaseController> GetBaseController(IInputService inputService, ICursorService cursorService, RunModel runModel, PlayerModel playerModel, PlayerView playerView)
+    public static async Task<DebugMenuUIController> GetBaseController(
+        IInputService inputService,
+        ICursorService cursorService,
+        RunModel runModel,
+        PlayerModel playerModel,
+        PlayerView playerView,
+        ConfigService configService)
     {
         var incrementTick = new DbgMenuItemIncrementTicks(runModel);
         var incrementDay = new DbgMenuItemIncrementDays(runModel);
@@ -13,11 +18,14 @@ public static class DebugFactory
         var wakeUp = new DbgMenuItemIncrementWakeUp();
         var switchToStation = new DbgMenuItemSwitchToStation(runModel);
         var switchToTrain = new DbgMenuItemSwitchToTrain(runModel);
-        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(playerModel, playerView);
-        
+        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(playerModel, playerView, configService);
+
         var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp, switchToStation, switchToTrain, openPlayerWindow);
+
+        await gameMenu.Preload();
+
         var menu = new DebugMenuUIModel(gameMenu);
 
-        yield return new DebugMenuUIController(inputService, cursorService, menu);
+        return new DebugMenuUIController(inputService, cursorService, menu);
     }
 }
