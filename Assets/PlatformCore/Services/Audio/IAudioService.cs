@@ -7,6 +7,8 @@ namespace PlatformCore.Services.Audio
 	{
 		UniTask PlayMusicAsync(string eventPath, float fadeTime = 0f);
 		UniTask StopMusicAsync(float fadeTime = 0f);
+		void PlaySoundParallel(string eventPath);
+		void StopParallelSound(string eventPath);
 		void SetMusicVolume(float volume);
 
 		void PlaySound(string eventPath);

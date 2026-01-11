@@ -112,9 +112,9 @@ namespace _Main.Scripts.Dice
 			diceGameModel.Setup(diceGameConfig, maxBetSize);
 			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
-			await SetupEnemyDiceList();
 			await SelectionProcess();
 			await BetProcess();
+			await SetupEnemyDiceList();
 
 			gameControllers.AddRange(DiceFactory.GetDiceGameControllers(sceneContext, loggerService,
 				diceGameModel, tableModel, cameraShakeService));

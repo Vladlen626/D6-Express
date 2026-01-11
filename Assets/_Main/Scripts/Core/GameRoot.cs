@@ -111,7 +111,7 @@ namespace _Main.Scripts.Core
 			// Level
 			controllersList.AddRange(RunFactory.GetSleepControllers(runModel.LevelModel, playerView));
 			controllersList.AddRange(RunFactory.GetBaseControllers(sceneContext, uiService, runModel,
-				playerModel, diceGameModel, playerView));
+				playerModel, diceGameModel, playerView, audioService));
 
 			var baseControllers = new IBaseController[]
 			{

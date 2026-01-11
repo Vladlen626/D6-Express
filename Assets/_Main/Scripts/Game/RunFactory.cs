@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
@@ -29,14 +30,14 @@ public static class RunFactory
 	}
 
 	public static IEnumerable<IBaseController> GetBaseControllers(SceneContext sceneContext, IUIService uiService,
-		RunModel runModel, PlayerModel playerModel, DiceGameModel diceGameModel, PlayerView playerView)
+		RunModel runModel, PlayerModel playerModel, DiceGameModel diceGameModel, PlayerView playerView, IAudioService audioService)
 	{
 		return new IBaseController[]
 		{
 			new LevelViewController(uiService, playerModel, runModel, sceneContext.Sun, sceneContext.TrainBlock,
 				sceneContext.StationBlock),
 			new LevelController(runModel, playerModel, diceGameModel,playerView, sceneContext.PlayerTrainSpawnPosition,
-				sceneContext.PlayerStationSpawnPosition)
+				sceneContext.PlayerStationSpawnPosition, audioService)
 		};
 	}
 

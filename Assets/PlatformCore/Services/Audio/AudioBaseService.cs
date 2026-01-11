@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using FMOD.Studio;
 using UnityEngine;
 using FMODUnity;
 
@@ -9,11 +11,13 @@ namespace PlatformCore.Services.Audio
 	{
 		private readonly ILoggerService _logger;
 
-		private FMOD.Studio.EventInstance _currentMusic;
+		private EventInstance _currentMusic;
 		private float _masterVolume = 0.8f;
 		private float _musicVolume = 0.5f;
 		private float _sfxVolume = 0.5f;
 		private bool _isMuted;
+		
+		private Dictionary<string, EventInstance> _eventInstances = new ();
 
 		public bool IsMuted => _isMuted;
 		public float MasterVolume => _masterVolume;
@@ -51,6 +55,30 @@ namespace PlatformCore.Services.Audio
 			}
 		}
 
+		public void PlaySoundParallel(string eventPath)
+		{
+			if (_eventInstances.ContainsKey(eventPath))
+			{
+				_logger?.Log($"[AudioService] Playing already played this sound path: {eventPath}");
+				return;
+			}
+
+			var sound = RuntimeManager.CreateInstance(eventPath);
+			_eventInstances.Add(eventPath, sound);
+			sound.start();
+		}
+
+		public void StopParallelSound(string eventPath)
+		{
+			if (!_eventInstances.TryGetValue(eventPath, out var sound))
+			{
+				_logger?.Log($"[AudioService] Failed to stop: {eventPath}");
+				return;
+			}
+
+			sound.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
+		}
+
 		public async UniTask StopMusicAsync(float fadeTime = 1f)
 		{
 			await UniTask.Yield();
@@ -63,7 +91,7 @@ namespace PlatformCore.Services.Audio
 				_currentMusic.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
 
 				_currentMusic.release();
-				_currentMusic = new FMOD.Studio.EventInstance();
+				_currentMusic = new EventInstance();
 			}
 			catch (Exception ex)
 			{
