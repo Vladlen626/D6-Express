@@ -1002,10 +1002,21 @@
                 {
                     "name": "",
                     "id": "43b02685-95e3-439e-85bc-e6953eff9d82",
-                    "path": "*/{Submit}",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";XR;Joystick;Touch;Keyboard&Mouse;Gamepad",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "SpeechLineSkip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "86272d4c-582d-4703-b8c1-b46e6e34a2f4",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
                     "action": "SpeechLineSkip",
                     "isComposite": false,
                     "isPartOfComposite": false

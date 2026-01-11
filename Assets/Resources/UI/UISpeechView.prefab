@@ -238,7 +238,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[enter]'
+  m_text: '[e] to skip'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 00fade5822328c341964077b498c9a99, type: 2}
   m_sharedMaterial: {fileID: 634152626267492156, guid: 00fade5822328c341964077b498c9a99, type: 2}
