@@ -59,8 +59,6 @@ public class NpcSpawner
 
             npcList.Add(npc);
         }
-
-        Debug.Log($"Spawned: {npcList.Count}");
     }
 
     private void DestroySpawned()
