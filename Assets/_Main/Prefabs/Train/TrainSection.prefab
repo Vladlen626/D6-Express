@@ -2084,6 +2084,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChairSeat (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2269,6 +2289,26 @@ PrefabInstance:
     - target: {fileID: 1137261104309016846, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
       propertyPath: m_Name
       value: ChairSeat
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
