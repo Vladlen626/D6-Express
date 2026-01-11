@@ -57,14 +57,12 @@ namespace PlatformCore.Services.Audio
 
 		public void PlaySoundParallel(string eventPath)
 		{
-			if (_eventInstances.ContainsKey(eventPath))
+			if (!_eventInstances.TryGetValue(eventPath, out var sound))
 			{
-				_logger?.Log($"[AudioService] Playing already played this sound path: {eventPath}");
-				return;
+				sound = RuntimeManager.CreateInstance(eventPath);
+				_eventInstances.Add(eventPath, sound);
 			}
 
-			var sound = RuntimeManager.CreateInstance(eventPath);
-			_eventInstances.Add(eventPath, sound);
 			sound.start();
 		}
 
