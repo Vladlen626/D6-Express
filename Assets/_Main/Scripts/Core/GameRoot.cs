@@ -115,12 +115,13 @@ namespace _Main.Scripts.Core
 
 			var baseControllers = new IBaseController[]
 			{
-				new WinViewController(uiService,inputService, cursorService, runModel, configService),
-				new LoseViewController(uiService,inputService, cursorService, runModel, configService),
+				new WinViewController(uiService, inputService, cursorService, runModel, configService),
+				new LoseViewController(uiService, inputService, cursorService, runModel, configService),
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
 					runModel.LevelModel, configService),
-				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main)
+				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main),
+				new LightController(sceneContext.Lights, runModel.LevelModel),
 			};
 
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView, configService));

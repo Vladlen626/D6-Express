@@ -611,6 +611,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5448740702697023594}
+  - component: {fileID: 2457915230549854631}
   m_Layer: 0
   m_Name: Train Light
   m_TagString: Untagged
@@ -635,6 +636,27 @@ Transform:
   - {fileID: 6560433233199072241}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2457915230549854631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4671922077702795984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1540f7ad2e2ede45ae8095ddb72386d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LightView
+  lights:
+  - {fileID: 715338977378909281}
+  - {fileID: 8691472804051134535}
+  - {fileID: 5591595435131112768}
+  - {fileID: 6697500034080423492}
+  - {fileID: 7728148717552256878}
+  - {fileID: 4784493408000429719}
+  - {fileID: 5297727544822966385}
+  - {fileID: 7827816994458266565}
 --- !u!1 &4853796526965880479
 GameObject:
   m_ObjectHideFlags: 0

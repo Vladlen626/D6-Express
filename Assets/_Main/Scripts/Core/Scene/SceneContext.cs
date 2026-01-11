@@ -30,5 +30,6 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public GameObject TrainBlock => trainBlock;
 	public Light Sun => sun;
 
+	public IEnumerable<LightView> Lights => FindObjectsByType<LightView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 	public IEnumerable<SpawnPoint> SpawnPoints => FindObjectsByType<SpawnPoint>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 }
