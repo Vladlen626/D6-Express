@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 1084030783067911277}
   - component: {fileID: 6873086243208018938}
   - component: {fileID: 3361349745628286014}
+  - component: {fileID: 4537036492359175433}
   m_Layer: 0
   m_Name: BedInteractable
   m_TagString: Untagged
@@ -113,3 +114,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hintable
   hintText: bed
+--- !u!114 &4537036492359175433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 603966713931340545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1773226448528a47b110fb4e97d65fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpawnPoint
+  levelState: 1

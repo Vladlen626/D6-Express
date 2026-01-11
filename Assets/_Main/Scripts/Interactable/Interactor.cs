@@ -117,6 +117,6 @@ public class Interactor : MonoBehaviour
 		interactionAction.Ended -= OnInteractionEnded;
 		interactionAction.Started -= OnInteractionStarted;
 
-		InteractionEnded.Invoke(interactionAction);
+		InteractionEnded?.Invoke(interactionAction);
 	}
 }

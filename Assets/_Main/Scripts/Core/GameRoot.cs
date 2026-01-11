@@ -62,6 +62,7 @@ namespace _Main.Scripts.Core
 			var controllersList = new List<IBaseController>();
 			// --------------
 
+
 			var playerModel = await PlayerFactory.CreatePlayerModel(configService);
 			var runModel = await RunFactory.CreateRunModel(configService);
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
@@ -97,6 +98,9 @@ namespace _Main.Scripts.Core
 			}
 
 			var sceneContext = context as SceneContext;
+
+			//NPC
+			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, runModel, sceneContext.SpawnPoints);
 
 			//Player
 			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService, playerModel);

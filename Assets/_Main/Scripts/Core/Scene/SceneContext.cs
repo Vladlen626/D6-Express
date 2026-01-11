@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SceneContext : MonoBehaviour, ISceneContext
@@ -26,4 +29,6 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public GameObject StationBlock => stationBlock;
 	public GameObject TrainBlock => trainBlock;
 	public Light Sun => sun;
+
+	public IEnumerable<SpawnPoint> SpawnPoints => FindObjectsByType<SpawnPoint>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 }
