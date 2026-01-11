@@ -24,7 +24,8 @@ public class InteractableActionSit : InteractionAction
 		// var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position - Interactor.OffsetFromOrigin, 10).ToUniTask();
 		// var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 10).ToUniTask();
 		Interactor.transform.SetPositionAndRotation(sittable.SitTfm.position, sittable.SitTfm.rotation);
-
+		
+		Interactor.GetComponent<Animator>().SetInteger("State", 1);
 		// await UniTask.WhenAll(moveTask, rotateTask);
 
 		StateModel.TryRemoveState(CharacterState.TRANSITION);
@@ -33,6 +34,8 @@ public class InteractableActionSit : InteractionAction
 
 	protected override async void StopInteractInternal()
 	{
+		Interactor.GetComponent<Animator>().SetInteger("State", 0);
+
 		// await Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
 		Interactor.transform.position = lastPos;
 
