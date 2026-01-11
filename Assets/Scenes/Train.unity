@@ -163,7 +163,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca138d27da52904b8334370eb0c1709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneContext
-  diceGameTableView: {fileID: 0}
+  diceGameTableView: {fileID: 5741847972874531003}
   playerTrainSpawnPosition: {fileID: 173345210}
   playerStationSpawnPosition: {fileID: 1994989543}
   stationBlock: {fileID: 1235700352}
@@ -521,8 +521,49 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 708965733349097685, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2232506000430312156, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 3058231345212316265, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 8996751470129671684, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 5812457548001011839, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4364617675231911333, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4343131620414539609, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7416204432958796716, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7049049792441639051, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7866990782131172667, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+--- !u!114 &5741847972874531003 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2438551764296587562, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+  m_PrefabInstance: {fileID: 5741847972874531002}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a482f3d4abd4a2180a7841c810447aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DiceGameTableView
 --- !u!1001 &7205606119079278648
 PrefabInstance:
   m_ObjectHideFlags: 0
