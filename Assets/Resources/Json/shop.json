@@ -1,0 +1,19 @@
+{
+    "items": [
+        {
+            "itemId": "default",
+            "description": "cool",
+            "price": 10
+        },
+        {
+            "itemId": "gen_1_focus",
+            "description": "cooler",
+            "price": 20
+        },
+        {
+            "itemId": "strat_straight_1_6_hunter",
+            "description": "coolest",
+            "price": 30
+        }
+    ]
+}

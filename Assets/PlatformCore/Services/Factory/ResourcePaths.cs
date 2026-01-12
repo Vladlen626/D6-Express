@@ -23,6 +23,7 @@ namespace PlatformCore.Services.Factory
 			public const string dice_types = "Json/dice_types";
 			public const string player = "Json/player";
 			public const string run_rules = "Json/run_rules";
+			public const string shop = "Json/shop";
 			public const string texts_eng = "Json/texts_eng";
 			public const string texts_ru = "Json/texts_ru";
 		}
@@ -39,7 +40,7 @@ namespace PlatformCore.Services.Factory
 			public const string NpcShopKeeper = "Player/NpcShopKeeper";
 			public const string PlayerBase = "Player/PlayerBase";
 			public const string Sit = "Player/Sit";
-			public const string Strings = "Player/Strings";
+			public const string StandUp = "Player/StandUp";
 		}
 
 		public static class Root
@@ -47,9 +48,16 @@ namespace PlatformCore.Services.Factory
 			public const string DOTweenSettings = "DOTweenSettings";
 		}
 
+		public static class Shop
+		{
+			public const string ShopItemDice = "Shop/ShopItemDice";
+			public const string TradeItem = "Shop/TradeItem";
+		}
+
 		public static class UI
 		{
 			public const string UICursorView = "UI/UICursorView";
+			public const string UIHintView = "UI/UIHintView";
 			public const string UILevelView = "UI/UILevelView";
 			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";

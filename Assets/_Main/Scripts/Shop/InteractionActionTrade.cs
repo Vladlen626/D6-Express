@@ -13,6 +13,6 @@ public class InteractionActionTrade : InteractionAction
         base.StartInteractInternal();
 
         var interactableTradeable = Interactable as InteractableTradeable;
-        interactableTradeable.GetComponent<TradeItem>().Buy(Interactor.gameObject);
+        interactableTradeable.GetComponent<TradeItemView>().Buy();
     }
 }

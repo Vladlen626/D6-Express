@@ -1,65 +1,71 @@
-using TMPro;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-public class Shop : MonoBehaviour
+public class Shop
 {
-    [SerializeField] 
-    private Transform[] spawnPositions;
-    
-    [SerializeField] 
-    private TradeItem[] tradeItemsPrefabs;
+    private const int SLOTS = 3;
 
-    [SerializeField] 
-    private TextMeshPro[] prices;
+    private readonly RunModel runModel;
+    private readonly InventoryModel inventoryModel;
+    private readonly ShopConfig config;
+    private readonly List<TradeItem> tradeItems = new();
 
-    private TradeItem[] tradeItems;
+    public IReadOnlyList<TradeItem> TradeItems => tradeItems;
 
-    private void Awake()
+    public event Action<int, TradeItem> ItemAdded;
+    public event Action<int, TradeItem> ItemRemoved;
+
+    public Shop(RunModel runModel, InventoryModel inventoryModel, ShopConfig config)
     {
-        tradeItems = new TradeItem[spawnPositions.Length];
+        runModel.StateChanged += OnStateChanged;
+        this.runModel = runModel;
+        this.inventoryModel = inventoryModel;
+        this.config = config;
     }
 
-    private void OnEnable()
+    public void Update()
     {
-        UpdateShop();
-    }
-
-    public void UpdateShop()
-    {
-        for (int i = 0; i < tradeItems.Length; i++)
+        for (int i = 0; i < tradeItems.Count; i++)
         {
-            var item = tradeItems[i];
-            if (item == null) 
-                continue;
-
+            TradeItem item = tradeItems[i];
             item.Buyed -= OnBuyed;
-            Destroy(item.gameObject);
-            tradeItems[i] = null;
+            ItemRemoved?.Invoke(i, item);
         }
+        tradeItems.Clear();
 
-        for (int i = 0; i < spawnPositions.Length; i++)
+        var unused = config.items.ToList();
+
+        for (int i = 0; i < SLOTS; i++)
         {
-            var spawnPosition = spawnPositions[i];
+            var itemConfigIndex = UnityEngine.Random.Range(0, unused.Count);
+            var itemConfig = unused[itemConfigIndex];
+            unused.RemoveAt(itemConfigIndex);
 
-            var prefab = tradeItemsPrefabs[Random.Range(0, tradeItemsPrefabs.Length)];
-            var item = Instantiate(prefab, spawnPosition.position, Quaternion.identity, transform);
+            var tradeItem = new TradeItem(itemConfig.itemId, itemConfig.price, itemConfig.description);
+            tradeItem.Buyed += OnBuyed;
+            tradeItems.Add(tradeItem);
 
-            prices[i].text = item.Price.ToString();
-            item.Buyed += OnBuyed;
-
-            tradeItems[i] = item;
+            ItemAdded?.Invoke(i, tradeItem);
         }
     }
 
-    public void OnBuyed(TradeItem item, GameObject buyer)
+    private void OnStateChanged()
     {
-        int index = System.Array.IndexOf(tradeItems, item);
-        if (index < 0)
-            return;
+        if (runModel.LevelState == LevelState.STATION)
+        {
+            Update();
+        }
+    }
 
-        item.Buyed -= OnBuyed;
-        tradeItems[index] = null;
-        prices[index].text = "x";
-        Destroy(item.gameObject);
+    private void OnBuyed(TradeItem tradeItem)
+    {
+        // todo: добавлять не только дайсы
+        inventoryModel.AddDice(tradeItem.ItemId);
+
+        tradeItem.Buyed -= OnBuyed;
+        var index = tradeItems.IndexOf(tradeItem);
+        tradeItems.RemoveAt(index);
+        ItemRemoved?.Invoke(index, tradeItem);
     }
 }
