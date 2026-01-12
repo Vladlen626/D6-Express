@@ -17,8 +17,10 @@ namespace _Main.Scripts.Dice
 
 		private readonly DiceTableView tableView;
 		private readonly DicePoolLogic dicePool;
+		
+		public DicePoolLogic DicePoolLogic => dicePool;
 
-		private bool isProcessing;
+		public bool IsProcessing { get; private set; }
 		public DiceGameProcessController(
 			TableModel tableModel,
 			DiceTableView tableView,
@@ -33,6 +35,17 @@ namespace _Main.Scripts.Dice
 			this.cameraShakeService = cameraShakeService;
 
 			dicePool = new DicePoolLogic(diceGameModel);
+		}
+
+		public int[] GetDiceValues(DiceModel[] dice)
+		{
+			int[] values = new int[dice.Length];
+			for (int i = 0; i < dice.Length; i++)
+			{
+				values[i] = dice[i].CurrentValue;
+			}
+
+			return values;
 		}
 
 		public void Activate()
@@ -65,9 +78,9 @@ namespace _Main.Scripts.Dice
 
 		// === ОБРАБОТЧИКИ КНОПОК ===
 
-		private void HandleRoll()
+		public void HandleRoll()
 		{
-			if (isProcessing)
+			if (IsProcessing)
 			{
 				return;
 			}
@@ -76,9 +89,9 @@ namespace _Main.Scripts.Dice
 		}
 
 		// ReSharper disable Unity.PerformanceAnalysis
-		private async UniTask HandleRollAsync()
+		public async UniTask HandleRollAsync()
 		{
-			isProcessing = true;
+			IsProcessing = true;
 
 			try
 			{
@@ -123,7 +136,7 @@ namespace _Main.Scripts.Dice
 			}
 			finally
 			{
-				isProcessing = false;
+				IsProcessing = false;
 			}
 		}
 
@@ -148,7 +161,7 @@ namespace _Main.Scripts.Dice
 
 		private void HandlePass()
 		{
-			if (isProcessing)
+			if (IsProcessing)
 			{
 				return;
 			}
@@ -158,7 +171,7 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask HandlePassAsync()
 		{
-			isProcessing = true;
+			IsProcessing = true;
 
 			try
 			{
@@ -168,11 +181,12 @@ namespace _Main.Scripts.Dice
 			}
 			finally
 			{
-				isProcessing = false;
+				IsProcessing = false;
 			}
 		}
 
-		private void EndTurn(bool success)
+		// ReSharper disable Unity.PerformanceAnalysis
+		public void EndTurn(bool success)
 		{
 			if (success)
 			{
@@ -186,7 +200,7 @@ namespace _Main.Scripts.Dice
 				}
 			}
 
-			
+
 			diceGameModel.IncreaseCurrentTurn();
 			tableModel.ResetTurn();
 			dicePool.ResetAll();
@@ -197,7 +211,7 @@ namespace _Main.Scripts.Dice
 			UpdateUI();
 		}
 
-		private async UniTask<bool> TrySaveSelected()
+		public async UniTask<bool> TrySaveSelected()
 		{
 			var selected = dicePool.GetSelected();
 			if (selected.Length == 0)
@@ -253,7 +267,7 @@ namespace _Main.Scripts.Dice
 			await UniTaskUtils.WaitAllTweens(tweens.ToArray());
 		}
 
-		private void UpdateUI()
+		public void UpdateUI()
 		{
 			if (tableModel.isFirstRoll)
 			{
@@ -279,8 +293,8 @@ namespace _Main.Scripts.Dice
 			int previewPoints = hasValidComboSelected ? scorePreview : 0;
 			tableModel.SetPreviewPoints(previewPoints);
 
-			tableView.SetButtonInteractable("Roll", canRoll);
-			tableView.SetButtonInteractable("Pass", canPass);
+			tableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);
+			tableView.SetButtonInteractable("Pass", canPass && diceGameModel.IsPlayerTurn);
 		}
 
 		public void DisableButtons()

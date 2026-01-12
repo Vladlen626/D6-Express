@@ -28,7 +28,6 @@ namespace _Main.Scripts.Dice
 		{
 			_activePositions = activePositions;
 			_bankedPositions = bankedPositions;
-			ResetAllPositions();
 		}
 		
 		public Transform GetFreeActivePosition()
@@ -139,6 +138,7 @@ namespace _Main.Scripts.Dice
 			SetTurnPoints(0);
 			SetPreviewPoints(0);
 			SetPlayerBankedPoints(0);
+			SetEnemyBankedPoints(0);
 		}
 	}
 }

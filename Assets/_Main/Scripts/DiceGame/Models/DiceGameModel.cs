@@ -96,10 +96,7 @@ namespace _Main.Scripts.Dice
 		public void IncreaseCurrentTurn()
 		{
 			CurrentTurn++;
-			if (IsPlayerTurn)
-			{
-				IsPlayerTurn = false;
-			}
+			IsPlayerTurn = !IsPlayerTurn;
 			OnCurrentTurnChanged?.Invoke();
 		}
 

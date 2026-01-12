@@ -202,12 +202,14 @@ namespace _Main.Scripts.Dice
 		public void Hide()
 		{
 			model.transform.DOScale(Vector3.zero, animSpeed/2);
+			diceCollider.enabled = false;
 			isActive = false;
 		}
 
 		public void Show()
 		{
 			model.transform.DOScale(Vector3.one, animSpeed/2);
+			diceCollider.enabled = true;
 			isActive = true;
 		}
 

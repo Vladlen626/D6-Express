@@ -113,6 +113,7 @@ public class DiceTableView : MonoBehaviour
 	public void SwitchTurn(bool isPlayerTurn)
 	{
 		bankTransform.rotation = Quaternion.Euler(0f, isPlayerTurn? 0f : 180f, 0f);
+		bankTransform.localPosition = new Vector3(bankTransform.localPosition.x, bankTransform.localPosition.y,  isPlayerTurn? -0.6f : 0.13f);
 	}
 
 	public void EnableCamera()
@@ -132,7 +133,7 @@ public class DiceTableView : MonoBehaviour
 
 	public void SetEnemyBankedPointsText(string text)
 	{
-		bankedScoreText.text = text;
+		enemyBankedScoreText.text = text;
 	}
 
 	public void SetTargetPointsText(int points)

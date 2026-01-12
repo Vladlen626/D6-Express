@@ -30,9 +30,7 @@ namespace _Main.Scripts.Core
 
 			var diceGameControllers = new IBaseController[]
 			{
-				new DiceGameProcessController(tableModel, sceneContext.DiceGameTableView, logger, diceGameModel, cameraShakeService),
-				new DiceGameScoreViewController(tableModel, sceneContext.DiceGameTableView, diceGameModel),
-				new DiceGameResultController(diceGameModel, tableModel)
+				
 			};
 			
 			controllersList.AddRange(diceGameControllers);

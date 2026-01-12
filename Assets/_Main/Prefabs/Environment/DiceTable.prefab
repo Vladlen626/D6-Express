@@ -3074,7 +3074,6 @@ MonoBehaviour:
   currentBetText: {fileID: 339012043514198436}
   minBetText: {fileID: 7593737878625107288}
   maxBetText: {fileID: 5818472621453455883}
-  tableCamera: {fileID: 3313437823269135476}
   gameStatePosHandler: {fileID: 8818887974081468422}
   selectionStatePosHandler: {fileID: 244888744760455558}
 --- !u!65 &6565419455448806131

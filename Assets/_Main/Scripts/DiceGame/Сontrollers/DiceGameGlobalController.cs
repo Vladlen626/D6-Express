@@ -108,16 +108,25 @@ namespace _Main.Scripts.Dice
 				await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
 
 			int maxBetSize = playerModel.InventoryModel.CashCount;
-
+			
 			diceGameModel.Setup(diceGameConfig, maxBetSize);
+			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
 			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
 			await SelectionProcess();
 			await BetProcess();
 			await SetupEnemyDiceList();
 
-			gameControllers.AddRange(DiceFactory.GetDiceGameControllers(sceneContext, loggerService,
-				diceGameModel, tableModel, cameraShakeService));
+			var processController = new DiceGameProcessController(tableModel, sceneContext.DiceGameTableView,
+				loggerService, diceGameModel, cameraShakeService);
+
+			gameControllers.AddRange(new IBaseController[]
+			{
+				processController,
+				new EnemyTurnController(processController, diceGameModel, tableModel),
+				new DiceGameScoreViewController(tableModel, sceneContext.DiceGameTableView, diceGameModel),
+				new DiceGameResultController(diceGameModel, tableModel)
+			});
 
 			foreach (var controller in gameControllers)
 			{
@@ -213,6 +222,7 @@ namespace _Main.Scripts.Dice
 			ClenUpBetControllers();
 		}
 
+		// ReSharper disable Unity.PerformanceAnalysis
 		private void StopDiceGame()
 		{
 			if (gamePreviousStoped)

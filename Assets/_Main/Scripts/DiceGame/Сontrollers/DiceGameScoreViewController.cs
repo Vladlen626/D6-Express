@@ -59,6 +59,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnCurrentTurnChangedHandler()
 		{
+			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
 			diceTableView.SetTurnText(diceGameModel.CurrentTurn);
 		}
 
