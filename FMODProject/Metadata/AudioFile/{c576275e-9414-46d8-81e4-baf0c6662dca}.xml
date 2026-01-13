@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{c576275e-9414-46d8-81e4-baf0c6662dca}">
+		<property name="assetPath">
+			<value>TableTop/wav (SD)/JDSherbert - Tabletop Games SFX Pack - Dice Roll - 1.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.265625</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{2982e4c4-74fa-4b14-9bac-3351b6233cb2}</destination>
+		</relationship>
+	</object>
+</objects>

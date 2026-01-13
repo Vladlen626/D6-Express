@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{165c4af4-c3ac-4a6c-8e68-e76c07b000eb}">
 		<property name="assetPath">
-			<value>gibberish_med.wav</value>
+			<value>PlaceholderSounds/gibberish_med.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>

@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{1d56dad9-873d-4cd4-a6a5-5e6b9b377ecf}">
 		<property name="assetPath">
-			<value>z_uk-torgo_lya-u-poezda.mp3</value>
+			<value>PlaceholderSounds/z_uk-torgo_lya-u-poezda.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>

@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{254eded3-f506-4977-8969-897d5dd56805}">
 		<property name="assetPath">
-			<value>kick_short_whoosh_23.wav</value>
+			<value>PlaceholderSounds/kick_short_whoosh_23.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{990dad0f-4f45-474f-82a1-a35a100374e7}">
+		<property name="assetPath">
+			<value>UI Soundpack/UI Soundpack/WAV/Modern5.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.2857142857142858</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{2982e4c4-74fa-4b14-9bac-3351b6233cb2}</destination>
+		</relationship>
+	</object>
+</objects>

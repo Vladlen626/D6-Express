@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{cacf45b9-d669-477b-8549-9c233147b454}">
 		<property name="assetPath">
-			<value>African4.wav</value>
+			<value>PlaceholderSounds/African4.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>

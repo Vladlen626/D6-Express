@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="DataFile" id="{736285d2-ee8d-479e-9e2d-17aac003f3b0}">
+		<property name="assetPath">
+			<value>TableTop/m4a/JDSherbert - Tabletop Games SFX Pack - Deck Shuffle - 2.m4a</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{2982e4c4-74fa-4b14-9bac-3351b6233cb2}</destination>
+		</relationship>
+	</object>
+</objects>

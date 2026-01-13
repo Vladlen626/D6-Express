@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="DataFile" id="{1b5a4d3c-a14b-4b65-8070-4f5b4206f7e5}">
+		<property name="assetPath">
+			<value>TableTop/m4a/JDSherbert - Tabletop Games SFX Pack - Piece Impact - 1.m4a</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{2982e4c4-74fa-4b14-9bac-3351b6233cb2}</destination>
+		</relationship>
+	</object>
+</objects>

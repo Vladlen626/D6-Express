@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{a86f8242-d1de-41ad-9099-0763e06e5890}">
 		<property name="assetPath">
-			<value>get crumb.wav</value>
+			<value>PlaceholderSounds/get crumb.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>

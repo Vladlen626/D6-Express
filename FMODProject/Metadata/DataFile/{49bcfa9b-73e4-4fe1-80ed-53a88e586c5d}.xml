@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="DataFile" id="{49bcfa9b-73e4-4fe1-80ed-53a88e586c5d}">
+		<property name="assetPath">
+			<value>CasualGameSounds/DM-CGS-45.wav.meta</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{2982e4c4-74fa-4b14-9bac-3351b6233cb2}</destination>
+		</relationship>
+	</object>
+</objects>

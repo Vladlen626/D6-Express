@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{516e96ad-d6e4-4675-96e6-4492ea2d8aa3}">
 		<property name="assetPath">
-			<value>zvuki-stuk-koles-poezda-na-hodu.mp3</value>
+			<value>PlaceholderSounds/zvuki-stuk-koles-poezda-na-hodu.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>

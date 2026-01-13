@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{115f46f2-1482-4f75-b5ad-a57073b64893}">
 		<property name="assetPath">
-			<value>train-station-hall-1.mp3</value>
+			<value>PlaceholderSounds/train-station-hall-1.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>

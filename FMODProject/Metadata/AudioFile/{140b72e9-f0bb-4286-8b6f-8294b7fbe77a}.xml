@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{140b72e9-f0bb-4286-8b6f-8294b7fbe77a}">
 		<property name="assetPath">
-			<value>French music no copyright (mp3cut.net).mp3</value>
+			<value>PlaceholderSounds/French music no copyright (mp3cut.net).mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>

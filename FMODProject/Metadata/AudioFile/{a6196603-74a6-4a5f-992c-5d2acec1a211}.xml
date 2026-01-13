@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.03.00">
 	<object class="AudioFile" id="{a6196603-74a6-4a5f-992c-5d2acec1a211}">
 		<property name="assetPath">
-			<value>Слава КПСС - Домики у моря.mp3</value>
+			<value>PlaceholderSounds/Слава КПСС - Домики у моря.mp3</value>
 		</property>
 		<property name="isStreaming">
 			<value>true</value>
