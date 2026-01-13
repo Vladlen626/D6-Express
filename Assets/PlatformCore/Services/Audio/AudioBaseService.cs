@@ -97,6 +97,7 @@ namespace PlatformCore.Services.Audio
 			}
 		}
 
+		// ReSharper disable Unity.PerformanceAnalysis
 		public void PlaySound(string eventPath)
 		{
 			try
@@ -109,6 +110,7 @@ namespace PlatformCore.Services.Audio
 			}
 		}
 
+		// ReSharper disable Unity.PerformanceAnalysis
 		public void PlaySoundAt(string eventPath, Vector3 position)
 		{
 			try

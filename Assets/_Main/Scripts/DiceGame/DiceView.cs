@@ -13,6 +13,9 @@ namespace _Main.Scripts.Dice
 	{
 		[HideInInspector]
 		public UnityEvent OnDiceClicked;
+		
+		[HideInInspector]
+		public UnityEvent OnDiceRelease;
 
 		[HideInInspector]
 		public UnityEvent OnDiceHoverEnter;
@@ -95,14 +98,13 @@ namespace _Main.Scripts.Dice
 				if (isMouseOver)
 				{
 					_isPressed = true;
-					PlayPressAnimation();
+					OnDiceRelease?.Invoke();
 				}
 			}
 
 			if (Mouse.current.leftButton.wasReleasedThisFrame && _isPressed)
 			{
 				_isPressed = false;
-				PlayReleaseAnimation();
 
 				if (isMouseOver)
 				{

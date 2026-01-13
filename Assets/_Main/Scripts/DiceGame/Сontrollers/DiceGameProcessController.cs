@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using _Main.Scripts.Core;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
+using PlatformCore.Services.Audio;
 
 namespace _Main.Scripts.Dice
 {
 	public class DiceGameProcessController : IBaseController, IActivatable
 	{
 		private readonly ILoggerService logger;
+		private readonly IAudioService audioService;
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
 		private readonly TableModel tableModel;
@@ -26,26 +28,17 @@ namespace _Main.Scripts.Dice
 			DiceTableView tableView,
 			ILoggerService logger,
 			DiceGameModel diceGameModel,
-			ICameraShakeService cameraShakeService)
+			ICameraShakeService cameraShakeService,
+			IAudioService audioService)
 		{
 			this.tableModel = tableModel;
 			this.tableView = tableView;
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
+			this.audioService = audioService;
 
 			dicePool = new DicePoolLogic(diceGameModel);
-		}
-
-		public int[] GetDiceValues(DiceModel[] dice)
-		{
-			int[] values = new int[dice.Length];
-			for (int i = 0; i < dice.Length; i++)
-			{
-				values[i] = dice[i].CurrentValue;
-			}
-
-			return values;
 		}
 
 		public void Activate()
@@ -99,7 +92,7 @@ namespace _Main.Scripts.Dice
 
 				DisableButtons();
 
-				await cameraShakeService.ShakeAsync(tableView.TableCamera,0.75f, 0.075f);
+				await cameraShakeService.ShakeAsync(tableView.TableCamera,0.3f, 0.05f);
 				if (tableModel.isFirstRoll)
 				{
 					tableModel.isFirstRoll = false;
@@ -126,12 +119,20 @@ namespace _Main.Scripts.Dice
 					var view = diceGameModel.ScreenDiceDict[dice];
 					tasks.Add(view.PlayRollAnimationAsync());
 				}
-
-				await UniTask.WhenAll(tasks);
 				
-				await cameraShakeService.ShakeAsync(tableView.TableCamera,1.5f, 0.1f);
+				await UniTask.WhenAll(tasks);
+				audioService.PlaySound(SoundNames.DiceDrop);
 
-				CheckBust();
+				await cameraShakeService.ShakeAsync(tableView.TableCamera,0.5f, 0.05f);
+				await UniTask.Delay(GlobalParameters.Delay/2);
+			
+
+				if (IsBoost())
+				{
+					audioService.PlaySound(SoundNames.Fail);
+					await UniTask.Delay(GlobalParameters.Delay);
+					EndTurn(false);
+				}
 				UpdateUI();
 			}
 			finally
@@ -140,16 +141,16 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		private void CheckBust()
+		private bool IsBoost()
 		{
 			var diceToRoll = dicePool.GetUnbanked();
 			if (DiceGameUtils.RollHasAnyScore(GetValues(diceToRoll)))
 			{
-				return;
+				return false;
 			}
 
 			logger?.Log("[DiceGameController] BUST!");
-			EndTurn(false);
+			return true;
 		}
 
 		private int[] GetValues(DiceModel[] dice)
@@ -200,7 +201,7 @@ namespace _Main.Scripts.Dice
 				}
 			}
 
-
+			audioService.PlaySound(SoundNames.TurnChange);
 			diceGameModel.IncreaseCurrentTurn();
 			tableModel.ResetTurn();
 			dicePool.ResetAll();

@@ -152,5 +152,16 @@ namespace _Main.Scripts.Dice
 
 			return 1;
 		}
+		
+		public static int[] GetDiceValues(DiceModel[] dice)
+		{
+			int[] values = new int[dice.Length];
+			for (int i = 0; i < dice.Length; i++)
+			{
+				values[i] = dice[i].CurrentValue;
+			}
+
+			return values;
+		}
 	}
 }

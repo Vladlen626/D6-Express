@@ -1,19 +1,22 @@
 ﻿using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
+using PlatformCore.Services.Audio;
 
 namespace _Main.Scripts.Dice
 {
 	public class DiceController : IBaseController, IActivatable
 	{
-		private readonly TableModel _tableModel;
+		private readonly TableModel tableModel;
 		private readonly DiceModel diceModel;
 		private readonly DiceView diceView;
+		private readonly IAudioService audioService;
 
-		public DiceController(DiceModel inDiceModel, DiceView inDiceView, TableModel inTableModel)
+		public DiceController(DiceModel diceModel, DiceView diceView, TableModel tableModel, IAudioService audioService)
 		{
-			diceModel = inDiceModel;
-			diceView = inDiceView;
-			_tableModel = inTableModel;
+			this.diceModel = diceModel;
+			this.diceView = diceView;
+			this.tableModel = tableModel;
+			this.audioService = audioService;
 		}
 
 		public void Activate()
@@ -24,6 +27,7 @@ namespace _Main.Scripts.Dice
 			diceModel.OnDiceHiddenChanged += OnDiceHiddenChangedHandler;
 
 			diceView.OnDiceClicked.AddListener(OnDiceClickedHandler);
+			diceView.OnDiceRelease.AddListener(OnDiceReleaseHandler);
 		}
 
 		public void Deactivate()
@@ -36,6 +40,7 @@ namespace _Main.Scripts.Dice
 			if (diceView)
 			{
 				diceView.OnDiceClicked.RemoveListener(OnDiceClickedHandler);
+				diceView.OnDiceRelease.RemoveListener(OnDiceReleaseHandler);
 			}
 
 			ReleaseCurrentPosition();
@@ -43,12 +48,20 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceClickedHandler()
 		{
+			diceView.PlayPressAnimation();
+			audioService.PlaySoundAt(SoundNames.DiceClick, diceModel.CurrentPosition.position);
+			
 			if (diceModel.IsSaved)
 			{
 				return;
 			}
 
 			diceModel.SetChosen(!diceModel.IsChosen);
+		}
+		
+		private void OnDiceReleaseHandler()
+		{
+			diceView.PlayReleaseAnimation();
 		}
 
 		private void OnDiceChosenChangedHandler()
@@ -92,11 +105,11 @@ namespace _Main.Scripts.Dice
 
 			if (diceModel.IsSaved)
 			{
-				_tableModel.ReleaseBankedPosition(diceModel.CurrentPosition);
+				tableModel.ReleaseBankedPosition(diceModel.CurrentPosition);
 			}
 			else
 			{
-				_tableModel.ReleaseActivePosition(diceModel.CurrentPosition);
+				tableModel.ReleaseActivePosition(diceModel.CurrentPosition);
 			}
 
 			diceModel.SetCurrentPosition(null);

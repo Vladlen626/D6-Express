@@ -16,5 +16,13 @@ namespace _Main.Scripts.Core
 				DOTween.timeScale = animSpeed;
 			}
 		}
+
+		private static int delay = 500;
+		public static int Delay
+		{
+			get => (int)(delay / animSpeed);
+		
+			set => delay = value;
+		}
 	}
 }

@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
 using UnityEngine;
 
@@ -18,6 +19,7 @@ namespace _Main.Scripts.Dice
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly IObjectFactory objectFactory;
 		private readonly ILoggerService loggerService;
+		private readonly IAudioService audioService;
 		private readonly LifecycleService lifecycleService;
 		private readonly ConfigService configService;
 
@@ -46,6 +48,7 @@ namespace _Main.Scripts.Dice
 			objectFactory = serviceLocator.Get<IObjectFactory>();
 			loggerService = serviceLocator.Get<ILoggerService>();
 			cameraShakeService = serviceLocator.Get<ICameraShakeService>();
+			audioService = serviceLocator.Get<IAudioService>();
 		}
 
 		public void Activate()
@@ -118,7 +121,7 @@ namespace _Main.Scripts.Dice
 			await SetupEnemyDiceList();
 
 			var processController = new DiceGameProcessController(tableModel, sceneContext.DiceGameTableView,
-				loggerService, diceGameModel, cameraShakeService);
+				loggerService, diceGameModel, cameraShakeService, audioService);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
@@ -160,7 +163,7 @@ namespace _Main.Scripts.Dice
 				view.MoveToPosition(gamePos.position);
 				model.SetCurrentPosition(gamePos);
 				playerDiceViewsArray[i] = view;
-				gameControllers.Add(new DiceController(model, view, tableModel));
+				gameControllers.Add(new DiceController(model, view, tableModel, audioService));
 			}
 
 			ClenUpSelectionControllers();
@@ -198,7 +201,7 @@ namespace _Main.Scripts.Dice
 				view.MoveToPosition(gamePos.position);
 				model.SetCurrentPosition(gamePos);
 				enemyDiceViewsArray[i] = view;
-				gameControllers.Add(new DiceController(model, view, tableModel));
+				gameControllers.Add(new DiceController(model, view, tableModel, audioService));
 			}
 		}
 

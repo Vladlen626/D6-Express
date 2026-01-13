@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Main.Scripts.Core;
 using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
@@ -10,7 +11,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 	private readonly DiceGameModel diceGameModel;
 	private readonly TableModel tableModel;
 
-	private int delay = 500;
+	private int delay => GlobalParameters.Delay;
 
 	private bool isRunning;
 
@@ -78,7 +79,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 					return;
 				}
 
-				int[] values = processController.GetDiceValues(unbanked);
+				int[] values = DiceGameUtils.GetDiceValues(unbanked);
 
 				// bust проверяется внутри HandleRollAsync → EndTurn(false)
 				if (DiceGameUtils.RollHasAnyScore(values) == false)
