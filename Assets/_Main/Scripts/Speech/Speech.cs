@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Speech
 {
@@ -16,6 +17,9 @@ public class Speech
 
     public event Action<SpeechNode> NodeStarted;
     public event Action<SpeechNode> NodeFinished;
+
+    public GameObject Speaker => Blackboard[SpeechBlackboardBaseKeys.USER] as GameObject;
+    public GameObject Target => Blackboard[SpeechBlackboardBaseKeys.TARGET] as GameObject;
 
     public Dictionary<string, object> Blackboard => blackboard;
 
@@ -60,7 +64,7 @@ public class Speech
         if (next == null)
         {
             blackboard.Clear();
-            
+
             Finished?.Invoke();
             return;
         }

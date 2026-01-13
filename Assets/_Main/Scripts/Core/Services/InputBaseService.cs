@@ -143,7 +143,7 @@ namespace _Main.Scripts.Core.Services
 				OnDebugSwitchPressed?.Invoke();
 			};
 
-			_actions.UI.SpeechLineSkip.started += _ =>
+			_actions.UI.SpeechLineSkip.performed += _ =>
 			{
 				OnSpeechLineSkip?.Invoke();
 			};

@@ -18,6 +18,7 @@ public static class SpeechFactory
         var speechPassengerComrade = GetComradeSpeech(textsConfig);
         var speechPassengerAnecdote = GetAnecdoteSpeech(textsConfig);
         var speechShopkeeper = GetShopkeeperSpeech(playerModel, textsConfig);
+        var speechShopkeeperFailedBuy = GetShopkeeperFailedBuySpeech(textsConfig);
 
         var speeches = new Speech[]
         {
@@ -25,7 +26,8 @@ public static class SpeechFactory
             speechPassengerGeneric,
             speechPassengerComrade,
             speechPassengerAnecdote,
-            speechShopkeeper
+            speechShopkeeper,
+            speechShopkeeperFailedBuy
         };
 
         var speechModel = new SpeechModel(speeches);
@@ -156,6 +158,19 @@ public static class SpeechFactory
             .Init(speechShopkeeper);
 
         speechShopkeeper.SetRootNode(speechNodeRichCondition);
+        return speechShopkeeper;
+    }
+
+    private static Speech GetShopkeeperFailedBuySpeech(TextsConfig textsConfig)
+    {
+        var speechShopkeeper = new Speech(69);
+
+        var root = SayRandom(
+            speechShopkeeper,
+            textsConfig.texts["shopkeeper_buy_failed_random_0"]
+        );
+
+        speechShopkeeper.SetRootNode(root);
         return speechShopkeeper;
     }
 }

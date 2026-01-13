@@ -529,6 +529,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f575a01f64afa824dbc3806be5860016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerView
+  characterName: 
   states:
   - rid: 704733243231436877
   - rid: 704733243231436878

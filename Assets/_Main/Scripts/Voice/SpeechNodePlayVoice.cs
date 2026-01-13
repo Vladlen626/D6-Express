@@ -6,7 +6,7 @@ public class SpeechNodePlayVoice : SpeechNode
     {
         base.StartInternal();
 
-        var target = Speech.Blackboard[SpeechBlackboardBaseKeys.TARGET] as GameObject;
+        var target = Speech.Target;
         target.GetComponent<VoiceUser>().Play();
 
         Finish();
