@@ -3,6 +3,7 @@ using System.Linq;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace _Main.Scripts.Dice
 		private readonly InventoryModel _inventory;
 		private readonly DiceTableView _view;
 		private readonly IObjectFactory _factory;
+		private readonly IAudioService _audioService;
 		private readonly ConfigService _configService;
 
 		private List<DiceModel> _allModels => _diceGameModel.ScreenDiceDict.Keys.ToList();
@@ -23,13 +25,14 @@ namespace _Main.Scripts.Dice
 		private bool _isFinished;
 
 		public DiceSelectionController(InventoryModel inventory, DiceTableView view, IObjectFactory factory, 
-			ConfigService configService, DiceGameModel diceGameModel)
+			ConfigService configService, DiceGameModel diceGameModel, IAudioService audioService)
 		{
 			_inventory = inventory;
 			_view = view;
 			_factory = factory;
 			_configService = configService;
 			_diceGameModel = diceGameModel;
+			_audioService = audioService;
 			_posHandler = view.SelectionStatePosHandler;
 		}
 
@@ -74,7 +77,7 @@ namespace _Main.Scripts.Dice
 			DiceView view = await _factory.CreateAsync<DiceView>(
 				ResourcePaths.Items.DicePrefab, startPos.position, Quaternion.identity);
 
-			view.Initialize(config.id, true);
+			view.Initialize(config.id, true, _audioService);
 			view.transform.SetParent(startPos);
 
 			DiceModel model = new DiceModel(config);

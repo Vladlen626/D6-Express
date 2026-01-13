@@ -6,10 +6,10 @@ namespace _Main.Scripts.Dice
 {
 	public class TableModel
 	{
-		public event Action OnPlayerBankedPointsChanged;
-		public event Action OnEnemyBankedPointsChanged;
-		public event Action OnTurnPointsChanged;
-		public event Action OnPreviewPointsChanged;
+		public event Action<int, int> OnPlayerBankedPointsChanged;
+		public event Action<int, int> OnEnemyBankedPointsChanged;
+		public event Action<int, int> OnTurnPointsChanged;
+		public event Action<int, int> OnPreviewPointsChanged;
 		public int TurnPoints { get; private set; }
 		public int PreviewPoints { get; private set; }
 		public int PlayerBankedPoints { get; private set; }
@@ -97,32 +97,35 @@ namespace _Main.Scripts.Dice
 
 		public void SetPlayerBankedPoints(int points)
 		{
+			var oldValue = PlayerBankedPoints;
 			PlayerBankedPoints = points;
-			OnPlayerBankedPointsChanged?.Invoke();
+			OnPlayerBankedPointsChanged?.Invoke(oldValue, PlayerBankedPoints);
 		}
 		
 		public void SetEnemyBankedPoints(int points)
 		{
+			var oldValue = EnemyBankedPoints;
 			EnemyBankedPoints = points;
-			OnEnemyBankedPointsChanged?.Invoke();
+			OnEnemyBankedPointsChanged?.Invoke(oldValue, EnemyBankedPoints);
 		}
 
 		public void SetPreviewPoints(int points)
 		{
+			var oldValue = PreviewPoints;
 			PreviewPoints = points;
-			OnPreviewPointsChanged?.Invoke();
+			OnPreviewPointsChanged?.Invoke(oldValue, PreviewPoints);
+		}
+		
+		private void SetTurnPoints(int points)
+		{
+			var oldValue = TurnPoints;
+			TurnPoints = points;
+			OnTurnPointsChanged?.Invoke(oldValue, TurnPoints);
 		}
 		public void AddTurnPoints(int points)
 		{
 			SetTurnPoints(TurnPoints + points);
 		}
-		
-		private void SetTurnPoints(int points)
-		{
-			TurnPoints = points;
-			OnTurnPointsChanged?.Invoke();
-		}
-
 
 		public void ResetTurn()
 		{

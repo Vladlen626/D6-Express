@@ -9,8 +9,8 @@ namespace _Main.Scripts.Dice
 		public event Action OnGameConditionPassed;
 		public event Action OnGameConditionFailed;
 		public event Action OnBetSizeChanged;
-		public event Action OnTargetPointsChanged;
-		public event Action OnCurrentTurnChanged;
+		public event Action<int, int> OnTargetPointsChanged;
+		public event Action<int, int> OnCurrentTurnChanged;
 		public event Action OnDiceGameStateChanged;
 
 		public DiceGameState DiceGameState { get; private set; } = DiceGameState.DEFAULT;
@@ -89,22 +89,22 @@ namespace _Main.Scripts.Dice
 
 		public void SetTargetScore(int score)
 		{
+			var oldValue = TargetPoints;
 			TargetPoints = score;
-			OnTargetPointsChanged?.Invoke();
+			OnTargetPointsChanged?.Invoke(oldValue, TargetPoints);
 		}
 
 		public void IncreaseCurrentTurn()
 		{
-			CurrentTurn++;
-			IsPlayerTurn = !IsPlayerTurn;
-			OnCurrentTurnChanged?.Invoke();
+			SetCurrentTurn(CurrentTurn + 1, !IsPlayerTurn);
 		}
 
 		public void SetCurrentTurn(int turn, bool isPlayerTurn)
 		{
+			var oldValue = CurrentTurn;
 			CurrentTurn = turn;
 			IsPlayerTurn = isPlayerTurn;
-			OnCurrentTurnChanged?.Invoke();
+			OnCurrentTurnChanged?.Invoke(oldValue, CurrentTurn);
 		}
 
 		public void SetConditionPassed()

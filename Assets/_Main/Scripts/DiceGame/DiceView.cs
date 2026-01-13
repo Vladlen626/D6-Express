@@ -4,6 +4,8 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using DG.Tweening;
+using FMOD;
+using PlatformCore.Services.Audio;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
@@ -33,6 +35,7 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private float animSpeed = 0.3f;
 		[SerializeField] private float yOffset = 0.02f;
 
+		private IAudioService _audioService;
 		private Dictionary<string, Transform> _diceVisualMap;
 		private Camera _mainCamera;
 		private bool _isPressed;
@@ -40,7 +43,7 @@ namespace _Main.Scripts.Dice
 		private bool isPlayerDice;
 		private bool _isHovered;
 
-		public void Initialize(string diceConfigId, bool isPlayerDice)
+		public void Initialize(string diceConfigId, bool isPlayerDice, IAudioService audioService)
 		{
 			_diceVisualMap = new Dictionary<string, Transform>();
 			foreach (var entry in diceVisuals)
@@ -52,7 +55,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			this.isPlayerDice = isPlayerDice;
-
+			_audioService = audioService;
 			_mainCamera = Camera.main;
 			isActive = true;
 			SetupVisual(diceConfigId);
@@ -98,6 +101,7 @@ namespace _Main.Scripts.Dice
 				if (isMouseOver)
 				{
 					_isPressed = true;
+					PlayPressAnimation();
 					OnDiceRelease?.Invoke();
 				}
 			}
@@ -105,6 +109,8 @@ namespace _Main.Scripts.Dice
 			if (Mouse.current.leftButton.wasReleasedThisFrame && _isPressed)
 			{
 				_isPressed = false;
+				_audioService.PlaySoundAt(SoundNames.DiceClick, transform.position);
+				PlayReleaseAnimation();
 
 				if (isMouseOver)
 				{
@@ -198,12 +204,13 @@ namespace _Main.Scripts.Dice
 
 		public Tween MoveToPosition(Vector3 position, float speedMultiplier = 1)
 		{
-			return transform.DOMove(position, animSpeed * speedMultiplier);
+			_audioService.PlaySoundAt(SoundNames.DiceMove, transform.position);
+			return transform.DOMove(position, animSpeed / speedMultiplier);
 		}
 
 		public void Hide()
 		{
-			model.transform.DOScale(Vector3.zero, animSpeed/2);
+			model.transform.localScale = Vector3.zero;
 			diceCollider.enabled = false;
 			isActive = false;
 		}
@@ -230,11 +237,15 @@ namespace _Main.Scripts.Dice
 
 			var seq = DOTween.Sequence();
 
+			_audioService.PlaySoundAt(SoundNames.DiceMove, transform.position);
 			seq.Append(transform.DOMove(targetPos + Vector3.up * 0.2f, moveUpTime).SetEase(Ease.Linear))
 				.Join(transform.DORotate(Vector3.one * 180f, moveUpTime, RotateMode.FastBeyond360).SetEase(Ease.Linear))
 				.Append(transform.DORotate(Vector3.one * (Random.Range(360f, 720f) * 5f), rotateTime, RotateMode.FastBeyond360)
 					.SetEase(Ease.InOutQuad))
-				.Append(transform.DOMove(targetPos, moveDownTime).SetEase(Ease.Linear))
+				.Append(transform.DOMove(targetPos, moveDownTime).SetEase(Ease.Linear)).OnComplete(() =>
+				{
+					_audioService.PlaySoundAt(SoundNames.DiceMove, transform.position);
+				})
 				.Join(transform.DORotate(new Vector3(0f, Random.Range(0f, 360f), 0f), moveDownTime, RotateMode.FastBeyond360)
 					.SetEase(Ease.Linear));
 

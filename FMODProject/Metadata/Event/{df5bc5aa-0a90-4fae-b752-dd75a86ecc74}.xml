@@ -85,7 +85,7 @@
 			<value>-6</value>
 		</property>
 		<property name="pitch">
-			<value>-0.600000024</value>
+			<value>0.900000036</value>
 		</property>
 		<relationship name="audioFile">
 			<destination>{516e96ad-d6e4-4675-96e6-4492ea2d8aa3}</destination>
@@ -99,10 +99,10 @@
 	<object class="MixerBusPanner" id="{56c437cc-c130-4f75-b7cb-cd5ee250baf8}" />
 	<object class="LoopRegion" id="{71310283-658f-4751-8e23-6fe14212620f}">
 		<property name="position">
-			<value>1</value>
+			<value>2.9072752253610803</value>
 		</property>
 		<property name="length">
-			<value>51.012426275929087</value>
+			<value>3.0927247746389197</value>
 		</property>
 		<relationship name="timeline">
 			<destination>{bf1d89d8-71b7-4ff9-81a6-0ba0e998eeb7}</destination>
@@ -125,7 +125,7 @@
 	<object class="MixerBusFader" id="{8fd32828-1354-4362-aa9d-0c05bd602ce3}" />
 	<object class="ThreeEQEffect" id="{21e6c4e4-6a1f-4295-a2f1-46f7785b428e}">
 		<property name="lowGain">
-			<value>-3</value>
+			<value>-4</value>
 		</property>
 		<property name="midGain">
 			<value>-4</value>
@@ -133,7 +133,7 @@
 	</object>
 	<object class="CompressorEffect" id="{d4718c5c-6959-4303-a0cd-7964063323c2}">
 		<property name="threshold">
-			<value>-18.5</value>
+			<value>-25</value>
 		</property>
 		<property name="attackTime">
 			<value>7.4000001</value>
@@ -144,7 +144,7 @@
 	</object>
 	<object class="GainEffect" id="{e85e2d66-6f3a-4f8a-8c8b-2830005a53b8}">
 		<property name="gain">
-			<value>-8</value>
+			<value>-7</value>
 		</property>
 	</object>
 	<object class="ChannelMixEffect" id="{b8a765e6-f24e-4218-a193-027093fb3f72}">

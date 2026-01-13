@@ -35,7 +35,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 		diceGameModel.OnCurrentTurnChanged -= OnCurrentTurnChangedHandler;
 	}
 
-	private void OnCurrentTurnChangedHandler()
+	private void OnCurrentTurnChangedHandler(int oldValue, int newValue)
 	{
 		if (diceGameModel.DiceGameState != DiceGameState.GAME)
 		{

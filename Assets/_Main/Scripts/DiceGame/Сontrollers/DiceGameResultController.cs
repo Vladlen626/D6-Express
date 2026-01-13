@@ -24,7 +24,7 @@ namespace _Main.Scripts.Dice
 			tableModel.OnPlayerBankedPointsChanged -= OnPlayerBankedPointsChangedHandler;
 			tableModel.OnEnemyBankedPointsChanged -= OnEnemyBankedPointsChangedHandler;
 		}
-		private void OnPlayerBankedPointsChangedHandler()
+		private void OnPlayerBankedPointsChangedHandler(int oldValue, int newValue)
 		{
 			if (tableModel.PlayerBankedPoints >= diceGameModel.TargetPoints)
 			{
@@ -32,7 +32,7 @@ namespace _Main.Scripts.Dice
 			}
 		}
 		
-		private void OnEnemyBankedPointsChangedHandler()
+		private void OnEnemyBankedPointsChangedHandler(int oldValue, int newValue)
 		{
 			if (tableModel.EnemyBankedPoints >= diceGameModel.TargetPoints)
 			{

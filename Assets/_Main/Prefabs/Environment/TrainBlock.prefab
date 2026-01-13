@@ -32,6 +32,7 @@ Transform:
   - {fileID: 5013701294004851525}
   - {fileID: 8391646160227393416}
   - {fileID: 8660441689893484245}
+  - {fileID: 3265912169367670109}
   m_Father: {fileID: 6975254042331190161}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &636330587842876866
@@ -117,7 +118,7 @@ MonoBehaviour:
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
   maxSpawnedObjects: 300
   spawnCooldownMin: 0.3
-  spawnCooldownMax: 1
+  spawnCooldownMax: 2
   speed: 20
   movable: 1
 --- !u!1 &967234854689226090
@@ -169,7 +170,7 @@ MonoBehaviour:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
   maxSpawnedObjects: 300
-  spawnCooldownMin: 0.3
+  spawnCooldownMin: 0.15
   spawnCooldownMax: 1
   speed: 10
   movable: 1
@@ -267,7 +268,7 @@ MonoBehaviour:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
   maxSpawnedObjects: 300
-  spawnCooldownMin: 0.3
+  spawnCooldownMin: 0.15
   spawnCooldownMax: 1
   speed: 10
   movable: 1
@@ -413,7 +414,7 @@ MonoBehaviour:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
   maxSpawnedObjects: 300
-  spawnCooldownMin: 0.3
+  spawnCooldownMin: 0.075
   spawnCooldownMax: 1
   speed: 5
   movable: 1
@@ -560,6 +561,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5704129669163623561}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4385364759597159727
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3265912169367670109}
+  - component: {fileID: 7373756833780334230}
+  m_Layer: 0
+  m_Name: Wind
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3265912169367670109
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4385364759597159727}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.2, y: 0, z: 0}
+  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5003494484736968796}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!182 &7373756833780334230
+WindZone:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4385364759597159727}
+  m_Enabled: 1
+  m_Mode: 0
+  m_Radius: 100
+  m_WindMain: 1
+  m_WindTurbulence: 1
+  m_WindPulseMagnitude: 0.5
+  m_WindPulseFrequency: 0.01
 --- !u!1 &5601139516613383153
 GameObject:
   m_ObjectHideFlags: 0
@@ -609,7 +656,7 @@ MonoBehaviour:
   - {fileID: 9181541192067402090, guid: b815825451d9e654183f97a7fc655f9c, type: 3}
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
   maxSpawnedObjects: 300
-  spawnCooldownMin: 0.3
+  spawnCooldownMin: 0.075
   spawnCooldownMax: 1
   speed: 5
   movable: 1
@@ -903,6 +950,7 @@ Transform:
   - {fileID: 8200300450169954500}
   - {fileID: 8403904509057898271}
   - {fileID: 2055165064826870313}
+  - {fileID: 6008936036340261429}
   m_Father: {fileID: 6975254042331190161}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8430449203614979756
@@ -955,9 +1003,55 @@ MonoBehaviour:
   - {fileID: 5230536050262471634, guid: 10d40e345d745ca40ba31713ed76c475, type: 3}
   maxSpawnedObjects: 300
   spawnCooldownMin: 0.3
-  spawnCooldownMax: 1
+  spawnCooldownMax: 2
   speed: 20
   movable: 1
+--- !u!1 &8474838084433687766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6008936036340261429}
+  - component: {fileID: 1473804062045220640}
+  m_Layer: 0
+  m_Name: Wind (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6008936036340261429
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8474838084433687766}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -10.11, y: 0, z: 0}
+  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3833500556269062109}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!182 &1473804062045220640
+WindZone:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8474838084433687766}
+  m_Enabled: 1
+  m_Mode: 0
+  m_Radius: 100
+  m_WindMain: 1
+  m_WindTurbulence: 1
+  m_WindPulseMagnitude: 0.5
+  m_WindPulseFrequency: 0.01
 --- !u!1 &8694702908571754480
 GameObject:
   m_ObjectHideFlags: 0

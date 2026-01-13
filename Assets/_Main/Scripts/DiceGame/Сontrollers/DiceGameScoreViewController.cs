@@ -25,11 +25,11 @@ namespace _Main.Scripts.Dice
 			tableModel.OnTurnPointsChanged += OnTurnPointsChangedHandler;
 			tableModel.OnPreviewPointsChanged += OnPreviewPointsChangedHandler;
 
-			OnPlayerBankedPointsChangedHandler();
-			OnTargetPointsChangedHandler();
-			OnTurnPointsChangedHandler();
-			OnPreviewPointsChangedHandler();
-			OnCurrentTurnChangedHandler();
+			OnPlayerBankedPointsChangedHandler(0, tableModel.PlayerBankedPoints);
+			OnTargetPointsChangedHandler(0, diceGameModel.TargetPoints);
+			OnTurnPointsChangedHandler(0, tableModel.TurnPoints);
+			OnPreviewPointsChangedHandler(0, tableModel.PreviewPoints);
+			OnCurrentTurnChangedHandler(0, diceGameModel.CurrentTurn);
 		}
 
 		public void Deactivate()
@@ -42,35 +42,35 @@ namespace _Main.Scripts.Dice
 			tableModel.OnPreviewPointsChanged -= OnPreviewPointsChangedHandler;
 		}
 
-		private void OnPlayerBankedPointsChangedHandler()
+		private void OnPlayerBankedPointsChangedHandler(int oldValue, int newValue)
 		{
-			diceTableView.SetPlayerBankedPointsText(tableModel.PlayerBankedPoints.ToString());
+			diceTableView.SetPlayerBankedPointsText(oldValue, newValue);
 		}
 		
-		private void OnEnemyBankedPointsChangedHandler()
+		private void OnEnemyBankedPointsChangedHandler(int oldValue, int newValue)
 		{
-			diceTableView.SetEnemyBankedPointsText(tableModel.EnemyBankedPoints.ToString());
+			diceTableView.SetEnemyBankedPointsText(oldValue, newValue);
 		}
 
-		private void OnTargetPointsChangedHandler()
+		private void OnTargetPointsChangedHandler(int oldValue, int newValue)
 		{
-			diceTableView.SetTargetPointsText(diceGameModel.TargetPoints);
+			diceTableView.SetTargetPointsText(oldValue, newValue);
 		}
 
-		private void OnCurrentTurnChangedHandler()
+		private void OnCurrentTurnChangedHandler(int oldValue, int newValue)
 		{
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
-			diceTableView.SetTurnText(diceGameModel.CurrentTurn);
+			diceTableView.SetTurnText(oldValue, newValue);
 		}
 
-		private void OnTurnPointsChangedHandler()
+		private void OnTurnPointsChangedHandler(int oldValue, int newValue)
 		{
-			diceTableView.SetCurrentPointsText(tableModel.TurnPoints.ToString());
+			diceTableView.SetCurrentPointsText(oldValue, newValue);
 		}
 		
-		private void OnPreviewPointsChangedHandler()
+		private void OnPreviewPointsChangedHandler(int oldValue, int newValue)
 		{
-			diceTableView.SetPreviewPointsText(tableModel.PreviewPoints.ToString());
+			diceTableView.SetPreviewPointsText(oldValue, newValue);
 		}
 	}
 }

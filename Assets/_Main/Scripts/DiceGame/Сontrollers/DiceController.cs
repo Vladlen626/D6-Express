@@ -27,7 +27,6 @@ namespace _Main.Scripts.Dice
 			diceModel.OnDiceHiddenChanged += OnDiceHiddenChangedHandler;
 
 			diceView.OnDiceClicked.AddListener(OnDiceClickedHandler);
-			diceView.OnDiceRelease.AddListener(OnDiceReleaseHandler);
 		}
 
 		public void Deactivate()
@@ -40,7 +39,6 @@ namespace _Main.Scripts.Dice
 			if (diceView)
 			{
 				diceView.OnDiceClicked.RemoveListener(OnDiceClickedHandler);
-				diceView.OnDiceRelease.RemoveListener(OnDiceReleaseHandler);
 			}
 
 			ReleaseCurrentPosition();
@@ -48,8 +46,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceClickedHandler()
 		{
-			diceView.PlayPressAnimation();
-			audioService.PlaySoundAt(SoundNames.DiceClick, diceModel.CurrentPosition.position);
+			audioService.PlaySound(SoundNames.DiceClick);
 			
 			if (diceModel.IsSaved)
 			{
@@ -57,11 +54,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			diceModel.SetChosen(!diceModel.IsChosen);
-		}
-		
-		private void OnDiceReleaseHandler()
-		{
-			diceView.PlayReleaseAnimation();
 		}
 
 		private void OnDiceChosenChangedHandler()

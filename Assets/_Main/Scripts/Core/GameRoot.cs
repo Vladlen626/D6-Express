@@ -71,26 +71,26 @@ namespace _Main.Scripts.Core
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
 
 			//Load MainMenu Scene
-			//var sceneForLoad = SceneNames.MainMenu;
-			//await sceneService.LoadSceneAsync(sceneForLoad);
-			//await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
-
-			//var mainMenuController = new MainMenuController(uiService);
-			//await _lifecycle.RegisterAsync(mainMenuController);
-
-			//await mainMenuController.WaitForStartAsync();
-			//await sceneService.UnloadSceneAsync(sceneForLoad);
-
-			// Start Game
-			var sceneForLoad = SceneNames.Train;
+			var sceneForLoad = SceneNames.MainMenu;
 			await sceneService.LoadSceneAsync(sceneForLoad);
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
 
-			//TODO: Сделать статический класс с названиями треков
-			await audioService.PlayMusicAsync(SoundNames.GameplayEvent);
+			await audioService.PlayMusicAsync(SoundNames.TrainSound);
+			var mainMenuController = new MainMenuController(uiService);
+			await _lifecycle.RegisterAsync(mainMenuController);
+
+			await mainMenuController.WaitForStartAsync();
+			await sceneService.UnloadSceneAsync(sceneForLoad);
+
+			// Start Game
+			sceneForLoad = SceneNames.Train;
+			await sceneService.LoadSceneAsync(sceneForLoad);
+			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
+			
+			await audioService.StopMusicAsync(0.2f);
+			await audioService.PlayMusicAsync(SoundNames.GameplayEvent, 0.5f);
 
 			//TODO: Контекст сейчас будет обязательным на игровой сцене
-			// Какая-то херня, над править, но пока нет идей как. Дальше посмотрим.
 			if (!sceneService.TryGetSceneContext(sceneForLoad, out var context))
 			{
 				Debug.LogError($"[GameRoot] Scene {sceneForLoad} could not have SceneContext!");

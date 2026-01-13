@@ -189,6 +189,7 @@ namespace _Main.Scripts.Dice
 		// ReSharper disable Unity.PerformanceAnalysis
 		public void EndTurn(bool success)
 		{
+			diceGameModel.HideAllDiceGameModels();
 			if (success)
 			{
 				if (diceGameModel.IsPlayerTurn)

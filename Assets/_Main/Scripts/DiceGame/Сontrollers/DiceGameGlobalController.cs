@@ -143,7 +143,7 @@ namespace _Main.Scripts.Dice
 			
 			var selectionController = new DiceSelectionController(
 				playerModel.InventoryModel, sceneContext.DiceGameTableView,
-				objectFactory, configService, diceGameModel);
+				objectFactory, configService, diceGameModel, audioService);
 			
 			selectionControllers.Add(selectionController);
 
@@ -178,7 +178,7 @@ namespace _Main.Scripts.Dice
 				DiceView view = await objectFactory.CreateAsync<DiceView>(
 					ResourcePaths.Items.DicePrefab, Vector3.zero, Quaternion.identity);
 
-				view.Initialize(config.id, false);
+				view.Initialize(config.id, false, audioService);
 				view.transform.SetParent(startPos);
 				view.Hide();
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using _Main.Scripts.Game.Views;
+using _Main.Scripts.UI;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -22,6 +23,7 @@ public class DiceTableView : MonoBehaviour
 
 	[Header("Turn")] 
 	[SerializeField] private TextMeshPro turnText;
+	[SerializeField] private TextMeshPro turnOwnerText;
 	[SerializeField] private Transform bankTransform;
 
 	[Header("Score")]
@@ -112,8 +114,12 @@ public class DiceTableView : MonoBehaviour
 
 	public void SwitchTurn(bool isPlayerTurn)
 	{
+		turnOwnerText.text = isPlayerTurn ? "Your Turn" : "Enemy Turn";
+		turnOwnerText.color = isPlayerTurn ? Color.blue : Color.red;
 		bankTransform.rotation = Quaternion.Euler(0f, isPlayerTurn? 0f : 180f, 0f);
 		bankTransform.localPosition = new Vector3(bankTransform.localPosition.x, bankTransform.localPosition.y,  isPlayerTurn? -0.6f : 0.13f);
+		passButton.gameObject.SetActive(isPlayerTurn);
+		rollButton.gameObject.SetActive(isPlayerTurn);
 	}
 
 	public void EnableCamera()
@@ -126,34 +132,34 @@ public class DiceTableView : MonoBehaviour
 		cinemachineCamera.gameObject.SetActive(false);
 	}
 
-	public void SetPlayerBankedPointsText(string text)
+	public void SetPlayerBankedPointsText(int oldValue, int newValue)
 	{
-		bankedScoreText.text = text;
+		UIUtils.UpdateUiIntValueText(bankedScoreText, oldValue, newValue, v => v.ToString());
 	}
 
-	public void SetEnemyBankedPointsText(string text)
+	public void SetEnemyBankedPointsText(int oldValue, int newValue)
 	{
-		enemyBankedScoreText.text = text;
+		UIUtils.UpdateUiIntValueText(enemyBankedScoreText, oldValue, newValue, v => v.ToString());
 	}
 
-	public void SetTargetPointsText(int points)
+	public void SetTargetPointsText(int oldValue, int newValue)
 	{
-		targetScoreText.text = $"Target: {points}";
+		UIUtils.UpdateUiIntValueText(targetScoreText, oldValue, newValue, v => $"Target: {v}");
 	}
 
-	public void SetCurrentPointsText(string text)
+	public void SetCurrentPointsText(int oldValue, int newValue)
 	{
-		currentScoreText.text = text;
+		UIUtils.UpdateUiIntValueText(currentScoreText, oldValue, newValue, v => v.ToString());
 	}
 
-	public void SetPreviewPointsText(string text)
+	public void SetPreviewPointsText(int oldValue, int newValue)
 	{
-		previewScoreText.text = text;
+		UIUtils.UpdateUiIntValueText(previewScoreText, oldValue, newValue, v => v.ToString());
 	}
 
-	public void SetTurnText(int currentTurn)
+	public void SetTurnText(int oldValue, int newValue)
 	{
-		turnText.text = $"Turn: {currentTurn}";
+		UIUtils.UpdateUiIntValueText(turnText, oldValue, newValue, v => $"Turn: {v}");
 	}
 
 	public void SetCurrentBetText(string text)
