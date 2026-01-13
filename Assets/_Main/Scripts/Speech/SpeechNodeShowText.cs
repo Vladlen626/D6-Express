@@ -9,14 +9,24 @@ public abstract class SpeechNodeShowText : SpeechNode
 
     protected override void StartInternal()
     {
-        Locator.Resolve<IUIService>().GetWindow<UISpeechView>().SetSpeech(Text);
-        Locator.Resolve<IInputService>().OnSpeechLineSkip += Finish;
+        var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
+        uISpeechView.SetSpeakerName(Speech.Target.GetComponent<CharacterView>().CharacterName);
+        uISpeechView.SetSpeech(Text);
+        Locator.Resolve<IInputService>().OnSpeechLineSkip += SpeechLineSkipHandler;
     }
 
     protected override void FinishInternal()
     {
-        Locator.Resolve<IInputService>().OnSpeechLineSkip -= Finish;
-        Locator.Resolve<IUIService>().GetWindow<UISpeechView>().SetSpeech(string.Empty);
+        var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
+
+        Locator.Resolve<IInputService>().OnSpeechLineSkip -= SpeechLineSkipHandler;
+        uISpeechView.SetSpeakerName(string.Empty);
+        uISpeechView.SetSpeech(string.Empty);
+    }
+
+    private void SpeechLineSkipHandler()
+    {
+        Finish();
     }
 }
 

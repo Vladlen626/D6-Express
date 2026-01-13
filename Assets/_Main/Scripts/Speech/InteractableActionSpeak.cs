@@ -30,7 +30,7 @@ public class InteractableActionSpeak : InteractionAction
 
 		var playerView = Interactor.GetComponent<PlayerView>();
 		// await playerView.CameraRoot.DOLookAt(rotateTarget.position, 1).ToUniTask();
-		playerView.Head.LookAt(rotateTarget.position);
+		playerView.transform.LookAt(rotateTarget.position);
 	}
 
 	protected override async void StopInteractInternal()

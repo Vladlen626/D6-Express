@@ -3,6 +3,10 @@ using UnityEngine;
 
 public class CharacterView : MonoBehaviour
 {
+	[Header("Name")]
+	[SerializeField]
+	private string characterName;
+
 	[Header("States")]
 	[SerializeReference]
 	[SubclassSelector]
@@ -37,6 +41,7 @@ public class CharacterView : MonoBehaviour
 	public Transform CameraRoot => cameraRoot;
 	public Transform Head => head;
 	public Interactor Interactor => interactor;
+	public string CharacterName => characterName;
 
 	private void Awake()
 	{
