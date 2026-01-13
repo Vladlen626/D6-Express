@@ -11,24 +11,29 @@ public class ShopViewController : IBaseController, IActivatable
     private readonly Shop shop;
     private readonly ShopView shopView;
     private readonly IObjectFactory objectFactory;
-
+    private readonly Interactor interactor;
+    private readonly CharacterView shopkeeper;
     private readonly List<TradeItemView> items = new();
 
-    public ShopViewController(Shop shop, ShopView shopView, IObjectFactory objectFactory)
+    public ShopViewController(Shop shop, ShopView shopView, IObjectFactory objectFactory, Interactor interactor, CharacterView shopkeeper)
     {
         this.shop = shop;
         this.shopView = shopView;
         this.objectFactory = objectFactory;
+        this.interactor = interactor;
+        this.shopkeeper = shopkeeper;
     }
 
     public void Activate()
     {
         shop.ItemAdded += OnTradeItemAdded;
         shop.ItemRemoved += OnTradeItemRemoved;
+        shop.BuyFailed += OnBuyFailed;
     }
 
     public void Deactivate()
     {
+        shop.BuyFailed -= OnBuyFailed;
         shop.ItemRemoved -= OnTradeItemRemoved;
         shop.ItemAdded -= OnTradeItemAdded;
     }
@@ -63,5 +68,13 @@ public class ShopViewController : IBaseController, IActivatable
 
         tradeItemView.gameObject.SetActive(false);
         Object.Destroy(tradeItemView.gameObject);
+    }
+
+    private void OnBuyFailed()
+    {
+        var interactable = shopkeeper.GetComponent<InteractableSpeakable>();
+        interactable.SetId(69);
+        interactor.Interact(interactable);
+        interactable.ResetId();
     }
 }

@@ -12,9 +12,9 @@ public static class ShopFactory
         return new Shop(runModel, inventoryModel, diceConfigsDict, shopConfig);
     }
 
-    public static ShopViewController GetShopViewController(Shop shop, ShopView shopView, IObjectFactory objectFactory)
+    public static ShopViewController GetShopViewController(Shop shop, ShopView shopView, IObjectFactory objectFactory, Interactor interactor, CharacterView shopkeeper)
     {
-        return new ShopViewController(shop, shopView, objectFactory);
+        return new ShopViewController(shop, shopView, objectFactory, interactor, shopkeeper);
     }
 
     public static ShopTooltipsController GetShopTooltipsController(IUIService uiService, Shop shop, Interactor interactor, Camera camera)

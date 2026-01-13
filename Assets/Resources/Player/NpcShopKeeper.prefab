@@ -61,6 +61,10 @@ PrefabInstance:
       value: NpcShopKeeper
       objectReference: {fileID: 0}
     - target: {fileID: 7730824348964566677, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
+      propertyPath: characterName
+      value: shopkeeper
+      objectReference: {fileID: 0}
+    - target: {fileID: 7730824348964566677, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
       propertyPath: hatsTransforms.Array.size
       value: 1
       objectReference: {fileID: 0}

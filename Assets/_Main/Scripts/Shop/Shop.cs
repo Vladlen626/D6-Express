@@ -16,6 +16,7 @@ public class Shop
 
     public event Action<int, TradeItem> ItemAdded;
     public event Action<int, TradeItem> ItemRemoved;
+    public event Action BuyFailed;
 
     public Shop(RunModel runModel, InventoryModel inventoryModel, IReadOnlyDictionary<string, DiceConfig> dicesConfigs, ShopConfig config)
     {
@@ -62,12 +63,21 @@ public class Shop
 
     private void OnBuyed(TradeItem tradeItem)
     {
-        // todo: добавлять не только дайсы
-        inventoryModel.AddDice(tradeItem.ItemId);
+        if (inventoryModel.CashCount >= tradeItem.Price)
+        {
+            inventoryModel.TakeCash(tradeItem.Price);
 
-        tradeItem.Buyed -= OnBuyed;
-        var index = tradeItems.IndexOf(tradeItem);
-        tradeItems.RemoveAt(index);
-        ItemRemoved?.Invoke(index, tradeItem);
+            // todo: добавлять не только дайсы
+            inventoryModel.AddDice(tradeItem.ItemId);
+
+            tradeItem.Buyed -= OnBuyed;
+            var index = tradeItems.IndexOf(tradeItem);
+            tradeItems.RemoveAt(index);
+            ItemRemoved?.Invoke(index, tradeItem);
+        }
+        else
+        {
+            BuyFailed?.Invoke();
+        }
     }
 }
