@@ -8,6 +8,7 @@ public class DiceConfig : BaseConfig
 	public string description;
 	public string rarity;
 	public Rarity rarityEnum;
+	public int price;
 
 	public override void ParseConfig()
 	{

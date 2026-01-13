@@ -1,19 +1,13 @@
 {
     "items": [
         {
-            "itemId": "default",
-            "description": "cool",
-            "price": 10
+            "itemId": "default"
         },
         {
-            "itemId": "gen_1_focus",
-            "description": "cooler",
-            "price": 20
+            "itemId": "gen_1_focus"
         },
         {
-            "itemId": "strat_straight_1_6_hunter",
-            "description": "coolest",
-            "price": 30
+            "itemId": "strat_straight_1_6_hunter"
         }
     ]
 }

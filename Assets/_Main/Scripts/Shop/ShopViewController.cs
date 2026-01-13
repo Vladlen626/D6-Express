@@ -36,6 +36,8 @@ public class ShopViewController : IBaseController, IActivatable
     private async void OnTradeItemAdded(int index, TradeItem tradeItem)
     {
         var tradeItemView = await objectFactory.CreateAsync<TradeItemView>(ResourcePaths.Shop.TradeItem, shopView.Slots[index].ItemTfm.position, shopView.Slots[index].ItemTfm.rotation, shopView.Slots[index].ItemTfm);
+        tradeItemView.Init(index);
+
         tradeItemView.Buyed += OnBuyed;
 
         var view = await objectFactory.CreateAsync<ShopItemDiceView>(ResourcePaths.Shop.ShopItemDice, tradeItemView.transform.position, tradeItemView.transform.rotation, tradeItemView.transform);
@@ -59,6 +61,7 @@ public class ShopViewController : IBaseController, IActivatable
 
         shopView.Slots[index].SetPrice("x");
 
+        tradeItemView.gameObject.SetActive(false);
         Object.Destroy(tradeItemView.gameObject);
     }
 }

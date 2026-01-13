@@ -8,6 +8,7 @@ public class Shop
 
     private readonly RunModel runModel;
     private readonly InventoryModel inventoryModel;
+    private readonly IReadOnlyDictionary<string, DiceConfig> dicesConfigs;
     private readonly ShopConfig config;
     private readonly List<TradeItem> tradeItems = new();
 
@@ -16,11 +17,12 @@ public class Shop
     public event Action<int, TradeItem> ItemAdded;
     public event Action<int, TradeItem> ItemRemoved;
 
-    public Shop(RunModel runModel, InventoryModel inventoryModel, ShopConfig config)
+    public Shop(RunModel runModel, InventoryModel inventoryModel, IReadOnlyDictionary<string, DiceConfig> dicesConfigs, ShopConfig config)
     {
         runModel.StateChanged += OnStateChanged;
         this.runModel = runModel;
         this.inventoryModel = inventoryModel;
+        this.dicesConfigs = dicesConfigs;
         this.config = config;
     }
 
@@ -42,7 +44,7 @@ public class Shop
             var itemConfig = unused[itemConfigIndex];
             unused.RemoveAt(itemConfigIndex);
 
-            var tradeItem = new TradeItem(itemConfig.itemId, itemConfig.price, itemConfig.description);
+            var tradeItem = new TradeItem(itemConfig.itemId, dicesConfigs[itemConfig.itemId].price);
             tradeItem.Buyed += OnBuyed;
             tradeItems.Add(tradeItem);
 
