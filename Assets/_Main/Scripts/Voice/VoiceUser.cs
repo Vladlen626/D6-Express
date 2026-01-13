@@ -26,9 +26,9 @@ public class VoiceUser : MonoBehaviour
     {
         return type switch
         {
-            VoiceType.LOW => "event:/GibberishLow",
-            VoiceType.MEDIUM => "event:/GibberishMedium",
-            VoiceType.HIGH => "event:/GibberishHigh",
+            VoiceType.LOW => "event:/NpcTalk/GibberishLow",
+            VoiceType.MEDIUM => "event:/NpcTalk/GibberishMedium",
+            VoiceType.HIGH => "event:/NpcTalk/GibberishHigh",
             _ => string.Empty,
         };
     }

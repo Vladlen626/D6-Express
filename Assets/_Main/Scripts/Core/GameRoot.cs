@@ -87,7 +87,7 @@ namespace _Main.Scripts.Core
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
 
 			//TODO: Сделать статический класс с названиями треков
-			await audioService.PlayMusicAsync("event:/GameplayEvent");
+			await audioService.PlayMusicAsync(SoundNames.GameplayEvent);
 
 			//TODO: Контекст сейчас будет обязательным на игровой сцене
 			// Какая-то херня, над править, но пока нет идей как. Дальше посмотрим.

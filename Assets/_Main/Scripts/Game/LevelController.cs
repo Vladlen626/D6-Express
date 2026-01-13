@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class LevelController : IBaseController, IActivatable
 {
-	private const string StationSound = "event:/StationSound";
-	private const string TrainSound = "event:/TrainSound";
-	
 	private readonly RunModel runModel;
 	private readonly PlayerModel playerModel;
 	private readonly DiceGameModel diceGameModel;
@@ -57,8 +54,8 @@ public class LevelController : IBaseController, IActivatable
 
 		if (runModel.LevelState == LevelState.STATION)
 		{
-			audioService.StopParallelSound(TrainSound);
-			audioService.PlaySoundParallel(StationSound);
+			audioService.StopParallelSound(SoundNames.TrainSound);
+			audioService.PlaySoundParallel(SoundNames.StationSound);
 			playerView.SetCharacterGhost(true);
 			playerView.transform.SetPositionAndRotation(playerStationSpawnPosition.position,
 				playerStationSpawnPosition.rotation);
@@ -66,8 +63,8 @@ public class LevelController : IBaseController, IActivatable
 		}
 		else
 		{
-			audioService.StopParallelSound(StationSound);
-			audioService.PlaySoundParallel(TrainSound);
+			audioService.StopParallelSound(SoundNames.StationSound);
+			audioService.PlaySoundParallel(SoundNames.TrainSound);
 			playerView.SetCharacterGhost(true);
 			playerView.transform.SetPositionAndRotation(playerTrainSpawnPosition.position,
 				playerTrainSpawnPosition.rotation);
