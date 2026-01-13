@@ -23,13 +23,17 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	[SerializeField]
 	private Light sun;
 
+	[SerializeField]
+	private ShopView shop;
+
 	public DiceTableView DiceGameTableView => diceGameTableView;
 	public Transform PlayerTrainSpawnPosition => playerTrainSpawnPosition;
 	public Transform PlayerStationSpawnPosition => playerStationSpawnPosition;
 	public GameObject StationBlock => stationBlock;
 	public GameObject TrainBlock => trainBlock;
 	public Light Sun => sun;
-
+	public ShopView Shop => shop;
+	
 	public IEnumerable<LightView> Lights => FindObjectsByType<LightView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 	public IEnumerable<SpawnPoint> SpawnPoints => FindObjectsByType<SpawnPoint>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 }

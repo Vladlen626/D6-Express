@@ -22,9 +22,7 @@ public class RunModel
 	public event Action<bool> Finished;
 
 	public RunModel()
-	{
-		state = DebugVariables.StartSpawnLocation;
-		
+	{		
 		LevelModel.LevelFinished += OnLevelFinished;
 	}
 

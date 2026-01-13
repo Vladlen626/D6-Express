@@ -24,7 +24,7 @@ public class HintController : BaseContextController<UIHintView>
 
     private void OnNoticed(Interactable interactable)
     {
-        if (interactable.TryGetComponent<Hintable>(out var hintable))
+        if (interactable.TryGetComponent<IHintable>(out var hintable))
         {
             _context.SetHintText(hintable.HintText);
         }

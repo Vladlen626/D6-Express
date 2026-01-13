@@ -169,6 +169,7 @@ MonoBehaviour:
   stationBlock: {fileID: 1235700352}
   trainBlock: {fileID: 1911067291}
   sun: {fileID: 410087040}
+  shop: {fileID: 1935522581}
 --- !u!4 &173345210 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2344411299241026454, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
@@ -461,6 +462,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5875971813687885191, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
   m_PrefabInstance: {fileID: 5741847972874531002}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1935522581 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8602693902919280642, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+  m_PrefabInstance: {fileID: 7205606119079278648}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bcbddc1118687e4c91112ab41326cee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopView
 --- !u!4 &1994989543 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 568192472526910677, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
@@ -614,7 +626,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 992826982392300895, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1355620770823827789, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       propertyPath: m_Name
@@ -676,13 +688,13 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 701664386261287655, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 2037325876015972137, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 4682564815505833413, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 8496850184097804413, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 6848382458164342459, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 3913362134524404613, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}

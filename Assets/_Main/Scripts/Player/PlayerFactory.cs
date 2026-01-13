@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
+using UnityEngine;
 
 public static class PlayerFactory
 {
@@ -27,13 +28,13 @@ public static class PlayerFactory
 	
 	
 	public static async UniTask<PlayerView> SpawnPlayerView(
-		SceneContext sceneContext,
 		IObjectFactory factory,
 		IInputService inputService,
-		PlayerModel playerModel)
+		PlayerModel playerModel,
+		Transform spawnTfm)
 	{
-		var playerView = await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerBase, sceneContext.PlayerTrainSpawnPosition.position,
-			sceneContext.PlayerTrainSpawnPosition.rotation);
+		var playerView = await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerBase, spawnTfm.position,
+			spawnTfm.rotation);
 
 		var playerInteractSystem = playerView.GetComponent<InteractorPlayer>();
 		playerInteractSystem.Initialize(inputService, playerModel.PlayerStateModel);

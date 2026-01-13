@@ -1,17 +1,20 @@
 using System;
-using UnityEngine;
 
-public class TradeItem : MonoBehaviour
+public class TradeItem
 {
-    [SerializeField]
-    private int price;
+    public string ItemId { get; private set; }
+    public int Price { get; private set; }
 
-    public int Price => price;
+    public event Action<TradeItem> Buyed;
 
-    public event Action<TradeItem, GameObject> Buyed;
-
-    public void Buy(GameObject buyer)
+    public TradeItem(string itemId, int price)
     {
-        Buyed?.Invoke(this, buyer);
+        ItemId = itemId;
+        Price = price;
+    }
+
+    public void Buy()
+    {
+        Buyed?.Invoke(this);
     }
 }

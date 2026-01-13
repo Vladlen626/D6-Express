@@ -99,11 +99,13 @@ namespace _Main.Scripts.Core
 
 			var sceneContext = context as SceneContext;
 
+			var state = DebugVariables.StartSpawnLocation;
+
 			//NPC
 			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, runModel, sceneContext.SpawnPoints);
 
 			//Player
-			var playerView = await PlayerFactory.SpawnPlayerView(sceneContext, factory, inputService, playerModel);
+			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, playerModel, state == LevelState.STATION ? sceneContext.PlayerStationSpawnPosition : sceneContext.PlayerTrainSpawnPosition);
 			playerModel.PlayerStateModel.FillCharacterStatesDict(playerView.CharacterStateHandlers);
 			cameraService.AttachTo(playerView.CameraRoot);
 			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
@@ -124,6 +126,10 @@ namespace _Main.Scripts.Core
 				new LightController(sceneContext.Lights, runModel.LevelModel),
 			};
 
+			var shop = await ShopFactory.GetShopAsync(runModel, playerModel.InventoryModel, configService);
+
+			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory));
+			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView, configService));
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel, configService));
 			controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
@@ -134,6 +140,8 @@ namespace _Main.Scripts.Core
 			{
 				await _lifecycle.RegisterAsync(controller);
 			}
+
+			runModel.SetLevelState(state);
 		}
 	}
 }
