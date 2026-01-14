@@ -61,6 +61,8 @@ namespace PlatformCore.Services.Factory
 			public const string UILevelView = "UI/UILevelView";
 			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";
+			public const string UINotificationsView = "UI/UINotificationsView";
+			public const string UINotificationView = "UI/UINotificationView";
 			public const string UIPlayerHud = "UI/UIPlayerHud";
 			public const string UIQuestsView = "UI/UIQuestsView";
 			public const string UISettings = "UI/UISettings";
