@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 
 public static class DebugVariables
@@ -21,3 +22,4 @@ public static class DebugVariables
         set => EditorPrefs.SetInt(SpawnLocKey, (int)value);
     }
 }
+#endif

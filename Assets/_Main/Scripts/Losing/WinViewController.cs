@@ -54,6 +54,7 @@ public class WinViewController : BaseContextController<UIWinView>
 	{
 		if (result)
 		{
+#if UNITY_EDITOR
 			if (DebugVariables.ShowWinView)
 			{
 				ShowContext();
@@ -62,6 +63,10 @@ public class WinViewController : BaseContextController<UIWinView>
 			{
 				runModel.SetLevelState(LevelState.STATION);
 			}
+#else
+			runModel.SetLevelState(LevelState.STATION);
+#endif
+			
 		}
 	}
 
