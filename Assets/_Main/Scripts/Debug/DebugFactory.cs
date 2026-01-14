@@ -10,7 +10,8 @@ public static class DebugFactory
         RunModel runModel,
         PlayerModel playerModel,
         PlayerView playerView,
-        ConfigService configService)
+        ConfigService configService,
+        Notifications notifications)
     {
         var incrementTick = new DbgMenuItemIncrementTicks(runModel);
         var incrementDay = new DbgMenuItemIncrementDays(runModel);
@@ -18,7 +19,7 @@ public static class DebugFactory
         var wakeUp = new DbgMenuItemIncrementWakeUp();
         var switchToStation = new DbgMenuItemSwitchToStation(runModel);
         var switchToTrain = new DbgMenuItemSwitchToTrain(runModel);
-        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(playerModel, playerView, configService);
+        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(playerModel, playerView, configService, notifications);
 
         var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp, switchToStation, switchToTrain, openPlayerWindow);
 

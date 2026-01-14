@@ -11,10 +11,11 @@ public class DebugWindowPlayer : DebugWindowModel
 	private readonly PlayerModel playerModel;
 	private readonly PlayerView playerView;
 	private readonly ConfigService configService;
-
+	private readonly Notifications notifications;
 	private int cashInputBuffer;
 	private int questIdBuffer;
 	private string diceIdBuffer;
+	private string notificationMessageBuffer = string.Empty;
 	private int diceIdxBuffer;
 
 	private Dictionary<string, DiceConfig> diceConfig;
@@ -28,11 +29,12 @@ public class DebugWindowPlayer : DebugWindowModel
 		diceConfig = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
 	}
 
-	public DebugWindowPlayer(PlayerModel playerModel, PlayerView playerView, ConfigService configService)
+	public DebugWindowPlayer(PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
 	{
 		this.playerModel = playerModel;
 		this.playerView = playerView;
 		this.configService = configService;
+		this.notifications = notifications;
 	}
 
 	protected override void OnLayout(UImGui.UImGui uImGui)
@@ -131,6 +133,19 @@ public class DebugWindowPlayer : DebugWindowModel
 			if (ImGui.Button("Remove All Dices"))
 			{
 				playerModel.InventoryModel.RemoveAllDices();
+			}
+		}
+
+		if (ImGui.CollapsingHeader("Notifications"))
+		{
+			ImGui.InputText("Message", ref notificationMessageBuffer, 999);
+
+			if (ImGui.Button("Send"))
+			{
+				notifications.Add(new Notifications.Notification()
+				{
+					message = notificationMessageBuffer
+				});
 			}
 		}
 
