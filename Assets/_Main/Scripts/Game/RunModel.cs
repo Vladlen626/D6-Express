@@ -1,4 +1,5 @@
 using System;
+using PlatformCore.Core;
 
 public struct LevelData
 {
@@ -22,7 +23,7 @@ public class RunModel
 	public event Action<bool> Finished;
 
 	public RunModel()
-	{		
+	{
 		LevelModel.LevelFinished += OnLevelFinished;
 	}
 

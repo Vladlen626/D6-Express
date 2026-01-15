@@ -69,6 +69,7 @@ namespace PlatformCore.Services.Factory
 			public const string UISleepView = "UI/UISleepView";
 			public const string UISpeechView = "UI/UISpeechView";
 			public const string UITooltip = "UI/UITooltip";
+			public const string UITransitionView = "UI/UITransitionView";
 			public const string UIWinView = "UI/UIWinView";
 		}
 

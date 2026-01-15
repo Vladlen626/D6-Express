@@ -7,17 +7,12 @@ public class LevelViewController : BaseContextController<UILevelView>
 	private readonly PlayerModel playerModel;
 	private readonly RunModel runModel;
 	private readonly Light sun;
-	private readonly GameObject trainBlock;
-	private readonly GameObject stationBlock;
 
-	public LevelViewController(IUIService uiService, PlayerModel playerModel, RunModel runModel, Light sun, GameObject trainBlock,
-		GameObject stationBlock) : base(uiService)
+	public LevelViewController(IUIService uiService, PlayerModel playerModel, RunModel runModel, Light sun) : base(uiService)
 	{
 		this.playerModel = playerModel;
 		this.runModel = runModel;
 		this.sun = sun;
-		this.trainBlock = trainBlock;
-		this.stationBlock = stationBlock;
 	}
 
 	protected override void OnActivate()
@@ -53,9 +48,6 @@ public class LevelViewController : BaseContextController<UILevelView>
 	private void OnLevelStateChanged()
 	{
 		_context.SetRunText($"Run: {runModel.LevelIndex + 1} / {runModel.MaxLevels}");
-
-		trainBlock.SetActive(runModel.LevelState == LevelState.TRAIN);
-		stationBlock.SetActive(runModel.LevelState == LevelState.STATION);
 	}
 
 	private void RotateSun()

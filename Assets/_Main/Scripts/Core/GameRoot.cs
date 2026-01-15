@@ -30,6 +30,7 @@ namespace _Main.Scripts.Core
 			var cameraService = new CameraService(objectFactory);
 			var cursorService = new CursorService(uiService);
 			var configService = new ConfigService(resourceService, logger);
+			var transitionService = new TransitionService();
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
 			_serviceLocator.Register<IResourceService, ResourceService>(resourceService);
@@ -42,6 +43,7 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<ICameraService, CameraService>(cameraService);
 			_serviceLocator.Register<ICursorService, CursorService>(cursorService);
 			_serviceLocator.Register<ConfigService, ConfigService>(configService);
+			_serviceLocator.Register<TransitionService, TransitionService>(transitionService);
 
 			Debug.Log("[GameRoot] Services registered!");
 		}
@@ -70,6 +72,8 @@ namespace _Main.Scripts.Core
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
 
+
+
 			//Load MainMenu Scene
 			var sceneForLoad = SceneNames.MainMenu;
 			await sceneService.LoadSceneAsync(sceneForLoad);
@@ -80,13 +84,19 @@ namespace _Main.Scripts.Core
 			await _lifecycle.RegisterAsync(mainMenuController);
 
 			await mainMenuController.WaitForStartAsync();
+
+			// Transition View Controller 
+			var transitionViewController = new TransitionViewController(uiService);
+			await _lifecycle.RegisterAsync(transitionViewController);
+			await transitionViewController.StartTransition();
+
 			await sceneService.UnloadSceneAsync(sceneForLoad);
 
 			// Start Game
 			sceneForLoad = SceneNames.Train;
 			await sceneService.LoadSceneAsync(sceneForLoad);
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
-			
+
 			await audioService.StopMusicAsync(0.2f);
 			await audioService.PlayMusicAsync(SoundNames.GameplayEvent, 0.5f);
 
@@ -126,8 +136,9 @@ namespace _Main.Scripts.Core
 				new LightController(sceneContext.Lights, runModel.LevelModel),
 			};
 
-			var shop = await ShopFactory.GetShopAsync(runModel, playerModel.InventoryModel, configService);
+			var shop = await ShopFactory.GetShopAsync(playerModel.InventoryModel, configService);
 			var notifications = NotificationsFactory.CreateNotifications();
+			var transitionController = new TransitionController(runModel, playerModel, playerView, sceneContext, audioService, npcSpawner, shop);
 
 			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));
@@ -135,6 +146,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel, configService));
 			controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
+			controllersList.Add(transitionController);
 
 			controllersList.AddRange(baseControllers);
 
@@ -143,7 +155,13 @@ namespace _Main.Scripts.Core
 				await _lifecycle.RegisterAsync(controller);
 			}
 
+			await transitionController.StartLocationTransition();
+			await transitionViewController.FinishTransition();
+
 			runModel.SetLevelState(state);
+
+			transitionViewController.StartObserving();
+			transitionController.StartObserving();
 		}
 	}
 }
