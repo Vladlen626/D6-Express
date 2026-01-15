@@ -12,4 +12,9 @@ public static class NotificationsFactory
     {
         return new NotificationsViewControler(uiService, notifications, objectFactory);
     }
+
+    public static NotificationsController GetNotificationsControler(Notifications notifications, InventoryModel inventory, ConfigService configService)
+    {
+        return new NotificationsController(notifications, inventory, configService);
+    }
 }

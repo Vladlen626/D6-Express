@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class UINotificationView : UIBaseElement
 {
-    [SerializeField] private float initialRightShift = 50f;
     [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private float initialShift = 50f;
     [SerializeField] private float smoothDuration = 0.5f;
     [SerializeField] private float fadeDuration = 0.3f;
     [SerializeField] private float showDelay = 2f;
@@ -37,21 +37,42 @@ public class UINotificationView : UIBaseElement
     {
         base.OnShow();
 
-        var rectTransform = text.GetComponent<RectTransform>();
-        originalPos = rectTransform.anchoredPosition;
-        rectTransform.anchoredPosition += Vector2.right * initialRightShift;
-        text.gameObject.SetActive(true);
-        canvasGroup.alpha = 0f;
+        RectTransform rectTransform = text.GetComponent<RectTransform>();
 
+        originalPos = rectTransform.anchoredPosition;
+
+        rectTransform.anchoredPosition = originalPos + Vector2.down * initialShift;
+        canvasGroup.alpha = 0f;
+        text.gameObject.SetActive(true);
+
+        fullSequence?.Kill();
         fullSequence = DOTween.Sequence();
 
-        fullSequence.Join(rectTransform.DOAnchorPosX(originalPos.x, smoothDuration).SetEase(Ease.InOutQuad));
-        fullSequence.Join(canvasGroup.DOFade(1f, fadeDuration).SetEase(Ease.OutQuad));
+        fullSequence.Append(
+            rectTransform
+                .DOAnchorPos(originalPos, smoothDuration)
+                .SetEase(Ease.InOutQuad)
+        );
+
+        fullSequence.Join(
+            canvasGroup
+                .DOFade(1f, fadeDuration)
+                .SetEase(Ease.OutQuad)
+        );
 
         fullSequence.AppendInterval(showDelay);
 
-        fullSequence.Join(rectTransform.DOAnchorPosX(originalPos.x + 50f, fadeDuration).SetEase(Ease.InQuad));
-        fullSequence.Join(canvasGroup.DOFade(0f, fadeDuration).SetEase(Ease.InQuad));
+        fullSequence.Append(
+            rectTransform
+                .DOAnchorPosX(originalPos.x + 50f, fadeDuration)
+                .SetEase(Ease.InQuad)
+        );
+
+        fullSequence.Join(
+            canvasGroup
+                .DOFade(0f, fadeDuration)
+                .SetEase(Ease.InQuad)
+        );
 
         fullSequence.OnComplete(() =>
         {
@@ -60,6 +81,7 @@ public class UINotificationView : UIBaseElement
             base.OnHide();
         });
     }
+
 
     protected override void OnHide()
     {

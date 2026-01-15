@@ -152,6 +152,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel, configService));
 			controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
+			controllersList.Add(NotificationsFactory.GetNotificationsControler(notifications, playerModel.InventoryModel, configService));
 			controllersList.Add(transitionController);
 
 			controllersList.AddRange(baseControllers);

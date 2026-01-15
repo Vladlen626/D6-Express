@@ -3,12 +3,15 @@ using System.Collections.Generic;
 
 public class InventoryModel
 {
-	public event Action OnCashCountChanged;
+	private readonly List<string> diceIdList = new();
+	private int cashCount;
+
 	public int CashCount => cashCount;
 	public IReadOnlyList<string> DiceIdList => diceIdList;
 
-	private readonly List<string> diceIdList = new();
-	private int cashCount;
+	public event Action OnCashCountChanged;
+	public event Action<string> DiceAdded;
+	public event Action<string> DiceRemoved;
 
 	public void GiveCash(int amount)
 	{
@@ -31,15 +34,21 @@ public class InventoryModel
 	public void AddDice(string diceId)
 	{
 		diceIdList.Add(diceId);
+		DiceAdded?.Invoke(diceId);
 	}
 
 	public void RemoveDice(string diceId)
 	{
 		diceIdList.Remove(diceId);
+		DiceRemoved?.Invoke(diceId);
 	}
 
 	public void RemoveAllDices()
 	{
+		foreach (var item in diceIdList)
+		{
+			DiceRemoved?.Invoke(item);
+		}
 		diceIdList.Clear();
 	}
 }
