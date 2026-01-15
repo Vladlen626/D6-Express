@@ -58,6 +58,7 @@ namespace _Main.Scripts.Core
 			var cursorService = _serviceLocator.Get<ICursorService>();
 			var inputService = _serviceLocator.Get<IInputService>();
 			var configService = _serviceLocator.Get<ConfigService>();
+			var transitionService = _serviceLocator.Get<TransitionService>();
 
 			cursorService.UnlockCursor();
 			// Controllers list
@@ -86,7 +87,7 @@ namespace _Main.Scripts.Core
 			await mainMenuController.WaitForStartAsync();
 
 			// Transition View Controller 
-			var transitionViewController = new TransitionViewController(uiService);
+			var transitionViewController = new TransitionViewController(uiService, transitionService);
 			await _lifecycle.RegisterAsync(transitionViewController);
 			await transitionViewController.StartTransition();
 
@@ -138,7 +139,7 @@ namespace _Main.Scripts.Core
 
 			var shop = await ShopFactory.GetShopAsync(playerModel.InventoryModel, configService);
 			var notifications = NotificationsFactory.CreateNotifications();
-			var transitionController = new TransitionController(runModel, playerModel, playerView, sceneContext, audioService, npcSpawner, shop);
+			var transitionController = new TransitionController(runModel, playerModel, playerView, sceneContext, audioService, npcSpawner, shop, transitionService);
 
 			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));

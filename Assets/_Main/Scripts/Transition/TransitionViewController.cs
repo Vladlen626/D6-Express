@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services.UI;
 
@@ -7,8 +6,12 @@ public class TransitionViewController : BaseContextController<UITransitionView>
 {
     private float durationStart = 0.1f;
     private float durationEnd = 0.5f;
+    private readonly TransitionService transitionService;
 
-    public TransitionViewController(IUIService uiService) : base(uiService) { }
+    public TransitionViewController(IUIService uiService, TransitionService transitionService) : base(uiService)
+    {
+        this.transitionService = transitionService;
+    }
 
     protected override void OnActivate()
     {
@@ -17,14 +20,14 @@ public class TransitionViewController : BaseContextController<UITransitionView>
 
     protected override void OnDeactivate()
     {
-        Locator.Resolve<TransitionService>().TransitionRequested -= OnTransitionRequested;
+        transitionService.TransitionRequested -= OnTransitionRequested;
 
         base.OnDeactivate();
     }
 
     public void StartObserving()
     {
-        Locator.Resolve<TransitionService>().TransitionRequested += OnTransitionRequested;
+        transitionService.TransitionRequested += OnTransitionRequested;
     }
 
     public Task StartTransition(float duration = -1)
@@ -39,7 +42,7 @@ public class TransitionViewController : BaseContextController<UITransitionView>
 
     private void OnTransitionRequested()
     {
-        Locator.Resolve<TransitionService>().CurrentTransition.SetFirstTask(() => StartTransition(durationStart));
-        Locator.Resolve<TransitionService>().CurrentTransition.SetLastTask(() => FinishTransition(durationEnd));
+        transitionService.CurrentTransition.SetFirstTask(() => StartTransition(durationStart));
+        transitionService.CurrentTransition.SetLastTask(() => FinishTransition(durationEnd));
     }
 }

@@ -12,8 +12,9 @@ public class TransitionController : IBaseController
     private readonly IAudioService audioService;
     private readonly NpcSpawner npcSpawner;
     private readonly Shop shop;
+    private readonly TransitionService transitionService;
 
-    public TransitionController(RunModel runModel, PlayerModel playerModel, PlayerView playerView, SceneContext sceneContext, IAudioService audioService, NpcSpawner npcSpawner, Shop shop)
+    public TransitionController(RunModel runModel, PlayerModel playerModel, PlayerView playerView, SceneContext sceneContext, IAudioService audioService, NpcSpawner npcSpawner, Shop shop, TransitionService transitionService)
     {
         this.runModel = runModel;
         this.playerModel = playerModel;
@@ -23,6 +24,7 @@ public class TransitionController : IBaseController
         runModel.LevelModel.TickChanged += OnTickChanged;
         this.npcSpawner = npcSpawner;
         this.shop = shop;
+        this.transitionService = transitionService;
     }
 
     public void StartObserving()
@@ -32,7 +34,7 @@ public class TransitionController : IBaseController
 
     public async Task StartLocationTransition()
     {
-        await Locator.Resolve<TransitionService>().Request(new Transition.Data()
+        await transitionService.Request(new Transition.Data()
         {
             type = Transition.Type.LOCATION
         },
@@ -71,7 +73,7 @@ public class TransitionController : IBaseController
 
     private async void OnTickChanged()
     {
-        await Locator.Resolve<TransitionService>().Request(new Transition.Data()
+        await transitionService.Request(new Transition.Data()
         {
             type = Transition.Type.TICK
         },
