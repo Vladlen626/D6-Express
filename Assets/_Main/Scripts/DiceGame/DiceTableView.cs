@@ -27,7 +27,6 @@ public class DiceTableView : MonoBehaviour
 	[Header("Turn")] 
 	[SerializeField] private TextMeshPro turnText;
 	[SerializeField] private TextMeshPro turnOwnerText;
-	[SerializeField] private Transform bankTransform;
 
 	[Header("Score")]
 	[SerializeField] private TextMeshPro targetScoreText;
@@ -35,6 +34,7 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshPro enemyBankedScoreText;
 	[SerializeField] private TextMeshPro currentScoreText;
 	[SerializeField] private TextMeshPro previewScoreText;
+	[SerializeField] private TextMeshPro previewScoreText2;
 
 	[Header("Buttons")]
 	[SerializeField] private ButtonView rollButton;
@@ -121,8 +121,6 @@ public class DiceTableView : MonoBehaviour
 	{
 		turnOwnerText.text = isPlayerTurn ? "Your Turn" : "Enemy Turn";
 		turnOwnerText.color = isPlayerTurn ? Color.blue : Color.red;
-		bankTransform.rotation = Quaternion.Euler(0f, isPlayerTurn? 0f : 180f, 0f);
-		bankTransform.localPosition = new Vector3(bankTransform.localPosition.x, bankTransform.localPosition.y,  isPlayerTurn? -0.6f : 0.13f);
 		passButton.gameObject.SetActive(isPlayerTurn);
 		rollButton.gameObject.SetActive(isPlayerTurn);
 	}
@@ -160,6 +158,7 @@ public class DiceTableView : MonoBehaviour
 	public void SetPreviewPointsText(int oldValue, int newValue)
 	{
 		UIUtils.UpdateUiIntValueText(previewScoreText, oldValue, newValue, v => v.ToString());
+		UIUtils.UpdateUiIntValueText(previewScoreText2, oldValue, newValue, v => v.ToString());
 	}
 
 	public void SetTurnText(int oldValue, int newValue)

@@ -98,6 +98,7 @@ namespace _Main.Scripts.Core
 			sceneForLoad = SceneNames.Train;
 			await sceneService.LoadSceneAsync(sceneForLoad);
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
+			sceneService.SetActiveScene(sceneForLoad);
 
 			await audioService.StopMusicAsync(0.2f);
 			await audioService.PlayMusicAsync(SoundNames.GameplayEvent, 0.5f);

@@ -9,7 +9,8 @@ namespace _Main.Scripts.Game.Views
 	{
 		[SerializeField] private Transform buttonModel;
 		[SerializeField] private Collider buttonCollider;
-		[SerializeField] private Outline outline;
+		[SerializeField] private Transform greenButton;
+		[SerializeField] private Transform redButton;
 		public event Action OnClicked;
 
 		private bool isInteractable = true;
@@ -57,7 +58,8 @@ namespace _Main.Scripts.Game.Views
 		public void SetInteractable(bool interactable)
 		{
 			isInteractable = interactable;
-			outline.OutlineColor = isInteractable ? Color.green : Color.red;
+			greenButton.gameObject.SetActive(interactable);
+			redButton.gameObject.SetActive(!interactable);
 		}
 	}
 }
