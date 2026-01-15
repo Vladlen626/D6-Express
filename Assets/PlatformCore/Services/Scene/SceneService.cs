@@ -105,6 +105,11 @@ namespace PlatformCore.Services
 			await LoadSceneAsync(currentSceneName, LoadSceneMode.Single, ct);
 		}
 
+		public void SetActiveScene(string sceneName)
+		{
+			SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+		}
+
 		public async UniTask UnloadSceneAsync(string sceneName, CancellationToken ct = default)
 		{
 			_loggerService?.Log($"[SceneService] Unloading scene: {sceneName}");

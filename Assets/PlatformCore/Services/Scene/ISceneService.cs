@@ -13,6 +13,7 @@ namespace PlatformCore.Services
 		string GetActiveSceneName();
 		bool IsSceneLoaded(string sceneName);
 		bool TryGetSceneContext(string sceneName, out ISceneContext sceneContext);
+		void SetActiveScene(string sceneName);
 		UniTask UnloadSceneAsync(string sceneName, CancellationToken ct = default);
 	}
 }

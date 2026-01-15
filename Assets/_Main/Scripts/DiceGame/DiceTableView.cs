@@ -1,6 +1,8 @@
 ﻿using System;
+using _Main.Scripts.Core;
 using _Main.Scripts.Game.Views;
 using _Main.Scripts.UI;
+using DG.Tweening;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -15,6 +17,7 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnPlayClicked;
 	
 	[SerializeField] private CinemachineCamera cinemachineCamera;
+	[SerializeField] private Transform diceCombinationsTransform;
 	
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
@@ -47,6 +50,8 @@ public class DiceTableView : MonoBehaviour
 	
 	[SerializeField] private DicePositionsHandler gameStatePosHandler;
 	[SerializeField] private DicePositionsHandler selectionStatePosHandler;
+	
+	[SerializeField] private float animDuration = 0.15f;
 	public DicePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public DicePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
 	public CinemachineCamera TableCamera => cinemachineCamera;
@@ -183,4 +188,19 @@ public class DiceTableView : MonoBehaviour
 		maxBetText.text = MaxBet.ToString();
 		betSlider.maxValue = MaxBet;
 	}
+
+	public void DiceCombinationsToggle()
+	{
+		if (Mathf.Approximately(diceCombinationsTransform.localScale.z, 1))
+		{
+			diceCombinationsTransform.DOScaleZ(0, animDuration)
+				.OnComplete(() => diceCombinationsTransform.gameObject.SetActive(false));
+		} else if (diceCombinationsTransform.localScale.z == 0)
+		{
+			diceCombinationsTransform.gameObject.SetActive(true);
+			diceCombinationsTransform.DOScaleZ(1, animDuration);
+		}
+	}
+
+
 }

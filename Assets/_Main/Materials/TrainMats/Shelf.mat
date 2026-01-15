@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Shelf
-  m_Shader: {fileID: -6465566751694194690, guid: b2c58a39b59af42b081d22622f1969e6, type: 3}
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -30,7 +30,8 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -50,7 +51,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BC_rgb_smoothness_a:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 49903d2ea43a6d2499207cd3be163261, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BC_rgb_transparency_a:
@@ -165,7 +166,7 @@ Material:
     - _SrcBlendAlpha: 1
     - _StrokeBlendingNoiseScale: 500
     - _StrokeBlendingNoiseStrength: 0.022
-    - _StrokeRandomness: 1
+    - _StrokeRandomness: 0.16
     - _StrokeScale: 5
     - _Surface: 0
     - _Transparency: 1
@@ -178,11 +179,11 @@ Material:
     m_Colors:
     - Color_2E5415DE: {r: 1, g: 1, b: 1, a: 0}
     - Vector2_8044833E: {r: 1, g: 1, b: 0, a: 0}
-    - _BaseColor: {r: 0.49366003, g: 0.16672862, b: 0.14283103, a: 1}
-    - _Color: {r: 0.49366003, g: 0.16672859, b: 0.142831, a: 1}
+    - _BaseColor: {r: 0.41509432, g: 0.1194375, b: 0.1291843, a: 1}
+    - _Color: {r: 0.4150943, g: 0.11943745, b: 0.12918428, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _VariationColorA: {r: 1, g: 0, b: 0.0568218, a: 0}
-    - _VariationColorB: {r: 1, g: 0.83413947, b: 0, a: 0}
+    - _VariationColorA: {r: 0, g: 0, b: 0, a: 0}
+    - _VariationColorB: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

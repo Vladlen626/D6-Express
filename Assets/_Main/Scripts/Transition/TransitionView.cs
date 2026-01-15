@@ -27,16 +27,16 @@ public class UITransitionView : UIBaseElement
     {
         Show();
 
-        var upperMove = upper.DOAnchorPosY(0f, duration).SetEase(curve).ToUniTask();
-        var bottomMove = bottom.DOAnchorPosY(0f, duration).SetEase(curve).ToUniTask();
+        var upperMove = upper.DOAnchorPosY(0f, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
+        var bottomMove = bottom.DOAnchorPosY(0f, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
 
         await UniTask.WhenAll(upperMove, bottomMove);
     }
 
     public async Task HideAsync(float duration)
     {
-        var upperMove = upper.DOAnchorPosY(initialUpperY, duration).SetEase(curve).ToUniTask();
-        var bottomMove = bottom.DOAnchorPosY(initialBottomY, duration).SetEase(curve).ToUniTask();
+        var upperMove = upper.DOAnchorPosY(initialUpperY, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
+        var bottomMove = bottom.DOAnchorPosY(initialBottomY, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
 
         await UniTask.WhenAll(upperMove, bottomMove);
 
