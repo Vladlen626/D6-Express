@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using PlatformCore.Services.Factory;
 using UnityEngine;
 
@@ -20,14 +21,15 @@ public class NpcSpawner
         this.runModel = runModel;
         trainSpawnPoints = spawnPoints.Where(x => x.levelState == LevelState.TRAIN);
         stationSpawnPoints = spawnPoints.Where(x => x.levelState == LevelState.STATION);
-
-        runModel.StateChanged += Respawn;
-        runModel.LevelModel.TickChanged += Respawn;
-
-        Respawn();
     }
 
-    private async void Spawn()
+    public async Task Respawn()
+    {
+        DestroySpawned();
+        await Spawn();
+    }
+
+    private async Task Spawn()
     {
         var notUsedPoints = runModel.LevelState == LevelState.STATION ? stationSpawnPoints.ToList() : trainSpawnPoints.ToList();
 
@@ -71,11 +73,5 @@ public class NpcSpawner
         }
 
         npcList.Clear();
-    }
-
-    private void Respawn()
-    {
-        DestroySpawned();
-        Spawn();
     }
 }

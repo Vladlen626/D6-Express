@@ -13,7 +13,7 @@ public class ShopViewController : IBaseController, IActivatable
     private readonly IObjectFactory objectFactory;
     private readonly Interactor interactor;
     private readonly CharacterView shopkeeper;
-    private readonly List<TradeItemView> items = new();
+    private readonly List<(TradeItem item, TradeItemView view)> items = new();
 
     public ShopViewController(Shop shop, ShopView shopView, IObjectFactory objectFactory, Interactor interactor, CharacterView shopkeeper)
     {
@@ -50,21 +50,25 @@ public class ShopViewController : IBaseController, IActivatable
 
         shopView.Slots[index].SetPrice(tradeItem.Price.ToString());
 
-        items.Add(tradeItemView);
+        items.Add((tradeItem, tradeItemView));
     }
 
     private void OnBuyed(TradeItemView tradeItemView)
     {
-        var viewIndex = items.IndexOf(tradeItemView);
-        shop.TradeItems[viewIndex].Buy();
+        var item = items.Find(x => x.view == tradeItemView).item;
+        item.Buy();
     }
 
     private void OnTradeItemRemoved(int index, TradeItem tradeItem)
     {
-        var tradeItemView = items[index];
+        var tradeItemViewIndex = items.FindIndex(x => x.item == tradeItem);
+        var tradeItemView = items[tradeItemViewIndex].view;
+
         tradeItemView.Buyed -= OnBuyed;
 
-        shopView.Slots[index].SetPrice("x");
+        shopView.Slots[tradeItemViewIndex].SetPrice("x");
+
+        items.RemoveAt(tradeItemViewIndex);
 
         tradeItemView.gameObject.SetActive(false);
         Object.Destroy(tradeItemView.gameObject);

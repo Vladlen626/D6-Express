@@ -1,4 +1,5 @@
 using System;
+using PlatformCore.Core;
 
 public class LevelModel
 {
@@ -11,6 +12,7 @@ public class LevelModel
 	public bool IsLevelFinished { get; private set; }
 	public float TickRatio => Tick / (float)Ticks;
 	public bool IsFinalDay => Day + 1 >= Days;
+
 	public event Action TickChanged;
 	public event Action DayChanged;
 	public event Action OnFinalDay;
@@ -25,8 +27,8 @@ public class LevelModel
 		Ticks = levelData.ticks;
 		CashGoal = levelData.cashGoal;
 
-		TicketPrice = ticketPrice; 
-		
+		TicketPrice = ticketPrice;
+
 		IsLevelFinished = false;
 	}
 
