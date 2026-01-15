@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using PlatformCore.Core;
 
 public class Shop
 {
     private const int SLOTS = 3;
 
-    private readonly RunModel runModel;
     private readonly InventoryModel inventoryModel;
     private readonly IReadOnlyDictionary<string, DiceConfig> dicesConfigs;
     private readonly ShopConfig config;
@@ -18,16 +19,14 @@ public class Shop
     public event Action<int, TradeItem> ItemRemoved;
     public event Action BuyFailed;
 
-    public Shop(RunModel runModel, InventoryModel inventoryModel, IReadOnlyDictionary<string, DiceConfig> dicesConfigs, ShopConfig config)
+    public Shop(InventoryModel inventoryModel, IReadOnlyDictionary<string, DiceConfig> dicesConfigs, ShopConfig config)
     {
-        runModel.StateChanged += OnStateChanged;
-        this.runModel = runModel;
         this.inventoryModel = inventoryModel;
         this.dicesConfigs = dicesConfigs;
         this.config = config;
     }
 
-    public void Update()
+    public async Task Restock()
     {
         for (int i = 0; i < tradeItems.Count; i++)
         {
@@ -50,14 +49,6 @@ public class Shop
             tradeItems.Add(tradeItem);
 
             ItemAdded?.Invoke(i, tradeItem);
-        }
-    }
-
-    private void OnStateChanged()
-    {
-        if (runModel.LevelState == LevelState.STATION)
-        {
-            Update();
         }
     }
 
