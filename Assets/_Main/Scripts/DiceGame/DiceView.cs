@@ -249,7 +249,7 @@ namespace _Main.Scripts.Dice
 				.Join(transform.DORotate(new Vector3(0f, Random.Range(0f, 360f), 0f), moveDownTime, RotateMode.FastBeyond360)
 					.SetEase(Ease.Linear));
 
-			await seq.ToUniTask();
+			await seq.AsyncWaitForCompletion().AsUniTask();;
 		}
 	}
 }

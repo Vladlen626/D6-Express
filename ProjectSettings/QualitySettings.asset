@@ -60,6 +60,9 @@ QualitySettings:
     terrainMaxTrees: 50
     excludedTargetPlatforms:
     - Standalone
+    - Android
+    - WebGL
+    - Windows Store Apps
   - serializedVersion: 5
     name: PC
     pixelLightCount: 2
@@ -99,7 +102,7 @@ QualitySettings:
     streamingMipmapsMaxFileIORequests: 1024
     particleRaycastBudget: 256
     asyncUploadTimeSlice: 2
-    asyncUploadBufferSize: 16
+    asyncUploadBufferSize: 24
     asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
     customRenderPipeline: {fileID: 11400000, guid: 4b83569d67af61e458304325a23e5dfd, type: 2}
@@ -113,11 +116,10 @@ QualitySettings:
     terrainFadeLength: 5
     terrainMaxTrees: 50
     excludedTargetPlatforms:
-    - Android
     - iPhone
   m_TextureMipmapLimitGroupNames: []
   m_PerPlatformDefaultQuality:
-    Android: 0
+    Android: 1
     GameCoreScarlett: 1
     GameCoreXboxOne: 1
     Lumin: 0
@@ -127,8 +129,8 @@ QualitySettings:
     Server: 0
     Stadia: 0
     Standalone: 1
-    WebGL: 0
-    Windows Store Apps: 0
+    WebGL: 1
+    Windows Store Apps: 1
     XboxOne: 0
     iPhone: 0
     tvOS: 0

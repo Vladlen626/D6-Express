@@ -27,16 +27,16 @@ public class UISleepView : UIBaseElement
 
     public UniTask CloseEyes()
     {
-        var upperMove = upper.DOAnchorPosY(0f, duration).SetEase(curve).ToUniTask();
-        var bottomMove = bottom.DOAnchorPosY(0f, duration).SetEase(curve).ToUniTask();
+        var upperMove = upper.DOAnchorPosY(0f, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
+        var bottomMove = bottom.DOAnchorPosY(0f, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
 
         return UniTask.WhenAll(upperMove, bottomMove);
     }
 
     public UniTask OpenEyes()
     {
-        var upperMove = upper.DOAnchorPosY(initialUpperY, duration).SetEase(curve).ToUniTask();
-        var bottomMove = bottom.DOAnchorPosY(initialBottomY, duration).SetEase(curve).ToUniTask();
+        var upperMove = upper.DOAnchorPosY(initialUpperY, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
+        var bottomMove = bottom.DOAnchorPosY(initialBottomY, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
 
         return UniTask.WhenAll(upperMove, bottomMove);
     }

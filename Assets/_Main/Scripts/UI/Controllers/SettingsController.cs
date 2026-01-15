@@ -12,6 +12,8 @@ namespace _Main.Scripts.UI
 		private readonly ICursorService cursorService;
 		private readonly IInputService inputService;
 
+		private bool isCursorLocked;
+
 		public SettingsController(IUIService uiService, IAudioService audioService, ICursorService cursorService,
 			IInputService inputService) : base(uiService)
 		{
@@ -58,6 +60,8 @@ namespace _Main.Scripts.UI
 
 		private void ShowContext()
 		{
+			isCursorLocked = cursorService.IsCursorLocked;
+			
 			_context.Show();
 			inputService.DisablePlayerInputs();
 			cursorService.UnlockCursor();
@@ -67,7 +71,15 @@ namespace _Main.Scripts.UI
 		{
 			_context.Hide();
 			inputService.EnablePlayerInputs();
-			cursorService.LockCursor();
+				
+			if (isCursorLocked)
+			{
+				cursorService.LockCursor();
+			}
+			else
+			{
+				cursorService.UnlockCursor();
+			}
 		}
 
 		private void OnMasterChangedHandler(float obj)

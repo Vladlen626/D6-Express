@@ -57,6 +57,7 @@ public class LoseViewController : BaseContextController<UILoseView>
 	{
 		if (!result)
 		{
+#if UNITY_EDITOR
 			if (DebugVariables.ShowLoseView)
 			{
 				ShowContext();
@@ -65,6 +66,9 @@ public class LoseViewController : BaseContextController<UILoseView>
 			{
 				runModel.SetLevelState(LevelState.STATION);
 			}
+#else
+			runModel.SetLevelState(LevelState.STATION);
+#endif
 		}
 	}
 

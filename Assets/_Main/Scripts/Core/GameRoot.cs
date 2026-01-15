@@ -3,6 +3,7 @@ using _Main.Scripts.Core.Services;
 using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
+using FMODUnity;
 using PlatformCore.Core;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
@@ -61,10 +62,10 @@ namespace _Main.Scripts.Core
 			var transitionService = _serviceLocator.Get<TransitionService>();
 
 			cursorService.UnlockCursor();
+			await UniTask.WaitUntil(() => RuntimeManager.IsInitialized);
 			// Controllers list
 			var controllersList = new List<IBaseController>();
 			// --------------
-
 
 			var playerModel = await PlayerFactory.CreatePlayerModel(configService);
 			var runModel = await RunFactory.CreateRunModel(configService);
@@ -110,7 +111,11 @@ namespace _Main.Scripts.Core
 
 			var sceneContext = context as SceneContext;
 
-			var state = DebugVariables.StartSpawnLocation;
+#if UNITY_EDITOR
+				var state = DebugVariables.StartSpawnLocation;
+#else
+				var state = LevelState.STATION;
+#endif
 
 			//NPC
 			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, runModel, sceneContext.SpawnPoints);
