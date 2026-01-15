@@ -21,7 +21,6 @@ public class TransitionController : IBaseController
         this.playerView = playerView;
         this.sceneContext = sceneContext;
         this.audioService = audioService;
-        runModel.LevelModel.TickChanged += OnTickChanged;
         this.npcSpawner = npcSpawner;
         this.shop = shop;
         this.transitionService = transitionService;
@@ -30,6 +29,7 @@ public class TransitionController : IBaseController
     public void StartObserving()
     {
         runModel.StateChanged += OnStateTransition;
+        runModel.LevelModel.TickChanged += OnTickChanged;
     }
 
     public async Task StartLocationTransition()
