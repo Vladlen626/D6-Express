@@ -5,7 +5,7 @@ namespace _Main.Scripts.UI
 {
 	public static class UIUtils
 	{
-		public static void UpdateUiIntValueText(TextMeshPro tmp, int from, int to, System.Func<int, string> formatter)
+		public static void UpdateUiIntValueText(TMP_Text tmp, int from, int to, System.Func<int, string> formatter)
 		{
 			int value = from;
 

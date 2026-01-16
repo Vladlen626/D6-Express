@@ -1,9 +1,44 @@
 fileFormatVersion: 2
-guid: b8a2100cf025ad842b4832308b671f2e
+guid: 628c67ceeb51779498fc53f64803e080
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass
+    second: {fileID: 2100000, guid: 3276cf79406ba034ebcd46e92e790287, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u041A\u043E\u0440\u043F\u0443\u0441 \u0432\u0430\u0433\u043E\u043D\u0430"
+    second: {fileID: 2100000, guid: 586f7dc675b23fe49aba634f707f36f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u041C\u0435\u0442\u0430\u043B\u043B"
+    second: {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u041F\u043B\u0430\u0441\u0442\u0438\u043A"
+    second: {fileID: 2100000, guid: 0bda58e3cf9a469438d518fbb92e5fa3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u041F\u043E\u0440\u0443\u0447\u043D\u0438"
+    second: {fileID: 2100000, guid: 8f20414998ac6f84daff77d1c527df10, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u0420\u0435\u0437\u0438\u043D\u0430"
+    second: {fileID: 2100000, guid: 23d3867bf281ee44dacef7b8b4b3cb8a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u043F\u043E\u043B"
+    second: {fileID: 2100000, guid: 1a8906db3fd5a2f4183781f2b7f8d392, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -50,7 +85,7 @@ ModelImporter:
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
-    bakeAxisConversion: 1
+    bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4
