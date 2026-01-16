@@ -27,10 +27,7 @@ public class LightController : IBaseController, IActivatable
     private void OnTickChanged()
     {
         // todo: в конфиг 
-        //var lightNeeded = levelModel.TickRatio >= 0.5f;
-        
-        // todo 2: ну кароч надо так.....
-        var lightNeeded = true;
+        var lightNeeded = levelModel.TickRatio >= 0.5f;
 
         foreach (var item in lightViews)
         {
