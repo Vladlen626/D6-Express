@@ -4,7 +4,7 @@
     "levels": [
       {
         "id": "default",
-        "days": 1,
+        "days": 2,
         "ticks_per_day": 2,
         "cash_goal": 1000
       },
@@ -12,13 +12,13 @@
         "id": "default",
         "days": 2,
         "ticks_per_day": 2,
-        "cash_goal": 2000
+        "cash_goal": 1500
       },
       {
         "id": "default",
         "days": 3,
         "ticks_per_day": 2,
-        "cash_goal": 3000
+        "cash_goal": 2000
       }
     ]
   }
