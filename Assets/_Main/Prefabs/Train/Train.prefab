@@ -443,6 +443,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainSection (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 2497387111768772395, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: blockInteract
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6702504551725090239, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.86
@@ -482,6 +486,10 @@ PrefabInstance:
     - target: {fileID: 6702504551725090239, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8872519827554604805, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: blockInteract
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

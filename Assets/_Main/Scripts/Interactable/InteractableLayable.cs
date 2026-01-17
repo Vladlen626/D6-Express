@@ -13,7 +13,7 @@ public class InteractableLayable : Interactable
 
     public override bool CanInteract(Interactor interactor)
     {
-        return !occupied;
+        return base.CanInteract(interactor) && !occupied;
     }
 
     public override void StartInteract(Interactor interactor)

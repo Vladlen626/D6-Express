@@ -24,7 +24,7 @@ public class InteractableSpeakable : Interactable
         currentId = id;
     }
 
-    public override bool CanInteract(Interactor interactor) => currentId != -1;
+    public override bool CanInteract(Interactor interactor) => base.CanInteract(interactor) && currentId != -1;
 
     public override async void StartInteract(Interactor interactor)
     {

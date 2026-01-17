@@ -2,6 +2,9 @@ using UnityEngine;
 
 public abstract class Interactable : MonoBehaviour, IInteractable
 {
+    [SerializeField]
+    private bool blockInteract;
+
     private void Awake()
     {
         // TODO: не юзать стринг
@@ -9,7 +12,12 @@ public abstract class Interactable : MonoBehaviour, IInteractable
     }
 
     public abstract InteractionType Type { get; }
-    public abstract bool CanInteract(Interactor interactor);
+
+    public virtual bool CanInteract(Interactor interactor)
+    {
+        return !blockInteract;
+    }
+
     public abstract void StartInteract(Interactor interactor);
     public abstract void StopInteract(Interactor interactor);
 }

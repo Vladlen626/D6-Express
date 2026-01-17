@@ -9,11 +9,6 @@ public class InteractableDiceGame : Interactable
 
 	public Transform SitTfm => sitTfm;
 
-	public override bool CanInteract(Interactor interactor)
-	{
-		return true;
-	}
-
 	public override void StartInteract(Interactor interactor)
 	{
 	}
