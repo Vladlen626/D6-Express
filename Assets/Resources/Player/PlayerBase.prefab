@@ -626,6 +626,7 @@ MonoBehaviour:
   - rid: 704733269922676815
   - rid: 704733269922676816
   - rid: 704733269922676817
+  - rid: 704733425137090638
   interactionDistance: 3
   interactableLayerMask:
     serializedVersion: 2
@@ -651,6 +652,9 @@ MonoBehaviour:
       data: 
     - rid: 704733269922676817
       type: {class: InteractionActionTrade, ns: , asm: Assembly-CSharp}
+      data: 
+    - rid: 704733425137090638
+      type: {class: InteractionActionRestock, ns: , asm: Assembly-CSharp}
       data: 
 --- !u!114 &7107346300069552847
 MonoBehaviour:

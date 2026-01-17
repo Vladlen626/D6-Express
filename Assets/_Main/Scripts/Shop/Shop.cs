@@ -17,13 +17,37 @@ public class Shop
 
     public event Action<int, TradeItem> ItemAdded;
     public event Action<int, TradeItem> ItemRemoved;
+
+    public event Action<TradeItem> BuyCompleted;
     public event Action BuyFailed;
+
+    public event Action RestockFailed;
 
     public Shop(InventoryModel inventoryModel, IReadOnlyDictionary<string, DiceConfig> dicesConfigs, ShopConfig config)
     {
         this.inventoryModel = inventoryModel;
         this.dicesConfigs = dicesConfigs;
         this.config = config;
+    }
+
+    public bool CanRestock()
+    {
+        return inventoryModel.CashCount >= config.restock_price;
+    }
+
+    public async Task<bool> TryRestockForPrice()
+    {
+        if (CanRestock())
+        {
+            inventoryModel.TakeCash(config.restock_price);
+            await Restock();
+            return true;
+        }
+        else
+        {
+            RestockFailed?.Invoke();
+            return false;
+        }
     }
 
     public async Task Restock()
@@ -65,6 +89,8 @@ public class Shop
             var index = tradeItems.IndexOf(tradeItem);
             tradeItems.RemoveAt(index);
             ItemRemoved?.Invoke(index, tradeItem);
+
+            BuyCompleted?.Invoke(tradeItem);
         }
         else
         {

@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 270164968547467888}
   - component: {fileID: 6127046550786192864}
   - component: {fileID: 4039852929644235979}
+  - component: {fileID: 9181810231363598131}
+  - component: {fileID: 6250706095244838997}
   m_Layer: 6
   m_Name: TradeItem
   m_TagString: Untagged
@@ -49,6 +51,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TradeItem
   rotationDuration: 2
   amplitude: 0.25
+  transitionDuration: 1
+  ease: 27
 --- !u!114 &270164968547467888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95,3 +99,37 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!95 &9181810231363598131
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6603505557557184873}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 35b12f0e6a9769e4980d0e1cf3b3a7be, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6250706095244838997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6603505557557184873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b2cd5bf99bfbe64187110a07bf34b5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimatorSignalBridge

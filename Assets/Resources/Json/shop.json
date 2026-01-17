@@ -1,4 +1,5 @@
 {
+    "restock_price": 100,
     "items": [
         {
             "itemId": "default"

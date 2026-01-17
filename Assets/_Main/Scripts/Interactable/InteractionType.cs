@@ -5,5 +5,6 @@ public enum InteractionType
     PLAY_DICE,
     SLEEP,
     TRADE,
-    SPEAK
+    SPEAK,
+    RESTOCK
 }
