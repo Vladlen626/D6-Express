@@ -15,56 +15,35 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
-
-		private readonly DiceTableView tableView;
-		private readonly DicePoolLogic dicePool;
 		private TableModel tableModel => diceGameModel.tableModel;
-		
-		public DicePoolLogic DicePoolLogic => dicePool;
 
 		public bool IsProcessing { get; private set; }
 		public DiceGameProcessController(
-			DiceTableView tableView,
 			ILoggerService logger,
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
 			IAudioService audioService)
 		{
-			this.tableView = tableView;
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
 			this.audioService = audioService;
-
-			dicePool = new DicePoolLogic(diceGameModel);
 		}
 
 		public void Activate()
 		{
 			logger?.Log("[DiceGameController] Activating...");
 
-			tableView.OnRollClicked += HandleRoll;
-			tableView.OnPassClicked += HandlePass;
-
-			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
-			{
-				diceModel.OnDiceChosenChanged += UpdateUI;
-			}
-			
-			UpdateUI();
+			diceGameModel.OnRollClicked += HandleRoll;
+			diceGameModel.OnPassClicked += HandlePass;
 		}
 
 		public void Deactivate()
 		{
 			logger?.Log("[DiceGameController] Deactivating...");
 
-			tableView.OnRollClicked -= HandleRoll;
-			tableView.OnPassClicked -= HandlePass;
-
-			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
-			{
-				diceModel.OnDiceChosenChanged -= UpdateUI;
-			}
+			diceGameModel.OnRollClicked -= HandleRoll;
+			diceGameModel.OnPassClicked -= HandlePass;
 		}
 
 		// === ОБРАБОТЧИКИ КНОПОК ===
@@ -88,9 +67,8 @@ namespace _Main.Scripts.Dice
 			{
 				logger?.Log("[DiceGameController] Handle roll");
 
-				DisableButtons();
+				diceGameModel.tableModel.DisableButtons();
 
-				await cameraShakeService.ShakeAsync(tableView.TableCamera,0.3f, 0.05f);
 				if (tableModel.isFirstRoll)
 				{
 					tableModel.isFirstRoll = false;
@@ -121,9 +99,7 @@ namespace _Main.Scripts.Dice
 				await UniTask.WhenAll(tasks);
 				audioService.PlaySound(SoundNames.DiceDrop);
 
-				await cameraShakeService.ShakeAsync(tableView.TableCamera,0.5f, 0.05f);
 				await UniTask.Delay(GlobalParameters.Delay/2);
-			
 
 				if (IsBoost())
 				{
@@ -134,7 +110,7 @@ namespace _Main.Scripts.Dice
 			}
 			finally
 			{
-				diceGameModel.SendRollEnded();
+				diceGameModel.RollEnded();
 				IsProcessing = false;
 			}
 		}
@@ -174,13 +150,13 @@ namespace _Main.Scripts.Dice
 
 			try
 			{
-				DisableButtons();
+				diceGameModel.tableModel.DisableButtons();
 				await TrySaveSelected();
 				EndTurn(true);
 			}
 			finally
 			{
-				diceGameModel.SendPassEnded();
+				diceGameModel.PassEnded();
 				IsProcessing = false;
 			}
 		}
@@ -188,27 +164,8 @@ namespace _Main.Scripts.Dice
 		// ReSharper disable Unity.PerformanceAnalysis
 		public void EndTurn(bool success)
 		{
-			diceGameModel.HideAllDiceGameModels();
-			if (success)
-			{
-				if (diceGameModel.IsPlayerTurn)
-				{
-					tableModel.AddBankedPointsForPlayer(tableModel.TurnPoints);
-				}
-				else
-				{
-					tableModel.AddBankedPointsForEnemy(tableModel.TurnPoints);
-				}
-			}
-
+			diceGameModel.EndTurn(success);
 			audioService.PlaySound(SoundNames.TurnChange);
-			diceGameModel.IncreaseCurrentTurn();
-			tableModel.ResetTurn();
-			diceGameModel.ResetAll();
-			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
-			{
-				diceGameModel.ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
-			}
 			UpdateUI();
 		}
 
@@ -268,7 +225,7 @@ namespace _Main.Scripts.Dice
 			await UniTaskUtils.WaitAllTweens(tweens.ToArray());
 		}
 
-		public void UpdateUI()
+		private void UpdateUI()
 		{
 			if (tableModel.isFirstRoll)
 			{
@@ -279,29 +236,7 @@ namespace _Main.Scripts.Dice
 				diceGameModel.ShowAllDiceGameModels();
 			}
 
-			var selectedDice = diceGameModel.GetSelected();
-			var selectedValues = new int[selectedDice.Length];
-			for (int i = 0; i < selectedDice.Length; i++)
-			{
-				selectedValues[i] = selectedDice[i].CurrentValue;
-			}
-
-			int scorePreview = DiceGameUtils.CalculateScore(selectedValues);
-			bool hasValidComboSelected = scorePreview > 0;
-			bool canPass = hasValidComboSelected || (tableModel.TurnPoints > 0 && selectedDice.Length == 0);
-			bool canRoll = tableModel.isFirstRoll || hasValidComboSelected;
-
-			int previewPoints = hasValidComboSelected ? scorePreview : 0;
-			tableModel.SetPreviewPoints(previewPoints);
-
-			tableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);
-			tableView.SetButtonInteractable("Pass", canPass && diceGameModel.IsPlayerTurn);
-		}
-
-		public void DisableButtons()
-		{
-			tableView.SetButtonInteractable("Roll", false);
-			tableView.SetButtonInteractable("Pass", false);
+			diceGameModel.tableModel.SendUpdateUI();
 		}
 	}
 }

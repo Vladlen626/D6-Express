@@ -1,21 +1,57 @@
-﻿using PlatformCore.Core;
+﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 
 namespace _Main.Scripts.Dice
 {
-	public class ModifiersController : IBaseController, IActivatable
+	public interface IOnRollAction
+	{
+		UniTask OnRoll(DiceGameModel diceGameModel);
+	}
+	
+	public interface IOnPassAction
+	{
+		UniTask OnPass(DiceGameModel diceGameModel);
+	}
+	
+	public class ModifiersModel
 	{
 		private readonly DiceGameModel diceGameModel;
-		private readonly TableModel tableModel;
+		
+		private List<IOnRollAction> onRollActionsHandler;
+		private List<IOnPassAction> onPassActionsHandler;
 
-		public void Activate()
+		public void AddRollAction(IOnRollAction onRollAction)
 		{
-			throw new System.NotImplementedException();
+			onRollActionsHandler.Add(onRollAction);
 		}
 
-		public void Deactivate()
+		public void AddPassAction(IOnPassAction onPassAction)
 		{
-			throw new System.NotImplementedException();
+			onPassActionsHandler.Add(onPassAction);
+		}
+
+		public async UniTask PlayRollActions()
+		{
+			foreach (var onRollAction in onRollActionsHandler)
+			{
+				await onRollAction.OnRoll(diceGameModel);
+			}
+		}
+
+		public async UniTask PlayPassActions()
+		{
+			foreach (var onPassAction in onPassActionsHandler)
+			{
+				await onPassAction.OnPass(diceGameModel);
+			}
+		}
+
+		public void Reset()
+		{
+			onRollActionsHandler.Clear();
+			onPassActionsHandler.Clear();
 		}
 	}
 }

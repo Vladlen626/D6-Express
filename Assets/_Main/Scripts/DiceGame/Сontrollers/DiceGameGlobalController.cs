@@ -122,14 +122,14 @@ namespace _Main.Scripts.Dice
 			await BetProcess();
 			await SetupEnemyDiceList();
 
-			var processController = new DiceGameProcessController(sceneContext.DiceGameTableView,
+			var processController = new DiceGameProcessController(
 				loggerService, diceGameModel, cameraShakeService, audioService);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
 				processController,
 				new EnemyTurnController(processController, diceGameModel),
-				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel),
+				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService),
 				new DiceGameResultController(diceGameModel)
 			});
 

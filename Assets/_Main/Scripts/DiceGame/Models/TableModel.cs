@@ -6,6 +6,8 @@ namespace _Main.Scripts.Dice
 {
 	public class TableModel
 	{
+		public event Action OnUpdateUI;
+		public event Action OnDisableButtons;
 		public event Action<int, int> OnPlayerBankedPointsChanged;
 		public event Action<int, int> OnEnemyBankedPointsChanged;
 		public event Action<int, int> OnTurnPointsChanged;
@@ -13,7 +15,6 @@ namespace _Main.Scripts.Dice
 		public int TurnPoints { get; private set; }
 		public int PreviewPoints { get; private set; }
 		public int PlayerBankedPoints { get; private set; }
-		
 		public int EnemyBankedPoints {get; private set;}
 
 		public bool isFirstRoll { get; set; } = true;
@@ -125,6 +126,16 @@ namespace _Main.Scripts.Dice
 		public void AddTurnPoints(int points)
 		{
 			SetTurnPoints(TurnPoints + points);
+		}
+
+		public void SendUpdateUI()
+		{
+			OnUpdateUI?.Invoke();
+		}
+
+		public void DisableButtons()
+		{
+			OnDisableButtons?.Invoke();
 		}
 
 		public void ResetTurn()

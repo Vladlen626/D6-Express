@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 
 namespace _Main.Scripts.Dice
 {
 	public class DiceGameModel
 	{
+		public event Action<bool> OnEndTurn;
 		public event Action ScreenDiceDictChanged;
 		public event Action OnGameConditionPassed;
 		public event Action OnGameConditionFailed;
@@ -13,10 +15,11 @@ namespace _Main.Scripts.Dice
 		public event Action<int, int> OnTargetPointsChanged;
 		public event Action<int, int> OnCurrentTurnChanged;
 		public event Action OnDiceGameStateChanged;
-		public event Action OnRoll;
-		public event Action OnPass;
+		public event Action OnRollClicked;
+		public event Action OnPassClicked;
 		
 		public TableModel tableModel;
+		public ModifiersModel ModifiersModel;
 		
 		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
 		
@@ -35,6 +38,11 @@ namespace _Main.Scripts.Dice
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
 
+		public DiceGameModel()
+		{
+			ModifiersModel = new ModifiersModel();
+		}
+		
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
 		{
 			this.tableModel = tableModel;
@@ -139,14 +147,51 @@ namespace _Main.Scripts.Dice
 			ScreenDiceDictChanged?.Invoke();
 		}
 
-		public void SendRollEnded()
+		public void SendRollClicked()
 		{
-			OnRoll?.Invoke();
+			OnRollClicked?.Invoke();
 		}
 
-		public void SendPassEnded()
+		public void SendPassClicked()
 		{
-			OnPass?.Invoke();
+			OnPassClicked?.Invoke();
+		}
+
+		public void RollEnded()
+		{
+			tableModel.SendUpdateUI();
+			ModifiersModel.PlayRollActions().Forget();
+		}
+
+		public void PassEnded()
+		{
+			tableModel.SendUpdateUI();
+			ModifiersModel.PlayPassActions().Forget();
+		}
+
+		public void EndTurn(bool success)
+		{
+			OnEndTurn?.Invoke(success);
+			HideAllDiceGameModels();
+			if (success)
+			{
+				if (IsPlayerTurn)
+				{
+					tableModel.AddBankedPointsForPlayer(tableModel.TurnPoints);
+				}
+				else
+				{
+					tableModel.AddBankedPointsForEnemy(tableModel.TurnPoints);
+				}
+			}
+
+			IncreaseCurrentTurn();
+			tableModel.ResetTurn();
+			ResetAll();
+			foreach (var diceModel in CurrentDiceModelList)
+			{
+				ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
+			}
 		}
 		
 		public DiceModel[] GetSelected()
