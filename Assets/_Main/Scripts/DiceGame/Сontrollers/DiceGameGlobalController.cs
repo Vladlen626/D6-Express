@@ -301,7 +301,14 @@ namespace _Main.Scripts.Dice
 
 		private void ResetModels()
 		{
-			foreach (var model in diceGameModel.CurrentDiceModelList)
+			foreach (var model in diceGameModel.EnemyDiceModelList)
+			{
+				var dice = diceGameModel.ScreenDiceDict[model];
+				diceGameModel.RemoveDiceOnScreen(model);
+				objectFactory.Destroy(dice.gameObject);
+			}
+
+			foreach (var model in diceGameModel.PlayerDiceModelList)
 			{
 				var dice = diceGameModel.ScreenDiceDict[model];
 				diceGameModel.RemoveDiceOnScreen(model);

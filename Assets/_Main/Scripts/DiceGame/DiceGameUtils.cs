@@ -95,6 +95,74 @@ namespace _Main.Scripts.Dice
 
 			return totalScore > 0 ? totalScore : -1;
 		}
+		
+		public static string GetCombinationName(int[] values)
+		{
+			if (values == null || values.Length == 0)
+			{
+				return string.Empty;
+			}
+
+			var info = AnalyzeValues(values);
+
+			if (info.IsStraight_1_6)
+			{
+				return "One dice straight (1-6)";
+			}
+
+			if (info.IsStraight_1_5)
+			{
+				return "One dice straight (1-5)";
+			}
+
+			if (info.IsStraight_2_6)
+			{
+				return "One dice straight (2-6)";
+			}
+
+			for (int face = 1; face <= 6; face++)
+			{
+				if (info.TripleCounts[face] >= 3)
+				{
+					if (info.TripleCounts[face] == 3)
+					{
+						return "Three of a kind";
+					}
+
+					if (info.TripleCounts[face] == 4)
+					{
+						return "Four of a kind";
+					}
+
+					if (info.TripleCounts[face] >= 5)
+					{
+						return "Five of a kind";
+					}
+				}
+			}
+
+			if (info.SingleOnes > 0)
+			{
+				return "Single ones";
+			}
+
+			if (info.SingleFives > 0)
+			{
+				return "Single fives";
+			}
+
+			foreach (int face in new[] { 2, 3, 4, 6 })
+			{
+				int unused = info.Counts[face] - info.TripleCounts[face];
+				if (unused > 0)
+				{
+					return string.Empty;
+				}
+			}
+
+			return string.Empty;
+		}
+
 
 		/// <summary>
 		/// Есть ли в броске хоть одна очковая кость? (для BUST)

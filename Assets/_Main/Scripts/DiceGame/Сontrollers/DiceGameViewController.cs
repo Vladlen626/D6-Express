@@ -133,6 +133,15 @@ namespace _Main.Scripts.Dice
 			int previewPoints = hasValidComboSelected ? scorePreview : 0;
 			tableModel.SetPreviewPoints(previewPoints);
 
+			if (scorePreview == 0)
+			{
+				diceTableView.SetComboNameText(string.Empty);
+			}
+			else
+			{
+				diceTableView.SetComboNameText(DiceGameUtils.GetCombinationName(selectedValues));
+			}
+			
 			diceTableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);
 			diceTableView.SetButtonInteractable("Pass", canPass && diceGameModel.IsPlayerTurn);
 		}

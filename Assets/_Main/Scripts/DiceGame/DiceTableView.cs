@@ -1,5 +1,4 @@
 ﻿using System;
-using _Main.Scripts.Core;
 using _Main.Scripts.Game.Views;
 using _Main.Scripts.UI;
 using DG.Tweening;
@@ -32,8 +31,9 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI targetScoreText;
 	[SerializeField] private TextMeshProUGUI bankedScoreText;
 	[SerializeField] private TextMeshProUGUI enemyBankedScoreText;
-	[SerializeField] private TextMeshPro turnScoreText;
-	[SerializeField] private TextMeshPro previewScoreText;
+	[SerializeField] private TextMeshProUGUI comboNameText;
+	[SerializeField] private TextMeshProUGUI turnScoreText;
+	[SerializeField] private TextMeshProUGUI previewScoreText;
 
 	[Header("Buttons")]
 	[SerializeField] private ButtonView rollButton;
@@ -154,6 +154,11 @@ public class DiceTableView : MonoBehaviour
 	public void SetCurrentPointsText(int oldValue, int newValue)
 	{
 		UIUtils.UpdateUiIntValueText(turnScoreText, oldValue, newValue, v => v.ToString());
+	}
+
+	public void SetComboNameText(string id)
+	{
+		comboNameText.text = id;
 	}
 
 	public void SetPreviewPointsText(int oldValue, int newValue)

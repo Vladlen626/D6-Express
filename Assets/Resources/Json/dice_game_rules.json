@@ -1,8 +1,7 @@
 ﻿[
   {
     "id": "default",
-    "target_score": 1000,
-    "max_turn_count": 10,
+    "target_score": 2000,
     "min_bet_size": 10
   }
 ]
