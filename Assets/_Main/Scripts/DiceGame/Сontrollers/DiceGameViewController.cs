@@ -3,16 +3,15 @@ using PlatformCore.Infrastructure.Lifecycle;
 
 namespace _Main.Scripts.Dice
 {
-	public class DiceGameScoreViewController : IBaseController, IActivatable
+	public class DiceGameViewController : IBaseController, IActivatable
 	{
 		private readonly DiceGameModel diceGameModel;
-		private readonly TableModel tableModel;
 		private readonly DiceTableView diceTableView;
+		private TableModel tableModel => diceGameModel.tableModel;
 
-		public DiceGameScoreViewController(TableModel tableModel, DiceTableView diceTableView,
+		public DiceGameViewController(DiceTableView diceTableView,
 			DiceGameModel diceGameModel)
 		{
-			this.tableModel = tableModel;
 			this.diceTableView = diceTableView;
 			this.diceGameModel = diceGameModel;
 		}

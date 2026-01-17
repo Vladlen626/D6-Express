@@ -14,30 +14,6 @@ namespace _Main.Scripts.Core
 			return diceGameModel;
 		}
 
-		public static IBaseController[] GetDiceGameControllers(
-			SceneContext sceneContext,
-			ILoggerService logger,
-			DiceGameModel diceGameModel,
-			TableModel tableModel,
-			ICameraShakeService cameraShakeService)
-		{
-			var controllersList = new List<IBaseController>();
-
-			if (sceneContext.DiceGameTableView == null)
-			{
-				return controllersList.ToArray();
-			}
-
-			var diceGameControllers = new IBaseController[]
-			{
-				
-			};
-			
-			controllersList.AddRange(diceGameControllers);
-			
-			return controllersList.ToArray();
-		}
-
 		public static IBaseController[] GetDiceGameBetControllers(
 			SceneContext sceneContext,
 			DiceGameModel diceGameModel)

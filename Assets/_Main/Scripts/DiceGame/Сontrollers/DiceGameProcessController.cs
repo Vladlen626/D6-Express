@@ -15,23 +15,21 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
-		private readonly TableModel tableModel;
 
 		private readonly DiceTableView tableView;
 		private readonly DicePoolLogic dicePool;
+		private TableModel tableModel => diceGameModel.tableModel;
 		
 		public DicePoolLogic DicePoolLogic => dicePool;
 
 		public bool IsProcessing { get; private set; }
 		public DiceGameProcessController(
-			TableModel tableModel,
 			DiceTableView tableView,
 			ILoggerService logger,
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
 			IAudioService audioService)
 		{
-			this.tableModel = tableModel;
 			this.tableView = tableView;
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
@@ -107,12 +105,12 @@ namespace _Main.Scripts.Dice
 				if (isHotDice)
 				{
 					await ResetAllDiceToActiveAsync();
-					dicePool.ResetAll();
+					diceGameModel.ResetAll();
 				}
 
 				// Роллим актуальные кубы
 				var tasks = new List<UniTask>();
-				var diceToRoll = dicePool.GetUnbanked();
+				var diceToRoll = diceGameModel.GetUnbanked();
 				foreach (var dice in diceToRoll)
 				{
 					dice.Roll();
@@ -133,17 +131,17 @@ namespace _Main.Scripts.Dice
 					await UniTask.Delay(GlobalParameters.Delay);
 					EndTurn(false);
 				}
-				UpdateUI();
 			}
 			finally
 			{
+				diceGameModel.SendRollEnded();
 				IsProcessing = false;
 			}
 		}
 
 		private bool IsBoost()
 		{
-			var diceToRoll = dicePool.GetUnbanked();
+			var diceToRoll = diceGameModel.GetUnbanked();
 			if (DiceGameUtils.RollHasAnyScore(GetValues(diceToRoll)))
 			{
 				return false;
@@ -182,6 +180,7 @@ namespace _Main.Scripts.Dice
 			}
 			finally
 			{
+				diceGameModel.SendPassEnded();
 				IsProcessing = false;
 			}
 		}
@@ -205,7 +204,7 @@ namespace _Main.Scripts.Dice
 			audioService.PlaySound(SoundNames.TurnChange);
 			diceGameModel.IncreaseCurrentTurn();
 			tableModel.ResetTurn();
-			dicePool.ResetAll();
+			diceGameModel.ResetAll();
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				diceGameModel.ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
@@ -215,7 +214,7 @@ namespace _Main.Scripts.Dice
 
 		public async UniTask<bool> TrySaveSelected()
 		{
-			var selected = dicePool.GetSelected();
+			var selected = diceGameModel.GetSelected();
 			if (selected.Length == 0)
 			{
 				return false;
@@ -249,7 +248,7 @@ namespace _Main.Scripts.Dice
 
 			await UniTaskUtils.WaitAllTweens(tweenList.ToArray());
 
-			return dicePool.AllBanked();
+			return diceGameModel.AllBanked();
 		}
 
 		private async UniTask ResetAllDiceToActiveAsync()
@@ -280,7 +279,7 @@ namespace _Main.Scripts.Dice
 				diceGameModel.ShowAllDiceGameModels();
 			}
 
-			var selectedDice = dicePool.GetSelected();
+			var selectedDice = diceGameModel.GetSelected();
 			var selectedValues = new int[selectedDice.Length];
 			for (int i = 0; i < selectedDice.Length; i++)
 			{

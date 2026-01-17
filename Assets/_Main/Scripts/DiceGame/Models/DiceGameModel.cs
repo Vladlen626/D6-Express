@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace _Main.Scripts.Dice
 {
@@ -12,6 +13,17 @@ namespace _Main.Scripts.Dice
 		public event Action<int, int> OnTargetPointsChanged;
 		public event Action<int, int> OnCurrentTurnChanged;
 		public event Action OnDiceGameStateChanged;
+		public event Action OnRoll;
+		public event Action OnPass;
+		
+		public TableModel tableModel;
+		
+		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
+		
+		public readonly List<DiceModel> EnemyDiceModelList = new();
+		public readonly List<DiceModel> PlayerDiceModelList = new();
+		public IReadOnlyDictionary<DiceModel, DiceView> ScreenDiceDict => screenDiceDict;
+		public Dictionary<DiceModel, DiceView> screenDiceDict = new ();
 
 		public DiceGameState DiceGameState { get; private set; } = DiceGameState.DEFAULT;
 		public int BetSize { get; private set; }
@@ -22,14 +34,10 @@ namespace _Main.Scripts.Dice
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
-		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
-		public readonly List<DiceModel> EnemyDiceModelList = new();
-		public readonly List<DiceModel> PlayerDiceModelList = new();
-		public IReadOnlyDictionary<DiceModel, DiceView> ScreenDiceDict => screenDiceDict;
-		public Dictionary<DiceModel, DiceView> screenDiceDict = new ();
 
-		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize)
+		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
 		{
+			this.tableModel = tableModel;
 			SetMinBetSize(diceGameConfig.min_bet_size);
 			SetMaxBetSize(maxBetSize);
 			SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
@@ -131,8 +139,52 @@ namespace _Main.Scripts.Dice
 			ScreenDiceDictChanged?.Invoke();
 		}
 
+		public void SendRollEnded()
+		{
+			OnRoll?.Invoke();
+		}
+
+		public void SendPassEnded()
+		{
+			OnPass?.Invoke();
+		}
+		
+		public DiceModel[] GetSelected()
+		{
+			return CurrentDiceModelList.Where(d => d.IsChosen && !d.IsSaved).ToArray();
+		}
+
+		public DiceModel[] GetUnbanked()
+		{
+			return CurrentDiceModelList.Where(d => !d.IsSaved).ToArray();
+		}
+
+		public DiceModel[] GetBanked()
+		{
+			return CurrentDiceModelList.Where(d => d.IsSaved).ToArray();
+		}
+
+		public bool HasUnbanked()
+		{
+			return CurrentDiceModelList.Any(d => !d.IsSaved);
+		}
+
+		public bool AllBanked()
+		{
+			return CurrentDiceModelList.All(d => d.IsSaved);
+		}
+
+		public void ResetAll()
+		{
+			foreach (var dice in CurrentDiceModelList)
+			{
+				dice.Reset();
+			}
+		}
+
 		public void Reset()
 		{
+			tableModel.Reset();
 			CurrentDiceModelList.Clear();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;

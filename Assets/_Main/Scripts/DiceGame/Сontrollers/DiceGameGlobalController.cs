@@ -24,18 +24,20 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService configService;
 
 		private readonly SceneContext sceneContext;
-		private DicePositionsHandler dicePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
-		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
 		
 		private DiceView[] playerDiceViewsArray;
 		private DiceView[] enemyDiceViewsArray;
-		private TableModel tableModel;
 
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
 		private List<IBaseController> selectionControllers = new();
 
 		private bool gamePreviousStoped = false;
+		
+		private DicePositionsHandler dicePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
+		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
+		private TableModel tableModel => diceGameModel.tableModel;
+
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
 			ServiceLocator serviceLocator, LevelModel levelModel, ConfigService configService)
 		{
@@ -112,23 +114,23 @@ namespace _Main.Scripts.Dice
 
 			int maxBetSize = playerModel.InventoryModel.CashCount;
 			
-			diceGameModel.Setup(diceGameConfig, maxBetSize);
+			var newTableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
+			diceGameModel.Setup(diceGameConfig, maxBetSize, newTableModel);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
-			tableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 
 			await SelectionProcess();
 			await BetProcess();
 			await SetupEnemyDiceList();
 
-			var processController = new DiceGameProcessController(tableModel, sceneContext.DiceGameTableView,
+			var processController = new DiceGameProcessController(sceneContext.DiceGameTableView,
 				loggerService, diceGameModel, cameraShakeService, audioService);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
 				processController,
-				new EnemyTurnController(processController, diceGameModel, tableModel),
-				new DiceGameScoreViewController(tableModel, sceneContext.DiceGameTableView, diceGameModel),
-				new DiceGameResultController(diceGameModel, tableModel)
+				new EnemyTurnController(processController, diceGameModel),
+				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel),
+				new DiceGameResultController(diceGameModel)
 			});
 
 			foreach (var controller in gameControllers)
@@ -307,7 +309,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			diceGameModel.Reset();
-			tableModel.Reset();
 		}
 	}
 }
