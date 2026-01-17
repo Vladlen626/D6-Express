@@ -1,24 +1,12 @@
 ﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using PlatformCore.Core;
-using PlatformCore.Infrastructure.Lifecycle;
 
 namespace _Main.Scripts.Dice
 {
-	public interface IOnRollAction
-	{
-		UniTask OnRoll(DiceGameModel diceGameModel);
-	}
-	
-	public interface IOnPassAction
-	{
-		UniTask OnPass(DiceGameModel diceGameModel);
-	}
-	
 	public class ModifiersModel
 	{
 		private readonly DiceGameModel diceGameModel;
-		
+
 		private List<IOnRollAction> onRollActionsHandler;
 		private List<IOnPassAction> onPassActionsHandler;
 
@@ -31,7 +19,7 @@ namespace _Main.Scripts.Dice
 		{
 			onPassActionsHandler.Add(onPassAction);
 		}
-
+		
 		public async UniTask PlayRollActions()
 		{
 			foreach (var onRollAction in onRollActionsHandler)
