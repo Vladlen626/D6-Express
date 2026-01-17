@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 
 public class TransitionService : IService
 {
@@ -9,7 +10,7 @@ public class TransitionService : IService
     public event Action TransitionStarted;
     public event Action TransitionFinished;
 
-    public async Task Request(Transition.Data data, params Func<Task>[] tasks)
+    public async Task Request(Transition.Data data, params Func<UniTask>[] tasks)
     {
         CurrentTransition = new Transition(data);
 

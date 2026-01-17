@@ -1,5 +1,6 @@
 using System;
 
+
 public class TradeItem
 {
     public string ItemId { get; private set; }

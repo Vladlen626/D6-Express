@@ -1,70 +1,76 @@
 using System;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
 
 [RequireComponent(typeof(AnimatorSignalBridge))]
 public class TradeItemView : MonoBehaviour
 {
-    [SerializeField]
-    private float rotationDuration = 2f;
-
-    [SerializeField]
-    private float amplitude = 1f;
-
-    [SerializeField]
-    private float transitionDuration = 1f;
-
-    [SerializeField]
-    private Ease ease = Ease.OutBack;
-
     private Animator animator;
-
     private AnimatorSignalBridge bridge;
-
+    private UniTaskCompletionSource currentTransition;
+    
     public int Index { get; private set; }
-
+    public bool IsTransitioning => currentTransition != null;
+    
     private void Awake()
     {
         animator = GetComponent<Animator>();
         bridge = GetComponent<AnimatorSignalBridge>();
         bridge.Reset();
     }
-
+    
     public void Init(int index)
     {
         this.Index = index;
     }
-
+    
     public event Action<TradeItemView> Buyed;
-
+    
     public void Buy()
     {
         Buyed?.Invoke(this);
     }
-
-    public async Task ShowAsync()
+    
+    public async UniTask ShowAsync()
     {
-        animator.SetBool("Active", true);
-
-        await bridge.EnterFinished.Task;
+        if (currentTransition != null)
+            await currentTransition.Task;
+        
+        currentTransition = new UniTaskCompletionSource();
+        
+        try
+        {
+            animator.SetBool("Active", true);
+            await bridge.EnterFinished.Task;
+        }
+        finally
+        {
+            currentTransition.TrySetResult();
+            currentTransition = null;
+        }
     }
-
-    public UniTask Showing()
+    
+    public async UniTask HideAsync()
     {
-        return bridge.EnterFinished.Task;
+        if (currentTransition != null)
+            await currentTransition.Task;
+        
+        currentTransition = new UniTaskCompletionSource();
+        
+        try
+        {
+            animator.SetBool("Active", false);
+            await bridge.ExitFinished.Task;
+        }
+        finally
+        {
+            currentTransition.TrySetResult();
+            currentTransition = null;
+        }
     }
-
-    public UniTask Hiding()
+    
+    public UniTask WaitForTransition()
     {
-        return bridge.ExitFinished.Task;
-    }
-
-    public async Task HideAsync()
-    {
-        animator.SetBool("Active", false);
-
-        await bridge.ExitFinished.Task;
+        return currentTransition?.Task ?? UniTask.CompletedTask;
     }
 }

@@ -55,6 +55,11 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
 
             var shopItem = shop.TradeItems[shopItemView.Index];
 
+            if (shopItem == null)
+            {
+                return;
+            }
+
             _context.Show();
 
             var dice = diceConfigsDict[shopItem.ItemId];

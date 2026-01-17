@@ -226,6 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TradeItemSlotView
   price: {fileID: 268568117604618464}
+  delay: 0
   ItemTfm: {fileID: 2884043182903339736}
 --- !u!1 &1755219509093392671
 GameObject:

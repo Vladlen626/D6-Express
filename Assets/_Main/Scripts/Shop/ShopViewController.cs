@@ -1,10 +1,12 @@
-
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Factory;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+using System.Threading;
+using System;
+
 
 public class ShopViewController : IBaseController, IActivatable
 {
@@ -13,9 +15,11 @@ public class ShopViewController : IBaseController, IActivatable
     private readonly IObjectFactory objectFactory;
     private readonly Interactor interactor;
     private readonly CharacterView shopkeeper;
-    private readonly List<(TradeItem item, TradeItemView view)> items = new();
+    private readonly Dictionary<int, (TradeItem item, TradeItemView view)> itemsByIndex = new();
 
-    private int objectsChanging = 0;
+    private readonly Dictionary<int, UniTask> operationsByIndex = new();
+
+    public bool IsOperationInProgress => operationsByIndex.Count > 0;
 
     public ShopViewController(Shop shop, ShopView shopView, IObjectFactory objectFactory, Interactor interactor, CharacterView shopkeeper)
     {
@@ -33,12 +37,14 @@ public class ShopViewController : IBaseController, IActivatable
         shop.BuyFailed += OnBuyFailed;
         shop.RestockFailed += OnRestockFailed;
 
-        shopView.Lever.RestockRequested += OnRestockRequested;
+        shopView.RestockLever.RestockRequested += OnRestockRequested;
+
+        shopView.SetRestockPrice(shop.RestockPrice.ToString());
     }
 
     public void Deactivate()
     {
-        shopView.Lever.RestockRequested -= OnRestockRequested;
+        shopView.RestockLever.RestockRequested -= OnRestockRequested;
 
         shop.RestockFailed -= OnRestockFailed;
         shop.BuyFailed -= OnBuyFailed;
@@ -46,70 +52,85 @@ public class ShopViewController : IBaseController, IActivatable
         shop.ItemAdded -= OnTradeItemAdded;
     }
 
-    private async void OnTradeItemAdded(int index, TradeItem tradeItem)
+    private void OnTradeItemAdded(int index, TradeItem tradeItem)
     {
-        objectsChanging++;
+        operationsByIndex[index] = ExecuteForIndex(index, () => AddTradeItem(index, tradeItem));
+    }
 
-        foreach (var item in items)
+    private void OnTradeItemRemoved(int index, TradeItem tradeItem)
+    {
+        operationsByIndex[index] = ExecuteForIndex(index, () => RemoveTradeItem(index, tradeItem));
+    }
+
+    private async UniTask ExecuteForIndex(int index, Func<UniTask> operation)
+    {
+        if (operationsByIndex.TryGetValue(index, out var previousOperation))
         {
-            if (item.view.Index == index)
-            {
-                await item.view.Hiding();
-                break;
-            }
+            await previousOperation;
         }
 
-        var tradeItemView = await objectFactory.CreateAsync<TradeItemView>(ResourcePaths.Shop.TradeItem, shopView.Slots[index].ItemTfm.position, shopView.Slots[index].ItemTfm.rotation, shopView.Slots[index].ItemTfm);
-        tradeItemView.Init(index);
-        items.Add((tradeItem, tradeItemView));
+        try
+        {
+            await operation();
+        }
+        finally
+        {
+            operationsByIndex.Remove(index);
+        }
+    }
 
+    private async UniTask AddTradeItem(int index, TradeItem tradeItem)
+    {
+        if (itemsByIndex.TryGetValue(index, out var existingItem))
+        {
+            await existingItem.view.WaitForTransition();
+        }
+
+        var tradeItemView = await objectFactory.CreateAsync<TradeItemView>(
+            ResourcePaths.Shop.TradeItem,
+            shopView.Slots[index].ItemTfm.position,
+            shopView.Slots[index].ItemTfm.rotation,
+            shopView.Slots[index].ItemTfm);
+
+        tradeItemView.Init(index);
         tradeItemView.Buyed += OnBuyed;
 
-        var view = await objectFactory.CreateAsync<ShopItemDiceView>(ResourcePaths.Shop.ShopItemDice, tradeItemView.transform.position, tradeItemView.transform.rotation, tradeItemView.transform);
+        var view = await objectFactory.CreateAsync<ShopItemDiceView>(
+            ResourcePaths.Shop.ShopItemDice,
+            tradeItemView.transform.position,
+            tradeItemView.transform.rotation,
+            tradeItemView.transform);
         view.Initialize(tradeItem.ItemId);
-
-        await tradeItemView.ShowAsync();
-
         shopView.Slots[index].SetPrice(tradeItem.Price.ToString());
 
-        objectsChanging--;
+        itemsByIndex[index] = (tradeItem, tradeItemView);
     }
 
     private void OnBuyed(TradeItemView tradeItemView)
     {
-        var item = items.Find(x => x.view == tradeItemView).item;
-        item.Buy();
+        if (itemsByIndex.TryGetValue(tradeItemView.Index, out var itemData))
+        {
+            itemData.item.Buy();
+        }
     }
 
-    private async void OnTradeItemRemoved(int index, TradeItem tradeItem)
+    private async UniTask RemoveTradeItem(int index, TradeItem tradeItem)
     {
-        objectsChanging++;
+        if (!itemsByIndex.TryGetValue(index, out var itemData))
+            return;
 
-        foreach (var item in items)
-        {
-            if (item.view.Index == index)
-            {
-                await item.view.Showing();
-                break;
-            }
-        }
+        await itemData.view.WaitForTransition();
 
-        var tradeItemViewIndex = items.FindIndex(x => x.item == tradeItem);
-        var tradeItemView = items[tradeItemViewIndex].view;
-
+        var tradeItemView = itemData.view;
         tradeItemView.Buyed -= OnBuyed;
-
-        shopView.Slots[tradeItemViewIndex].SetPrice("x");
+        shopView.Slots[index].SetPrice("x");
 
         await tradeItemView.HideAsync();
 
-        tradeItemViewIndex = items.FindIndex(x => x.item == tradeItem);
-        items.RemoveAt(tradeItemViewIndex);
+        itemsByIndex.Remove(index);
 
         tradeItemView.gameObject.SetActive(false);
-        Object.Destroy(tradeItemView.gameObject);
-
-        objectsChanging--;
+        UnityEngine.Object.Destroy(tradeItemView.gameObject);
     }
 
     private void OnRestockFailed()
@@ -120,16 +141,18 @@ public class ShopViewController : IBaseController, IActivatable
         interactable.ResetId();
     }
 
-    private async void OnRestockRequested()
+    private void OnRestockRequested()
     {
-        if (objectsChanging != 0 || shopView.Lever.IsPulling())
-        {
+        if (IsOperationInProgress || shopView.RestockLever.IsPulling)
             return;
-        }
 
-        await Task.WhenAll(
-            shopView.Lever.Pull(),
-            shop.TryRestockForPrice());
+        Restock().Forget();
+    }
+
+    private async UniTask Restock()
+    {
+        shop.TryRestockForPrice();
+        await shopView.RestockLever.Pull();
     }
 
     private void OnBuyFailed()

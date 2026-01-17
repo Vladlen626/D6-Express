@@ -23,7 +23,7 @@ public class UITransitionView : UIBaseElement
         initialBottomY = bottom.anchoredPosition.y;
     }
 
-    public async Task ShowAsync(float duration)
+    public async UniTask ShowAsync(float duration)
     {
         Show();
 
@@ -33,7 +33,7 @@ public class UITransitionView : UIBaseElement
         await UniTask.WhenAll(upperMove, bottomMove);
     }
 
-    public async Task HideAsync(float duration)
+    public async UniTask HideAsync(float duration)
     {
         var upperMove = upper.DOAnchorPosY(initialUpperY, duration).SetEase(curve).ToUniTask();
         var bottomMove = bottom.DOAnchorPosY(initialBottomY, duration).SetEase(curve).ToUniTask();

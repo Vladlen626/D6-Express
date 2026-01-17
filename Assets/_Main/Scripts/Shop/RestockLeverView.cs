@@ -1,18 +1,16 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class RestockLeverView : MonoBehaviour
 {
     private AnimatorSignalBridge bridge;
     private Animator animator;
+    private UniTask? currentPullTask;
 
     public event Action RestockRequested;
 
-    public void RequestRestock()
-    {
-        RestockRequested?.Invoke();
-    }
+    public bool IsPulling => currentPullTask.HasValue;
 
     private void Awake()
     {
@@ -22,19 +20,23 @@ public class RestockLeverView : MonoBehaviour
         bridge.Reset();
     }
 
-    public async Task Pull()
+    public void RequestRestock()
     {
+        RestockRequested?.Invoke();
+    }
+
+    public async UniTask Pull()
+    {
+        if (IsPulling) return; // Already pulling
+
         animator.SetBool("Pulled", true);
 
-        await bridge.EnterFinished.Task;
+        currentPullTask = bridge.EnterFinished.Task;
+        await currentPullTask.Value;
 
         animator.SetBool("Pulled", false);
         bridge.Reset();
-    }
 
-    public bool IsPulling()
-    {
-        // todo плюнуть бы себе за это
-        return animator.GetBool("Pulled");
+        currentPullTask = null;
     }
 }

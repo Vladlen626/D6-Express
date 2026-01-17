@@ -11,9 +11,10 @@ public class Shop
     private readonly InventoryModel inventoryModel;
     private readonly IReadOnlyDictionary<string, DiceConfig> dicesConfigs;
     private readonly ShopConfig config;
-    private readonly List<TradeItem> tradeItems = new();
+    private readonly TradeItem[] tradeItems = new TradeItem[SLOTS];
 
     public IReadOnlyList<TradeItem> TradeItems => tradeItems;
+    public int RestockPrice => config.restock_price;
 
     public event Action<int, TradeItem> ItemAdded;
     public event Action<int, TradeItem> ItemRemoved;
@@ -35,12 +36,12 @@ public class Shop
         return inventoryModel.CashCount >= config.restock_price;
     }
 
-    public async Task<bool> TryRestockForPrice()
+    public bool TryRestockForPrice()
     {
         if (CanRestock())
         {
             inventoryModel.TakeCash(config.restock_price);
-            await Restock();
+            Restock();
             return true;
         }
         else
@@ -50,15 +51,19 @@ public class Shop
         }
     }
 
-    public async Task Restock()
+    public void Restock()
     {
-        for (int i = 0; i < tradeItems.Count; i++)
+        for (int i = 0; i < tradeItems.Length; i++)
         {
             TradeItem item = tradeItems[i];
-            item.Buyed -= OnBuyed;
-            ItemRemoved?.Invoke(i, item);
+
+            if (item != null)
+            {
+                item.Buyed -= OnBuyed;
+                ItemRemoved?.Invoke(i, item);
+            }
+            tradeItems[i] = null;
         }
-        tradeItems.Clear();
 
         var unused = config.items.ToList();
 
@@ -70,7 +75,7 @@ public class Shop
 
             var tradeItem = new TradeItem(itemConfig.itemId, dicesConfigs[itemConfig.itemId].price);
             tradeItem.Buyed += OnBuyed;
-            tradeItems.Add(tradeItem);
+            tradeItems[i] = tradeItem;
 
             ItemAdded?.Invoke(i, tradeItem);
         }
@@ -86,8 +91,8 @@ public class Shop
             inventoryModel.AddDice(tradeItem.ItemId);
 
             tradeItem.Buyed -= OnBuyed;
-            var index = tradeItems.IndexOf(tradeItem);
-            tradeItems.RemoveAt(index);
+            var index = Array.IndexOf(tradeItems, tradeItem);
+            tradeItems[index] = null;
             ItemRemoved?.Invoke(index, tradeItem);
 
             BuyCompleted?.Invoke(tradeItem);

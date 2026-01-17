@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using PlatformCore.Services.Factory;
 using UnityEngine;
 
@@ -23,13 +23,13 @@ public class NpcSpawner
         stationSpawnPoints = spawnPoints.Where(x => x.levelState == LevelState.STATION);
     }
 
-    public async Task Respawn()
+    public async UniTask Respawn()
     {
         DestroySpawned();
         await Spawn();
     }
 
-    private async Task Spawn()
+    private async UniTask Spawn()
     {
         var notUsedPoints = runModel.LevelState == LevelState.STATION ? stationSpawnPoints.ToList() : trainSpawnPoints.ToList();
 

@@ -41,11 +41,11 @@ public class TransitionController : IBaseController
         () => StartTransition(),
         () => ChangeLocation(),
         () => npcSpawner.Respawn(),
-        () => shop.Restock(),
+        () => UniTask.Create(async () => shop.Restock()),
         () => FinishTransition());
     }
 
-    private async Task ChangeLocation()
+    private async UniTask ChangeLocation()
     {
         sceneContext.TrainBlock.SetActive(runModel.LevelState == LevelState.TRAIN);
         sceneContext.StationBlock.SetActive(runModel.LevelState == LevelState.STATION);
@@ -77,17 +77,17 @@ public class TransitionController : IBaseController
         {
             type = Transition.Type.TICK
         },
-        () => shop.Restock(),
+        () => UniTask.Create(async () => shop.Restock()),
         () => npcSpawner.Respawn());
     }
 
-    private async Task StartTransition()
+    private async UniTask StartTransition()
     {
         playerModel.PlayerStateModel.TryAddState(CharacterState.LOCATION_TRANSITIONING);
         playerView.SetCharacterGhost(true);
     }
 
-    private async Task FinishTransition()
+    private async UniTask FinishTransition()
     {
         playerView.SetCharacterGhost(false);
         playerModel.PlayerStateModel.TryRemoveState(CharacterState.LOCATION_TRANSITIONING);

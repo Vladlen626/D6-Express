@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services.UI;
 
@@ -30,12 +31,12 @@ public class TransitionViewController : BaseContextController<UITransitionView>
         transitionService.TransitionRequested += OnTransitionRequested;
     }
 
-    public Task StartTransition(float duration = -1)
+    public UniTask StartTransition(float duration = -1)
     {
         return duration == -1 ? _context.ShowAsync(durationStart) : _context.ShowAsync(duration);
     }
 
-    public Task FinishTransition(float duration = -1)
+    public UniTask FinishTransition(float duration = -1)
     {
         return duration == -1 ? _context.HideAsync(durationEnd) : _context.HideAsync(duration);
     }
