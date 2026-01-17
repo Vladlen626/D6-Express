@@ -9,7 +9,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 {
 	private readonly DiceGameProcessController processController;
 	private readonly DiceGameModel diceGameModel;
-	private readonly TableModel tableModel;
+	private TableModel tableModel => diceGameModel.tableModel;
 
 	private int delay => GlobalParameters.Delay;
 
@@ -17,12 +17,10 @@ public class EnemyTurnController : IBaseController, IActivatable
 
 	public EnemyTurnController(
 		DiceGameProcessController processController,
-		DiceGameModel diceGameModel,
-		TableModel tableModel)
+		DiceGameModel diceGameModel)
 	{
 		this.processController = processController;
 		this.diceGameModel = diceGameModel;
-		this.tableModel = tableModel;
 	}
 
 	public void Activate()
@@ -46,7 +44,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 		{
 			return;
 		}
-		
+
 		TakeTurn().Forget();
 	}
 
@@ -61,7 +59,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 
 		try
 		{
-			processController.DisableButtons();
+			diceGameModel.tableModel.DisableButtons();
 
 			await UniTask.Delay(delay);
 
@@ -70,7 +68,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 
 			while (diceGameModel.IsPlayerTurn == false)
 			{
-				var unbanked = processController.DicePoolLogic.GetUnbanked();
+				var unbanked = diceGameModel.GetUnbanked();
 
 				if (unbanked.Length == 0)
 				{
@@ -121,7 +119,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 				}
 
 				// если хот дайс — ролл снова
-				if (hotDice || processController.DicePoolLogic.GetUnbanked().Length > 0)
+				if (hotDice || diceGameModel.GetUnbanked().Length > 0)
 				{
 					await Roll();
 					await UniTask.Delay(delay);

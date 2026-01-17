@@ -7,6 +7,8 @@ namespace _Main.Scripts.Dice
 	{
 		public readonly DiceGameModel diceGameModel;
 		public readonly DiceTableView diceTableView;
+		
+		private TableModel tableModel => diceGameModel.tableModel;
 
 		public DiceGameBetController(DiceGameModel diceGameModel, DiceTableView diceTableView)
 		{

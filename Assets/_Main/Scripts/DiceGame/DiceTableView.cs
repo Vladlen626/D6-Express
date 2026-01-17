@@ -1,6 +1,8 @@
 ﻿using System;
+using _Main.Scripts.Core;
 using _Main.Scripts.Game.Views;
 using _Main.Scripts.UI;
+using DG.Tweening;
 using TMPro;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -15,6 +17,7 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnPlayClicked;
 	
 	[SerializeField] private CinemachineCamera cinemachineCamera;
+	[SerializeField] private Transform scoreListTransform;
 	
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
@@ -22,15 +25,14 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private Transform selectStateHandler;
 
 	[Header("Turn")] 
-	[SerializeField] private TextMeshPro turnText;
-	[SerializeField] private TextMeshPro turnOwnerText;
-	[SerializeField] private Transform bankTransform;
+	[SerializeField] private TextMeshProUGUI turnText;
+	[SerializeField] private TextMeshProUGUI turnOwnerText;
 
 	[Header("Score")]
-	[SerializeField] private TextMeshPro targetScoreText;
-	[SerializeField] private TextMeshPro bankedScoreText;
-	[SerializeField] private TextMeshPro enemyBankedScoreText;
-	[SerializeField] private TextMeshPro currentScoreText;
+	[SerializeField] private TextMeshProUGUI targetScoreText;
+	[SerializeField] private TextMeshProUGUI bankedScoreText;
+	[SerializeField] private TextMeshProUGUI enemyBankedScoreText;
+	[SerializeField] private TextMeshPro turnScoreText;
 	[SerializeField] private TextMeshPro previewScoreText;
 
 	[Header("Buttons")]
@@ -47,10 +49,14 @@ public class DiceTableView : MonoBehaviour
 	
 	[SerializeField] private DicePositionsHandler gameStatePosHandler;
 	[SerializeField] private DicePositionsHandler selectionStatePosHandler;
+	
+	[SerializeField] private float animDuration = 0.15f;
 	public DicePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public DicePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
 	public CinemachineCamera TableCamera => cinemachineCamera;
 
+	private bool isCombinationsOpen;
+	private bool inAnimProcess;
 	private void Awake()
 	{
 		DisableCamera();
@@ -116,8 +122,6 @@ public class DiceTableView : MonoBehaviour
 	{
 		turnOwnerText.text = isPlayerTurn ? "Your Turn" : "Enemy Turn";
 		turnOwnerText.color = isPlayerTurn ? Color.blue : Color.red;
-		bankTransform.rotation = Quaternion.Euler(0f, isPlayerTurn? 0f : 180f, 0f);
-		bankTransform.localPosition = new Vector3(bankTransform.localPosition.x, bankTransform.localPosition.y,  isPlayerTurn? -0.6f : 0.13f);
 		passButton.gameObject.SetActive(isPlayerTurn);
 		rollButton.gameObject.SetActive(isPlayerTurn);
 	}
@@ -149,7 +153,7 @@ public class DiceTableView : MonoBehaviour
 
 	public void SetCurrentPointsText(int oldValue, int newValue)
 	{
-		UIUtils.UpdateUiIntValueText(currentScoreText, oldValue, newValue, v => v.ToString());
+		UIUtils.UpdateUiIntValueText(turnScoreText, oldValue, newValue, v => v.ToString());
 	}
 
 	public void SetPreviewPointsText(int oldValue, int newValue)
@@ -183,4 +187,34 @@ public class DiceTableView : MonoBehaviour
 		maxBetText.text = MaxBet.ToString();
 		betSlider.maxValue = MaxBet;
 	}
+
+	public void DiceCombinationsToggle()
+	{
+		if (inAnimProcess)
+		{
+			return;
+		}
+		
+		if (!isCombinationsOpen)
+		{
+			inAnimProcess = true;
+			scoreListTransform.DOLocalRotate(Vector3.forward * 90, animDuration)
+				.OnComplete(() =>
+				{
+					isCombinationsOpen = true;
+					inAnimProcess = false;
+				});
+		} else
+		{
+			inAnimProcess = true;
+			scoreListTransform.DOLocalRotate(Vector3.zero, animDuration)
+				.OnComplete(() =>
+				{
+					isCombinationsOpen = false;
+					inAnimProcess = false;
+				});
+		}
+	}
+
+
 }

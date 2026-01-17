@@ -6,16 +6,6 @@
     "default",
     "default",
     "default",
-    "default",
-    "gen_1_focus",
-    "gen_2_focus",
-    "gen_3_focus",
-    "gen_4_focus",
-    "gen_5_focus",
-    "gen_6_focus",
-    "strat_safe_ones_fives",
-    "strat_straight_1_6_hunter",
-    "strat_straight_2_6_hunter",
-    "strat_polar_ends"
+    "default"
   ]
 }

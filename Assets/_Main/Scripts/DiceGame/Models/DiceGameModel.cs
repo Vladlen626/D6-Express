@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Cysharp.Threading.Tasks;
 
 namespace _Main.Scripts.Dice
 {
 	public class DiceGameModel
 	{
+		public event Action<bool> OnEndTurn;
 		public event Action ScreenDiceDictChanged;
 		public event Action OnGameConditionPassed;
 		public event Action OnGameConditionFailed;
@@ -12,6 +15,18 @@ namespace _Main.Scripts.Dice
 		public event Action<int, int> OnTargetPointsChanged;
 		public event Action<int, int> OnCurrentTurnChanged;
 		public event Action OnDiceGameStateChanged;
+		public event Action OnRollClicked;
+		public event Action OnPassClicked;
+		
+		public TableModel tableModel;
+		public ModifiersModel ModifiersModel;
+		
+		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
+		
+		public readonly List<DiceModel> EnemyDiceModelList = new();
+		public readonly List<DiceModel> PlayerDiceModelList = new();
+		public IReadOnlyDictionary<DiceModel, DiceView> ScreenDiceDict => screenDiceDict;
+		public Dictionary<DiceModel, DiceView> screenDiceDict = new ();
 
 		public DiceGameState DiceGameState { get; private set; } = DiceGameState.DEFAULT;
 		public int BetSize { get; private set; }
@@ -22,14 +37,15 @@ namespace _Main.Scripts.Dice
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
-		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
-		public readonly List<DiceModel> EnemyDiceModelList = new();
-		public readonly List<DiceModel> PlayerDiceModelList = new();
-		public IReadOnlyDictionary<DiceModel, DiceView> ScreenDiceDict => screenDiceDict;
-		public Dictionary<DiceModel, DiceView> screenDiceDict = new ();
 
-		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize)
+		public DiceGameModel()
 		{
+			ModifiersModel = new ModifiersModel();
+		}
+		
+		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
+		{
+			this.tableModel = tableModel;
 			SetMinBetSize(diceGameConfig.min_bet_size);
 			SetMaxBetSize(maxBetSize);
 			SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
@@ -131,8 +147,89 @@ namespace _Main.Scripts.Dice
 			ScreenDiceDictChanged?.Invoke();
 		}
 
+		public void SendRollClicked()
+		{
+			OnRollClicked?.Invoke();
+		}
+
+		public void SendPassClicked()
+		{
+			OnPassClicked?.Invoke();
+		}
+
+		public void RollEnded()
+		{
+			tableModel.SendUpdateUI();
+			ModifiersModel.PlayRollActions().Forget();
+		}
+
+		public void PassEnded()
+		{
+			tableModel.SendUpdateUI();
+			ModifiersModel.PlayPassActions().Forget();
+		}
+
+		public void EndTurn(bool success)
+		{
+			OnEndTurn?.Invoke(success);
+			HideAllDiceGameModels();
+			if (success)
+			{
+				if (IsPlayerTurn)
+				{
+					tableModel.AddBankedPointsForPlayer(tableModel.TurnPoints);
+				}
+				else
+				{
+					tableModel.AddBankedPointsForEnemy(tableModel.TurnPoints);
+				}
+			}
+
+			IncreaseCurrentTurn();
+			tableModel.ResetTurn();
+			ResetAll();
+			foreach (var diceModel in CurrentDiceModelList)
+			{
+				ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
+			}
+		}
+		
+		public DiceModel[] GetSelected()
+		{
+			return CurrentDiceModelList.Where(d => d.IsChosen && !d.IsSaved).ToArray();
+		}
+
+		public DiceModel[] GetUnbanked()
+		{
+			return CurrentDiceModelList.Where(d => !d.IsSaved).ToArray();
+		}
+
+		public DiceModel[] GetBanked()
+		{
+			return CurrentDiceModelList.Where(d => d.IsSaved).ToArray();
+		}
+
+		public bool HasUnbanked()
+		{
+			return CurrentDiceModelList.Any(d => !d.IsSaved);
+		}
+
+		public bool AllBanked()
+		{
+			return CurrentDiceModelList.All(d => d.IsSaved);
+		}
+
+		public void ResetAll()
+		{
+			foreach (var dice in CurrentDiceModelList)
+			{
+				dice.Reset();
+			}
+		}
+
 		public void Reset()
 		{
+			tableModel.Reset();
 			CurrentDiceModelList.Clear();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;

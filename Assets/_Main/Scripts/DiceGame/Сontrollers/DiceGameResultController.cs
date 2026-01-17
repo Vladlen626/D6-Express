@@ -6,12 +6,11 @@ namespace _Main.Scripts.Dice
 	public class DiceGameResultController : IBaseController, IActivatable
 	{
 		private readonly DiceGameModel diceGameModel;
-		private readonly TableModel tableModel;
+		private TableModel tableModel => diceGameModel.tableModel;
 
-		public DiceGameResultController(DiceGameModel diceGameModel, TableModel tableModel)
+		public DiceGameResultController(DiceGameModel diceGameModel)
 		{
-			this.diceGameModel = diceGameModel;
-			this.tableModel = tableModel;
+			this.diceGameModel = diceGameModel; ;
 		}
 		public void Activate()
 		{

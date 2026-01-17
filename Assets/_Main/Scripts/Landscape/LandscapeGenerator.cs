@@ -25,6 +25,7 @@ public class LandscapeGenerator : MonoBehaviour
     private bool movable;
 
     private readonly List<GameObject> activeObjects = new();
+    private readonly Queue<GameObject> pooledObjects = new();
 
     private float lastSpawnTime;
 
@@ -65,13 +66,37 @@ public class LandscapeGenerator : MonoBehaviour
 
     private void SpawnLandscapeObject(Vector3 spawnPos)
     {
-        GameObject prefab = landScapePrefabs[Random.Range(0, landScapePrefabs.Length)];
-
         spawnPos.x += Random.Range(-GetWidth(), GetWidth());
 
-        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity, instantiatedObjectsParent);
-        obj.AddComponent<LandscapeObject>().Initialize(speed, movable);
+        GameObject obj = GetFromPool();
+        obj.transform.SetParent(instantiatedObjectsParent);
+        obj.transform.position = spawnPos;
+        obj.transform.rotation = Quaternion.identity;
+        obj.SetActive(true);
+
+        var landscapeObject = obj.GetComponent<LandscapeObject>();
+        landscapeObject.Initialize(speed, movable);
+
         activeObjects.Add(obj);
+    }
+
+    private GameObject GetFromPool()
+    {
+        if (pooledObjects.Count > 0)
+        {
+            return pooledObjects.Dequeue();
+        }
+
+        GameObject prefab = landScapePrefabs[Random.Range(0, landScapePrefabs.Length)];
+        GameObject obj = Instantiate(prefab, instantiatedObjectsParent);
+        obj.AddComponent<LandscapeObject>();
+        return obj;
+    }
+
+    private void ReturnToPool(GameObject obj)
+    {
+        obj.SetActive(false);
+        pooledObjects.Enqueue(obj);
     }
 
     private void InitialSpawnObjects()
@@ -83,7 +108,7 @@ public class LandscapeGenerator : MonoBehaviour
             SpawnLandscapeObject(spawnPos);
             spawnPos.z -= Random.Range(spawnCooldownMin, spawnCooldownMax) * speed;
 
-            if (OutOfBounds(gameObject))
+            if (spawnPos.z < GetEndPoint().z)
             {
                 break;
             }
@@ -97,8 +122,8 @@ public class LandscapeGenerator : MonoBehaviour
             var activeObject = activeObjects[i];
             if (OutOfBounds(activeObject))
             {
-                Destroy(activeObjects[i]);
                 activeObjects.RemoveAt(i);
+                ReturnToPool(activeObject);
             }
         }
 
