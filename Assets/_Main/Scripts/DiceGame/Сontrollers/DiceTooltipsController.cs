@@ -13,11 +13,11 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly ConfigService configService;
 
+		private TextsConfig textsConfig;
 		private IReadOnlyDictionary<string, DiceConfig> diceConfigsDict;
 		
 		private DiceModel currentDiceModel;
 		private Camera mainCamera;
-		
 		public DiceTooltipsController(IUIService uiService, DiceGameModel diceGameModel, ConfigService configService,
 			Camera mainCamera) 
 			: base(uiService)
@@ -30,6 +30,7 @@ namespace _Main.Scripts.Dice
 		protected override async UniTask OnPreloadAsync()
 		{
 			diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+			textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 		}
 
 		protected override void OnActivate()
@@ -97,8 +98,10 @@ namespace _Main.Scripts.Dice
 			}
 			currentDiceModel = diceModel;
 
-			_context.SetHeaderText(diceConfig.name);
-			_context.SetDescriptionText(diceConfig.description);
+			var header = textsConfig.texts[diceConfig.name];
+			var description = textsConfig.texts[diceConfig.description];
+			_context.SetHeaderText(header);
+			_context.SetDescriptionText(description);
 			_context.SetRarity(diceConfig.rarityEnum);
 
 			_context.SetPositionFromWorld(

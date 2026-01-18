@@ -230,7 +230,8 @@ namespace _Main.Scripts.Dice
 		public void Reset()
 		{
 			tableModel.Reset();
-			CurrentDiceModelList.Clear();
+			PlayerDiceModelList.Clear();
+			EnemyDiceModelList.Clear();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;

@@ -7,8 +7,8 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceGameModel diceGameModel;
 
-		private List<IOnRollAction> onRollActionsHandler;
-		private List<IOnPassAction> onPassActionsHandler;
+		private readonly List<IOnRollAction> onRollActionsHandler = new ();
+		private readonly List<IOnPassAction> onPassActionsHandler = new ();
 
 		public void AddRollAction(IOnRollAction onRollAction)
 		{

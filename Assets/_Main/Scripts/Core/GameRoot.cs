@@ -74,8 +74,6 @@ namespace _Main.Scripts.Core
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
 
-
-
 			//Load MainMenu Scene
 			var sceneForLoad = SceneNames.MainMenu;
 			await sceneService.LoadSceneAsync(sceneForLoad);

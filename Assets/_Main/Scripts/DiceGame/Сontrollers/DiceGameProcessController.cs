@@ -36,6 +36,8 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.OnRollClicked += HandleRoll;
 			diceGameModel.OnPassClicked += HandlePass;
+
+			UpdateUI();
 		}
 
 		public void Deactivate()
