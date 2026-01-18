@@ -768,7 +768,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FartView
   fartTfm: {fileID: 1578018771005576153}
-  radius: 1
+  radius: 2
   interactableFart: {fileID: 9210400433103913327}
   fartLayerMask:
     serializedVersion: 2
