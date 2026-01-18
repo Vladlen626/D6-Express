@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -8,44 +9,71 @@ namespace _Main.Scripts.Dice
 		private class DiceInfo
 		{
 			public int[] Counts = new int[7];
-			public int[] TripleCounts = new int[7];
-			public int SingleOnes;
-			public int SingleFives;
-			public bool IsStraight_1_6;
-			public bool IsStraight_1_5;
-			public bool IsStraight_2_6;
+			public int[] Remaining = new int[7];
 		}
+
 
 		private static DiceInfo AnalyzeValues(int[] values)
 		{
 			var info = new DiceInfo();
 
 			if (values == null || values.Length == 0)
+			{
 				return info;
+			}
 
 			foreach (var value in values)
 			{
 				if (value >= 1 && value <= 6)
+				{
 					info.Counts[value]++;
+					info.Remaining[value]++;
+				}
 			}
-
-			var sorted = values.OrderBy(v => v).ToArray();
-
-			info.IsStraight_1_6 = (values.Length == 6 && sorted.SequenceEqual(new[] { 1, 2, 3, 4, 5, 6 }));
-			info.IsStraight_1_5 = (values.Length == 5 && sorted.SequenceEqual(new[] { 1, 2, 3, 4, 5 }));
-			info.IsStraight_2_6 = (values.Length == 5 && sorted.SequenceEqual(new[] { 2, 3, 4, 5, 6 }));
-
-			for (int face = 1; face <= 6; face++)
-			{
-				if (info.Counts[face] >= 3)
-					info.TripleCounts[face] = info.Counts[face];
-			}
-
-			info.SingleOnes = System.Math.Max(0, info.Counts[1] - info.TripleCounts[1]);
-			info.SingleFives = System.Math.Max(0, info.Counts[5] - info.TripleCounts[5]);
 
 			return info;
 		}
+		
+		private static void TryAddStraight(
+			DiceInfo info,
+			int[] faces,
+			DiceCombination combination,
+			List<DiceCombinationEntry> result)
+		{
+			while (true)
+			{
+				foreach (int face in faces)
+				{
+					if (info.Remaining[face] <= 0)
+					{
+						return;
+					}
+				}
+
+				foreach (int face in faces)
+				{
+					info.Remaining[face]--;
+				}
+
+				result.Add(new DiceCombinationEntry
+				{
+					Combination = combination,
+					Face = 0,
+					Count = faces.Length
+				});
+			}
+		}
+		
+		public static int CalculateTotalScore(DiceCombinationResult result)
+		{
+			int total = 0;
+			foreach (var combo in result.Combinations)
+			{
+				total += combo.FinalScore;
+			}
+			return total;
+		}
+
 
 		private static int ScoreNOfKind(int face, int count)
 		{
@@ -60,141 +88,145 @@ namespace _Main.Scripts.Dice
 			return baseScore;
 		}
 
-		/// <summary>
-		/// Подсчитать очки. Возвращает -1 если невалидная комбинация.
-		/// </summary>
-		public static int CalculateScore(int[] values)
+		// === ГЛАВНЫЙ МЕТОД ===
+		public static DiceCombinationResult GetCombinations(int[] values)
 		{
+			var result = new DiceCombinationResult
+			{
+				Combinations = new List<DiceCombinationEntry>()
+			};
+
 			if (values == null || values.Length == 0)
-				return -1;
+			{
+				return result;
+			}
 
 			var info = AnalyzeValues(values);
 
-			if (info.IsStraight_1_6) return 1500;
-			if (info.IsStraight_1_5) return 500;
-			if (info.IsStraight_2_6) return 750;
+			// === СТРЕЙТЫ ===
+			TryAddStraight(info, new[] { 1, 2, 3, 4, 5, 6 }, DiceCombination.Straight_1_6, result.Combinations);
+			TryAddStraight(info, new[] { 1, 2, 3, 4, 5 }, DiceCombination.Straight_1_5, result.Combinations);
+			TryAddStraight(info, new[] { 2, 3, 4, 5, 6 }, DiceCombination.Straight_2_6, result.Combinations);
 
+			// === N OF A KIND ===
+			for (int face = 1; face <= 6; face++)
+			{
+				while (info.Remaining[face] >= 3)
+				{
+					int count = info.Remaining[face];
+					if (count > 6)
+					{
+						count = 6;
+					}
+
+					DiceCombination combo;
+					switch (count)
+					{
+						case 3: combo = DiceCombination.ThreeOfAKind; break;
+						case 4: combo = DiceCombination.FourOfAKind; break;
+						case 5: combo = DiceCombination.FiveOfAKind; break;
+						default: combo = DiceCombination.SixOfAKind; break;
+					}
+
+					info.Remaining[face] -= count;
+
+					result.Combinations.Add(new DiceCombinationEntry
+					{
+						Combination = combo,
+						Face = face,
+						Count = count
+					});
+				}
+			}
+
+			// === ОДИНОЧКИ ===
+			if (info.Remaining[1] > 0)
+			{
+				result.Combinations.Add(new DiceCombinationEntry
+				{
+					Combination = DiceCombination.SingleOnes,
+					Face = 1,
+					Count = info.Remaining[1]
+				});
+
+				info.Remaining[1] = 0;
+			}
+
+			if (info.Remaining[5] > 0)
+			{
+				result.Combinations.Add(new DiceCombinationEntry
+				{
+					Combination = DiceCombination.SingleFives,
+					Face = 5,
+					Count = info.Remaining[5]
+				});
+
+				info.Remaining[5] = 0;
+			}
+
+			return result;
+		}
+
+
+
+		// === УДОБНЫЕ ОБЁРТКИ ДЛЯ ТЕКУЩЕГО КОДА ===
+
+		public static int CalculateScore(DiceCombinationResult combinations)
+		{
 			int totalScore = 0;
 
-			for (int face = 1; face <= 6; face++)
+			foreach (var entry in combinations.Combinations)
 			{
-				if (info.TripleCounts[face] >= 3)
-					totalScore += ScoreNOfKind(face, info.TripleCounts[face]);
+				switch (entry.Combination)
+				{
+					case DiceCombination.Straight_1_6:
+						totalScore += 1500;
+						break;
+
+					case DiceCombination.Straight_1_5:
+						totalScore += 500;
+						break;
+
+					case DiceCombination.Straight_2_6:
+						totalScore += 750;
+						break;
+
+					case DiceCombination.ThreeOfAKind:
+					case DiceCombination.FourOfAKind:
+					case DiceCombination.FiveOfAKind:
+					case DiceCombination.SixOfAKind:
+						totalScore += ScoreNOfKind(entry.Face, entry.Count);
+						break;
+
+					case DiceCombination.SingleOnes:
+						totalScore += entry.Count * 100;
+						break;
+
+					case DiceCombination.SingleFives:
+						totalScore += entry.Count * 50;
+						break;
+				}
 			}
 
-			totalScore += info.SingleOnes * 100;
-			totalScore += info.SingleFives * 50;
-
-			// Проверка "мёртвых" костей
-			foreach (int face in new[] { 2, 3, 4, 6 })
-			{
-				int unused = info.Counts[face] - info.TripleCounts[face];
-				if (unused > 0)
-					return -1; // Невалидная комбинация
-			}
-
-			return totalScore > 0 ? totalScore : -1;
+			return totalScore;
 		}
-		
-		public static string GetCombinationName(int[] values)
+
+		public static string GetCombinationName(DiceCombination combination)
 		{
-			if (values == null || values.Length == 0)
+			switch (combination)
 			{
-				return string.Empty;
-			}
-
-			var info = AnalyzeValues(values);
-
-			if (info.IsStraight_1_6)
-			{
-				return "One dice straight (1-6)";
-			}
-
-			if (info.IsStraight_1_5)
-			{
-				return "One dice straight (1-5)";
-			}
-
-			if (info.IsStraight_2_6)
-			{
-				return "One dice straight (2-6)";
-			}
-
-			for (int face = 1; face <= 6; face++)
-			{
-				if (info.TripleCounts[face] >= 3)
-				{
-					if (info.TripleCounts[face] == 3)
-					{
-						return "Three of a kind";
-					}
-
-					if (info.TripleCounts[face] == 4)
-					{
-						return "Four of a kind";
-					}
-
-					if (info.TripleCounts[face] >= 5)
-					{
-						return "Five of a kind";
-					}
-				}
-			}
-
-			if (info.SingleOnes > 0)
-			{
-				return "Single ones";
-			}
-
-			if (info.SingleFives > 0)
-			{
-				return "Single fives";
-			}
-
-			foreach (int face in new[] { 2, 3, 4, 6 })
-			{
-				int unused = info.Counts[face] - info.TripleCounts[face];
-				if (unused > 0)
-				{
-					return string.Empty;
-				}
+				case DiceCombination.Straight_1_6: return "Straight 1-6";
+				case DiceCombination.Straight_1_5: return "Straight 1-5";
+				case DiceCombination.Straight_2_6: return "Straight 2-6";
+				case DiceCombination.ThreeOfAKind: return "Three of a kind";
+				case DiceCombination.FourOfAKind: return "Four of a kind";
+				case DiceCombination.FiveOfAKind: return "Five of a kind";
+				case DiceCombination.SixOfAKind: return "Six of a kind";
+				case DiceCombination.SingleOnes: return "Single ones";
+				case DiceCombination.SingleFives: return "Single fives";
 			}
 
 			return string.Empty;
-		}
-
-
-		/// <summary>
-		/// Есть ли в броске хоть одна очковая кость? (для BUST)
-		/// </summary>
-		public static bool RollHasAnyScore(int[] values)
-		{
-			if (values == null || values.Length == 0)
-			{
-				return false;
-			}
-
-			var info = AnalyzeValues(values);
-
-			if (info.IsStraight_1_6 || info.IsStraight_1_5 || info.IsStraight_2_6)
-			{
-				return true;
-			}
-
-			if (values.Contains(1) || values.Contains(5))
-			{
-				return true;
-			}
-
-			for (int face = 1; face <= 6; face++)
-			{
-				if (info.Counts[face] >= 3)
-				{
-					return true;
-				}
-			}
-
-			return false;
 		}
 
 		public static int GetWeightedRandomValue(int[] weights)

@@ -187,7 +187,7 @@ namespace _Main.Scripts.Dice
 
 			IncreaseCurrentTurn();
 			tableModel.ResetTurn();
-			ResetAll();
+			ResetAllDices();
 			foreach (var diceModel in CurrentDiceModelList)
 			{
 				ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
@@ -219,7 +219,7 @@ namespace _Main.Scripts.Dice
 			return CurrentDiceModelList.All(d => d.IsSaved);
 		}
 
-		public void ResetAll()
+		public void ResetAllDices()
 		{
 			foreach (var dice in CurrentDiceModelList)
 			{

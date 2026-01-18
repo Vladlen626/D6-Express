@@ -32,13 +32,8 @@ namespace _Main.Scripts.Dice
 			tableModel.OnEnemyBankedPointsChanged += OnEnemyBankedPointsChangedHandler;
 			tableModel.OnTurnPointsChanged += OnTurnPointsChangedHandler;
 			tableModel.OnPreviewPointsChanged += OnPreviewPointsChangedHandler;
-			tableModel.OnUpdateUI += UpdateUIHandler;
+			tableModel.OnUpdateUI += UpdateUI;
 			tableModel.OnDisableButtons += DisableButtons;
-			
-			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
-			{
-				diceModel.OnDiceChosenChanged += UpdateUIHandler;
-			}
 
 			OnPlayerBankedPointsChangedHandler(0, tableModel.PlayerBankedPoints);
 			OnTargetPointsChangedHandler(0, diceGameModel.TargetPoints);
@@ -46,7 +41,7 @@ namespace _Main.Scripts.Dice
 			OnPreviewPointsChangedHandler(0, tableModel.PreviewPoints);
 			OnCurrentTurnChangedHandler(0, diceGameModel.CurrentTurn);
 
-			UpdateUIHandler();
+			UpdateUI();
 		}
 
 		public void Deactivate()
@@ -61,13 +56,8 @@ namespace _Main.Scripts.Dice
 			tableModel.OnEnemyBankedPointsChanged -= OnEnemyBankedPointsChangedHandler;
 			tableModel.OnTurnPointsChanged -= OnTurnPointsChangedHandler;
 			tableModel.OnPreviewPointsChanged -= OnPreviewPointsChangedHandler;
-			tableModel.OnUpdateUI -= UpdateUIHandler;
+			tableModel.OnUpdateUI -= UpdateUI;
 			tableModel.OnDisableButtons -= DisableButtons;
-			
-			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
-			{
-				diceModel.OnDiceChosenChanged -= UpdateUIHandler;
-			}
 		}
 
 		private void OnPlayerBankedPointsChangedHandler(int oldValue, int newValue)
@@ -108,40 +98,29 @@ namespace _Main.Scripts.Dice
 
 		private void OnRollHandler()
 		{
-			UpdateUIHandler();
+			UpdateUI();
 		}
 
 		private void OnPassHandler()
 		{
-			UpdateUIHandler();
+			UpdateUI();
 		}
 
-		public void UpdateUIHandler()
+		public void UpdateUI()
 		{
-			var selectedDice = diceGameModel.GetSelected();
-			var selectedValues = new int[selectedDice.Length];
-			for (int i = 0; i < selectedDice.Length; i++)
-			{
-				selectedValues[i] = selectedDice[i].CurrentValue;
-			}
-
-			int scorePreview = DiceGameUtils.CalculateScore(selectedValues);
-			bool hasValidComboSelected = scorePreview > 0;
-			bool canPass = hasValidComboSelected || (tableModel.TurnPoints > 0 && selectedDice.Length == 0);
+			bool hasValidComboSelected = tableModel.PreviewPoints > 0;
+			bool canPass = hasValidComboSelected || (tableModel.TurnPoints > 0 && diceGameModel.GetSelected().Length == 0);
 			bool canRoll = tableModel.isFirstRoll || hasValidComboSelected;
 
-			int previewPoints = hasValidComboSelected ? scorePreview : 0;
-			tableModel.SetPreviewPoints(previewPoints);
-
-			if (scorePreview == 0)
+			/*if (scorePreview == 0)
 			{
 				diceTableView.SetComboNameText(string.Empty);
 			}
 			else
 			{
-				diceTableView.SetComboNameText(DiceGameUtils.GetCombinationName(selectedValues));
-			}
-			
+				diceTableView.SetComboNameText(DiceGameUtils.GetCombinationName());
+			}*/
+
 			diceTableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);
 			diceTableView.SetButtonInteractable("Pass", canPass && diceGameModel.IsPlayerTurn);
 		}
