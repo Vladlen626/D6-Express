@@ -6,5 +6,7 @@ public enum InteractionType
     SLEEP,
     TRADE,
     SPEAK,
-    RESTOCK
+    RESTOCK,
+    OPEN,
+    CLOSE
 }

@@ -370,6 +370,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8467989589557451913}
+  - component: {fileID: 4002219490872599452}
+  - component: {fileID: 4160052041968059080}
+  - component: {fileID: 4351870299177403631}
   m_Layer: 0
   m_Name: WindowsSmall (4)
   m_TagString: Untagged
@@ -396,3 +399,52 @@ Transform:
   - {fileID: 5234362958912381112}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4002219490872599452
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9137670629031888435}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.87, y: 0.81, z: 0.11}
+  m_Center: {x: 7.07, y: 0.12, z: 2.25}
+--- !u!114 &4160052041968059080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9137670629031888435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ec829d1ff9204141abe2a717fc79d6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableCurtains
+  blockInteract: 0
+  isOpened: 1
+  opened: {fileID: 2997764064977927700}
+  closed: {fileID: 387171975099513756}
+--- !u!114 &4351870299177403631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9137670629031888435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7675ec5ed4b9b7b4f941339dbdf5e95e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HintableDynamic

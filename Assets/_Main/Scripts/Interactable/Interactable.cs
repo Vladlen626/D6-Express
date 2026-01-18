@@ -5,7 +5,7 @@ public abstract class Interactable : MonoBehaviour, IInteractable
     [SerializeField]
     private bool blockInteract;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         // TODO: не юзать стринг
         gameObject.layer = LayerMask.NameToLayer("Interactable");
