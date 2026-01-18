@@ -12,7 +12,8 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnInteractPerformed;
 		public event Action<Vector2> OnMoved;
 		public event Action<Vector2> OnLooked;
-
+		public event Action OnFarted;
+		
 		public event Action OnDebugSwitchPressed;
 
 		public event Action OnSpeechLineSkip;

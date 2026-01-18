@@ -32,6 +32,7 @@ namespace _Main.Scripts.Core
 			var cursorService = new CursorService(uiService);
 			var configService = new ConfigService(resourceService, logger);
 			var transitionService = new TransitionService();
+			var localizationService = new LocalizationServiceBase(configService);
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
 			_serviceLocator.Register<IResourceService, ResourceService>(resourceService);
@@ -45,6 +46,7 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<ICursorService, CursorService>(cursorService);
 			_serviceLocator.Register<ConfigService, ConfigService>(configService);
 			_serviceLocator.Register<TransitionService, TransitionService>(transitionService);
+			_serviceLocator.Register<ILocalizationService, LocalizationServiceBase>(localizationService);
 
 			Debug.Log("[GameRoot] Services registered!");
 		}
@@ -123,7 +125,7 @@ namespace _Main.Scripts.Core
 			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, playerModel, state == LevelState.STATION ? sceneContext.PlayerStationSpawnPosition : sceneContext.PlayerTrainSpawnPosition);
 			playerModel.PlayerStateModel.FillCharacterStatesDict(playerView.CharacterStateHandlers);
 			cameraService.AttachTo(playerView.CameraRoot);
-			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel));
+			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel, inputService, audioService));
 
 			// Level
 			controllersList.AddRange(RunFactory.GetSleepControllers(runModel.LevelModel, playerView));

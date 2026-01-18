@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class NpcView : CharacterView
@@ -13,7 +14,7 @@ public class NpcView : CharacterView
 			hatsTransforms[0].gameObject.SetActive(true);
 			return;
 		}
-		
+
 		foreach (var hatsTransform in hatsTransforms)
 		{
 			hatsTransform.gameObject.SetActive(false);

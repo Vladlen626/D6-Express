@@ -2,6 +2,7 @@
 using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 using UnityEngine;
@@ -14,7 +15,7 @@ public static class PlayerFactory
 
 		var playerConfig = await configService.GetFirstOrDefaultAsync<PlayerConfig>(ResourcePaths.Json.player);
 		int startCash = playerConfig.cash;
-	
+
 		playerModel.InventoryModel.GiveCash(startCash);
 
 		foreach (var playerConfigDice in playerConfig.dices)
@@ -25,8 +26,8 @@ public static class PlayerFactory
 
 		return playerModel;
 	}
-	
-	
+
+
 	public static async UniTask<PlayerView> SpawnPlayerView(
 		IObjectFactory factory,
 		IInputService inputService,
@@ -43,17 +44,20 @@ public static class PlayerFactory
 	}
 
 	public static IBaseController[] GetPlayerBaseControllers(PlayerView playerView, ServiceLocator serviceLocator,
-		PlayerModel playerModel)
+		PlayerModel playerModel, IInputService inputService, IAudioService audioService)
 	{
 		var input = serviceLocator.Get<IInputService>();
 		var cursor = serviceLocator.Get<ICursorService>();
 		var uiService = serviceLocator.Get<IUIService>();
 
+		var fartView = playerView.GetComponent<FartView>();
+
 		var playerControllers = new IBaseController[]
 		{
 			new MovementController(playerView, playerModel, input, cursor),
 			new PlayerHudController(uiService, playerModel),
-			new HintController(uiService, playerView)
+			new HintController(uiService, playerView),
+			new FartController(fartView, inputService, audioService)
 		};
 
 		return playerControllers;

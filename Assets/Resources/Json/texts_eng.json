@@ -22,7 +22,7 @@
         "shopkeeper_rich_random_4": "Millionaire, don't multiply around here, pay up and head back to your mansion",
         "shopkeeper_poor_random_0": "You again, you bum? Stop begging for pennies, go get a job",
         "shopkeeper_poor_random_1": "Hobo, can't even scrape together bread money? Get outta here, don't stink up the place",
-        "shopkeeper_poor_random_2": "Five rubles? With that budget, dig in the dumpster, loser",
+        "shopkeeper_poor_random_2": "Five coins? With that budget, dig in the dumpster, loser",
         "shopkeeper_poor_random_3": "Another starving wretch. We don't give freebies—go beg for alms",
         "shopkeeper_poor_random_4": "My poor fellow, have you ever looked in a mirror? Pay up or scram",
         "lose_header": "You've been kicked off the train. Now your adventure leads you under a bridge, where you'll die stoned.",
@@ -52,6 +52,7 @@
         "strat_straight_2_6_hunter_name": "Straight Dice (2–6)",
         "strat_polar_ends_name": "Polar Dice",
         "shopkeeper_buy_failed_random_0": "No money, no honey, pal",
-        "dice_added_to_inventory_notification": "{0} added"
+        "dice_added_to_inventory_notification": "{0} added",
+        "fart_reaction": "What is that smell?!"
     }
 }

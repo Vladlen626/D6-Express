@@ -8,5 +8,6 @@ public enum InteractionType
     SPEAK,
     RESTOCK,
     OPEN,
-    CLOSE
+    CLOSE,
+    FART
 }

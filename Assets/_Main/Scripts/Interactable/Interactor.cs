@@ -64,6 +64,11 @@ public class Interactor : MonoBehaviour
 
 		TryGetAction(selectedInteractable, out var action);
 
+		if (action == null)
+		{
+			return;
+		}
+
 		actionStack.Push(action);
 
 		action.Started += OnInteractionStarted;

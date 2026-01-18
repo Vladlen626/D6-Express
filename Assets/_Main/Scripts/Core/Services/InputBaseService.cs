@@ -12,6 +12,7 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnInteractPerformed;
 		public event Action<Vector2> OnMoved;
 		public event Action<Vector2> OnLooked;
+		public event Action OnFarted;
 
 		public event Action OnDebugSwitchPressed;
 
@@ -146,6 +147,11 @@ namespace _Main.Scripts.Core.Services
 			_actions.UI.SpeechLineSkip.performed += _ =>
 			{
 				OnSpeechLineSkip?.Invoke();
+			};
+
+			_actions.Player.Fart.performed += _ =>
+			{
+				OnFarted?.Invoke();
 			};
 		}
 
