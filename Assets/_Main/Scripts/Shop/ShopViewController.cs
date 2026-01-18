@@ -119,9 +119,17 @@ public class ShopViewController : IBaseController, IActivatable
         if (!itemsByIndex.TryGetValue(index, out var itemData))
             return;
 
+        var tradeItemView = itemData.view;
+
+        if (!tradeItemView.gameObject.activeSelf || !tradeItemView.gameObject.activeInHierarchy)
+        {
+            UnityEngine.Object.Destroy(tradeItemView.gameObject);
+            operationsByIndex.Remove(index);
+            return;
+        }
+
         await itemData.view.WaitForTransition();
 
-        var tradeItemView = itemData.view;
         tradeItemView.Buyed -= OnBuyed;
         shopView.Slots[index].SetPrice("x");
 
