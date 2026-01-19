@@ -32,7 +32,7 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private Outline outline;
 		[SerializeField] private Collider diceCollider;
 
-		[SerializeField] private float animSpeed = 0.3f;
+		[SerializeField] private float animSpeed = 0.10f;
 		[SerializeField] private float yOffset = 0.02f;
 
 		private IAudioService _audioService;
@@ -42,6 +42,7 @@ namespace _Main.Scripts.Dice
 		private bool isActive;
 		private bool isPlayerDice;
 		private bool _isHovered;
+		private bool isInAnimation;
 
 		public void Initialize(string diceConfigId, bool isPlayerDice, IAudioService audioService)
 		{
@@ -72,7 +73,7 @@ namespace _Main.Scripts.Dice
 
 		private void Update()
 		{
-			if (!_mainCamera || !isPlayerDice)
+			if (!_mainCamera || !isPlayerDice || isInAnimation)
 			{
 				return;
 			}
@@ -208,6 +209,13 @@ namespace _Main.Scripts.Dice
 			return transform.DOMove(position, animSpeed / speedMultiplier);
 		}
 
+		public void ResetYRotation()
+		{
+			var rotation = transform.localRotation.eulerAngles;
+			rotation.y = 0;
+			transform.DOLocalRotate(rotation, animSpeed);
+		}
+
 		public void Hide()
 		{
 			model.transform.localScale = Vector3.zero;
@@ -225,6 +233,7 @@ namespace _Main.Scripts.Dice
 		// ReSharper disable Unity.PerformanceAnalysis
 		public async UniTask PlayRollAnimationAsync(float rollTime = 2f)
 		{
+			isInAnimation = true;
 			var randomOffset = new Vector3(Random.Range(-0.02f, 0.02f), 0, Random.Range(-0.02f, 0.02f));
 
 			var startPos = transform.position;
@@ -245,6 +254,7 @@ namespace _Main.Scripts.Dice
 				.Append(transform.DOMove(targetPos, moveDownTime).SetEase(Ease.Linear)).OnComplete(() =>
 				{
 					_audioService.PlaySoundAt(SoundNames.DiceMove, transform.position);
+					isInAnimation = false;
 				})
 				.Join(transform.DORotate(new Vector3(0f, Random.Range(0f, 360f), 0f), moveDownTime, RotateMode.FastBeyond360)
 					.SetEase(Ease.Linear));

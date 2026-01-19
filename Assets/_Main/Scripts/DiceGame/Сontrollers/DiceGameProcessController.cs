@@ -212,8 +212,8 @@ namespace _Main.Scripts.Dice
 
 				var position = tableModel.GetFreeBankedPosition();
 				diceModel.SetCurrentPosition(position);
-
 				var view = diceGameModel.ScreenDiceDict[diceModel];
+				view.ResetYRotation();
 				tweenList.Add(view.MoveToPosition(position.position));
 			}
 

@@ -163,6 +163,20 @@ namespace _Main.Scripts.Dice
 
 				info.Remaining[5] = 0;
 			}
+			
+			for (int face = 2; face <= 6; face++)
+			{
+				if (face == 5)
+				{
+					continue;
+				}
+
+				if (info.Remaining[face] > 0)
+				{
+					result.Combinations.Clear();
+					return result;
+				}
+			}
 
 			return result;
 		}

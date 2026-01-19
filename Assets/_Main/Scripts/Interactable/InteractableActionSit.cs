@@ -6,6 +6,7 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionSit : InteractionAction
 {
+	private static readonly int State = Animator.StringToHash("State");
 	protected Vector3 lastPos;
 
 	public override bool CanInteract(IInteractable interactable)
@@ -21,10 +22,10 @@ public class InteractableActionSit : InteractionAction
 
 		var sittable = Interactable as InteractableSittable;
 
-		var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 0.25f).ToUniTask();
-		var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 0.25f).ToUniTask();
+		var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 0.25f).AsyncWaitForCompletion().AsUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 0.25f).AsyncWaitForCompletion().AsUniTask();
 
-		Interactor.GetComponent<Animator>().SetInteger("State", 1);
+		Interactor.GetComponent<Animator>().SetInteger(State, 1);
 		await UniTask.WhenAll(moveTask, rotateTask);
 
 		StateModel.TryRemoveState(CharacterState.TRANSITION);
@@ -35,12 +36,14 @@ public class InteractableActionSit : InteractionAction
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
 
-		Interactor.GetComponent<Animator>().SetInteger("State", 0);
+		Interactor.GetComponent<Animator>().SetInteger(State, 0);
 
-		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).AsyncWaitForCompletion().AsUniTask();
 
 		// todo: так делать нельзя
-		var rotateTask = Interactor.GetComponent<CharacterView>().Head.transform.DOLocalRotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+		var rotateTask = Interactor.GetComponent<CharacterView>().Head.transform
+			.DOLocalRotateQuaternion(Quaternion.identity, 0.25f)
+			.AsyncWaitForCompletion().AsUniTask();
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 

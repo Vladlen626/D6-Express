@@ -21,8 +21,8 @@ public class InteractableActionLay : InteractionAction
 
 		var layable = Interactable as InteractableLayable;
 
-		var moveTask = Interactor.transform.DOMove(layable.SitTfm.position, .25f).ToUniTask();
-		var rotateTask = Interactor.transform.DORotateQuaternion(layable.SitTfm.rotation, .25f).ToUniTask();
+		var moveTask = Interactor.transform.DOMove(layable.SitTfm.position, .25f).AsyncWaitForCompletion().AsUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(layable.SitTfm.rotation, .25f).AsyncWaitForCompletion().AsUniTask();
 
 		await UniTask.WhenAll(moveTask, rotateTask);
 
@@ -34,11 +34,11 @@ public class InteractableActionLay : InteractionAction
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
 
-		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
-		var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).AsyncWaitForCompletion().AsUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).AsyncWaitForCompletion().AsUniTask();
 
 		// todo: так делать нельзя
-		var rotateHeadTask = Interactor.GetComponent<CharacterView>().Head.transform.DOLocalRotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+		var rotateHeadTask = Interactor.GetComponent<CharacterView>().Head.transform.DOLocalRotateQuaternion(Quaternion.identity, 0.25f).AsyncWaitForCompletion().AsUniTask();
 
 		await UniTask.WhenAll(moveTask, rotateTask, rotateHeadTask);
 

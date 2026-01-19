@@ -11,7 +11,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 	private readonly DiceGameModel diceGameModel;
 	private TableModel tableModel => diceGameModel.tableModel;
 
-	private int delay => GlobalParameters.Delay;
+	private int delay => GlobalParameters.Delay/2;
 
 	private bool isRunning;
 
