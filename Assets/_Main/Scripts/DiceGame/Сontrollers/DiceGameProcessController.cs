@@ -36,6 +36,11 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.OnRollClicked += HandleRoll;
 			diceGameModel.OnPassClicked += HandlePass;
+			
+			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
+			{
+				diceModel.OnDiceChosenChanged += UpdateUI;
+			}
 
 			UpdateUI();
 		}
@@ -46,6 +51,11 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.OnRollClicked -= HandleRoll;
 			diceGameModel.OnPassClicked -= HandlePass;
+			
+			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
+			{
+				diceModel.OnDiceChosenChanged -= UpdateUI;
+			}
 		}
 
 		// === ОБРАБОТЧИКИ КНОПОК ===
@@ -85,7 +95,7 @@ namespace _Main.Scripts.Dice
 				if (isHotDice)
 				{
 					await ResetAllDiceToActiveAsync();
-					diceGameModel.ResetAll();
+					diceGameModel.ResetAllDices();
 				}
 
 				// Роллим актуальные кубы
@@ -120,7 +130,8 @@ namespace _Main.Scripts.Dice
 		private bool IsBoost()
 		{
 			var diceToRoll = diceGameModel.GetUnbanked();
-			if (DiceGameUtils.RollHasAnyScore(GetValues(diceToRoll)))
+			var diceCombinationResult = DiceGameUtils.GetCombinations(GetValues(diceToRoll));
+			if (diceCombinationResult.Combinations.Count > 0)
 			{
 				return false;
 			}
@@ -185,7 +196,8 @@ namespace _Main.Scripts.Dice
 				values[i] = selected[i].CurrentValue;
 			}
 
-			int points = DiceGameUtils.CalculateScore(values);
+			var combo = DiceGameUtils.GetCombinations(values);
+			int points = DiceGameUtils.CalculateScore(combo);
 			if (points <= 0)
 			{
 				return false;
@@ -237,6 +249,16 @@ namespace _Main.Scripts.Dice
 			{
 				diceGameModel.ShowAllDiceGameModels();
 			}
+			
+			var selectedDice = diceGameModel.GetSelected();
+			var selectedValues = new int[selectedDice.Length];
+			for (int i = 0; i < selectedDice.Length; i++)
+			{
+				selectedValues[i] = selectedDice[i].CurrentValue;
+			}
+
+			var combo = DiceGameUtils.GetCombinations(selectedValues);
+			tableModel.SetPreviewPoints(DiceGameUtils.CalculateScore(combo));
 
 			diceGameModel.tableModel.SendUpdateUI();
 		}

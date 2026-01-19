@@ -78,15 +78,13 @@ public class EnemyTurnController : IBaseController, IActivatable
 				}
 
 				int[] values = DiceGameUtils.GetDiceValues(unbanked);
-
-				// bust проверяется внутри HandleRollAsync → EndTurn(false)
-				if (DiceGameUtils.RollHasAnyScore(values) == false)
+				var combinations = DiceGameUtils.GetCombinations(values);
+				if (combinations.Combinations.Count == 0)
 				{
 					await UniTask.Delay(delay);
 					return;
 				}
 
-				// выбираем лучшую комбинацию
 				int bestMask = FindBestMask(values);
 
 				for (int i = 0; i < unbanked.Length; i++)
@@ -169,7 +167,8 @@ public class EnemyTurnController : IBaseController, IActivatable
 				}
 			}
 
-			int score = DiceGameUtils.CalculateScore(subset.ToArray());
+			var combinations = DiceGameUtils.GetCombinations(subset.ToArray());
+			int score = DiceGameUtils.CalculateScore(combinations);
 
 			if (score > bestScore)
 			{
