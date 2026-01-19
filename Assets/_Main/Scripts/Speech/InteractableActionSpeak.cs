@@ -1,8 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
-using UnityEngine;
-using UnityEngine.Rendering;
 
 [Serializable]
 public class InteractableActionSpeak : InteractionAction
@@ -29,8 +27,7 @@ public class InteractableActionSpeak : InteractionAction
 		StateModel.TryAddState(CharacterState.SPEAKING);
 
 		var playerView = Interactor.GetComponent<PlayerView>();
-		// await playerView.CameraRoot.DOLookAt(rotateTarget.position, 1).ToUniTask();
-		playerView.transform.LookAt(rotateTarget.position);
+		await playerView.Head.DOLookAt(rotateTarget.position, .25f).ToUniTask();
 	}
 
 	protected override async void StopInteractInternal()

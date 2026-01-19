@@ -72,7 +72,6 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 		if (cameraState.minPitch != -1 && cameraState.maxPitch != -1)
 			pitch = Mathf.Clamp(pitch, cameraState.minPitch, cameraState.maxPitch);
 
-
 		float yaw = Mathf.DeltaAngle(0f, rotationTransform.localEulerAngles.y);
 		yaw += LookInput.x * playerView.mouseSensitivity;
 

@@ -603,6 +603,12 @@ MonoBehaviour:
     maxPitch: 45
     minYaw: -90
     maxYaw: 90
+  - characterState: 5
+    rotationType: 1
+    minPitch: -45
+    maxPitch: 45
+    minYaw: -90
+    maxYaw: 90
   characterController: {fileID: 7085261717966828229}
   walkSpeed: 5
   runSpeed: 10
