@@ -36,6 +36,8 @@ public class InteractableActionLay : InteractionAction
 
 		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
 		var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+
+		// todo: так делать нельзя
 		var rotateHeadTask = Interactor.GetComponent<CharacterView>().Head.transform.DOLocalRotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
 
 		await UniTask.WhenAll(moveTask, rotateTask, rotateHeadTask);

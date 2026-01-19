@@ -38,6 +38,8 @@ public class InteractableActionSit : InteractionAction
 		Interactor.GetComponent<Animator>().SetInteger("State", 0);
 
 		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+
+		// todo: так делать нельзя
 		var rotateTask = Interactor.GetComponent<CharacterView>().Head.transform.DOLocalRotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
 
 		await UniTask.WhenAll(moveTask, rotateTask);
