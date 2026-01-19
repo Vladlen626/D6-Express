@@ -257,8 +257,17 @@ namespace _Main.Scripts.Dice
 				selectedValues[i] = selectedDice[i].CurrentValue;
 			}
 
-			var combo = DiceGameUtils.GetCombinations(selectedValues);
-			tableModel.SetPreviewPoints(DiceGameUtils.CalculateScore(combo));
+
+			if (DiceGameUtils.HasTrashInSelected(selectedValues))
+			{
+				tableModel.SetPreviewPoints(0);
+			}
+			else
+			{
+				var combo = DiceGameUtils.GetCombinations(selectedValues);
+				tableModel.SetPreviewPoints(DiceGameUtils.CalculateScore(combo));
+			}
+
 
 			diceGameModel.tableModel.SendUpdateUI();
 		}

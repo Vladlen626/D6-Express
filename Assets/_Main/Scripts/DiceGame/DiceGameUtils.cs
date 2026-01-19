@@ -163,22 +163,71 @@ namespace _Main.Scripts.Dice
 
 				info.Remaining[5] = 0;
 			}
-			
-			for (int face = 2; face <= 6; face++)
-			{
-				if (face == 5)
-				{
-					continue;
-				}
 
-				if (info.Remaining[face] > 0)
+			return result;
+		}
+
+		public static bool HasTrashInSelected(int[] values)
+		{
+			if (values == null || values.Length == 0)
+			{
+				return false;
+			}
+
+			var info = AnalyzeValues(values);
+
+			var combos = GetCombinations(values);
+			foreach (var combo in combos.Combinations)
+			{
+				switch (combo.Combination)
 				{
-					result.Combinations.Clear();
-					return result;
+					case DiceCombination.Straight_1_6:
+						Consume(info, new[] { 1, 2, 3, 4, 5, 6 });
+						break;
+
+					case DiceCombination.Straight_1_5:
+						Consume(info, new[] { 1, 2, 3, 4, 5 });
+						break;
+
+					case DiceCombination.Straight_2_6:
+						Consume(info, new[] { 2, 3, 4, 5, 6 });
+						break;
+
+					case DiceCombination.ThreeOfAKind:
+					case DiceCombination.FourOfAKind:
+					case DiceCombination.FiveOfAKind:
+					case DiceCombination.SixOfAKind:
+						info.Remaining[combo.Face] -= combo.Count;
+						break;
+
+					case DiceCombination.SingleOnes:
+						info.Remaining[1] -= combo.Count;
+						break;
+
+					case DiceCombination.SingleFives:
+						info.Remaining[5] -= combo.Count;
+						break;
 				}
 			}
 
-			return result;
+			// если что-то осталось — это мусор
+			for (int face = 1; face <= 6; face++)
+			{
+				if (info.Remaining[face] > 0)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static void Consume(DiceInfo info, int[] faces)
+		{
+			foreach (var face in faces)
+			{
+				info.Remaining[face]--;
+			}
 		}
 
 
