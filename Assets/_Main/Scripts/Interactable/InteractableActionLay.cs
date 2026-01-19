@@ -1,10 +1,7 @@
 using System;
-using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 
 [Serializable]
 public class InteractableActionLay : InteractionAction
@@ -24,11 +21,10 @@ public class InteractableActionLay : InteractionAction
 
 		var layable = Interactable as InteractableLayable;
 
-		// var moveTask = Interactor.transform.DOMove(layable.SitTfm.position, 1).ToUniTask();
-		// var rotateTask = Interactor.transform.DORotateQuaternion(layable.SitTfm.rotation, 1).ToUniTask();
+		var moveTask = Interactor.transform.DOMove(layable.SitTfm.position, .25f).ToUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(layable.SitTfm.rotation, .25f).ToUniTask();
 
-		// await UniTask.WhenAll(moveTask, rotateTask);
-		Interactor.transform.SetPositionAndRotation(layable.SitTfm.position, layable.SitTfm.rotation);
+		await UniTask.WhenAll(moveTask, rotateTask);
 
 		StateModel.TryRemoveState(CharacterState.TRANSITION);
 		StateModel.TryAddState(CharacterState.LAYING);
@@ -36,12 +32,15 @@ public class InteractableActionLay : InteractionAction
 
 	protected async override void StopInteractInternal()
 	{
-		// var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
-		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+		StateModel.TryAddState(CharacterState.TRANSITION);
 
-		// await UniTask.WhenAll(moveTask, rotateTask);
-		Interactor.transform.SetPositionAndRotation(lastPos, Quaternion.identity);
+		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).ToUniTask();
+		var rotateTask = Interactor.transform.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
+		var rotateHeadTask = Interactor.GetComponent<CharacterView>().Head.transform.DOLocalRotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
 
+		await UniTask.WhenAll(moveTask, rotateTask, rotateHeadTask);
+
+		StateModel.TryRemoveState(CharacterState.TRANSITION);
 		StateModel.TryRemoveState(CharacterState.LAYING);
 	}
 }

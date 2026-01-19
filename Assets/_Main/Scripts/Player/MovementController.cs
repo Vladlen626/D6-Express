@@ -112,7 +112,6 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 				}
 			}
 		}
-		playerView.Head.localRotation = Quaternion.identity;
 	}
 
 	private void ResetCameraRotation()

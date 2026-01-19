@@ -585,6 +585,12 @@ MonoBehaviour:
     minYaw: -1
     maxYaw: -1
   cameraStates:
+  - characterState: 3
+    rotationType: 0
+    minPitch: -45
+    maxPitch: 45
+    minYaw: -1
+    maxYaw: -1
   - characterState: 1
     rotationType: 1
     minPitch: -45

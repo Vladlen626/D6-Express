@@ -36,6 +36,7 @@ public class CharacterView : MonoBehaviour
 	private readonly Dictionary<CharacterState, CameraState> cameraStatesDict = new();
 
 	public CharacterStateHandler[] CharacterStateHandlers => states.ToArray();
+	public IReadOnlyList<CameraState> CameraStates => cameraStates;
 
 	protected Collider CharacterCollider => characterCollider;
 	public Transform CameraRoot => cameraRoot;
