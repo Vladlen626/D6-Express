@@ -1,69 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 
 namespace _Main.Scripts.Dice
 {
 	public class ModifiersModel
 	{
-		public event Action OnMultiplierChanged;
-		public int PointsMultiplier
-		{
-			get => multiplier;
-
-			private set
-			{
-				multiplier = value;
-				OnMultiplierChanged?.Invoke();
-			}
-		}
-		
-		private readonly DiceGameModel diceGameModel;
-		private readonly List<IOnRollAction> onRollActionsHandler = new ();
-		private readonly List<IOnPassAction> onPassActionsHandler = new ();
+		private readonly List<IOnRollModifier> onRollActionsHandler = new ();
+		private readonly List<IOnPassModifier> onPassActionsHandler = new ();
 
 		private int multiplier;
-
-
-		public void AddPointsMultiplierValue(int multiplierValue)
+		public void AddModifier(IModifier modifier)
 		{
-			PointsMultiplier += multiplierValue;
+			switch (modifier)
+			{
+				case IOnRollModifier onRollAction:
+					onRollActionsHandler.Add(onRollAction);
+					break;
+				case IOnPassModifier onPassAction:
+					onPassActionsHandler.Add(onPassAction);
+					break;
+			}
 		}
 
-		public void MultiplyPointsMultiplierValue(int multiplierValue)
-		{
-			PointsMultiplier *= multiplierValue;
-		}
-		
-		public void AddRollAction(IOnRollAction onRollAction)
-		{
-			onRollActionsHandler.Add(onRollAction);
-		}
-
-		public void AddPassAction(IOnPassAction onPassAction)
-		{
-			onPassActionsHandler.Add(onPassAction);
-		}
-		
-		public async UniTask PlayRollActions()
+		public async UniTask PlayRollActions(DiceCombinationResult diceCombinationResult)
 		{
 			foreach (var onRollAction in onRollActionsHandler)
 			{
-				await onRollAction.OnRoll(diceGameModel);
+				await onRollAction.ModifyValues(diceCombinationResult);
 			}
 		}
 
-		public async UniTask PlayPassActions()
+		public async UniTask PlayPassActions(DiceCombinationResult diceCombinationResult)
 		{
 			foreach (var onPassAction in onPassActionsHandler)
 			{
-				await onPassAction.OnPass(diceGameModel);
+				await onPassAction.ModifyValues(diceCombinationResult);
 			}
 		}
 
 		public void Reset()
 		{
-			PointsMultiplier = 0;
 			onRollActionsHandler.Clear();
 			onPassActionsHandler.Clear();
 		}

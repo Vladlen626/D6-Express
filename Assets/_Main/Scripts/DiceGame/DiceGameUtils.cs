@@ -164,6 +164,8 @@ namespace _Main.Scripts.Dice
 				info.Remaining[5] = 0;
 			}
 
+			BaseScoreSetup(result);
+
 			return result;
 		}
 
@@ -234,44 +236,40 @@ namespace _Main.Scripts.Dice
 
 		// === УДОБНЫЕ ОБЁРТКИ ДЛЯ ТЕКУЩЕГО КОДА ===
 
-		public static int CalculateScore(DiceCombinationResult combinations)
+		private static void BaseScoreSetup(DiceCombinationResult combinations)
 		{
-			int totalScore = 0;
-
 			foreach (var entry in combinations.Combinations)
 			{
 				switch (entry.Combination)
 				{
 					case DiceCombination.Straight_1_6:
-						totalScore += 1500;
+						entry.BaseScore = 1500;
 						break;
 
 					case DiceCombination.Straight_1_5:
-						totalScore += 500;
+						entry.BaseScore = 500;
 						break;
 
 					case DiceCombination.Straight_2_6:
-						totalScore += 750;
+						entry.BaseScore = 750;
 						break;
 
 					case DiceCombination.ThreeOfAKind:
 					case DiceCombination.FourOfAKind:
 					case DiceCombination.FiveOfAKind:
 					case DiceCombination.SixOfAKind:
-						totalScore += ScoreNOfKind(entry.Face, entry.Count);
+						entry.BaseScore = ScoreNOfKind(entry.Face, entry.Count);
 						break;
 
 					case DiceCombination.SingleOnes:
-						totalScore += entry.Count * 100;
+						entry.BaseScore = entry.Count * 100;
 						break;
 
 					case DiceCombination.SingleFives:
-						totalScore += entry.Count * 50;
+						entry.BaseScore = entry.Count * 50;
 						break;
 				}
 			}
-
-			return totalScore;
 		}
 
 		public static string GetCombinationName(DiceCombination combination)
