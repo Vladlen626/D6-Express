@@ -95,7 +95,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			if (diceModel.IsSaved)
+			if (!diceModel.IsSaved)
 			{
 				tableModel.ReleaseBankedPosition(diceModel.CurrentPosition);
 			}
