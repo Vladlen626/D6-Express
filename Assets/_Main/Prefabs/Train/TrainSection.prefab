@@ -567,8 +567,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.024, y: 0.0016, z: 0.0288}
-  m_Center: {x: 0, y: -0.023, z: -0.0053}
+  m_Size: {x: 0.024, y: 0.003353695, z: 0.0288}
+  m_Center: {x: 0, y: -0.02387687, z: -0.0052999994}
 --- !u!65 &5364807474045509841
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -609,8 +609,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.024, y: 0.0016, z: 0.0288}
-  m_Center: {x: 0, y: 0.023, z: -0.0053}
+  m_Size: {x: 0.024, y: 0.0028405134, z: 0.0288}
+  m_Center: {x: 0, y: 0.023620268, z: -0.005299999}
 --- !u!1 &2183724433732191141
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,6 +730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
+  blockInteract: 0
   sitTfm: {fileID: 0}
 --- !u!1 &2369276770711910743
 GameObject:
