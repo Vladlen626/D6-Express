@@ -45,7 +45,7 @@ public class NpcSpawner
 
             notUsedPoints.RemoveAt(pointIndex);
 
-            if (!point.gameObject.activeSelf || point.levelState != runModel.LevelState)
+            if (!point.isActiveAndEnabled)
             {
                 continue;
             }

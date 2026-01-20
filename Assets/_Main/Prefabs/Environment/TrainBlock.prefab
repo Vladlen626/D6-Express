@@ -1467,6 +1467,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Train
       objectReference: {fileID: 0}
+    - target: {fileID: 2417122000572555349, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8647564642651338875, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 4095282814383895792, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
