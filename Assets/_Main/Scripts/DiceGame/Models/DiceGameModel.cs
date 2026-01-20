@@ -41,6 +41,7 @@ namespace _Main.Scripts.Dice
 		public DiceGameModel()
 		{
 			ModifiersModel = new ModifiersModel();
+			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
 		}
 		
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
@@ -160,13 +161,11 @@ namespace _Main.Scripts.Dice
 		public void RollEnded()
 		{
 			tableModel.SendUpdateUI();
-			ModifiersModel.PlayRollActions().Forget();
 		}
 
 		public void PassEnded()
 		{
 			tableModel.SendUpdateUI();
-			ModifiersModel.PlayPassActions().Forget();
 		}
 
 		public void EndTurn(bool success)

@@ -11,7 +11,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 	private readonly DiceGameModel diceGameModel;
 	private TableModel tableModel => diceGameModel.tableModel;
 
-	private int delay => GlobalParameters.Delay;
+	private int delay => GlobalParameters.Delay/2;
 
 	private bool isRunning;
 
@@ -96,7 +96,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 
 				await UniTask.Delay(delay);
 
-				bool hotDice = await processController.TrySaveSelected();
+				bool hotDice = await processController.TrySaveSelected(diceGameModel.GetSelected(), combinations);
 
 				await UniTask.Delay(delay);
 
@@ -168,7 +168,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 			}
 
 			var combinations = DiceGameUtils.GetCombinations(subset.ToArray());
-			int score = DiceGameUtils.CalculateScore(combinations);
+			int score = DiceGameUtils.CalculateTotalScore(combinations);
 
 			if (score > bestScore)
 			{

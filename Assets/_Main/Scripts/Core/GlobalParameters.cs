@@ -17,7 +17,7 @@ namespace _Main.Scripts.Core
 			}
 		}
 
-		private static int delay = 500;
+		private static int delay = 300;
 		public static int Delay
 		{
 			get => (int)(delay / animSpeed);

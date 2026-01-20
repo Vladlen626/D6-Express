@@ -18,6 +18,7 @@ namespace _Main.Scripts.Dice
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
+
 		public DiceGameProcessController(
 			ILoggerService logger,
 			DiceGameModel diceGameModel,
@@ -36,7 +37,7 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.OnRollClicked += HandleRoll;
 			diceGameModel.OnPassClicked += HandlePass;
-			
+
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				diceModel.OnDiceChosenChanged += UpdateUI;
@@ -51,7 +52,7 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.OnRollClicked -= HandleRoll;
 			diceGameModel.OnPassClicked -= HandlePass;
-			
+
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				diceModel.OnDiceChosenChanged -= UpdateUI;
@@ -86,9 +87,9 @@ namespace _Main.Scripts.Dice
 					tableModel.isFirstRoll = false;
 					diceGameModel.ShowAllDiceGameModels();
 				}
-
-				// Сохраняем выбранные кубы, если есть
-				bool isHotDice = await TrySaveSelected();
+				
+	
+				bool isHotDice = await TrySaveSelected(diceGameModel.GetSelected(), DiceGameUtils.GetCombinations(GetValues(diceGameModel.GetSelected())));
 				tableModel.SetPreviewPoints(0);
 
 				// Если все кубы забанкированы после сохранения, сбросить пул
@@ -107,37 +108,28 @@ namespace _Main.Scripts.Dice
 					var view = diceGameModel.ScreenDiceDict[dice];
 					tasks.Add(view.PlayRollAnimationAsync());
 				}
-				
+
 				await UniTask.WhenAll(tasks);
 				audioService.PlaySound(SoundNames.DiceDrop);
 
-				await UniTask.Delay(GlobalParameters.Delay/2);
-
-				if (IsBoost())
+				await UniTask.Delay(GlobalParameters.Delay / 2);
+				
+				var diceCombinationResult = DiceGameUtils.GetCombinations(GetValues(diceToRoll));
+				
+				if (diceCombinationResult.Combinations.Count == 0)
 				{
 					audioService.PlaySound(SoundNames.Fail);
 					await UniTask.Delay(GlobalParameters.Delay);
 					EndTurn(false);
 				}
+
+				await diceGameModel.ModifiersModel.PlayRollActions(diceCombinationResult);
 			}
 			finally
 			{
 				diceGameModel.RollEnded();
 				IsProcessing = false;
 			}
-		}
-
-		private bool IsBoost()
-		{
-			var diceToRoll = diceGameModel.GetUnbanked();
-			var diceCombinationResult = DiceGameUtils.GetCombinations(GetValues(diceToRoll));
-			if (diceCombinationResult.Combinations.Count > 0)
-			{
-				return false;
-			}
-
-			logger?.Log("[DiceGameController] BUST!");
-			return true;
 		}
 
 		private int[] GetValues(DiceModel[] dice)
@@ -164,7 +156,11 @@ namespace _Main.Scripts.Dice
 			try
 			{
 				diceGameModel.tableModel.DisableButtons();
-				await TrySaveSelected();
+				
+				var selected = diceGameModel.GetSelected();
+				var combo = DiceGameUtils.GetCombinations(GetValues(selected));
+				await diceGameModel.ModifiersModel.PlayPassActions(combo);
+				await TrySaveSelected(selected, combo);
 				EndTurn(true);
 			}
 			finally
@@ -182,22 +178,9 @@ namespace _Main.Scripts.Dice
 			UpdateUI();
 		}
 
-		public async UniTask<bool> TrySaveSelected()
+		public async UniTask<bool> TrySaveSelected(DiceModel[] selected, DiceCombinationResult combinationResult)
 		{
-			var selected = diceGameModel.GetSelected();
-			if (selected.Length == 0)
-			{
-				return false;
-			}
-
-			var values = new int[selected.Length];
-			for (var i = 0; i < selected.Length; i++)
-			{
-				values[i] = selected[i].CurrentValue;
-			}
-
-			var combo = DiceGameUtils.GetCombinations(values);
-			int points = DiceGameUtils.CalculateScore(combo);
+			int points = DiceGameUtils.CalculateTotalScore(combinationResult);
 			if (points <= 0)
 			{
 				return false;
@@ -212,8 +195,8 @@ namespace _Main.Scripts.Dice
 
 				var position = tableModel.GetFreeBankedPosition();
 				diceModel.SetCurrentPosition(position);
-
 				var view = diceGameModel.ScreenDiceDict[diceModel];
+				view.ResetYRotation();
 				tweenList.Add(view.MoveToPosition(position.position));
 			}
 
@@ -249,7 +232,7 @@ namespace _Main.Scripts.Dice
 			{
 				diceGameModel.ShowAllDiceGameModels();
 			}
-			
+
 			var selectedDice = diceGameModel.GetSelected();
 			var selectedValues = new int[selectedDice.Length];
 			for (int i = 0; i < selectedDice.Length; i++)
@@ -257,8 +240,17 @@ namespace _Main.Scripts.Dice
 				selectedValues[i] = selectedDice[i].CurrentValue;
 			}
 
-			var combo = DiceGameUtils.GetCombinations(selectedValues);
-			tableModel.SetPreviewPoints(DiceGameUtils.CalculateScore(combo));
+
+			if (DiceGameUtils.HasTrashInSelected(selectedValues))
+			{
+				tableModel.SetPreviewPoints(0);
+			}
+			else
+			{
+				var combo = DiceGameUtils.GetCombinations(selectedValues);
+				tableModel.SetPreviewPoints(DiceGameUtils.CalculateTotalScore(combo));
+			}
+
 
 			diceGameModel.tableModel.SendUpdateUI();
 		}

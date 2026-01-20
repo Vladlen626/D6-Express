@@ -164,51 +164,112 @@ namespace _Main.Scripts.Dice
 				info.Remaining[5] = 0;
 			}
 
+			BaseScoreSetup(result);
+
 			return result;
 		}
 
-
-
-		// === УДОБНЫЕ ОБЁРТКИ ДЛЯ ТЕКУЩЕГО КОДА ===
-
-		public static int CalculateScore(DiceCombinationResult combinations)
+		public static bool HasTrashInSelected(int[] values)
 		{
-			int totalScore = 0;
-
-			foreach (var entry in combinations.Combinations)
+			if (values == null || values.Length == 0)
 			{
-				switch (entry.Combination)
+				return false;
+			}
+
+			var info = AnalyzeValues(values);
+
+			var combos = GetCombinations(values);
+			foreach (var combo in combos.Combinations)
+			{
+				switch (combo.Combination)
 				{
 					case DiceCombination.Straight_1_6:
-						totalScore += 1500;
+						Consume(info, new[] { 1, 2, 3, 4, 5, 6 });
 						break;
 
 					case DiceCombination.Straight_1_5:
-						totalScore += 500;
+						Consume(info, new[] { 1, 2, 3, 4, 5 });
 						break;
 
 					case DiceCombination.Straight_2_6:
-						totalScore += 750;
+						Consume(info, new[] { 2, 3, 4, 5, 6 });
 						break;
 
 					case DiceCombination.ThreeOfAKind:
 					case DiceCombination.FourOfAKind:
 					case DiceCombination.FiveOfAKind:
 					case DiceCombination.SixOfAKind:
-						totalScore += ScoreNOfKind(entry.Face, entry.Count);
+						info.Remaining[combo.Face] -= combo.Count;
 						break;
 
 					case DiceCombination.SingleOnes:
-						totalScore += entry.Count * 100;
+						info.Remaining[1] -= combo.Count;
 						break;
 
 					case DiceCombination.SingleFives:
-						totalScore += entry.Count * 50;
+						info.Remaining[5] -= combo.Count;
 						break;
 				}
 			}
 
-			return totalScore;
+			// если что-то осталось — это мусор
+			for (int face = 1; face <= 6; face++)
+			{
+				if (info.Remaining[face] > 0)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private static void Consume(DiceInfo info, int[] faces)
+		{
+			foreach (var face in faces)
+			{
+				info.Remaining[face]--;
+			}
+		}
+
+
+
+		// === УДОБНЫЕ ОБЁРТКИ ДЛЯ ТЕКУЩЕГО КОДА ===
+
+		private static void BaseScoreSetup(DiceCombinationResult combinations)
+		{
+			foreach (var entry in combinations.Combinations)
+			{
+				switch (entry.Combination)
+				{
+					case DiceCombination.Straight_1_6:
+						entry.BaseScore = 1500;
+						break;
+
+					case DiceCombination.Straight_1_5:
+						entry.BaseScore = 500;
+						break;
+
+					case DiceCombination.Straight_2_6:
+						entry.BaseScore = 750;
+						break;
+
+					case DiceCombination.ThreeOfAKind:
+					case DiceCombination.FourOfAKind:
+					case DiceCombination.FiveOfAKind:
+					case DiceCombination.SixOfAKind:
+						entry.BaseScore = ScoreNOfKind(entry.Face, entry.Count);
+						break;
+
+					case DiceCombination.SingleOnes:
+						entry.BaseScore = entry.Count * 100;
+						break;
+
+					case DiceCombination.SingleFives:
+						entry.BaseScore = entry.Count * 50;
+						break;
+				}
+			}
 		}
 
 		public static string GetCombinationName(DiceCombination combination)
