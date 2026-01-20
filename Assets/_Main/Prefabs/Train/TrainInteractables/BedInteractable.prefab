@@ -100,6 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a58a2679b602044a3b38de82360f20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableLayable
+  blockInteract: 0
   sitTfm: {fileID: 8818953195172086195}
 --- !u!114 &3361349745628286014
 MonoBehaviour:
@@ -113,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 630e2a9849bf55e4e9838f6800ec2d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hintable
-  hintText: bed
+  hintText: lay down
 --- !u!114 &4537036492359175433
 MonoBehaviour:
   m_ObjectHideFlags: 0

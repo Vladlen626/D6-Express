@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c96d00e205c9b64aba6968a94101231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableSittable
+  blockInteract: 0
   sitTfm: {fileID: 1303052735680450577}
 --- !u!114 &2658383397834044581
 MonoBehaviour:
@@ -82,7 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 630e2a9849bf55e4e9838f6800ec2d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hintable
-  hintText: chair
+  hintText: sit
 --- !u!114 &3683045954050179199
 MonoBehaviour:
   m_ObjectHideFlags: 0

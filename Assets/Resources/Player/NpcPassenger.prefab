@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2398834361775956116, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
       propertyPath: hintText
-      value: Speak
+      value: speak
       objectReference: {fileID: 0}
     - target: {fileID: 2497132311732342863, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
       propertyPath: m_LocalRotation.w

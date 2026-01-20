@@ -2530,7 +2530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 630e2a9849bf55e4e9838f6800ec2d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hintable
-  hintText: Play
+  hintText: play
 --- !u!114 &7170553885424053037
 MonoBehaviour:
   m_ObjectHideFlags: 0

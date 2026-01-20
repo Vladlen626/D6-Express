@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2398834361775956116, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
       propertyPath: hintText
-      value: Shopkeeper
+      value: speak
       objectReference: {fileID: 0}
     - target: {fileID: 3846627723556643445, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
       propertyPath: id

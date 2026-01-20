@@ -1514,7 +1514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 630e2a9849bf55e4e9838f6800ec2d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hintable
-  hintText: BASE_NPC
+  hintText: speak
 --- !u!114 &3846627723556643445
 MonoBehaviour:
   m_ObjectHideFlags: 0
