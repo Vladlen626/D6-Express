@@ -39,7 +39,7 @@ public class LevelViewController : BaseContextController<UILevelView>
 	{
 		RotateSun();
 
-		_context.SetTicksText("sessions_count", runModel.LevelModel.Tick.ToString(), runModel.LevelModel.Ticks.ToString());
+		_context.SetTicksText("sessions_count", (runModel.LevelModel.Ticks - 1 - runModel.LevelModel.Tick).ToString());
 	}
 
 	private void RotateSun()

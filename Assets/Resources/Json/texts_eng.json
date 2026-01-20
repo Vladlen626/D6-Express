@@ -54,7 +54,7 @@
         "shopkeeper_buy_failed_random_0": "No money, no honey, pal",
         "dice_added_to_inventory_notification": "{0} added",
         "fart_reaction": "What is that smell?!",
-        "sessions_count": "sessions: {0} / {1}",
+        "sessions_count": "sessions left: {0}",
         "days_count": "days: {0} / {1}",
         "game_progress": "progress: {0}$ / {1}$"
     }
