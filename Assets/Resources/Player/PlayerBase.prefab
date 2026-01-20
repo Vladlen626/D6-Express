@@ -678,7 +678,7 @@ MonoBehaviour:
   interactionDistance: 3
   interactableLayerMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 65
   viewTransform: {fileID: 6011523122689109184}
   references:
     version: 2

@@ -44,9 +44,7 @@ public class InteractorPlayer : Interactor
 
 			if (Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactableLayerMask))
 			{
-				Interactable interactable = hit.collider.GetComponent<Interactable>();
-
-				if (CanInteract(interactable))
+				if (hit.collider.TryGetComponent<Interactable>(out var interactable) && CanInteract(interactable))
 				{
 					selectedInteractable = interactable;
 					FireNoticed(selectedInteractable);
