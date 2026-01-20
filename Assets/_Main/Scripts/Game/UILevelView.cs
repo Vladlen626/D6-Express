@@ -14,40 +14,31 @@ public class UILevelView : UIBaseElement
     [SerializeField]
     private AnimationCurve ratioModifier;
 
-    [Header("UI")]
     [SerializeField]
-    private TextMeshProUGUI run;
+    private LocalizedText ticks;
 
     [SerializeField]
-    private TextMeshProUGUI ticks;
+    private LocalizedText days;
 
     [SerializeField]
-    private TextMeshProUGUI days;
-
-    [SerializeField]
-    private TextMeshProUGUI cashProgress;
+    private LocalizedText cashProgress;
 
     public Gradient LightColor => lightColor;
     public AnimationCurve LightIntensity => lightIntensity;
     public AnimationCurve RatioModifier => ratioModifier;
 
-    public void SetRunText(string text)
+    public void SetTicksText(string id, params string[] args)
     {
-        run.text = text;
+        ticks.SetText(id, args);
     }
 
-    public void SetTicksText(string text)
+    public void SetDaysText(string id, params string[] args)
     {
-        ticks.text = text;
+        days.SetText(id, args);
     }
 
-    public void SetDaysText(string text)
+    public void SetCashProgress(string id, params string[] args)
     {
-        days.text = text;
-    }
-
-    public void SetCashProgress(string text)
-    {
-        cashProgress.text = text;
+        cashProgress.SetText(id, args);
     }
 }

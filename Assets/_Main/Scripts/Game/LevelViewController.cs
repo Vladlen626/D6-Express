@@ -19,21 +19,18 @@ public class LevelViewController : BaseContextController<UILevelView>
 	{
 		runModel.LevelModel.TickChanged += OnTickChanged;
 		runModel.LevelModel.DayChanged += OnDaysChanged;
-		runModel.StateChanged += OnLevelStateChanged;
 
 		playerModel.InventoryModel.OnCashCountChanged += OnCashChanged;
 
 		OnCashChanged();
 		OnTickChanged();
 		OnDaysChanged();
-		OnLevelStateChanged();
 	}
 
 	protected override void OnDeactivate()
 	{
 		playerModel.InventoryModel.OnCashCountChanged -= OnCashChanged;
 
-		runModel.StateChanged -= OnLevelStateChanged;
 		runModel.LevelModel.DayChanged -= OnDaysChanged;
 		runModel.LevelModel.TickChanged -= OnTickChanged;
 	}
@@ -42,12 +39,7 @@ public class LevelViewController : BaseContextController<UILevelView>
 	{
 		RotateSun();
 
-		_context.SetTicksText($"Ticks: {runModel.LevelModel.Tick + 1} / {runModel.LevelModel.Ticks}");
-	}
-
-	private void OnLevelStateChanged()
-	{
-		_context.SetRunText($"Run: {runModel.LevelIndex + 1} / {runModel.MaxLevels}");
+		_context.SetTicksText("sessions_count", runModel.LevelModel.Tick.ToString(), runModel.LevelModel.Ticks.ToString());
 	}
 
 	private void RotateSun()
@@ -61,11 +53,11 @@ public class LevelViewController : BaseContextController<UILevelView>
 
 	private void OnDaysChanged()
 	{
-		_context.SetDaysText($"Days: {runModel.LevelModel.Day + 1} / {runModel.LevelModel.Days}");
+		_context.SetDaysText("days_count", (runModel.LevelModel.Day + 1).ToString(), runModel.LevelModel.Days.ToString());
 	}
 
 	private void OnCashChanged()
 	{
-		_context.SetCashProgress($"Progress: {playerModel.InventoryModel.CashCount}$ / {runModel.LevelModel.CashGoal}$");
+		_context.SetCashProgress("game_progress", $"{playerModel.InventoryModel.CashCount}", $"{runModel.LevelModel.CashGoal}");
 	}
 }
