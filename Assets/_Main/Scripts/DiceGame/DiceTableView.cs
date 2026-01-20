@@ -36,10 +36,10 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI previewScoreText;
 
 	[Header("Buttons")]
-	[SerializeField] private ButtonView rollButton;
-	[SerializeField] private ButtonView passButton;
-	[SerializeField] private ButtonView betButton;
-	[SerializeField] private ButtonView playButton;
+	[SerializeField] private Button rollButton;
+	[SerializeField] private Button passButton;
+	[SerializeField] private Button betButton;
+	[SerializeField] private Button playButton;
 
 	[Header("Bet")]
 	[SerializeField] private Slider betSlider;
@@ -64,15 +64,19 @@ public class DiceTableView : MonoBehaviour
 
 	private void Start()
 	{
-		rollButton.OnClicked += () => OnRollClicked?.Invoke();
-		passButton.OnClicked += () => OnPassClicked?.Invoke();
-		betButton.OnClicked += () => OnBetClicked?.Invoke();
-		playButton.OnClicked += () => OnPlayClicked?.Invoke();
+		rollButton.onClick.AddListener(() => OnRollClicked?.Invoke());
+		passButton.onClick.AddListener(() => OnPassClicked?.Invoke());
+		betButton.onClick.AddListener(() => OnBetClicked?.Invoke());
+		playButton.onClick.AddListener(() => OnPlayClicked?.Invoke());
 		betSlider.onValueChanged.AddListener(OnSliderChanged);
 	}
 
 	private void OnDestroy()
 	{
+		rollButton.onClick.RemoveAllListeners();
+		passButton.onClick.RemoveAllListeners();
+		betButton.onClick.RemoveAllListeners();
+		playButton.onClick.RemoveAllListeners();
 		betSlider.onValueChanged.RemoveAllListeners();
 	}
 	
@@ -87,13 +91,13 @@ public class DiceTableView : MonoBehaviour
 		switch (buttonName)
 		{
 			case "Roll":
-				rollButton.SetInteractable(interactable);
+				rollButton.interactable = interactable;
 				break;
 			case "Pass":
-				passButton.SetInteractable(interactable);
+				passButton.interactable = interactable;
 				break;
 			case "Play":
-				playButton.SetInteractable(interactable);
+				playButton.interactable = interactable;
 				break;
 		}
 	}
