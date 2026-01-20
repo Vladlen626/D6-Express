@@ -85,7 +85,7 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 		else
 		{
 			playerView.Head.localEulerAngles = new Vector3(pitch, 0f, 0f);
-			rotationTransform.localEulerAngles = new Vector3(0f, yaw, 0f);
+			rotationTransform.localEulerAngles = new Vector3(rotationTransform.localEulerAngles.x, yaw, 0f);
 		}
 	}
 

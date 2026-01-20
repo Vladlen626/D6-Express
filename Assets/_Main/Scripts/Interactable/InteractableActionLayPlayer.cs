@@ -1,5 +1,6 @@
 using System;
 using _Main.Scripts.Core.Services;
+using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using UnityEngine;
 
@@ -27,12 +28,6 @@ public class InteractableActionLayPlayer : InteractableActionLay
 
 	private async void OnMoved(Vector2 dir)
 	{
-		// var moveTask = Interactor.InteractionRoot.DOMove(lastPos, 0.25f).ToUniTask();
-		// var rotateTask = Interactor.InteractionRoot.DORotateQuaternion(Quaternion.identity, 0.25f).ToUniTask();
-
-		// await UniTask.WhenAll(moveTask, rotateTask);
-		Interactor.transform.SetPositionAndRotation(lastPos, Quaternion.identity);
-
 		StopInteract();
 	}
 }
