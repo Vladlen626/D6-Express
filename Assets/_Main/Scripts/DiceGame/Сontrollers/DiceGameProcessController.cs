@@ -208,7 +208,7 @@ namespace _Main.Scripts.Dice
 		private async UniTask ResetAllDiceToActiveAsync()
 		{
 			var tweens = new List<Tween>();
-
+			
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				var pos = tableModel.GetFreeActivePosition();
