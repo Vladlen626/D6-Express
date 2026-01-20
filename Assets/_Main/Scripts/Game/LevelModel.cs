@@ -12,6 +12,7 @@ public class LevelModel
 	public bool IsLevelFinished { get; private set; }
 	public float TickRatio => Tick / (float)Ticks;
 	public bool IsFinalDay => Day + 1 >= Days;
+	public bool IsTicksLeft => Tick + 1 < Ticks;
 
 	public event Action TickChanged;
 	public event Action DayChanged;

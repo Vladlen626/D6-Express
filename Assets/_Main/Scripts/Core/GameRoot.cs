@@ -150,7 +150,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView, configService, notifications));
-			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel, configService));
+			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel, configService, runModel.LevelModel));
 			// todo. не требуется к mvp. раскоментить позже
 			// controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));

@@ -9,7 +9,8 @@ public static class SpeechFactory
         PlayerModel playerModel,
         PlayerView playerView,
         RunModel runModel,
-        ConfigService configService)
+        ConfigService configService,
+        LevelModel levelModel)
     {
         var textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 
@@ -19,6 +20,7 @@ public static class SpeechFactory
         var speechPassengerAnecdote = GetAnecdoteSpeech(textsConfig);
         var speechShopkeeper = GetShopkeeperSpeech(playerModel, textsConfig);
         var speechShopkeeperFailedBuy = GetShopkeeperFailedBuySpeech(textsConfig);
+        var speechEnemy = GetEnemySpeech(levelModel, textsConfig);
 
         var speeches = new Speech[]
         {
@@ -27,7 +29,8 @@ public static class SpeechFactory
             speechPassengerComrade,
             speechPassengerAnecdote,
             speechShopkeeper,
-            speechShopkeeperFailedBuy
+            speechShopkeeperFailedBuy,
+            speechEnemy
         };
 
         var speechModel = new SpeechModel(speeches);
@@ -172,5 +175,28 @@ public static class SpeechFactory
 
         speechShopkeeper.SetRootNode(root);
         return speechShopkeeper;
+    }
+
+    private static Speech GetEnemySpeech(LevelModel levelModel, TextsConfig textsConfig)
+    {
+        var speechEnemy = new Speech(123);
+
+        var speechNodePositive = SayRandom(
+            speechEnemy,
+            textsConfig.texts["enemy_offer"]
+        );
+
+        var speechNodeNegative = SayRandom(
+            speechEnemy,
+            textsConfig.texts["enemy_refuse"]
+        );
+
+        var speechNodeCondition = new SpeechNodeConditional(() => levelModel.IsTicksLeft)
+            .OnTrue(speechNodePositive)
+            .OnFalse(speechNodeNegative)
+            .Init(speechEnemy);
+
+        speechEnemy.SetRootNode(speechNodeCondition);
+        return speechEnemy;
     }
 }
