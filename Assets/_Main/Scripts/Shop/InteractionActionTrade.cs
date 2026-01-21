@@ -8,9 +8,9 @@ public class InteractionActionTrade : InteractionAction
         return interactable.Type == InteractionType.TRADE && StateModel.HasState(CharacterState.DEFAULT);
     }
 
-    protected override void StartInteractInternal()
+    protected override void StartInteractInternal(bool immediate = false)
     {
-        base.StartInteractInternal();
+        base.StartInteractInternal(immediate);
 
         var interactableTradeable = Interactable as InteractableTradeable;
         interactableTradeable.GetComponent<TradeItemView>().Buy();

@@ -16,7 +16,7 @@ public class InteractableActionDiceGame : InteractionAction
 		return interactable.Type == InteractionType.PLAY_DICE && StateModel.HasState(CharacterState.DEFAULT) && base.CanInteract(interactable);
 	}
 
-	protected override async void StartInteractInternal()
+	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
 
@@ -33,7 +33,7 @@ public class InteractableActionDiceGame : InteractionAction
 		Locator.Resolve<IInputService>().OnInteractPressed += OnInteract;
 	}
 
-	protected override async void StopInteractInternal()
+	protected override async void StopInteractInternal(bool immediate = false)
 	{
 		Locator.Resolve<IInputService>().OnInteractPressed -= OnInteract;
 		
