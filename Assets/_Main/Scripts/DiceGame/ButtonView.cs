@@ -19,6 +19,7 @@ namespace _Main.Scripts.Game.Views
 		private void Start()
 		{
 			mainCamera = Camera.main;
+			SetInteractable(true);
 		}
 
 		private void Update()
