@@ -1,8 +1,8 @@
 using System;
-using PlatformCore.Core;
 
 public struct LevelData
 {
+	public string nextStationId;
 	public int cashGoal;
 	public int days;
 	public int ticks;
@@ -10,6 +10,7 @@ public struct LevelData
 
 public class RunModel
 {
+	private string firstStationId;
 	private LevelData[] levelData;
 
 	private LevelState state = LevelState.STATION;
@@ -18,7 +19,9 @@ public class RunModel
 	public int MaxLevels => levelData.Length;
 	public LevelModel LevelModel { get; private set; } = new();
 	public LevelState LevelState => state;
+	public string FirstStationId => firstStationId;
 
+	public event Action LevelIndexChanged;
 	public event Action StateChanged;
 	public event Action<bool> Finished;
 
@@ -27,8 +30,9 @@ public class RunModel
 		LevelModel.LevelFinished += OnLevelFinished;
 	}
 
-	public void UpdateRun(LevelData[] levelData)
+	public void UpdateRun(string firstStationId, LevelData[] levelData)
 	{
+		this.firstStationId = firstStationId;
 		this.levelData = levelData;
 
 		var currentLevelData = levelData[LevelIndex];
@@ -45,13 +49,15 @@ public class RunModel
 	{
 		if (result)
 		{
-			LevelIndex++;
-			if (LevelIndex >= levelData.Length)
+			if (LevelIndex + 1 >= levelData.Length)
 			{
 				Finished?.Invoke(true);
 			}
 			else
 			{
+				LevelIndex++;
+				LevelIndexChanged?.Invoke();
+
 				var currentLevelData = levelData[LevelIndex];
 				SetLevelState(LevelState.STATION);
 				LevelModel.UpdateLevel(currentLevelData, GetTicketPrice(LevelIndex));

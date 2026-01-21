@@ -29,6 +29,9 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	[SerializeField]
 	private CharacterView shopkeeper;
 
+	[SerializeField]
+	private InformationPanelView informationPanelView;
+
 	public DiceTableView DiceGameTableView => diceGameTableView;
 	public Transform PlayerTrainSpawnPosition => playerTrainSpawnPosition;
 	public Transform PlayerStationSpawnPosition => playerStationSpawnPosition;
@@ -38,6 +41,7 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public ShopView Shop => shop;
 
 	public CharacterView Shopkeeper => shopkeeper;
+	public InformationPanelView InformationPanelView => informationPanelView;
 
 
 	public IEnumerable<LightView> Lights => FindObjectsByType<LightView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
