@@ -9,29 +9,29 @@ public class ReplaceTrainMaterialsColorsMuted
 	// Материалы и тусклые цвета для них
 	private static readonly Dictionary<string, string> MaterialToHex = new Dictionary<string, string>
 	{
-		{ "Battery", "#6E576E" },
-		{ "Crane", "#3C3444" },
-		{ "Train_Frame", "#c5b7cb" },
+		{ "Battery", "#7c7086" },
+		{ "Crane", "#eb5350" },
+		{ "Train_Frame", "#38543f" },
 
-		{ "Floor", "#3c3444" },
-		{ "Tabletop", "#C5B7CB" },
-		{ "Titan_Back_Wall", "#0E131E" },
+		{ "Floor", "#3d3b59" },
+		{ "Tabletop", "#b9a292" },
+		{ "Titan_Back_Wall", "#7c7086" },
 		
-		{ "Watch", "#0d0305" },
+		{ "Watch", "#21110a" },
 
-		{ "Plastic", "#f9cf9d" },
-		{ "Plastic_dark", "#f9cf9d" },
-		{ "Paper", "#f7f4e8" },
+		{ "Plastic", "#b9a292" },
+		{ "Plastic_dark", "#b9a292" },
+		{ "Paper", "#fbdfc7" },
 
-		{ "Кран синий", "#2a69b0" },
-		{ "Пластик туалет", "#f9cf9d" },
+		{ "Кран синий", "#3d3b59" },
+		{ "Пластик туалет", "#fbdfc7" },
 
-		{ "Поручни", "#851246" },
-		{ "Резина", "#0e131e" },
-		{ "Черный", "#0D0305" }, 
-		{ "Shelf", "#851246" },
-		{ "Metal", "#c5b7cb" },
-		{ "Штора ткань", "#c5b7cb" }
+		{ "Поручни", "#ee9662" },
+		{ "Резина", "#21110a" },
+		{ "Черный", "#21110a" }, 
+		{ "Shelf", "#eb5350" },
+		{ "Metal", "#7c7086" },
+		{ "Штора ткань", "#fdc68b" }
 	};
 
 	[MenuItem("Tools/Replace Train Materials Colors Muted")]

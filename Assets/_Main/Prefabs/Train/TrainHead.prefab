@@ -267,8 +267,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
   - {fileID: 2100000, guid: 80a7a1b2296107b4d9ee0cf79ad8c11b, type: 2}
+  - {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
   - {fileID: 2100000, guid: 08519ab42aef1934a8876e148afccaf6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -998,7 +998,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -2163174449083924880, guid: 4301d1bf0d8c92c4aa656d0320eabf7f, type: 3}
+  - {fileID: 2100000, guid: 0bda58e3cf9a469438d518fbb92e5fa3, type: 2}
   - {fileID: -5252004223000905018, guid: 4301d1bf0d8c92c4aa656d0320eabf7f, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -2020,7 +2020,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: -5252004223000905018, guid: 4301d1bf0d8c92c4aa656d0320eabf7f, type: 3}
-  - {fileID: 2100000, guid: aa4b271ad14a34542976d3b383e47fa1, type: 2}
+  - {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2961,7 +2961,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: -5252004223000905018, guid: 4301d1bf0d8c92c4aa656d0320eabf7f, type: 3}
-  - {fileID: 2100000, guid: aa4b271ad14a34542976d3b383e47fa1, type: 2}
+  - {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3050,7 +3050,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aa4b271ad14a34542976d3b383e47fa1, type: 2}
+  - {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4183,6 +4183,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 261097203850199138}
     m_Modifications:
+    - target: {fileID: 4757825392065904468, guid: 07a25b713994dc643a484a095fb0b5bc, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 484ad759d903f96489c36ddcd4dfc55b, type: 2}
     - target: {fileID: 7329793259877527754, guid: 07a25b713994dc643a484a095fb0b5bc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.16
