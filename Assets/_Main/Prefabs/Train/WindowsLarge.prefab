@@ -165,6 +165,7 @@ MonoBehaviour:
   isOpened: 1
   opened: {fileID: 4014397728831366928}
   closed: {fileID: 6768514178299144970}
+  hintableDynamic: {fileID: 0}
 --- !u!114 &8846764923529484213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,8 +244,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -987825944555561575, guid: f881372885e4dd74aa0da6fb04d90569, type: 3}
-  - {fileID: -3316623381408296222, guid: f881372885e4dd74aa0da6fb04d90569, type: 3}
+  - {fileID: 2100000, guid: 2b43d0b55cbc57b4cb10ba4a3a0b41ff, type: 2}
+  - {fileID: 2100000, guid: d29e06db8734dca4e8bb3216cc02ac2c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
