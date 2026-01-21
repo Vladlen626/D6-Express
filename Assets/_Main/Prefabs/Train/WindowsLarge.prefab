@@ -165,6 +165,7 @@ MonoBehaviour:
   isOpened: 1
   opened: {fileID: 4014397728831366928}
   closed: {fileID: 6768514178299144970}
+  hintableDynamic: {fileID: 0}
 --- !u!114 &8846764923529484213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,8 +244,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -987825944555561575, guid: f881372885e4dd74aa0da6fb04d90569, type: 3}
-  - {fileID: -3316623381408296222, guid: f881372885e4dd74aa0da6fb04d90569, type: 3}
+  - {fileID: 2100000, guid: 8bbb8be17b1bfd34bb60d69348deeb1e, type: 2}
+  - {fileID: 2100000, guid: bbcb648212aa03d4bb2122ae5d034624, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -333,8 +334,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -987825944555561575, guid: f881372885e4dd74aa0da6fb04d90569, type: 3}
-  - {fileID: -3316623381408296222, guid: f881372885e4dd74aa0da6fb04d90569, type: 3}
+  - {fileID: 2100000, guid: 8bbb8be17b1bfd34bb60d69348deeb1e, type: 2}
+  - {fileID: 2100000, guid: a6e8ad6e8367f0b4c9c88afc25d6302b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
