@@ -68,7 +68,7 @@ public class NpcSpawner
         foreach (NpcView item in npcList)
         {
             var interactor = item.GetComponent<Interactor>();
-            interactor.StopAllActions();
+            interactor.StopAllActions(true);
             Object.Destroy(item.gameObject);
         }
 

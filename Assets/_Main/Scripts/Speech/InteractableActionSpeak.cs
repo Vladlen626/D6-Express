@@ -12,9 +12,9 @@ public class InteractableActionSpeak : InteractionAction
 		return interactable.Type == InteractionType.SPEAK && StateModel.HasState(CharacterState.DEFAULT);
 	}
 
-	protected override async void StartInteractInternal()
+	protected override async void StartInteractInternal(bool immediate = false)
 	{
-		base.StartInteractInternal();
+		base.StartInteractInternal(immediate);
 
 		// todo: выглядит сомнительно
 		var speakable = Interactable as InteractableSpeakable;
@@ -30,12 +30,12 @@ public class InteractableActionSpeak : InteractionAction
 		await playerView.Head.DOLookAt(rotateTarget.position, .25f).AsyncWaitForCompletion().AsUniTask();
 	}
 
-	protected override async void StopInteractInternal()
+	protected override async void StopInteractInternal(bool immediate = false)
 	{
 		Id = -1;
 
 		StateModel.TryRemoveState(CharacterState.SPEAKING);
 
-		base.StopInteractInternal();
+		base.StopInteractInternal(immediate);
 	}
 }

@@ -8,9 +8,9 @@ public class InteractionActionRestock : InteractionAction
         return interactable.Type == InteractionType.RESTOCK && StateModel.HasState(CharacterState.DEFAULT);
     }
 
-    protected override void StartInteractInternal()
+    protected override void StartInteractInternal(bool immediate = false)
     {
-        base.StartInteractInternal();
+        base.StartInteractInternal(immediate);
 
         var interactableRestock = Interactable as InteractableRestock;
         interactableRestock.GetComponent<RestockLeverView>().RequestRestock();
