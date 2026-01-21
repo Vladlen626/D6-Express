@@ -27,7 +27,15 @@ public class InteractableActionSpeak : InteractionAction
 		StateModel.TryAddState(CharacterState.SPEAKING);
 
 		var playerView = Interactor.GetComponent<PlayerView>();
-		await playerView.Head.DOLookAt(rotateTarget.position, .25f).AsyncWaitForCompletion().AsUniTask();
+
+		if (immediate)
+		{
+			playerView.Head.LookAt(rotateTarget.position);
+		}
+		else
+		{
+			await playerView.Head.DOLookAt(rotateTarget.position, .25f).AsyncWaitForCompletion().AsUniTask();
+		}
 	}
 
 	protected override async void StopInteractInternal(bool immediate = false)
