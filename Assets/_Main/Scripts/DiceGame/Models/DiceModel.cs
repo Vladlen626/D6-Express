@@ -26,8 +26,7 @@ namespace _Main.Scripts.Dice
 
 		public void Roll()
 		{
-			//var newValue = DiceGameUtils.GetWeightedRandomValue(Weights);
-			var newValue = 1;
+			var newValue = DiceGameUtils.GetWeightedRandomValue(Weights);
 			SetValue(newValue);
 		}
 

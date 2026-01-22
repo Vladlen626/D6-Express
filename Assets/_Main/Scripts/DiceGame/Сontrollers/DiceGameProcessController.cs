@@ -115,6 +115,12 @@ namespace _Main.Scripts.Dice
 				await UniTask.Delay(GlobalParameters.Delay / 2);
 				
 				var diceCombinationResult = DiceGameUtils.GetCombinations(GetValues(diceToRoll));
+				var rollModifierContext = new DiceModifierContext(
+					diceCombinationResult,
+					diceToRoll,
+					tableModel,
+					diceGameModel,
+					ModifierStage.Roll);
 				
 				if (diceCombinationResult.Combinations.Count == 0)
 				{
@@ -123,7 +129,7 @@ namespace _Main.Scripts.Dice
 					EndTurn(false);
 				}
 
-				await diceGameModel.ModifiersModel.PlayRollActions(diceCombinationResult);
+				await diceGameModel.ModifiersModel.PlayRollActions(rollModifierContext);
 			}
 			finally
 			{
@@ -159,8 +165,14 @@ namespace _Main.Scripts.Dice
 				
 				var selected = diceGameModel.GetSelected();
 				var combo = DiceGameUtils.GetCombinations(GetValues(selected));
-				await diceGameModel.ModifiersModel.PlayPassActions(combo);
-				await TrySaveSelected(selected, combo);
+				var passModifierContext = new DiceModifierContext(
+					combo,
+					selected,
+					tableModel,
+					diceGameModel,
+					ModifierStage.Pass);
+				await diceGameModel.ModifiersModel.PlayPassActions(passModifierContext);
+				await TrySaveSelected(selected, passModifierContext.CombinationResult);
 				EndTurn(true);
 			}
 			finally

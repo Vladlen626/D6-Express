@@ -24,19 +24,19 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		public async UniTask PlayRollActions(DiceCombinationResult diceCombinationResult)
+		public async UniTask PlayRollActions(DiceModifierContext modifierContext)
 		{
 			foreach (var onRollAction in onRollActionsHandler)
 			{
-				await onRollAction.ModifyValues(diceCombinationResult);
+				await onRollAction.ModifyValues(modifierContext);
 			}
 		}
 
-		public async UniTask PlayPassActions(DiceCombinationResult diceCombinationResult)
+		public async UniTask PlayPassActions(DiceModifierContext modifierContext)
 		{
 			foreach (var onPassAction in onPassActionsHandler)
 			{
-				await onPassAction.ModifyValues(diceCombinationResult);
+				await onPassAction.ModifyValues(modifierContext);
 			}
 		}
 

@@ -11,6 +11,6 @@ namespace _Main.Scripts.Dice
 
 	public interface IModifier
 	{
-		UniTask ModifyValues(DiceCombinationResult diceCombinationResult);
+		UniTask ModifyValues(DiceModifierContext modifierContext);
 	}
 }
