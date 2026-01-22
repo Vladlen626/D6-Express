@@ -8,7 +8,7 @@ using Random=UnityEngine.Random;
 
 namespace _Main.Scripts.Dice
 {
-	public class ScrambleCombinationsModifier : IOnRoundStartModifier, IOnPassModifier
+	public class ScrambleCombinationsModifier : IOnRoundStartModifier, IOnRollModifier
 	{
 		private static readonly DiceCombination[] AvailableCombinations = Enum
 			.GetValues(typeof(DiceCombination))
@@ -42,7 +42,7 @@ namespace _Main.Scripts.Dice
 					ScrambleCombinationsOverlay.UpdateMap(scrambledScores);
 					break;
 
-				case ModifierStage.Pass:
+				case ModifierStage.Roll:
 					ApplyScramble(modifierContext.CombinationResult.Combinations);
 					break;
 
@@ -129,13 +129,13 @@ namespace _Main.Scripts.Dice
 
 			if (scrambledScores.Count == 0)
 			{
-				Debug.Log("[ScrambleCombinationsModifier] Scramble map missing on Pass. Rebuilding.");
+				Debug.Log("[ScrambleCombinationsModifier] Scramble map missing on Roll. Rebuilding.");
 				BuildNewRoundMap();
 				LogScrambledScores();
 				ScrambleCombinationsOverlay.UpdateMap(scrambledScores);
 			}
 
-			Debug.Log("[ScrambleCombinationsModifier] Applying scramble on Pass.");
+			Debug.Log("[ScrambleCombinationsModifier] Applying scramble on Roll.");
 			for (int i = 0; i < combinations.Count; i++)
 			{
 				var entry = combinations[i];
