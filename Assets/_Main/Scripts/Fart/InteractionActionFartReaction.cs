@@ -10,9 +10,9 @@ public class InteractionActionFartReaction : InteractionAction
         return base.CanInteract(interactable) && !isInReaction;
     }
 
-    protected override async void StartInteractInternal()
+    protected override async void StartInteractInternal(bool immediate = false)
     {
-        base.StartInteractInternal();
+        base.StartInteractInternal(immediate);
 
         isInReaction = true;
 
@@ -30,7 +30,7 @@ public class InteractionActionFartReaction : InteractionAction
         StopInteract();
     }
 
-    protected override void StopInteractInternal()
+    protected override void StopInteractInternal(bool immediate = false)
     {
         StateModel.TryRemoveState(CharacterState.SPEAKING);
 
@@ -39,6 +39,6 @@ public class InteractionActionFartReaction : InteractionAction
 
         isInReaction = false;
 
-        base.StopInteractInternal();
+        base.StopInteractInternal(immediate);
     }
 }

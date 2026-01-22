@@ -18,13 +18,14 @@ public static class RunFactory
 			LevelConfig item = runConfig.levels[i];
 			levelData[i] = new LevelData()
 			{
+				nextStationId = item.next_station_id,
 				days = item.days,
 				ticks = item.ticks_per_day,
 				cashGoal = item.cash_goal
 			};
 		}
 		var runModel = new RunModel();
-		runModel.UpdateRun(levelData);
+		runModel.UpdateRun(runConfig.first_station_id, levelData);
 
 		return runModel;
 	}

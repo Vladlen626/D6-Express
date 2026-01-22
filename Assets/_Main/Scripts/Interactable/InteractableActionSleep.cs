@@ -8,14 +8,14 @@ public class InteractableActionSleep : InteractionAction
 		return interactable.Type == InteractionType.SLEEP && !StateModel.HasState(CharacterState.SLEEPING) && base.CanInteract(interactable);
 	}
 
-	protected override async void StartInteractInternal()
+	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.SLEEPING);
 
 		StopInteract();
 	}
 
-	protected override async void StopInteractInternal()
+	protected override async void StopInteractInternal(bool immediate = false)
 	{
 		StateModel.TryRemoveState(CharacterState.SLEEPING);
 	}

@@ -59,7 +59,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 
 		try
 		{
-			processController.EndTurn(false);
+			//processController.EndTurn(false);
 			diceGameModel.tableModel.DisableButtons();
 
 			await UniTask.Delay(delay);

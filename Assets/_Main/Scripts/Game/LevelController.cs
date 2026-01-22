@@ -6,7 +6,6 @@ public class LevelController : IBaseController, IActivatable
 	private readonly RunModel runModel;
 	private readonly PlayerModel playerModel;
 
-
 	public LevelController(RunModel runModel, PlayerModel playerModel)
 	{
 		this.runModel = runModel;
@@ -25,6 +24,11 @@ public class LevelController : IBaseController, IActivatable
 
 	private void OnFinalDayHandler()
 	{
-		runModel.LevelModel.SetLevelFinished(playerModel.InventoryModel.CashCount >= runModel.LevelModel.CashGoal);
+		var canMoveNext = playerModel.InventoryModel.CashCount >= runModel.LevelModel.CashGoal;
+		if (canMoveNext)
+		{
+			playerModel.InventoryModel.TakeCash(runModel.LevelModel.CashGoal);
+		}
+		runModel.LevelModel.SetLevelFinished(canMoveNext);
 	}
 }

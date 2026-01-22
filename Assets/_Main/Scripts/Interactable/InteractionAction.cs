@@ -21,24 +21,24 @@ public abstract class InteractionAction
 		return !StateModel.HasState(CharacterState.TRANSITION) && !StateModel.HasState(CharacterState.LOCATION_TRANSITIONING);
 	}
 
-	public void StartInteract(IInteractable interactable)
+	public void StartInteract(IInteractable interactable, bool immediate = false)
 	{
 		Interactable = interactable;
 		// todo: подумать еще раз. точно ли интерактор управляет запуском и прерывание интерактабла? а если интерактбл перестанет быть доступным?
-		StartInteractInternal();
+		StartInteractInternal(immediate);
 		Interactable.StartInteract(Interactor);
 
 		Started?.Invoke(this);
 	}
 
-	public void StopInteract()
+	public void StopInteract(bool immediate = false)
 	{
-		StopInteractInternal();
+		StopInteractInternal(immediate);
 		Interactable.StopInteract(Interactor);
 
 		Ended?.Invoke(this);
 	}
 
-	protected virtual void StartInteractInternal() { }
-	protected virtual void StopInteractInternal() { }
+	protected virtual void StartInteractInternal(bool immediate = false) { }
+	protected virtual void StopInteractInternal(bool immediate = false) { }
 }

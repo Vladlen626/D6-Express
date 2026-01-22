@@ -14,7 +14,7 @@ public class InteractableActionSit : InteractionAction
 		return interactable.Type == InteractionType.SIT && !StateModel.HasState(CharacterState.SITTING) && base.CanInteract(interactable);
 	}
 
-	protected override async void StartInteractInternal()
+	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
 
@@ -22,30 +22,45 @@ public class InteractableActionSit : InteractionAction
 
 		var sittable = Interactable as InteractableSittable;
 
-		var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 0.25f).AsyncWaitForCompletion().AsUniTask();
-		var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 0.25f).AsyncWaitForCompletion().AsUniTask();
+		if (immediate)
+		{
+			Interactor.transform.SetPositionAndRotation(sittable.SitTfm.position, sittable.SitTfm.rotation);
+		}
+		else
+		{
+			var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 0.25f).AsyncWaitForCompletion().AsUniTask();
+			var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 0.25f).AsyncWaitForCompletion().AsUniTask();
 
-		Interactor.GetComponent<Animator>().SetInteger(State, 1);
-		await UniTask.WhenAll(moveTask, rotateTask);
+			Interactor.GetComponent<Animator>().SetInteger(State, 1);
+			await UniTask.WhenAll(moveTask, rotateTask);
+		}
 
 		StateModel.TryRemoveState(CharacterState.TRANSITION);
 		StateModel.TryAddState(CharacterState.SITTING);
 	}
 
-	protected override async void StopInteractInternal()
+	protected override async void StopInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
 
 		Interactor.GetComponent<Animator>().SetInteger(State, 0);
 
-		var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).AsyncWaitForCompletion().AsUniTask();
+		if (immediate)
+		{
+			Interactor.GetComponent<CharacterView>().Head.transform.localRotation = Quaternion.identity;
+			Interactor.transform.position = lastPos;
+		}
+		else
+		{
+			var moveTask = Interactor.transform.DOMove(lastPos, 0.25f).AsyncWaitForCompletion().AsUniTask();
 
-		// todo: так делать нельзя
-		var rotateTask = Interactor.GetComponent<CharacterView>().Head.transform
-			.DOLocalRotateQuaternion(Quaternion.identity, 0.25f)
-			.AsyncWaitForCompletion().AsUniTask();
+			// todo: так делать нельзя
+			var rotateTask = Interactor.GetComponent<CharacterView>().Head.transform
+				.DOLocalRotateQuaternion(Quaternion.identity, 0.25f)
+				.AsyncWaitForCompletion().AsUniTask();
 
-		await UniTask.WhenAll(moveTask, rotateTask);
+			await UniTask.WhenAll(moveTask, rotateTask);
+		}
 
 		StateModel.TryRemoveState(CharacterState.TRANSITION);
 		StateModel.TryRemoveState(CharacterState.SITTING);

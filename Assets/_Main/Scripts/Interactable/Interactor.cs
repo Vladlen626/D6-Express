@@ -29,22 +29,22 @@ public class Interactor : MonoBehaviour
 		}
 	}
 
-	public void StopAllActions()
+	public void StopAllActions(bool immediate = false)
 	{
 		while (actionStack.Count > 0)
 		{
 			var action = actionStack.Pop();
-			action.StopInteract();
+			action.StopInteract(immediate);
 		}
 	}
 
-	public void StopCurrentAction()
+	public void StopCurrentAction(bool immediate = false)
 	{
 		if (actionStack.Count > 0)
 		{
 			var action = actionStack.Pop();
 
-			action.StopInteract();
+			action.StopInteract(immediate);
 		}
 	}
 
@@ -58,7 +58,7 @@ public class Interactor : MonoBehaviour
 		return interactable != null && !interactable.IsDestroyed() && interactable.CanInteract(this) && TryGetAction(interactable, out var action);
 	}
 
-	public void Interact(Interactable interactable)
+	public void Interact(Interactable interactable, bool immediate = false)
 	{
 		selectedInteractable = interactable;
 
@@ -74,7 +74,7 @@ public class Interactor : MonoBehaviour
 		action.Started += OnInteractionStarted;
 		action.Ended += OnInteractionEnded;
 
-		action.StartInteract(selectedInteractable);
+		action.StartInteract(selectedInteractable, immediate);
 	}
 
 	// todo: это говно. надо делать по другому

@@ -171,6 +171,7 @@ MonoBehaviour:
   sun: {fileID: 410087040}
   shop: {fileID: 1935522581}
   shopkeeper: {fileID: 1944120481}
+  informationPanelView: {fileID: 7205606119079278649}
 --- !u!4 &173345210 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2344411299241026454, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
@@ -193,7 +194,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &410087040
 Light:
   m_ObjectHideFlags: 0
@@ -630,6 +631,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainBlock
       objectReference: {fileID: 0}
+    - target: {fileID: 6059111786329707514, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9c51ad2343d78154c9d6f0c2a68da6db, type: 2}
     - target: {fileID: 7278623292212538182, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -658,10 +663,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7049049792441639051, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 7866990782131172667, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 4632651557196112627, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
@@ -823,6 +825,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+--- !u!114 &7205606119079278649 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4737151401094089094, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+  m_PrefabInstance: {fileID: 7205606119079278648}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e45ed0996184d242ab1a9efdaaaaf34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InformationPanelView
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
