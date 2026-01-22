@@ -48,6 +48,7 @@ namespace _Main.Scripts.Dice
 				currentTable = modifierContext.Table;
 				lastKnownTurn = modifierContext.DiceGameModel?.CurrentTurn ?? -1;
 				LogScrambledScores();
+				ScrambleCombinationsOverlay.UpdateMap(scrambledScores);
 			}
 
 			// Only mutate scoring when points are about to be banked.
