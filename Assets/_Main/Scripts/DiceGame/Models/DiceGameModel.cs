@@ -42,6 +42,7 @@ namespace _Main.Scripts.Dice
 		{
 			ModifiersModel = new ModifiersModel();
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
+			ModifiersModel.AddModifier(new ShakeRerollModifier());
 			ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
 		}
 		

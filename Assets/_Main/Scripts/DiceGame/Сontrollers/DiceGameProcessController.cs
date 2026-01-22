@@ -130,6 +130,8 @@ namespace _Main.Scripts.Dice
 					diceGameModel,
 					ModifierStage.Roll);
 				
+				await diceGameModel.ModifiersModel.PlayRollActions(rollModifierContext);
+
 				if (diceCombinationResult.Combinations.Count == 0)
 				{
 					audioService.PlaySound(SoundNames.Fail);
@@ -143,8 +145,6 @@ namespace _Main.Scripts.Dice
 					await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
 					EndTurn(false);
 				}
-
-				await diceGameModel.ModifiersModel.PlayRollActions(rollModifierContext);
 			}
 			finally
 			{
