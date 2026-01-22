@@ -84,6 +84,14 @@ namespace _Main.Scripts.Dice
 
 				if (tableModel.isFirstRoll)
 				{
+					var roundStartContext = new DiceModifierContext(
+						new DiceCombinationResult { Combinations = new List<DiceCombinationEntry>() },
+						diceGameModel.GetUnbanked(),
+						tableModel,
+						diceGameModel,
+						ModifierStage.RoundStart);
+					await diceGameModel.ModifiersModel.PlayRoundStartActions(roundStartContext);
+
 					tableModel.isFirstRoll = false;
 					diceGameModel.ShowAllDiceGameModels();
 				}
@@ -126,6 +134,13 @@ namespace _Main.Scripts.Dice
 				{
 					audioService.PlaySound(SoundNames.Fail);
 					await UniTask.Delay(GlobalParameters.Delay);
+					var roundEndContext = new DiceModifierContext(
+						diceCombinationResult,
+						diceToRoll,
+						tableModel,
+						diceGameModel,
+						ModifierStage.RoundEnd);
+					await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
 					EndTurn(false);
 				}
 
@@ -173,6 +188,13 @@ namespace _Main.Scripts.Dice
 					ModifierStage.Pass);
 				await diceGameModel.ModifiersModel.PlayPassActions(passModifierContext);
 				await TrySaveSelected(selected, passModifierContext.CombinationResult);
+				var roundEndContext = new DiceModifierContext(
+					passModifierContext.CombinationResult,
+					selected,
+					tableModel,
+					diceGameModel,
+					ModifierStage.RoundEnd);
+				await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
 				EndTurn(true);
 			}
 			finally

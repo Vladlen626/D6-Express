@@ -4,8 +4,10 @@ namespace _Main.Scripts.Dice
 {
 	public enum ModifierStage
 	{
+		RoundStart,
 		Roll,
-		Pass
+		Pass,
+		RoundEnd
 	}
 
 	public class DiceModifierContext

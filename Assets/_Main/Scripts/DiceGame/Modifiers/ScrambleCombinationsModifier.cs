@@ -8,7 +8,7 @@ using Random=UnityEngine.Random;
 
 namespace _Main.Scripts.Dice
 {
-	public class ScrambleCombinationsModifier : IOnPassModifier, IOnRollModifier
+	public class ScrambleCombinationsModifier : IOnRoundStartModifier, IOnPassModifier
 	{
 		private static readonly DiceCombination[] AvailableCombinations = Enum
 			.GetValues(typeof(DiceCombination))
@@ -30,61 +30,28 @@ namespace _Main.Scripts.Dice
 		};
 
 		private readonly Dictionary<DiceCombination, int> scrambledScores = new ();
-		private TableModel currentTable;
-		private int lastKnownTurn = -1;
 
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
-			var combinations = modifierContext.CombinationResult.Combinations;
-			if (combinations == null || combinations.Count == 0)
+			switch (modifierContext.Stage)
 			{
-				return UniTask.CompletedTask;
-			}
+				case ModifierStage.RoundStart:
+					Debug.Log("[ScrambleCombinationsModifier] Building new scramble map for round start.");
+					BuildNewRoundMap();
+					LogScrambledScores();
+					ScrambleCombinationsOverlay.UpdateMap(scrambledScores);
+					break;
 
-			if (NeedNewRoundMap(modifierContext))
-			{
-				Debug.Log("[ScrambleCombinationsModifier] Building new scramble map (new round/game detected).");
-				BuildNewRoundMap();
-				currentTable = modifierContext.Table;
-				lastKnownTurn = modifierContext.DiceGameModel?.CurrentTurn ?? -1;
-				LogScrambledScores();
-				ScrambleCombinationsOverlay.UpdateMap(scrambledScores);
-			}
+				case ModifierStage.Pass:
+					ApplyScramble(modifierContext.CombinationResult.Combinations);
+					break;
 
-			// Only mutate scoring when points are about to be banked.
-			if (modifierContext.Stage == ModifierStage.Pass && scrambledScores.Count > 0)
-			{
-				Debug.Log("[ScrambleCombinationsModifier] Applying scramble on Pass.");
-				ApplyScramble(combinations);
-				LogScramble(combinations);
-			}
-			else
-			{
-				Debug.Log($"[ScrambleCombinationsModifier] Skipped scramble. Stage={modifierContext.Stage}, mapCount={scrambledScores.Count}.");
+				default:
+					Debug.Log($"[ScrambleCombinationsModifier] Skipped scramble. Stage={modifierContext.Stage}, mapCount={scrambledScores.Count}.");
+					break;
 			}
 
 			return UniTask.CompletedTask;
-		}
-
-		private bool NeedNewRoundMap(DiceModifierContext context)
-		{
-			if (scrambledScores.Count == 0)
-			{
-				return true;
-			}
-
-			if (context.Table != null && context.Table != currentTable)
-			{
-				return true;
-			}
-
-			int currentTurn = context.DiceGameModel?.CurrentTurn ?? -1;
-			if (currentTurn >= 0 && (lastKnownTurn == -1 || currentTurn < lastKnownTurn))
-			{
-				return true;
-			}
-
-			return false;
 		}
 
 		private void BuildNewRoundMap()
@@ -155,6 +122,20 @@ namespace _Main.Scripts.Dice
 
 		private void ApplyScramble(List<DiceCombinationEntry> combinations)
 		{
+			if (combinations == null || combinations.Count == 0)
+			{
+				return;
+			}
+
+			if (scrambledScores.Count == 0)
+			{
+				Debug.Log("[ScrambleCombinationsModifier] Scramble map missing on Pass. Rebuilding.");
+				BuildNewRoundMap();
+				LogScrambledScores();
+				ScrambleCombinationsOverlay.UpdateMap(scrambledScores);
+			}
+
+			Debug.Log("[ScrambleCombinationsModifier] Applying scramble on Pass.");
 			for (int i = 0; i < combinations.Count; i++)
 			{
 				var entry = combinations[i];
@@ -163,6 +144,8 @@ namespace _Main.Scripts.Dice
 					entry.BaseScore = scrambledScore;
 				}
 			}
+
+			LogScramble(combinations);
 		}
 
 		private static void LogScramble(List<DiceCombinationEntry> combinations)
