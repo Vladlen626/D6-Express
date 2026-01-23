@@ -15,23 +15,29 @@ namespace _Main.Scripts.Dice
 
 		public void AddModifier(IModifier modifier)
 		{
-			switch (modifier)
+			if (modifier is IOnLevelStartModifier onLevelStartAction)
 			{
-				case IOnLevelStartModifier onLevelStartAction:
-					onLevelStartActionsHandler.Add(onLevelStartAction);
-					break;
-				case IOnRoundStartModifier onRoundStartAction:
-					onRoundStartActionsHandler.Add(onRoundStartAction);
-					break;
-				case IOnRollModifier onRollAction:
-					onRollActionsHandler.Add(onRollAction);
-					break;
-				case IOnPassModifier onPassAction:
-					onPassActionsHandler.Add(onPassAction);
-					break;
-				case IOnRoundEndModifier onRoundEndAction:
-					onRoundEndActionsHandler.Add(onRoundEndAction);
-					break;
+				onLevelStartActionsHandler.Add(onLevelStartAction);
+			}
+
+			if (modifier is IOnRoundStartModifier onRoundStartAction)
+			{
+				onRoundStartActionsHandler.Add(onRoundStartAction);
+			}
+
+			if (modifier is IOnRollModifier onRollAction)
+			{
+				onRollActionsHandler.Add(onRollAction);
+			}
+
+			if (modifier is IOnPassModifier onPassAction)
+			{
+				onPassActionsHandler.Add(onPassAction);
+			}
+
+			if (modifier is IOnRoundEndModifier onRoundEndAction)
+			{
+				onRoundEndActionsHandler.Add(onRoundEndAction);
 			}
 		}
 
