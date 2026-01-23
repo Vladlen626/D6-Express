@@ -3,28 +3,28 @@ using PlatformCore.Infrastructure.Lifecycle;
 
 public class InformationPanelViewController : IBaseController, IActivatable
 {
-    private readonly RunModel runModel;
+    private readonly Run run;
     private readonly InformationPanelView informationPanelView;
 
-    public InformationPanelViewController(RunModel RunModel, InformationPanelView informationPanelView)
+    public InformationPanelViewController(Run Run, InformationPanelView informationPanelView)
     {
-        runModel = RunModel;
+        run = Run;
         this.informationPanelView = informationPanelView;
     }
 
     public void Activate()
     {
-        runModel.LevelIndexChanged += OnLevelChanged;
+        run.LevelChanged += OnLevelChanged;
         OnLevelChanged();
     }
 
     public void Deactivate()
     {
-        runModel.LevelIndexChanged -= OnLevelChanged;
+        run.LevelChanged -= OnLevelChanged;
     }
 
     private void OnLevelChanged()
     {
-        informationPanelView.Anchor.position = informationPanelView.Stations[runModel.LevelIndex].position;
+        informationPanelView.Anchor.position = informationPanelView.Stations[run.Level].position;
     }
 }

@@ -7,19 +7,19 @@ public static class DebugFactory
     public static async Task<DebugMenuUIController> GetBaseController(
         IInputService inputService,
         ICursorService cursorService,
-        RunModel runModel,
+        Run run,
         PlayerModel playerModel,
         PlayerView playerView,
         ConfigService configService,
         Notifications notifications)
     {
-        var incrementTick = new DbgMenuItemIncrementTicks(runModel);
-        var incrementDay = new DbgMenuItemIncrementDays(runModel);
+        var incrementTick = new DbgMenuItemIncrementTicks(run);
+        var incrementDay = new DbgMenuItemIncrementDays(run);
         var sleep = new DbgMenuItemIncrementSleep();
         var wakeUp = new DbgMenuItemIncrementWakeUp();
-        var switchToStation = new DbgMenuItemSwitchToStation(runModel);
-        var switchToTrain = new DbgMenuItemSwitchToTrain(runModel);
-        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(playerModel, playerView, configService, notifications);
+        var switchToStation = new DbgMenuItemSwitchToStation(run);
+        var switchToTrain = new DbgMenuItemSwitchToTrain(run);
+        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(run, playerModel, playerView, configService, notifications);
 
         var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp, switchToStation, switchToTrain, openPlayerWindow);
 

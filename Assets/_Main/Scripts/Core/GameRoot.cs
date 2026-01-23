@@ -63,6 +63,13 @@ namespace _Main.Scripts.Core
 			var configService = _serviceLocator.Get<ConfigService>();
 			var transitionService = _serviceLocator.Get<TransitionService>();
 
+			var run = new Run();
+
+			// Transition View Controller 
+			var transitionViewController = new TransitionViewController(uiService, transitionService, run, configService, inputService);
+			await _lifecycle.RegisterAsync(transitionViewController);
+			await transitionViewController.ShowContext(0);
+
 			cursorService.UnlockCursor();
 			await UniTask.WaitUntil(() => RuntimeManager.IsInitialized);
 			// Controllers list
@@ -70,7 +77,7 @@ namespace _Main.Scripts.Core
 			// --------------
 
 			var playerModel = await PlayerFactory.CreatePlayerModel(configService);
-			var runModel = await RunFactory.CreateRunModel(configService);
+
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 
 			var activeSceneName = sceneService.GetActiveSceneName();
@@ -85,12 +92,11 @@ namespace _Main.Scripts.Core
 			var mainMenuController = new MainMenuController(uiService);
 			await _lifecycle.RegisterAsync(mainMenuController);
 
+			await transitionViewController.HideContext();
+
 			await mainMenuController.WaitForStartAsync();
 
-			// Transition View Controller 
-			var transitionViewController = new TransitionViewController(uiService, transitionService);
-			await _lifecycle.RegisterAsync(transitionViewController);
-			await transitionViewController.StartTransition();
+			await transitionViewController.ShowContext();
 
 			await sceneService.UnloadSceneAsync(sceneForLoad);
 
@@ -113,45 +119,45 @@ namespace _Main.Scripts.Core
 			var sceneContext = context as SceneContext;
 
 #if UNITY_EDITOR
-				var state = DebugVariables.StartSpawnLocation;
+			var state = DebugVariables.StartSpawnLocation;
 #else
 				var state = LevelState.STATION;
 #endif
 
 			//NPC
-			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, runModel, sceneContext.SpawnPoints);
+			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, run, sceneContext.SpawnPoints);
 
 			//Player
-			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, playerModel, state == LevelState.STATION ? sceneContext.PlayerStationSpawnPosition : sceneContext.PlayerTrainSpawnPosition);
+			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, playerModel, state == Location.STATION ? sceneContext.PlayerStationSpawnPosition : sceneContext.PlayerTrainSpawnPosition);
 			playerModel.PlayerStateModel.FillCharacterStatesDict(playerView.CharacterStateHandlers);
 			cameraService.AttachTo(playerView.CameraRoot);
 			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel, inputService, audioService));
 
 			// Level
-			controllersList.AddRange(RunFactory.GetSleepControllers(runModel.LevelModel, playerView));
-			controllersList.AddRange(RunFactory.GetBaseControllers(sceneContext, uiService, runModel,
-				playerModel, diceGameModel, playerView, audioService));
+			controllersList.AddRange(RunFactory.GetSleepControllers(run, playerView));
+			controllersList.AddRange(await RunFactory.GetBaseControllers(sceneContext, uiService, run,
+				playerModel, configService));
 
 			var baseControllers = new IBaseController[]
 			{
-				new WinViewController(uiService, inputService, cursorService, runModel, configService),
-				new LoseViewController(uiService, inputService, cursorService, runModel, configService),
+				new WinViewController(uiService, inputService, cursorService, configService, transitionService),
+				new LoseViewController(uiService, inputService, cursorService, configService, transitionService),
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
-					runModel.LevelModel, configService),
+					run, configService),
 				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main),
-				new LightController(sceneContext.Lights, runModel.LevelModel),
-				new InformationPanelViewController(runModel, sceneContext.InformationPanelView),
+				new LightController(sceneContext.Lights, run),
+				new InformationPanelViewController(run, sceneContext.InformationPanelView),
 			};
 
 			var shop = await ShopFactory.GetShopAsync(playerModel.InventoryModel, configService);
 			var notifications = NotificationsFactory.CreateNotifications();
-			var transitionController = new TransitionController(runModel, playerModel, playerView, sceneContext, audioService, npcSpawner, shop, transitionService);
+			var transitionController = new TransitionController(run, playerModel, playerView, sceneContext, audioService, npcSpawner, shop, transitionService);
 
 			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));
-			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, runModel, playerModel, playerView, configService, notifications));
-			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, runModel, configService, runModel.LevelModel));
+			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, run, playerModel, playerView, configService, notifications));
+			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, run, configService));
 			// todo. не требуется к mvp. раскоментить позже
 			// controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
@@ -165,13 +171,7 @@ namespace _Main.Scripts.Core
 				await _lifecycle.RegisterAsync(controller);
 			}
 
-			await transitionController.StartLocationTransition();
-			await transitionViewController.FinishTransition();
-
-			runModel.SetLevelState(state);
-
-			transitionViewController.StartObserving();
-			transitionController.StartObserving();
+			run.Start();
 		}
 	}
 }

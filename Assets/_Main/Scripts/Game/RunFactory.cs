@@ -1,57 +1,36 @@
 using System.Collections.Generic;
-using _Main.Scripts.Dice;
-using Cysharp.Threading.Tasks;
+using System.Threading.Tasks;
 using PlatformCore.Core;
-using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
 public static class RunFactory
 {
-	public static async UniTask<RunModel> CreateRunModel(ConfigService configService)
+	public static async Task<IEnumerable<IBaseController>> GetBaseControllers(SceneContext sceneContext, IUIService uiService,
+		Run run, PlayerModel playerModel, ConfigService configService)
 	{
 		var runConfig = await configService.GetFirstOrDefaultAsync<RunConfig>(ResourcePaths.Json.run_rules);
 
-		var levelData = new LevelData[runConfig.levels.Length];
-		for (int i = 0; i < runConfig.levels.Length; i++)
-		{
-			LevelConfig item = runConfig.levels[i];
-			levelData[i] = new LevelData()
-			{
-				nextStationId = item.next_station_id,
-				days = item.days,
-				ticks = item.ticks_per_day,
-				cashGoal = item.cash_goal
-			};
-		}
-		var runModel = new RunModel();
-		runModel.UpdateRun(runConfig.first_station_id, levelData);
-
-		return runModel;
-	}
-
-	public static IEnumerable<IBaseController> GetBaseControllers(SceneContext sceneContext, IUIService uiService,
-		RunModel runModel, PlayerModel playerModel, DiceGameModel diceGameModel, PlayerView playerView, IAudioService audioService)
-	{
 		return new IBaseController[]
 		{
 			new LevelViewController(
 				uiService,
 				playerModel,
-				runModel,
+				run,
 				sceneContext.Sun),
 			new LevelController(
-				runModel,
+				run,
+				runConfig,
 				playerModel)
 		};
 	}
 
-	public static IEnumerable<IBaseController> GetSleepControllers(LevelModel levelModel, PlayerView playerView)
+	public static IEnumerable<IBaseController> GetSleepControllers(Run run, PlayerView playerView)
 	{
 		var sleepView = playerView.GetComponent<SleepView>();
 		var interactor = playerView.GetComponent<Interactor>();
 
-		var sleepController = new SleepController(levelModel, sleepView, interactor);
+		var sleepController = new SleepController(run, sleepView, interactor);
 		yield return sleepController;
 	}
 }

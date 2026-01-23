@@ -1,3 +1,4 @@
+using System.Linq;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
@@ -8,19 +9,17 @@ public class WinViewController : BaseContextController<UIWinView>
 {
 	private readonly IInputService inputService;
 	private readonly ICursorService cursorService;
-	private readonly RunModel runModel;
 	private readonly ConfigService configService;
+    private readonly TransitionService transitionService;
+    private TextsConfig textsConfig;
 
-	private TextsConfig textsConfig;
-
-	public WinViewController(IUIService uiService, IInputService inputService, ICursorService cursorService,
-		RunModel runModel, ConfigService configService) : base(uiService)
+	public WinViewController(IUIService uiService, IInputService inputService, ICursorService cursorService, ConfigService configService, TransitionService transitionService) : base(uiService)
 	{
 		this.inputService = inputService;
 		this.cursorService = cursorService;
-		this.runModel = runModel;
 		this.configService = configService;
-	}
+        this.transitionService = transitionService;
+    }
 
 	protected override async UniTask OnPreloadAsync()
 	{
@@ -36,37 +35,25 @@ public class WinViewController : BaseContextController<UIWinView>
 
 		HideContext();
 
-		runModel.Finished += RunFinished;
+		transitionService.TransitionRequested += OnTransitionRequested;
 		_context.ExitButtonClicked += OnExitButtonClickedHandler;
 	}
 
 	protected override void OnDeactivate()
 	{
 		_context.ExitButtonClicked -= OnExitButtonClickedHandler;
-		runModel.Finished -= RunFinished;
+		transitionService.TransitionRequested -= OnTransitionRequested;
 
 		HideContext();
 
 		base.OnDeactivate();
 	}
 
-	private void RunFinished(bool result)
+	private void OnTransitionRequested()
 	{
-		if (result)
+		if (transitionService.CurrentTransition.data.tasks.Contains(Transition.TaskType.WIN))
 		{
-#if UNITY_EDITOR
-			if (DebugVariables.ShowWinView)
-			{
-				ShowContext();
-			}
-			else
-			{
-				runModel.SetLevelState(LevelState.STATION);
-			}
-#else
-			runModel.SetLevelState(LevelState.STATION);
-#endif
-			
+			transitionService.CurrentTransition.AddTask(async () => ShowContext());
 		}
 	}
 
@@ -86,7 +73,6 @@ public class WinViewController : BaseContextController<UIWinView>
 
 	private void OnExitButtonClickedHandler()
 	{
-		runModel.SetLevelState(LevelState.STATION);
 		_context.Hide();
 	}
 }

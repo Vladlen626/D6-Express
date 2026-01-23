@@ -1,35 +1,38 @@
 ﻿[
   {
     "id": "default",
-    "first_station_id": "np",
     "levels": [
       {
         "id": "default",
-        "next_station_id": "ss",
-        "days": 3,
+        "station_id": "np",
+        "days": 1,
         "ticks_per_day": 2,
         "cash_goal": 1000
       },
       {
         "id": "default",
-        "next_station_id": "ow",
+        "station_id": "ss",
         "days": 4,
-        "ticks_per_day": 2,
-        "cash_goal": 1000
-      },
-      {
-        "id": "default",
-        "next_station_id": "nf",
-        "days": 2,
         "ticks_per_day": 2,
         "cash_goal": 1500
       },
       {
         "id": "default",
-        "next_station_id": "sf",
-        "days": 3,
+        "station_id": "ow",
+        "days": 2,
         "ticks_per_day": 2,
         "cash_goal": 2000
+      },
+      {
+        "id": "default",
+        "station_id": "nf",
+        "days": 3,
+        "ticks_per_day": 2,
+        "cash_goal": 2500
+      },
+      {
+        "id": "default",
+        "station_id": "sf"
       }
     ]
   }

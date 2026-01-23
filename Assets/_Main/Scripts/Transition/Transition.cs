@@ -33,7 +33,7 @@ public class Transition
         tasks.Add(task);
     }
 
-    public void AddTasks(params Func<UniTask>[] tasks)
+    public void AddTasks(IEnumerable<Func<UniTask>> tasks)
     {
         this.tasks.AddRange(tasks);
     }
@@ -57,17 +57,21 @@ public class Transition
         {
             await last.Invoke();
         }
-        Debug.Log("TRANSITION: first task completed");
+        Debug.Log("TRANSITION: last task completed");
     }
 
     public struct Data
     {
-        public Type type;
+        public TaskType[] tasks;
     }
 
-    public enum Type
+    public enum TaskType
     {
-        LOCATION,
-        TICK
+        CHANGE_LOCATION,
+        WAKE_UP,
+        WIN,
+        LOSE,
+        NPC_RESPAWN,
+        SHOP_RESTOCK,
     }
 }

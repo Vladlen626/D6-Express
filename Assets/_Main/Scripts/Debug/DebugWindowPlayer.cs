@@ -8,6 +8,7 @@ using UnityEngine;
 // todo нужно не хранить все категории в одном файле
 public class DebugWindowPlayer : DebugWindowModel
 {
+	private readonly Run run;
 	private readonly PlayerModel playerModel;
 	private readonly PlayerView playerView;
 	private readonly ConfigService configService;
@@ -29,8 +30,9 @@ public class DebugWindowPlayer : DebugWindowModel
 		diceConfig = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
 	}
 
-	public DebugWindowPlayer(PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
+	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
 	{
+		this.run = run;
 		this.playerModel = playerModel;
 		this.playerView = playerView;
 		this.configService = configService;
@@ -50,6 +52,51 @@ public class DebugWindowPlayer : DebugWindowModel
 		if (!ImGui.Begin(Id, ref isOpen, ImGuiWindowFlags.MenuBar))
 		{
 			return;
+		}
+
+		if (ImGui.CollapsingHeader("Run Settings"))
+		{
+			int tickBuffer = run.Tick;
+			ImGui.InputInt("Tick:", ref tickBuffer);
+			if (tickBuffer != run.Tick)
+			{
+				run.RequestSetTick(tickBuffer);
+			}
+
+			int ticksPerDayBuffer = run.TicksPerDay;
+			ImGui.InputInt("Ticks Per Day:", ref ticksPerDayBuffer);
+			if (ticksPerDayBuffer != run.TicksPerDay)
+			{
+				run.SetTicksPerDay(ticksPerDayBuffer);
+			}
+
+			int dayBuffer = run.Day;
+			ImGui.InputInt("Day:", ref dayBuffer);
+			if (dayBuffer != run.Day)
+			{
+				run.RequestSetDay(dayBuffer);
+			}
+
+			int daysPerLevelBuffer = run.DaysPerLevel;
+			ImGui.InputInt("Days Per Level:", ref daysPerLevelBuffer);
+			if (daysPerLevelBuffer != run.DaysPerLevel)
+			{
+				run.SetDaysPerLevel(daysPerLevelBuffer);
+			}
+
+			int ticketPriceBuffer = run.TicketPrice;
+			ImGui.InputInt("Ticket Price:", ref ticketPriceBuffer);
+			if (ticketPriceBuffer != run.TicketPrice)
+			{
+				run.SetTicketPrice(ticketPriceBuffer);
+			}
+
+			int nextTicketPriceBuffer = run.NextTicketPrice;
+			ImGui.InputInt("Next Ticket Price:", ref nextTicketPriceBuffer);
+			if (nextTicketPriceBuffer != run.NextTicketPrice)
+			{
+				run.SetNextTicketPrice(nextTicketPriceBuffer);
+			}
 		}
 
 		if (ImGui.CollapsingHeader("Cash"))

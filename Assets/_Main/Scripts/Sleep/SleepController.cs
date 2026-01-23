@@ -3,24 +3,24 @@ using PlatformCore.Infrastructure.Lifecycle;
 
 public class SleepController : IBaseController, IActivatable
 {
-	private readonly LevelModel levelModel;
+	private readonly Run run;
 	private readonly SleepView sleepView;
 	private readonly Interactor interactor;
 
-	public SleepController(LevelModel levelModel, SleepView sleepView, Interactor interactor)
+	public SleepController(Run run, SleepView sleepView, Interactor interactor)
 	{
-		this.levelModel = levelModel;
+		this.run = run;
 		this.sleepView = sleepView;
 		this.interactor = interactor;
 	}
 
-    public void Activate()
+	public void Activate()
 	{
 		interactor.InteractionStarted += OnInteractionStarted;
 		interactor.InteractionEnded += OnInteractionEnded;
 	}
 
-    public void Deactivate()
+	public void Deactivate()
 	{
 		interactor.InteractionEnded -= OnInteractionEnded;
 		interactor.InteractionStarted -= OnInteractionStarted;
@@ -42,7 +42,7 @@ public class SleepController : IBaseController, IActivatable
 		}
 		else if (action is InteractableActionSleep)
 		{
-			levelModel.IncrementDays();
+			run.RequestSetDay(run.Day + 1);
 		}
 	}
 

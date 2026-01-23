@@ -1,4 +1,4 @@
-public enum LevelState
+public enum Location
 {
     STATION,
     TRAIN,

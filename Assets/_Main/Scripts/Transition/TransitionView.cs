@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using PlatformCore.Services.UI;
+using TMPro;
 using UnityEngine;
 
 public class UITransitionView : UIBaseElement
@@ -14,6 +15,15 @@ public class UITransitionView : UIBaseElement
 
     [SerializeField]
     private AnimationCurve curve;
+
+    [SerializeField]
+    private CanvasGroup stationNameCanvasGroup;
+
+    [SerializeField]
+    private CanvasGroup wakeUpCanvasGroup;
+
+    [SerializeField]
+    private TextMeshProUGUI locationName;
 
     private float initialUpperY, initialBottomY;
 
@@ -41,6 +51,39 @@ public class UITransitionView : UIBaseElement
         await UniTask.WhenAll(upperMove, bottomMove);
 
         Hide();
+    }
+
+    public void SetLocationName(string name)
+    {
+        locationName.text = name;
+    }
+
+    public async UniTask ShowLocationName()
+    {
+        await stationNameCanvasGroup
+            .DOFade(1f, 0.5f)
+            .SetEase(Ease.OutQuad);
+    }
+
+    public async UniTask HideLocationName()
+    {
+        await stationNameCanvasGroup
+            .DOFade(0f, 0.5f)
+            .SetEase(Ease.OutQuad);
+    }
+
+    public async UniTask ShowWakeUp()
+    {
+        await wakeUpCanvasGroup
+            .DOFade(1f, 0.5f)
+            .SetEase(Ease.OutQuad);
+    }
+
+    public async UniTask HideWakeUp()
+    {
+        await wakeUpCanvasGroup
+            .DOFade(0f, 0.5f)
+            .SetEase(Ease.OutQuad);
     }
 
     protected override void OnHide()
