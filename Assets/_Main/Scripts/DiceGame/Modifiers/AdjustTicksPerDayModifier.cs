@@ -3,17 +3,18 @@ using Cysharp.Threading.Tasks;
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
-	/// Reduces the number of ticks (games per day) for the current level by a fixed amount.
+	/// Adjusts the number of ticks (games per day) for the current level by a fixed delta (can increase or decrease).
 	/// Applied on RoundStart; persists for the level until LevelModel.UpdateLevel is called for the next stage.
 	/// </summary>
-	public class ReduceTicksPerDayModifier : IOnRoundStartModifier
+	public class AdjustTicksPerDayModifier : IOnLevelStartModifier
 	{
-		private readonly int reduction;
+		private readonly int delta;
 		private bool isApplied;
 
-		public ReduceTicksPerDayModifier(int reduction = 1)
+		/// <param name="delta">Positive to increase ticks per day, negative to reduce. Defaults to -1 (reduce by one).</param>
+		public AdjustTicksPerDayModifier(int delta = -1)
 		{
-			this.reduction = reduction;
+			this.delta = delta;
 		}
 
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
@@ -23,7 +24,7 @@ namespace _Main.Scripts.Dice
 				return UniTask.CompletedTask;
 			}
 
-			if (modifierContext.Stage == ModifierStage.RoundStart)
+			if (modifierContext.Stage == ModifierStage.LevelStart)
 			{
 				Apply(modifierContext.LevelModel);
 			}
@@ -38,7 +39,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			var newTicks = levelModel.Ticks - reduction;
+			var newTicks = levelModel.Ticks + delta;
 			if (newTicks < 1)
 			{
 				newTicks = 1;
