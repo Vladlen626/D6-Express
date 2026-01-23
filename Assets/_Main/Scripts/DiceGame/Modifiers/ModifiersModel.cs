@@ -13,7 +13,6 @@ namespace _Main.Scripts.Dice
 		private readonly List<IOnPassModifier> onPassActionsHandler = new ();
 		private readonly List<IOnRoundEndModifier> onRoundEndActionsHandler = new ();
 
-		private int multiplier;
 		public void AddModifier(IModifier modifier)
 		{
 			switch (modifier)

@@ -45,6 +45,7 @@ namespace _Main.Scripts.Dice
 			ModifiersModel.AddModifier(new ShakeRerollModifier());
 			ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
 			ModifiersModel.AddModifier(new AdjustTicksPerDayModifier(5));
+			ModifiersModel.AddModifier(new PassActivationMultiplierModifier());
 		}
 		
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
