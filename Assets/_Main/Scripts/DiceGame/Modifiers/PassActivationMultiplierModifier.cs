@@ -7,7 +7,7 @@ namespace _Main.Scripts.Dice
 	/// Active modifier: when armed via the on-screen button, the next Pass gains a 1.5x score multiplier.
 	/// Only one activation is available per in-game day.
 	/// </summary>
-	public class PassActivationMultiplierModifier : IOnPassModifier
+	public class PassActivationMultiplierModifier : IOnPassModifier, IOnRoundStartModifier
 	{
 		private const float ScoreMultiplier = 1.5f;
 		private const int ActivationsPerDay = 1;
@@ -25,13 +25,24 @@ namespace _Main.Scripts.Dice
 
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
-			if (modifierContext.Stage != ModifierStage.Pass)
+			switch (modifierContext.Stage)
 			{
-				return UniTask.CompletedTask;
-			}
+				case ModifierStage.RoundStart:
+					AttachRun(modifierContext.Run);
+					RefreshDailyAllowance();
+					Debug.Log($"[PassMultiplier] RoundStart | day={lastKnownDay} remaining={remainingActivations} armed={isArmed}");
+					PassActivationMultiplierOverlay.UpdateState(remainingActivations, isArmed, true);
+					return UniTask.CompletedTask;
 
-			AttachRun(modifierContext.Run);
-			RefreshDailyAllowance();
+				case ModifierStage.Pass:
+					AttachRun(modifierContext.Run);
+					RefreshDailyAllowance();
+					Debug.Log($"[PassMultiplier] Pass stage | day={lastKnownDay} remaining={remainingActivations} armed={isArmed}");
+					break;
+
+				default:
+					return UniTask.CompletedTask;
+			}
 
 			if (!isArmed)
 			{
@@ -40,6 +51,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			ApplyMultiplier(modifierContext.CombinationResult);
+			Debug.Log($"[PassMultiplier] Applied x{ScoreMultiplier} | combos={modifierContext.CombinationResult.Combinations?.Count ?? 0}");
 
 			isArmed = false;
 			remainingActivations = Mathf.Max(0, remainingActivations - 1);
@@ -67,10 +79,12 @@ namespace _Main.Scripts.Dice
 
 			if (remainingActivations <= 0)
 			{
+				Debug.Log("[PassMultiplier] Activation click ignored: no charges left");
 				return;
 			}
 
 			isArmed = true;
+			Debug.Log($"[PassMultiplier] Armed for next pass | day={lastKnownDay} remaining={remainingActivations}");
 			PassActivationMultiplierOverlay.UpdateState(remainingActivations, isArmed, true);
 		}
 
@@ -86,6 +100,7 @@ namespace _Main.Scripts.Dice
 				lastKnownDay = run.Day;
 				remainingActivations = ActivationsPerDay;
 				isArmed = false;
+				Debug.Log($"[PassMultiplier] New day detected -> charges reset to {remainingActivations}");
 			}
 		}
 
@@ -111,12 +126,14 @@ namespace _Main.Scripts.Dice
 			run.RunFinished += OnRunFinished;
 			run.LevelChanged += OnLevelChanged;
 
+			Debug.Log($"[PassMultiplier] Attached to run | day={run.Day} level={run.Level}");
 			PassActivationMultiplierOverlay.UpdateState(remainingActivations, isArmed, true);
 		}
 
 		private void OnRunDayChanged()
 		{
 			RefreshDailyAllowance();
+			Debug.Log($"[PassMultiplier] Run day changed -> remaining={remainingActivations} armed={isArmed}");
 			PassActivationMultiplierOverlay.UpdateState(remainingActivations, isArmed, true);
 		}
 
@@ -124,6 +141,7 @@ namespace _Main.Scripts.Dice
 		{
 			lastKnownDay = -1;
 			RefreshDailyAllowance();
+			Debug.Log($"[PassMultiplier] Level changed -> day reset, remaining={remainingActivations} armed={isArmed}");
 			PassActivationMultiplierOverlay.UpdateState(remainingActivations, isArmed, true);
 		}
 
@@ -141,6 +159,7 @@ namespace _Main.Scripts.Dice
 				run = null;
 			}
 
+			Debug.Log("[PassMultiplier] Run finished -> overlay hidden and state reset");
 			PassActivationMultiplierOverlay.UpdateState(remainingActivations, isArmed, false);
 		}
 	}
