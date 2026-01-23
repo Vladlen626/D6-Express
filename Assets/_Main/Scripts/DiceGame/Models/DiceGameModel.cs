@@ -43,8 +43,8 @@ namespace _Main.Scripts.Dice
 			ModifiersModel = new ModifiersModel();
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
 			ModifiersModel.AddModifier(new ShakeRerollModifier());
-			ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
-			ModifiersModel.AddModifier(new AdjustTicksPerDayModifier(5));
+			// ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
+			ModifiersModel.AddModifier(new AdjustTicksPerDayModifier(1));
 			ModifiersModel.AddModifier(new PassActivationMultiplierModifier());
 		}
 		
