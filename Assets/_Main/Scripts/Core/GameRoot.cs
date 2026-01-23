@@ -141,6 +141,7 @@ namespace _Main.Scripts.Core
 					runModel.LevelModel, configService),
 				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main),
 				new LightController(sceneContext.Lights, runModel.LevelModel),
+				new LevelStartModifierController(runModel.LevelModel, diceGameModel),
 				new InformationPanelViewController(runModel, sceneContext.InformationPanelView),
 			};
 

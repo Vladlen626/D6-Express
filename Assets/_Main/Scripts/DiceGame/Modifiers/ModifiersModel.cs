@@ -7,6 +7,7 @@ namespace _Main.Scripts.Dice
 {
 	public class ModifiersModel
 	{
+		private readonly List<IOnLevelStartModifier> onLevelStartActionsHandler = new ();
 		private readonly List<IOnRoundStartModifier> onRoundStartActionsHandler = new ();
 		private readonly List<IOnRollModifier> onRollActionsHandler = new ();
 		private readonly List<IOnPassModifier> onPassActionsHandler = new ();
@@ -17,6 +18,9 @@ namespace _Main.Scripts.Dice
 		{
 			switch (modifier)
 			{
+				case IOnLevelStartModifier onLevelStartAction:
+					onLevelStartActionsHandler.Add(onLevelStartAction);
+					break;
 				case IOnRoundStartModifier onRoundStartAction:
 					onRoundStartActionsHandler.Add(onRoundStartAction);
 					break;
@@ -29,6 +33,14 @@ namespace _Main.Scripts.Dice
 				case IOnRoundEndModifier onRoundEndAction:
 					onRoundEndActionsHandler.Add(onRoundEndAction);
 					break;
+			}
+		}
+
+		public async UniTask PlayLevelStartActions(DiceModifierContext modifierContext)
+		{
+			foreach (var onLevelStartAction in onLevelStartActionsHandler)
+			{
+				await onLevelStartAction.ModifyValues(modifierContext);
 			}
 		}
 
@@ -66,6 +78,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
+			onLevelStartActionsHandler.Clear();
 			onRoundStartActionsHandler.Clear();
 			onRollActionsHandler.Clear();
 			onPassActionsHandler.Clear();

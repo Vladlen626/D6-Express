@@ -4,6 +4,7 @@ namespace _Main.Scripts.Dice
 {
 	public enum ModifierStage
 	{
+		LevelStart,
 		RoundStart,
 		Roll,
 		Pass,

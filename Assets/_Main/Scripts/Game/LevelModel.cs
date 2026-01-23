@@ -18,6 +18,7 @@ public class LevelModel
 	public event Action DayChanged;
 	public event Action OnFinalDay;
 	public event Action<bool> LevelFinished;
+	public event Action LevelStarted;
 
 	public void UpdateLevel(LevelData levelData, int ticketPrice)
 	{
@@ -31,6 +32,7 @@ public class LevelModel
 		TicketPrice = ticketPrice;
 
 		IsLevelFinished = false;
+		LevelStarted?.Invoke();
 	}
 
 	public void IncrementDays()

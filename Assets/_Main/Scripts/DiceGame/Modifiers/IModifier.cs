@@ -6,6 +6,10 @@ namespace _Main.Scripts.Dice
 	{
 	}
 
+	public interface IOnLevelStartModifier : IModifier
+	{
+	}
+
 	public interface IOnRollModifier : IModifier
 	{
 	}
