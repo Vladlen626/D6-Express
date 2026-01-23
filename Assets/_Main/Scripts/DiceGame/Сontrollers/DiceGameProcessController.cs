@@ -15,6 +15,7 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
+		private readonly Run run;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
@@ -23,12 +24,14 @@ namespace _Main.Scripts.Dice
 			ILoggerService logger,
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
-			IAudioService audioService)
+			IAudioService audioService,
+			Run run)
 		{
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
 			this.audioService = audioService;
+			this.run = run;
 		}
 
 		public void Activate()
@@ -89,7 +92,8 @@ namespace _Main.Scripts.Dice
 						diceGameModel.GetUnbanked(),
 						tableModel,
 						diceGameModel,
-						ModifierStage.RoundStart);
+						ModifierStage.RoundStart,
+						run);
 					await diceGameModel.ModifiersModel.PlayRoundStartActions(roundStartContext);
 
 					tableModel.isFirstRoll = false;
@@ -128,7 +132,8 @@ namespace _Main.Scripts.Dice
 					diceToRoll,
 					tableModel,
 					diceGameModel,
-					ModifierStage.Roll);
+					ModifierStage.Roll,
+					run);
 				
 				await diceGameModel.ModifiersModel.PlayRollActions(rollModifierContext);
 
@@ -141,7 +146,8 @@ namespace _Main.Scripts.Dice
 						diceToRoll,
 						tableModel,
 						diceGameModel,
-						ModifierStage.RoundEnd);
+						ModifierStage.RoundEnd,
+						run);
 					await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
 					EndTurn(false);
 				}
@@ -185,7 +191,8 @@ namespace _Main.Scripts.Dice
 					selected,
 					tableModel,
 					diceGameModel,
-					ModifierStage.Pass);
+					ModifierStage.Pass,
+					run);
 				await diceGameModel.ModifiersModel.PlayPassActions(passModifierContext);
 				await TrySaveSelected(selected, passModifierContext.CombinationResult);
 				var roundEndContext = new DiceModifierContext(
@@ -193,7 +200,8 @@ namespace _Main.Scripts.Dice
 					selected,
 					tableModel,
 					diceGameModel,
-					ModifierStage.RoundEnd);
+					ModifierStage.RoundEnd,
+					run);
 				await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
 				EndTurn(true);
 			}

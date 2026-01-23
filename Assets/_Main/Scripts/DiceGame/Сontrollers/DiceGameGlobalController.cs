@@ -123,7 +123,7 @@ namespace _Main.Scripts.Dice
 			await SetupEnemyDiceList();
 
 			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService);
+				loggerService, diceGameModel, cameraShakeService, audioService, run);
 
 			gameControllers.AddRange(new IBaseController[]
 			{

@@ -176,7 +176,7 @@ public static class SpeechFactory
         return speechShopkeeper;
     }
 
-    private static Speech GetEnemySpeech(Run levelModel, TextsConfig textsConfig)
+    private static Speech GetEnemySpeech(Run run, TextsConfig textsConfig)
     {
         var speechEnemy = new Speech(123);
 
@@ -190,7 +190,7 @@ public static class SpeechFactory
             textsConfig.texts["enemy_refuse"]
         );
 
-        var speechNodeCondition = new SpeechNodeConditional(() => levelModel.Tick < levelModel.TicksPerDay)
+        var speechNodeCondition = new SpeechNodeConditional(() => run.Tick < run.TicksPerDay)
             .OnTrue(speechNodePositive)
             .OnFalse(speechNodeNegative)
             .Init(speechEnemy);

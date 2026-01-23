@@ -148,6 +148,7 @@ namespace _Main.Scripts.Core
 				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main),
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelViewController(run, sceneContext.InformationPanelView),
+				new LevelStartModifierController(run, diceGameModel),
 			};
 
 			var shop = await ShopFactory.GetShopAsync(playerModel.InventoryModel, configService);

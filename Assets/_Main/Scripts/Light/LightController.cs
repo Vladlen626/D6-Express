@@ -7,9 +7,9 @@ public class LightController : IBaseController, IActivatable
     private readonly Run run;
     private readonly List<LightView> lightViews;
 
-    public LightController(IEnumerable<LightView> lights, Run levelModel)
+    public LightController(IEnumerable<LightView> lights, Run run)
     {
-        this.run = levelModel;
+        this.run = run;
         this.lightViews = new(lights);
     }
 
