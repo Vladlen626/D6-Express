@@ -4,12 +4,13 @@ namespace _Main.Scripts.Dice
 {
 	/// <summary>
 	/// Adjusts the number of ticks (games per day) for the current level by a fixed delta (can increase or decrease).
-	/// Applied on RoundStart; persists for the level until LevelModel.UpdateLevel is called for the next stage.
+	/// Applied on LevelStart; reverted at the end of the level by subtracting the same delta from the current value.
 	/// </summary>
 	public class AdjustTicksPerDayModifier : IOnLevelStartModifier
 	{
 		private readonly int delta;
 		private bool isApplied;
+		private Run run;
 
 		/// <param name="delta">Positive to increase ticks per day, negative to reduce. Defaults to -1 (reduce by one).</param>
 		public AdjustTicksPerDayModifier(int delta = -1)
@@ -39,6 +40,8 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			this.run = run;
+
 			var newTicks = run.TicksPerDay + delta;
 			if (newTicks < 1)
 			{
@@ -46,7 +49,40 @@ namespace _Main.Scripts.Dice
 			}
 
 			run.SetTicksPerDay(newTicks);
+			run.LevelChanged += OnLevelEnded;
+			run.RunFinished += OnRunFinished;
 			isApplied = true;
+		}
+
+		private void OnLevelEnded()
+		{
+			Reset();
+		}
+
+		private void OnRunFinished()
+		{
+			Reset();
+		}
+
+		private void Reset()
+		{
+			if (!isApplied || run == null)
+			{
+				return;
+			}
+
+			var restoredTicks = run.TicksPerDay - delta;
+			if (restoredTicks < 1)
+			{
+				restoredTicks = 1;
+			}
+
+			run.SetTicksPerDay(restoredTicks);
+			run.LevelChanged -= OnLevelEnded;
+			run.RunFinished -= OnRunFinished;
+
+			run = null;
+			isApplied = false;
 		}
 	}
 }

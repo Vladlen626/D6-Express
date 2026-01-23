@@ -44,7 +44,7 @@ namespace _Main.Scripts.Dice
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
 			ModifiersModel.AddModifier(new ShakeRerollModifier());
 			ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
-			ModifiersModel.AddModifier(new AdjustTicksPerDayModifier(1));
+			ModifiersModel.AddModifier(new AdjustTicksPerDayModifier(5));
 		}
 		
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
