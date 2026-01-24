@@ -45,8 +45,8 @@ namespace _Main.Scripts.Dice
 			ModifiersModel = new ModifiersModel();
 			ItemsModel = new ItemsModel(ModifiersModel);
 			// todo move this somwehere. Inside items model constructor?
-			var passMultiplierPrefab = Resources.Load<DiceItemView>("Prefabs/DiceTable/PassMultiplierItem");
-			var rerollItemPrefab = Resources.Load<DiceItemView>("Prefabs/DiceTable/ItemBase");
+			var passMultiplierPrefab = Resources.Load<DiceItemView>("Items/PassMultiplierItem");
+			var rerollItemPrefab = Resources.Load<DiceItemView>("Items/RerollSelectedItem");
 			ItemsModel.AddItem(new PassMultiplierItem(prefabOverride: passMultiplierPrefab));
 			ItemsModel.AddItem(new RerollSelectedItem(prefabOverride: rerollItemPrefab));
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));

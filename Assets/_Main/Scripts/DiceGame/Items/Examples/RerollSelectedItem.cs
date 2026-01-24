@@ -54,7 +54,7 @@ namespace _Main.Scripts.Dice
 
 		private void ApplyReroll(DiceModifierContext context)
 		{
-			if (context.Dice == null || context.Dice.Length == 0 || context.CombinationResult == null)
+			if (context.Dice == null || context.Dice.Length == 0)
 			{
 				return;
 			}
