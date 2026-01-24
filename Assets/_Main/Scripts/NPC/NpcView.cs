@@ -6,10 +6,15 @@ public class NpcView : CharacterView
 {
 	[SerializeField]
 	private List<Transform> hatsTransforms;
+	
+	[SerializeField]
+	private Animator animator;
+	
+	public Animator Animator => animator;
 
 	void Start()
 	{
-		if (hatsTransforms.Count == 0)
+		/*if (hatsTransforms.Count == 0)
 		{
 			return;
 		}
@@ -20,6 +25,6 @@ public class NpcView : CharacterView
 		}
 
 		var hatIndex = Random.Range(0, hatsTransforms.Count);
-		hatsTransforms[hatIndex].gameObject.SetActive(true);
+		hatsTransforms[hatIndex].gameObject.SetActive(true);*/
 	}
 }

@@ -2649,6 +2649,10 @@ PrefabInstance:
       value: ChairSeat
       objectReference: {fileID: 0}
     - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 1303052735680450577, guid: 26ade87522d274947b60ec493b5ca92f, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.7071068
       objectReference: {fileID: 0}

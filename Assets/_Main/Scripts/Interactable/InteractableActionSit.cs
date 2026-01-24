@@ -6,7 +6,6 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionSit : InteractionAction
 {
-	private static readonly int State = Animator.StringToHash("State");
 	protected Vector3 lastPos;
 
 	public override bool CanInteract(IInteractable interactable)
@@ -31,7 +30,9 @@ public class InteractableActionSit : InteractionAction
 			var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 0.25f).AsyncWaitForCompletion().AsUniTask();
 			var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 0.25f).AsyncWaitForCompletion().AsUniTask();
 
-			Interactor.GetComponent<Animator>().SetInteger(State, 1);
+			
+			// TODO: НУжна какая-то более адекватная тема, и инты поменять на енам
+			Interactor.GetComponent<NpcView>().Animator.SetInteger(State, 1);
 			await UniTask.WhenAll(moveTask, rotateTask);
 		}
 
@@ -43,7 +44,8 @@ public class InteractableActionSit : InteractionAction
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
 
-		Interactor.GetComponent<Animator>().SetInteger(State, 0);
+		// TODO: НУжна какая-то более адекватная тема, и инты поменять на енам
+		Interactor.GetComponent<NpcView>().Animator.SetInteger(State, 0);
 
 		if (immediate)
 		{

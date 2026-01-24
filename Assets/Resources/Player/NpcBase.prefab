@@ -307,7 +307,6 @@ GameObject:
   - component: {fileID: 4684685514780519473}
   - component: {fileID: 1412554539663941586}
   - component: {fileID: 9204753240576182304}
-  - component: {fileID: 5014711364630097364}
   - component: {fileID: 7573710915944212035}
   m_Layer: 6
   m_Name: NpcBase
@@ -421,6 +420,7 @@ MonoBehaviour:
     minYaw: -90
     maxYaw: 90
   hatsTransforms: []
+  animator: {fileID: 2568383377370273842}
   references:
     version: 2
     RefIds:
@@ -522,28 +522,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae5c477daf207734ebe8588e58466f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NpcRotationController
---- !u!95 &5014711364630097364
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6183470353876266074}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 81bc9863074020945bcae452146cd81c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &7573710915944212035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -681,10 +659,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6881390770214846263, guid: 87db2105775576b43b1daebce2b1bf71, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.0054101213
+      objectReference: {fileID: 0}
+    - target: {fileID: -6881390770214846263, guid: 87db2105775576b43b1daebce2b1bf71, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.0070977826
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 87db2105775576b43b1daebce2b1bf71, type: 3}
       propertyPath: m_Name
       value: SkeletonWeightsFix
       objectReference: {fileID: 0}
+    - target: {fileID: 4330094614076497766, guid: 87db2105775576b43b1daebce2b1bf71, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.78948015
+      objectReference: {fileID: 0}
+    - target: {fileID: 4330094614076497766, guid: 87db2105775576b43b1daebce2b1bf71, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.0018891181
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 87db2105775576b43b1daebce2b1bf71, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 680bf8b1187f66c4c95e2db3fe0c9849, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -696,6 +694,11 @@ PrefabInstance:
 --- !u!4 &1641224954004627560 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7208261743932278219, guid: 87db2105775576b43b1daebce2b1bf71, type: 3}
+  m_PrefabInstance: {fileID: 8272600946705229219}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &2568383377370273842 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 87db2105775576b43b1daebce2b1bf71, type: 3}
   m_PrefabInstance: {fileID: 8272600946705229219}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &4678254373357071160 stripped

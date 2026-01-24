@@ -1,8 +1,11 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public abstract class InteractionAction
 {
+	//TODO: оч не нравится, прости меня господь, но пока так.
+	public static readonly int State = Animator.StringToHash("State");
 	public IInteractable Interactable { get; private set; }
 	public Interactor Interactor { get; private set; }
 	protected PlayerStateModel StateModel { get; private set; }

@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 529758096486163173}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.846, y: -0.604, z: -0}
+  m_LocalPosition: {x: 0.846, y: -0.8, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c96d00e205c9b64aba6968a94101231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableSittable
+  blockInteract: 0
   sitTfm: {fileID: 6833843229934735552}
 --- !u!114 &4668229423244689918
 MonoBehaviour:
@@ -121,7 +122,7 @@ Transform:
   m_GameObject: {fileID: 2883206277786586963}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.769, y: -0.604, z: -0}
+  m_LocalPosition: {x: -0.769, y: -0.8, z: 0.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -139,6 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c96d00e205c9b64aba6968a94101231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableSittable
+  blockInteract: 0
   sitTfm: {fileID: 4497743395149260919}
 --- !u!114 &1621009298457294655
 MonoBehaviour:
