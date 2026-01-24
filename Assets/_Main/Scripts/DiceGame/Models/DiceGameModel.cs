@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
@@ -43,7 +44,11 @@ namespace _Main.Scripts.Dice
 		{
 			ModifiersModel = new ModifiersModel();
 			ItemsModel = new ItemsModel(ModifiersModel);
-			ItemsModel.AddItem(new PassMultiplierItem());
+			// todo move this somwehere. Inside items model constructor?
+			var passMultiplierPrefab = Resources.Load<DiceItemView>("Items/PassMultiplierItem");
+			var rerollItemPrefab = Resources.Load<DiceItemView>("Items/RerollSelectedItem");
+			ItemsModel.AddItem(new PassMultiplierItem(prefabOverride: passMultiplierPrefab));
+			ItemsModel.AddItem(new RerollSelectedItem(prefabOverride: rerollItemPrefab));
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
 			ModifiersModel.AddModifier(new ShakeRerollModifier());
 			// ModifiersModel.AddModifier(new ScrambleCombinationsModifier());

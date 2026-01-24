@@ -149,6 +149,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 838404092}
+  - {fileID: 239267684}
   m_Father: {fileID: 5741847972874531004}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &157643399
@@ -209,6 +210,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2344411299241026454, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
   m_PrefabInstance: {fileID: 5741847972874531002}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &239267683
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 239267684}
+  m_Layer: 0
+  m_Name: ItemSlotSel_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &239267684
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 239267683}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.204, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 109365271}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &340983900
 GameObject:
   m_ObjectHideFlags: 0
@@ -234,11 +266,12 @@ Transform:
   m_GameObject: {fileID: 340983900}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.582, y: 1.045, z: -0.381}
+  m_LocalPosition: {x: 0.349, y: 1.045, z: 0.395}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 494900644}
+  - {fileID: 949212217}
   m_Father: {fileID: 5741847972874531004}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &410087039
@@ -479,6 +512,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 109365271}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &949212216
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 949212217}
+  m_Layer: 0
+  m_Name: ItemSlotGame_1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &949212217
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 949212216}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.197, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 340983901}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1001068295
 GameObject:
   m_ObjectHideFlags: 0
@@ -711,15 +775,19 @@ PrefabInstance:
       objectReference: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
     - target: {fileID: 2438551764296587562, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: itemSlotsGame.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2438551764296587562, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: 'itemSlotsGame.Array.data[0]'
       value: 
       objectReference: {fileID: 494900644}
     - target: {fileID: 2438551764296587562, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      propertyPath: 'itemSlotsGame.Array.data[1]'
+      value: 
+      objectReference: {fileID: 949212217}
+    - target: {fileID: 2438551764296587562, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: itemSlotsSelection.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2438551764296587562, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: 'itemSlotsSelection.Array.data[0]'
@@ -728,7 +796,7 @@ PrefabInstance:
     - target: {fileID: 2438551764296587562, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: 'itemSlotsSelection.Array.data[1]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 239267684}
     - target: {fileID: 4235464633974296642, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
