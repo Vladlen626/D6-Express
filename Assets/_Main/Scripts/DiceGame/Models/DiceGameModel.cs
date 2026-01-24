@@ -20,6 +20,7 @@ namespace _Main.Scripts.Dice
 		
 		public TableModel tableModel;
 		public ModifiersModel ModifiersModel;
+		public ItemsModel ItemsModel;
 		
 		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
 		
@@ -41,7 +42,13 @@ namespace _Main.Scripts.Dice
 		public DiceGameModel()
 		{
 			ModifiersModel = new ModifiersModel();
+			ItemsModel = new ItemsModel(ModifiersModel);
+			ItemsModel.AddItem(new PassMultiplierItem());
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
+			ModifiersModel.AddModifier(new ShakeRerollModifier());
+			// ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
+			ModifiersModel.AddModifier(new AdjustTicksPerDayModifier(1));
+			ModifiersModel.AddModifier(new PassActivationMultiplierModifier());
 		}
 		
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)

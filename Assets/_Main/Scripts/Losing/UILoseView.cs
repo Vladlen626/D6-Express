@@ -16,14 +16,6 @@ public class UILoseView : UIBaseElement
     [SerializeField]
     private TextMeshProUGUI exitButtonText;
 
-    [Header("Continue")]
-    [SerializeField]
-    private Button continueButton;
-
-    [SerializeField]
-    private TextMeshProUGUI continueButtonText;
-
-
     public event Action ExitButtonClicked;
     public event Action ContinueButtonClicked;
 
@@ -37,20 +29,13 @@ public class UILoseView : UIBaseElement
         exitButtonText.text = text;
     }
 
-    public void SetContinueButtonText(string text)
-    {
-        continueButtonText.text = text;
-    }
-
     private void OnEnable()
     {
         exitButton.onClick.AddListener(() => ExitButtonClicked?.Invoke());
-        continueButton.onClick.AddListener(() => ContinueButtonClicked?.Invoke());
     }
 
     private void OnDisable()
     {
         exitButton.onClick.RemoveAllListeners();
-        continueButton.onClick.RemoveAllListeners();
     }
 }

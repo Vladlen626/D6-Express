@@ -17,8 +17,8 @@ public static class DebugVariables
         set => EditorPrefs.SetBool(ShowWinKey, value);
     }
     
-    public static LevelState StartSpawnLocation {
-        get => (LevelState)EditorPrefs.GetInt(SpawnLocKey, 0);
+    public static Location StartSpawnLocation {
+        get => (Location)EditorPrefs.GetInt(SpawnLocKey, 0);
         set => EditorPrefs.SetInt(SpawnLocKey, (int)value);
     }
 }

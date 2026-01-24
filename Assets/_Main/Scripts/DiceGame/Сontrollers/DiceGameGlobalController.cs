@@ -14,7 +14,7 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceGameModel diceGameModel;
 		private readonly PlayerModel playerModel;
-		private readonly LevelModel levelModel;
+		private readonly Run run;
 
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly IObjectFactory objectFactory;
@@ -24,26 +24,28 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService configService;
 
 		private readonly SceneContext sceneContext;
-		
+
 		private DiceView[] playerDiceViewsArray;
 		private DiceView[] enemyDiceViewsArray;
 
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
 		private List<IBaseController> selectionControllers = new();
+		private readonly List<IBaseController> itemControllers = new();
+		private readonly List<DiceItemView> itemViews = new();
 
 		private bool gamePreviousStoped = false;
-		
+
 		private DicePositionsHandler dicePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
 		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
-			ServiceLocator serviceLocator, LevelModel levelModel, ConfigService configService)
+			ServiceLocator serviceLocator, Run run, ConfigService configService)
 		{
 			this.diceGameModel = diceGameModel;
 			this.playerModel = playerModel;
-			this.levelModel = levelModel;
+			this.run = run;
 			this.sceneContext = sceneContext;
 			this.configService = configService;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
@@ -113,17 +115,19 @@ namespace _Main.Scripts.Dice
 				await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
 
 			int maxBetSize = playerModel.InventoryModel.CashCount;
-			
+
 			var newTableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 			diceGameModel.Setup(diceGameConfig, maxBetSize, newTableModel);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
 
+			await SetupItemsDisplay();
 			await SelectionProcess();
+			MoveItemsToGameSlots();
 			await BetProcess();
 			await SetupEnemyDiceList();
 
 			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService);
+				loggerService, diceGameModel, cameraShakeService, audioService, run);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
@@ -142,11 +146,11 @@ namespace _Main.Scripts.Dice
 		private async UniTask SelectionProcess()
 		{
 			diceGameModel.ChangeDiceGameState(DiceGameState.SELECT_DICE);
-			
+
 			var selectionController = new DiceSelectionController(
 				playerModel.InventoryModel, sceneContext.DiceGameTableView,
 				objectFactory, configService, diceGameModel, audioService);
-			
+
 			selectionControllers.Add(selectionController);
 
 			await lifecycleService.RegisterAsync(selectionController);
@@ -170,7 +174,7 @@ namespace _Main.Scripts.Dice
 
 			ClenUpSelectionControllers();
 		}
-		
+
 		private async UniTask SetupEnemyDiceList()
 		{
 			var config = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_game_rules);
@@ -234,15 +238,16 @@ namespace _Main.Scripts.Dice
 			{
 				return;
 			}
-			
+
 			diceTableView.DisableCamera();
-			if (!levelModel.IsLevelFinished && diceGameModel.IsDiceGameStarted)
+			if (diceGameModel.IsDiceGameStarted)
 			{
-				levelModel.IncrementTicks();
+				run.RequestIncrementTick();
 			}
 
 			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
 			ResetModels();
+			CleanUpItems();
 			ClenUpSelectionControllers();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
@@ -258,7 +263,7 @@ namespace _Main.Scripts.Dice
 
 			betControllers.Clear();
 		}
-		
+
 		private void ClenUpSelectionControllers()
 		{
 			foreach (var controller in selectionControllers)
@@ -280,7 +285,7 @@ namespace _Main.Scripts.Dice
 
 				playerDiceViewsArray = null;
 			}
-			
+
 			if (enemyDiceViewsArray != null)
 			{
 				foreach (var dice in enemyDiceViewsArray)
@@ -297,6 +302,84 @@ namespace _Main.Scripts.Dice
 			}
 
 			gameControllers.Clear();
+		}
+
+		private async UniTask SetupItemsDisplay()
+		{
+			var items = diceGameModel.ItemsModel.Items;
+			if (items == null || items.Count == 0)
+			{
+				return;
+			}
+
+			if (diceTableView.ItemViewPrefab == null)
+			{
+				Debug.LogWarning("[DiceGame] ItemViewPrefab is not assigned on DiceTableView. Items will not be spawned.");
+				return;
+			}
+
+			var slots = diceTableView.ItemSlotsSelection;
+
+			for (int i = 0; i < items.Count; i++)
+			{
+				var slot = slots != null && i < slots.Length ? slots[i] : null;
+				var prefab = (items[i] as IDiceItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
+				var view = UnityEngine.Object.Instantiate(
+					prefab,
+					slot ? slot.position : Vector3.zero,
+					slot ? slot.rotation : Quaternion.identity);
+
+				if (slot != null)
+				{
+					view.transform.SetParent(slot);
+				}
+
+				var controller = new DiceItemController(items[i], view);
+				itemControllers.Add(controller);
+				itemViews.Add(view);
+				await lifecycleService.RegisterAsync(controller);
+			}
+		}
+
+		private void MoveItemsToGameSlots()
+		{
+			if (itemViews.Count == 0)
+			{
+				return;
+			}
+
+			var slots = diceTableView.ItemSlotsGame;
+			for (int i = 0; i < itemViews.Count; i++)
+			{
+				var slot = slots != null && i < slots.Length ? slots[i] : null;
+				if (slot == null)
+				{
+					continue;
+				}
+
+				var view = itemViews[i];
+				view.transform.SetParent(slot);
+				view.transform.position = slot.position;
+				view.transform.rotation = slot.rotation;
+			}
+		}
+
+		private void CleanUpItems()
+		{
+			foreach (var controller in itemControllers)
+			{
+				lifecycleService.Unregister(controller);
+			}
+			itemControllers.Clear();
+
+			foreach (var view in itemViews)
+			{
+				if (view != null)
+				{
+					objectFactory.Destroy(view.gameObject);
+				}
+			}
+			itemViews.Clear();
 		}
 
 		private void ResetModels()

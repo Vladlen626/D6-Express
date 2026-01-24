@@ -16,35 +16,35 @@ public abstract class DebugMenuItem
 
 public class DbgMenuItemIncrementDays : DebugMenuItem
 {
-    private readonly RunModel runModel;
+    private readonly Run run;
 
     public override string Path => "Increment Day";
 
-    public DbgMenuItemIncrementDays(RunModel runModel)
+    public DbgMenuItemIncrementDays(Run run)
     {
-        this.runModel = runModel;
+        this.run = run;
     }
 
     public override void Execute()
     {
-        runModel.LevelModel.IncrementDays();
+        run.RequestIncrementDay();
     }
 }
 
 public class DbgMenuItemIncrementTicks : DebugMenuItem
 {
-    private readonly RunModel runModel;
+    private readonly Run run;
 
     public override string Path => "Increment Tick";
 
-    public DbgMenuItemIncrementTicks(RunModel runModel)
+    public DbgMenuItemIncrementTicks(Run run)
     {
-        this.runModel = runModel;
+        this.run = run;
     }
 
     public override void Execute()
     {
-        runModel.LevelModel.IncrementTicks();
+        run.RequestIncrementTick();
     }
 }
 
@@ -70,36 +70,36 @@ public class DbgMenuItemIncrementWakeUp : DebugMenuItem
 
 public class DbgMenuItemSwitchToStation : DebugMenuItem
 {
-    private readonly RunModel runModel;
+    private readonly Run run;
 
     public override string Path => "Switch to Station";
 
-    public DbgMenuItemSwitchToStation(RunModel runModel)
+    public DbgMenuItemSwitchToStation(Run run)
     {
-        this.runModel = runModel;
+        this.run = run;
     }
 
     public override void Execute()
     {
-        runModel.SetLevelState(LevelState.STATION);
+        run.RequestSetLocation(Location.STATION);
     }
 }
 
 
 public class DbgMenuItemSwitchToTrain : DebugMenuItem
 {
-    private readonly RunModel runModel;
+    private readonly Run run;
 
     public override string Path => "Switch to Train";
 
-    public DbgMenuItemSwitchToTrain(RunModel runModel)
+    public DbgMenuItemSwitchToTrain(Run run)
     {
-        this.runModel = runModel;
+        this.run = run;
     }
 
     public override void Execute()
     {
-        runModel.SetLevelState(LevelState.TRAIN);
+        run.RequestSetLocation(Location.TRAIN);
     }
 }
 
@@ -109,9 +109,9 @@ public class DbgMenuItemOpenPlayerWindow : DebugMenuItem
 
     public override string Path => "Open Player Window";
 
-    public DbgMenuItemOpenPlayerWindow(PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
+    public DbgMenuItemOpenPlayerWindow(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
     {
-        debugWindowPlayer = new DebugWindowPlayer(playerModel, playerView, configService, notifications);
+        debugWindowPlayer = new DebugWindowPlayer(run, playerModel, playerView, configService, notifications);
     }
 
     public override async Task Preload()

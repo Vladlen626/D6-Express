@@ -24,6 +24,7 @@ namespace PlatformCore.Services.Factory
 			public const string player = "Json/player";
 			public const string run_rules = "Json/run_rules";
 			public const string shop = "Json/shop";
+			public const string stations = "Json/stations";
 			public const string texts_eng = "Json/texts_eng";
 			public const string texts_ru = "Json/texts_ru";
 		}

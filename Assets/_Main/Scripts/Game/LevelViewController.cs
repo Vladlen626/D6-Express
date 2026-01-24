@@ -5,22 +5,26 @@ using UnityEngine;
 public class LevelViewController : BaseContextController<UILevelView>
 {
 	private readonly PlayerModel playerModel;
-	private readonly RunModel runModel;
+	private readonly Run run;
 	private readonly Light sun;
 
-	public LevelViewController(IUIService uiService, PlayerModel playerModel, RunModel runModel, Light sun) : base(uiService)
+	public LevelViewController(IUIService uiService, PlayerModel playerModel, Run run, Light sun) : base(uiService)
 	{
 		this.playerModel = playerModel;
-		this.runModel = runModel;
+		this.run = run;
 		this.sun = sun;
 	}
 
 	protected override void OnActivate()
 	{
-		runModel.LevelModel.TickChanged += OnTickChanged;
-		runModel.LevelModel.DayChanged += OnDaysChanged;
+		run.TickChanged += OnTickChanged;
+		run.TicksPerDayChanged += OnTickChanged;
 
+		run.DayChanged += OnDaysChanged;
+		run.DaysPerLevelChanged += OnDaysChanged;
+		
 		playerModel.InventoryModel.OnCashCountChanged += OnCashChanged;
+		run.NextTicketPriceChanged += OnCashChanged;
 
 		OnCashChanged();
 		OnTickChanged();
@@ -31,20 +35,21 @@ public class LevelViewController : BaseContextController<UILevelView>
 	{
 		playerModel.InventoryModel.OnCashCountChanged -= OnCashChanged;
 
-		runModel.LevelModel.DayChanged -= OnDaysChanged;
-		runModel.LevelModel.TickChanged -= OnTickChanged;
+		run.DayChanged -= OnDaysChanged;
+		run.TickChanged -= OnTickChanged;
 	}
 
 	private void OnTickChanged()
 	{
 		RotateSun();
 
-		_context.SetTicksText("sessions_count", (runModel.LevelModel.Ticks - runModel.LevelModel.Tick).ToString());
+		_context.SetTicksText("ticks_progress", (run.TicksPerDay - run.Tick).ToString());
 	}
 
 	private void RotateSun()
 	{
-		var currentTickRatio = _context.RatioModifier.Evaluate(runModel.LevelModel.TickRatio);
+		var ratio = run.TicksPerDay > 0 ? (run.Tick / run.TicksPerDay) : 0;
+		var currentTickRatio = _context.RatioModifier.Evaluate(ratio);
 
 		sun.transform.rotation = Quaternion.Euler(currentTickRatio * 360f - 90f, 170f, 0f);
 		sun.color = _context.LightColor.Evaluate(currentTickRatio);
@@ -53,11 +58,11 @@ public class LevelViewController : BaseContextController<UILevelView>
 
 	private void OnDaysChanged()
 	{
-		_context.SetDaysText("days_count", (runModel.LevelModel.Day + 1).ToString(), runModel.LevelModel.Days.ToString());
+		_context.SetDaysText("days_progress", (run.DaysPerLevel - run.Day).ToString());
 	}
 
 	private void OnCashChanged()
 	{
-		_context.SetCashProgress("game_progress", $"{playerModel.InventoryModel.CashCount}", $"{runModel.LevelModel.CashGoal}");
+		_context.SetCashProgress("cash_progress", $"{playerModel.InventoryModel.CashCount}", $"{run.NextTicketPrice}");
 	}
 }

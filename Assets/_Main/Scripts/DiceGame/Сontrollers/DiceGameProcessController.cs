@@ -15,6 +15,7 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
+		private readonly Run run;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
@@ -23,12 +24,14 @@ namespace _Main.Scripts.Dice
 			ILoggerService logger,
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
-			IAudioService audioService)
+			IAudioService audioService,
+			Run run)
 		{
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
 			this.audioService = audioService;
+			this.run = run;
 		}
 
 		public void Activate()
@@ -84,6 +87,15 @@ namespace _Main.Scripts.Dice
 
 				if (tableModel.isFirstRoll)
 				{
+					var roundStartContext = new DiceModifierContext(
+						new DiceCombinationResult { Combinations = new List<DiceCombinationEntry>() },
+						diceGameModel.GetUnbanked(),
+						tableModel,
+						diceGameModel,
+						ModifierStage.RoundStart,
+						run);
+					await diceGameModel.ModifiersModel.PlayRoundStartActions(roundStartContext);
+
 					tableModel.isFirstRoll = false;
 					diceGameModel.ShowAllDiceGameModels();
 				}
@@ -115,15 +127,30 @@ namespace _Main.Scripts.Dice
 				await UniTask.Delay(GlobalParameters.Delay / 2);
 				
 				var diceCombinationResult = DiceGameUtils.GetCombinations(GetValues(diceToRoll));
+				var rollModifierContext = new DiceModifierContext(
+					diceCombinationResult,
+					diceToRoll,
+					tableModel,
+					diceGameModel,
+					ModifierStage.Roll,
+					run);
 				
+				await diceGameModel.ModifiersModel.PlayRollActions(rollModifierContext);
+
 				if (diceCombinationResult.Combinations.Count == 0)
 				{
 					audioService.PlaySound(SoundNames.Fail);
 					await UniTask.Delay(GlobalParameters.Delay);
+					var roundEndContext = new DiceModifierContext(
+						diceCombinationResult,
+						diceToRoll,
+						tableModel,
+						diceGameModel,
+						ModifierStage.RoundEnd,
+						run);
+					await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
 					EndTurn(false);
 				}
-
-				await diceGameModel.ModifiersModel.PlayRollActions(diceCombinationResult);
 			}
 			finally
 			{
@@ -159,8 +186,23 @@ namespace _Main.Scripts.Dice
 				
 				var selected = diceGameModel.GetSelected();
 				var combo = DiceGameUtils.GetCombinations(GetValues(selected));
-				await diceGameModel.ModifiersModel.PlayPassActions(combo);
-				await TrySaveSelected(selected, combo);
+				var passModifierContext = new DiceModifierContext(
+					combo,
+					selected,
+					tableModel,
+					diceGameModel,
+					ModifierStage.Pass,
+					run);
+				await diceGameModel.ModifiersModel.PlayPassActions(passModifierContext);
+				await TrySaveSelected(selected, passModifierContext.CombinationResult);
+				var roundEndContext = new DiceModifierContext(
+					passModifierContext.CombinationResult,
+					selected,
+					tableModel,
+					diceGameModel,
+					ModifierStage.RoundEnd,
+					run);
+				await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
 				EndTurn(true);
 			}
 			finally

@@ -10,6 +10,6 @@ public class EditorWindowDebugVariables : EditorWindow
         DebugVariables.ShowLoseView = EditorGUILayout.Toggle("Show Lose View", DebugVariables.ShowLoseView);
         DebugVariables.ShowWinView = EditorGUILayout.Toggle("Show Win View", DebugVariables.ShowWinView);
 
-        DebugVariables.StartSpawnLocation = (LevelState)EditorGUILayout.EnumPopup("Start Spawn Location", DebugVariables.StartSpawnLocation);
+        DebugVariables.StartSpawnLocation = (Location)EditorGUILayout.EnumPopup("Start Spawn Location", DebugVariables.StartSpawnLocation);
     }
 }

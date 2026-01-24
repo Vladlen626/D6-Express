@@ -8,19 +8,18 @@ public static class SpeechFactory
         IUIService uiService,
         PlayerModel playerModel,
         PlayerView playerView,
-        RunModel runModel,
-        ConfigService configService,
-        LevelModel levelModel)
+        Run run,
+        ConfigService configService)
     {
         var textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 
-        var speechBuyTicket = GetConductorSpeech(playerModel, runModel, textsConfig);
+        var speechBuyTicket = GetConductorSpeech(playerModel, run, textsConfig);
         var speechPassengerGeneric = GetGenericPassengerSpeech(textsConfig);
         var speechPassengerComrade = GetComradeSpeech(textsConfig);
         var speechPassengerAnecdote = GetAnecdoteSpeech(textsConfig);
         var speechShopkeeper = GetShopkeeperSpeech(playerModel, textsConfig);
         var speechShopkeeperFailedBuy = GetShopkeeperFailedBuySpeech(textsConfig);
-        var speechEnemy = GetEnemySpeech(levelModel, textsConfig);
+        var speechEnemy = GetEnemySpeech(run, textsConfig);
 
         var speeches = new Speech[]
         {
@@ -63,7 +62,7 @@ public static class SpeechFactory
         return parallel;
     }
 
-    private static Speech GetConductorSpeech(PlayerModel playerModel, RunModel runModel, TextsConfig textsConfig)
+    private static Speech GetConductorSpeech(PlayerModel playerModel, Run run, TextsConfig textsConfig)
     {
         var speechBuyTicket = new Speech(0);
 
@@ -72,7 +71,7 @@ public static class SpeechFactory
         var speechNodeHasNoMoney = Say(speechBuyTicket, textsConfig.texts["conductor_enter_negative"]);
 
         var speechNodeConditional = new SpeechNodeConditional(
-                () => playerModel.InventoryModel.CashCount >= runModel.LevelModel.TicketPrice)
+                () => playerModel.InventoryModel.CashCount >= run.TicketPrice)
             .OnTrue(speechNodeHasMoney)
             .OnFalse(speechNodeHasNoMoney)
             .After(speechNodeConductorSaysHi)
@@ -80,8 +79,8 @@ public static class SpeechFactory
 
         var speechNodeMoveToTrain = new SpeechNodeDo(() =>
             {
-                runModel.SetLevelState(LevelState.TRAIN);
-                playerModel.InventoryModel.TakeCash(runModel.LevelModel.TicketPrice);
+                run.RequestSetLocation(Location.TRAIN);
+                playerModel.InventoryModel.TakeCash(run.TicketPrice);
             })
             .After(speechNodeHasMoney)
             .Init(speechBuyTicket);
@@ -177,7 +176,7 @@ public static class SpeechFactory
         return speechShopkeeper;
     }
 
-    private static Speech GetEnemySpeech(LevelModel levelModel, TextsConfig textsConfig)
+    private static Speech GetEnemySpeech(Run run, TextsConfig textsConfig)
     {
         var speechEnemy = new Speech(123);
 
@@ -191,7 +190,7 @@ public static class SpeechFactory
             textsConfig.texts["enemy_refuse"]
         );
 
-        var speechNodeCondition = new SpeechNodeConditional(() => levelModel.IsTicksLeft)
+        var speechNodeCondition = new SpeechNodeConditional(() => run.Tick < run.TicksPerDay)
             .OnTrue(speechNodePositive)
             .OnFalse(speechNodeNegative)
             .Init(speechEnemy);

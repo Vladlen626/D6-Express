@@ -11,9 +11,9 @@ namespace _Main.Scripts.Dice
 			this.combination = combination;
 		}
 		
-		public UniTask ModifyValues(DiceCombinationResult diceCombinationResult)
+		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
-			foreach (var diceCombinationEntry in diceCombinationResult.Combinations)
+			foreach (var diceCombinationEntry in modifierContext.CombinationResult.Combinations)
 			{
 				if (diceCombinationEntry.Combination == combination)
 				{

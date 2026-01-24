@@ -1,11 +1,13 @@
-using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Audio;
 
-public class TransitionController : IBaseController
+public class TransitionController : IBaseController, IActivatable
 {
-    private readonly RunModel runModel;
+    private readonly Run run;
     private readonly PlayerModel playerModel;
     private readonly PlayerView playerView;
     private readonly SceneContext sceneContext;
@@ -14,9 +16,9 @@ public class TransitionController : IBaseController
     private readonly Shop shop;
     private readonly TransitionService transitionService;
 
-    public TransitionController(RunModel runModel, PlayerModel playerModel, PlayerView playerView, SceneContext sceneContext, IAudioService audioService, NpcSpawner npcSpawner, Shop shop, TransitionService transitionService)
+    public TransitionController(Run run, PlayerModel playerModel, PlayerView playerView, SceneContext sceneContext, IAudioService audioService, NpcSpawner npcSpawner, Shop shop, TransitionService transitionService)
     {
-        this.runModel = runModel;
+        this.run = run;
         this.playerModel = playerModel;
         this.playerView = playerView;
         this.sceneContext = sceneContext;
@@ -26,31 +28,22 @@ public class TransitionController : IBaseController
         this.transitionService = transitionService;
     }
 
-    public void StartObserving()
+    public void Activate()
     {
-        runModel.StateChanged += OnStateTransition;
-        runModel.LevelModel.TickChanged += OnTickChanged;
+        run.ProgressChanged += OnRunProgressChanged;
     }
 
-    public async Task StartLocationTransition()
+    public void Deactivate()
     {
-        await transitionService.Request(new Transition.Data()
-        {
-            type = Transition.Type.LOCATION
-        },
-        () => StartTransition(),
-        () => ChangeLocation(),
-        () => npcSpawner.Respawn(),
-        () => UniTask.Create(async () => shop.Restock()),
-        () => FinishTransition());
+        run.ProgressChanged -= OnRunProgressChanged;
     }
 
     private async UniTask ChangeLocation()
     {
-        sceneContext.TrainBlock.SetActive(runModel.LevelState == LevelState.TRAIN);
-        sceneContext.StationBlock.SetActive(runModel.LevelState == LevelState.STATION);
+        sceneContext.TrainBlock.SetActive(run.Location == Location.TRAIN);
+        sceneContext.StationBlock.SetActive(run.Location == Location.STATION);
 
-        if (runModel.LevelState == LevelState.STATION)
+        if (run.Location == Location.STATION)
         {
             audioService.StopParallelSound(SoundNames.TrainSound);
             audioService.PlaySoundParallel(SoundNames.StationSound);
@@ -66,19 +59,121 @@ public class TransitionController : IBaseController
         }
     }
 
-    private async void OnStateTransition()
+    private void OnRunProgressChanged(Run.ProgressType progressType)
     {
-        await StartLocationTransition();
+        switch (progressType)
+        {
+            case Run.ProgressType.STARTED:
+                OnRunStarted();
+                break;
+            case Run.ProgressType.DAY_FINISHED:
+                OnDayChanged();
+                break;
+            case Run.ProgressType.SESSION_FINISHED:
+                OnSessionChanged();
+                break;
+            case Run.ProgressType.LEVEL_FINISHED:
+                OnLevelFinishedChanged();
+                break;
+            case Run.ProgressType.LOCATION_CHANGED:
+                OnLocationChanged();
+                break;
+            case Run.ProgressType.WIN:
+                OnRunFinished(true);
+                break;
+            case Run.ProgressType.LOSE:
+                OnRunFinished(false);
+                break;
+        }
     }
 
-    private async void OnTickChanged()
+    private async void OnRunStarted()
     {
-        await transitionService.Request(new Transition.Data()
+        var data = new Transition.Data()
         {
-            type = Transition.Type.TICK
-        },
-        () => UniTask.Create(async () => shop.Restock()),
-        () => npcSpawner.Respawn());
+            tasks = new[]
+            {
+                Transition.TaskType.CHANGE_LOCATION,
+                Transition.TaskType.SHOP_RESTOCK,
+                Transition.TaskType.NPC_RESPAWN,
+            }
+        };
+
+        await transitionService.Request(data, GetTasks(data));
+    }
+
+
+    private async void OnLocationChanged()
+    {
+        var data = new Transition.Data()
+        {
+            tasks = new[]
+            {
+                Transition.TaskType.CHANGE_LOCATION,
+                Transition.TaskType.SHOP_RESTOCK,
+                Transition.TaskType.NPC_RESPAWN,
+            }
+        };
+
+        await transitionService.Request(data, GetTasks(data));
+    }
+
+    private async void OnLevelFinishedChanged()
+    {
+        var data = new Transition.Data()
+        {
+            tasks = new[]
+            {
+                Transition.TaskType.WAKE_UP,
+                Transition.TaskType.CHANGE_LOCATION,
+                Transition.TaskType.SHOP_RESTOCK,
+                Transition.TaskType.NPC_RESPAWN,
+            }
+        };
+
+        await transitionService.Request(data, GetTasks(data));
+    }
+
+    private async void OnSessionChanged()
+    {
+        var data = new Transition.Data()
+        {
+            tasks = new[]
+            {
+                Transition.TaskType.SHOP_RESTOCK,
+                Transition.TaskType.NPC_RESPAWN,
+            }
+        };
+
+        await transitionService.Request(data, GetTasks(data));
+    }
+
+    private async void OnDayChanged()
+    {
+        var data = new Transition.Data()
+        {
+            tasks = new[]
+            {
+                Transition.TaskType.WAKE_UP,
+                Transition.TaskType.SHOP_RESTOCK,
+                Transition.TaskType.NPC_RESPAWN,
+            }
+        };
+
+        await transitionService.Request(data, GetTasks(data));
+    }
+
+    private async void OnRunFinished(bool result)
+    {
+        var data = new Transition.Data()
+        {
+            tasks = new[]
+            {
+                result ? Transition.TaskType.WIN : Transition.TaskType.LOSE,
+            }
+        };
+
+        await transitionService.Request(data, GetTasks(data));
     }
 
     private async UniTask StartTransition()
@@ -91,5 +186,28 @@ public class TransitionController : IBaseController
     {
         playerView.SetCharacterGhost(false);
         playerModel.PlayerStateModel.TryRemoveState(CharacterState.LOCATION_TRANSITIONING);
+    }
+
+    private IEnumerable<Func<UniTask>> GetTasks(Transition.Data data)
+    {
+        yield return () => StartTransition();
+
+        foreach (var item in data.tasks)
+        {
+            if (item == Transition.TaskType.CHANGE_LOCATION)
+            {
+                yield return () => ChangeLocation();
+            }
+            else if (item == Transition.TaskType.NPC_RESPAWN)
+            {
+                yield return () => npcSpawner.Respawn();
+            }
+            else if (item == Transition.TaskType.SHOP_RESTOCK)
+            {
+                yield return () => UniTask.Create(async () => shop.Restock());
+            }
+        }
+
+        yield return () => FinishTransition();
     }
 }
