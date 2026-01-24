@@ -7,15 +7,17 @@ namespace _Main.Scripts.Dice
 	/// Clickable item that lets the player reroll their selected dice once on the next Pass.
 	/// After activation it goes on cooldown for a set number of Pass actions (default: 2).
 	/// </summary>
-	public class RerollSelectedItem : DiceItemBase, IOnPassModifier, IOnRoundStartModifier
+	public class RerollSelectedItem : DiceItemBase, IOnPassModifier, IOnRoundStartModifier, IDiceItemViewProvider
 	{
 		private readonly int cooldownLengthInPasses;
+		private readonly DiceItemView customPrefab;
 		private int cooldownRemaining;
 
-		public RerollSelectedItem(int cooldownPasses = 2)
+		public RerollSelectedItem(int cooldownPasses = 2, DiceItemView prefabOverride = null)
 			: base("reroll_selected_item", "Second Chance", DiceItemActivationType.ClickToActivate)
 		{
 			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses);
+			customPrefab = prefabOverride;
 		}
 
 		public override UniTask ModifyValues(DiceModifierContext modifierContext)
@@ -103,5 +105,7 @@ namespace _Main.Scripts.Dice
 			base.ResetItem();
 			cooldownRemaining = 0;
 		}
+
+		public DiceItemView GetViewPrefab() => customPrefab;
 	}
 }
