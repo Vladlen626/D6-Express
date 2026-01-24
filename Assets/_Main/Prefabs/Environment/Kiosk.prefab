@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 3085070531647891682}
   - component: {fileID: 5734397306001372031}
   - component: {fileID: 3445524544305534027}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RestockLever
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,6 +174,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53393a0fe7ed5cd44a9702a0d0aa38fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractableRestock
+  blockInteract: 0
 --- !u!114 &4980126982116718477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,7 +254,7 @@ GameObject:
   - component: {fileID: 2934233945970498972}
   - component: {fileID: 7674821722877872657}
   - component: {fileID: 4734612342684059456}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1094,7 +1095,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8025337239182226847}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1742,7 +1743,7 @@ GameObject:
   - component: {fileID: 1191431394495234647}
   - component: {fileID: 4237125510128901527}
   - component: {fileID: 1558256341615284411}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1976,7 +1977,7 @@ GameObject:
   - component: {fileID: 436036236839553267}
   - component: {fileID: 6337665802432095936}
   - component: {fileID: 7286255965997446642}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2063,7 +2064,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 35729030127609063}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
