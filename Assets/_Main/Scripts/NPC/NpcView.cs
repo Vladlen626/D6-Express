@@ -11,7 +11,6 @@ public class NpcView : CharacterView
 	{
 		if (hatsTransforms.Count == 0)
 		{
-			hatsTransforms[0].gameObject.SetActive(true);
 			return;
 		}
 

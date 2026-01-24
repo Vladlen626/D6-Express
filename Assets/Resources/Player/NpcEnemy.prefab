@@ -88,14 +88,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: NpcEnemy
       objectReference: {fileID: 0}
-    - target: {fileID: 7730824348964566677, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
-      propertyPath: hatsTransforms.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7730824348964566677, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
-      propertyPath: 'hatsTransforms.Array.data[0]'
-      value: 
-      objectReference: {fileID: 1109213601517446186}
     - target: {fileID: 7875980217578614180, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -105,8 +97,3 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
---- !u!4 &1109213601517446186 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8070367890735682220, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
-  m_PrefabInstance: {fileID: 6961161163597837958}
-  m_PrefabAsset: {fileID: 0}

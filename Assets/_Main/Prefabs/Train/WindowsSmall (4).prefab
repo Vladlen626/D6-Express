@@ -246,7 +246,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -2488727377049168862, guid: 81e78fba0581b9c4d8f2d4de224df868, type: 3}
+  - {fileID: 2100000, guid: 36ca5f6cfdc4b1944ad3265fb8c4db9f, type: 2}
   - {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
   - {fileID: 2100000, guid: 3276cf79406ba034ebcd46e92e790287, type: 2}
   m_StaticBatchInfo:
@@ -436,6 +436,7 @@ MonoBehaviour:
   isOpened: 1
   opened: {fileID: 2997764064977927700}
   closed: {fileID: 387171975099513756}
+  hintableDynamic: {fileID: 0}
 --- !u!114 &4351870299177403631
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -76,14 +76,6 @@ PrefabInstance:
       propertyPath: characterName
       value: passenger
       objectReference: {fileID: 0}
-    - target: {fileID: 7730824348964566677, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
-      propertyPath: hatsTransforms.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7730824348964566677, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
-      propertyPath: 'hatsTransforms.Array.data[4]'
-      value: 
-      objectReference: {fileID: 568910491338580816}
     m_RemovedComponents:
     - {fileID: 3131978809266006664, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
     - {fileID: 2795999350617170995, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
@@ -91,8 +83,3 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
---- !u!4 &568910491338580816 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8070367890735682220, guid: 8e1579be97510a9438f9d889b24f1503, type: 3}
-  m_PrefabInstance: {fileID: 7501477202458735100}
-  m_PrefabAsset: {fileID: 0}

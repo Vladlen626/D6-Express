@@ -652,10 +652,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1558494628716004490}
     m_Modifications:
-    - target: {fileID: 44272121165849805, guid: dc30987de8e795a448f8368c65c4b6b7, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: -2163174449083924880, guid: f396891f59132bf41a0d5922b4fc88a6, type: 3}
     - target: {fileID: 6266863029184233947, guid: dc30987de8e795a448f8368c65c4b6b7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.9
@@ -696,10 +692,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7889352138327031530, guid: dc30987de8e795a448f8368c65c4b6b7, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: -2163174449083924880, guid: f396891f59132bf41a0d5922b4fc88a6, type: 3}
     - target: {fileID: 8715949699068055524, guid: dc30987de8e795a448f8368c65c4b6b7, type: 3}
       propertyPath: m_Name
       value: TrainTail
