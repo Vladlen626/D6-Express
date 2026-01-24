@@ -48,4 +48,12 @@ namespace _Main.Scripts.Dice
 		/// </summary>
 		void ResetItem();
 	}
+
+	/// <summary>
+	/// Optional: implement to supply a custom view prefab per item.
+	/// </summary>
+	public interface IDiceItemViewProvider
+	{
+		DiceItemView GetViewPrefab();
+	}
 }

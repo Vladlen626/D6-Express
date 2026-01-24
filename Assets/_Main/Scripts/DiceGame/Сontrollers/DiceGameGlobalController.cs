@@ -323,8 +323,9 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < items.Count; i++)
 			{
 				var slot = slots != null && i < slots.Length ? slots[i] : null;
+				var prefab = (items[i] as IDiceItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
 				var view = UnityEngine.Object.Instantiate(
-					diceTableView.ItemViewPrefab,
+					prefab,
 					slot ? slot.position : Vector3.zero,
 					slot ? slot.rotation : Quaternion.identity);
 
