@@ -31,6 +31,8 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
 		private List<IBaseController> selectionControllers = new();
+		private readonly List<IBaseController> itemControllers = new();
+		private readonly List<DiceItemView> itemViews = new();
 
 		private bool gamePreviousStoped = false;
 
@@ -118,7 +120,9 @@ namespace _Main.Scripts.Dice
 			diceGameModel.Setup(diceGameConfig, maxBetSize, newTableModel);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
 
+			await SetupItemsDisplay();
 			await SelectionProcess();
+			MoveItemsToGameSlots();
 			await BetProcess();
 			await SetupEnemyDiceList();
 
@@ -243,6 +247,7 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
 			ResetModels();
+			CleanUpItems();
 			ClenUpSelectionControllers();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
@@ -297,6 +302,83 @@ namespace _Main.Scripts.Dice
 			}
 
 			gameControllers.Clear();
+		}
+
+		private async UniTask SetupItemsDisplay()
+		{
+			var items = diceGameModel.ItemsModel.Items;
+			if (items == null || items.Count == 0)
+			{
+				return;
+			}
+
+			if (diceTableView.ItemViewPrefab == null)
+			{
+				Debug.LogWarning("[DiceGame] ItemViewPrefab is not assigned on DiceTableView. Items will not be spawned.");
+				return;
+			}
+
+			var slots = diceTableView.ItemSlotsSelection;
+
+			for (int i = 0; i < items.Count; i++)
+			{
+				var slot = slots != null && i < slots.Length ? slots[i] : null;
+				var view = UnityEngine.Object.Instantiate(
+					diceTableView.ItemViewPrefab,
+					slot ? slot.position : Vector3.zero,
+					slot ? slot.rotation : Quaternion.identity);
+
+				if (slot != null)
+				{
+					view.transform.SetParent(slot);
+				}
+
+				var controller = new DiceItemController(items[i], view);
+				itemControllers.Add(controller);
+				itemViews.Add(view);
+				await lifecycleService.RegisterAsync(controller);
+			}
+		}
+
+		private void MoveItemsToGameSlots()
+		{
+			if (itemViews.Count == 0)
+			{
+				return;
+			}
+
+			var slots = diceTableView.ItemSlotsGame;
+			for (int i = 0; i < itemViews.Count; i++)
+			{
+				var slot = slots != null && i < slots.Length ? slots[i] : null;
+				if (slot == null)
+				{
+					continue;
+				}
+
+				var view = itemViews[i];
+				view.transform.SetParent(slot);
+				view.transform.position = slot.position;
+				view.transform.rotation = slot.rotation;
+			}
+		}
+
+		private void CleanUpItems()
+		{
+			foreach (var controller in itemControllers)
+			{
+				lifecycleService.Unregister(controller);
+			}
+			itemControllers.Clear();
+
+			foreach (var view in itemViews)
+			{
+				if (view != null)
+				{
+					objectFactory.Destroy(view.gameObject);
+				}
+			}
+			itemViews.Clear();
 		}
 
 		private void ResetModels()

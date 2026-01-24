@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 
 namespace _Main.Scripts.Dice
 {
@@ -23,6 +24,7 @@ namespace _Main.Scripts.Dice
 
 		public void Bind(IDiceItem item)
 		{
+			Debug.Log($"[DiceItemView] Bind -> {(item != null ? item.Id : "null")}");
 			if (boundItem == item)
 			{
 				return;
@@ -43,6 +45,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			Debug.Log($"[DiceItemView] Unbind -> {item.Id}");
 			boundItem.OnChanged -= OnItemChanged;
 			boundItem = null;
 		}
@@ -57,18 +60,36 @@ namespace _Main.Scripts.Dice
 			OnClicked.RemoveAllListeners();
 		}
 
-		private void OnMouseDown()
+		private void Update()
 		{
 			if (boundItem == null || clickCollider == null)
 			{
 				return;
 			}
 
-			OnClicked.Invoke();
+			var mouse = Mouse.current;
+			if (mouse == null || !mouse.leftButton.wasPressedThisFrame)
+			{
+				return;
+			}
+
+			var cam = Camera.main;
+			if (cam == null)
+			{
+				return;
+			}
+
+			Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
+			if (clickCollider.Raycast(ray, out _, 200f))
+			{
+				Debug.Log($"[DiceItemView] Click detected on {boundItem.Id}");
+				OnClicked.Invoke();
+			}
 		}
 
 		private void OnItemChanged(IDiceItem item)
 		{
+			Debug.Log($"[DiceItemView] OnItemChanged -> {item.Id} state={item.State} visible={item.IsVisible}");
 			UpdateState(item.State, item.IsVisible);
 		}
 

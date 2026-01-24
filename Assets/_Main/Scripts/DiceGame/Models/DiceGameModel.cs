@@ -43,6 +43,7 @@ namespace _Main.Scripts.Dice
 		{
 			ModifiersModel = new ModifiersModel();
 			ItemsModel = new ItemsModel(ModifiersModel);
+			ItemsModel.AddItem(new PassMultiplierItem());
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
 			ModifiersModel.AddModifier(new ShakeRerollModifier());
 			// ModifiersModel.AddModifier(new ScrambleCombinationsModifier());

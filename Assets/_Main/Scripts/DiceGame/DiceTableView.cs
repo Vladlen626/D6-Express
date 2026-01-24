@@ -1,4 +1,5 @@
 ﻿using System;
+using _Main.Scripts.Dice;
 using _Main.Scripts.Game.Views;
 using _Main.Scripts.UI;
 using DG.Tweening;
@@ -50,9 +51,17 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private DicePositionsHandler gameStatePosHandler;
 	[SerializeField] private DicePositionsHandler selectionStatePosHandler;
 	
+	[Header("Items")]
+	[SerializeField] private DiceItemView itemViewPrefab;
+	[SerializeField] private Transform[] itemSlotsSelection;
+	[SerializeField] private Transform[] itemSlotsGame;
+	
 	[SerializeField] private float animDuration = 0.15f;
 	public DicePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public DicePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
+	public DiceItemView ItemViewPrefab => itemViewPrefab;
+	public Transform[] ItemSlotsSelection => itemSlotsSelection;
+	public Transform[] ItemSlotsGame => itemSlotsGame;
 	public CinemachineCamera TableCamera => cinemachineCamera;
 
 	private bool isCombinationsOpen;

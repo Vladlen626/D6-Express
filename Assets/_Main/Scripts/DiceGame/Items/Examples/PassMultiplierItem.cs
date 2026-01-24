@@ -21,10 +21,12 @@ namespace _Main.Scripts.Dice
 			this.scoreMultiplier = Mathf.Max(1f, scoreMultiplier);
 			this.activationsPerDay = Mathf.Max(1, activationsPerDay);
 			remaining = activationsPerDay;
+			Debug.Log($"[PassMultiplierItem] ctor | mult={scoreMultiplier} perDay={activationsPerDay}");
 		}
 
 		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			Debug.Log($"[PassMultiplierItem] ModifyValues stage={modifierContext.Stage} day={(run != null ? run.Day : -1)} remaining={remaining} state={State}");
 			switch (modifierContext.Stage)
 			{
 				case ModifierStage.RoundStart:
@@ -44,6 +46,7 @@ namespace _Main.Scripts.Dice
 
 		protected override bool OnClick()
 		{
+			Debug.Log($"[PassMultiplierItem] OnClick state={State} remaining={remaining}");
 			if (remaining <= 0)
 			{
 				return false;
@@ -71,6 +74,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			remaining = Mathf.Max(0, remaining - 1);
+			Debug.Log($"[PassMultiplierItem] Applied x{scoreMultiplier} -> remaining={remaining}");
 			SetState(remaining > 0 ? DiceItemState.Ready : DiceItemState.Cooldown);
 		}
 
@@ -85,6 +89,7 @@ namespace _Main.Scripts.Dice
 			{
 				lastDay = run.Day;
 				remaining = activationsPerDay;
+				Debug.Log($"[PassMultiplierItem] New day -> reset remaining={remaining}");
 				SetState(DiceItemState.Ready);
 			}
 		}
@@ -96,6 +101,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			Debug.Log($"[PassMultiplierItem] AttachRun");
 			if (run != null)
 			{
 				run.DayChanged -= OnRunDayChanged;
@@ -114,6 +120,7 @@ namespace _Main.Scripts.Dice
 		private void OnLevelChanged()
 		{
 			lastDay = -1;
+			Debug.Log("[PassMultiplierItem] OnLevelChanged -> day reset");
 			RefreshDailyAllowance();
 		}
 
@@ -128,6 +135,8 @@ namespace _Main.Scripts.Dice
 				run.RunFinished -= OnRunFinished;
 				run = null;
 			}
+
+			Debug.Log("[PassMultiplierItem] OnRunFinished -> state reset");
 		}
 
 		public override void ResetItem()
@@ -135,6 +144,7 @@ namespace _Main.Scripts.Dice
 			base.ResetItem();
 			remaining = activationsPerDay;
 			lastDay = -1;
+			Debug.Log("[PassMultiplierItem] ResetItem");
 		}
 	}
 }
