@@ -258,7 +258,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!108 &410087040
 Light:
   m_ObjectHideFlags: 0
@@ -270,7 +270,7 @@ Light:
   serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
+  m_Intensity: 1.5
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -819,6 +819,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 340983901}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6855781157787847146, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
     - targetCorrespondingSourceObject: {fileID: 4632651557196112627, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
