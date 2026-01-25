@@ -41,19 +41,14 @@ public class LevelViewController : BaseContextController<UILevelView>
 
 	private void OnTickChanged()
 	{
-		RotateSun();
+		ChangeDayState();
 
 		_context.SetTicksText("ticks_progress", (run.TicksPerDay - run.Tick).ToString());
 	}
 
-	private void RotateSun()
+	private void ChangeDayState()
 	{
-		var ratio = run.TicksPerDay > 0 ? (run.Tick / run.TicksPerDay) : 0;
-		var currentTickRatio = _context.RatioModifier.Evaluate(ratio);
-
-		sun.transform.rotation = Quaternion.Euler(currentTickRatio * 360f - 90f, 170f, 0f);
-		sun.color = _context.LightColor.Evaluate(currentTickRatio);
-		sun.intensity = _context.LightIntensity.Evaluate(currentTickRatio);
+		//Todo: добавить смену дня на ночь.
 	}
 
 	private void OnDaysChanged()

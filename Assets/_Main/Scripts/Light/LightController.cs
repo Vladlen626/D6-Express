@@ -4,35 +4,35 @@ using PlatformCore.Infrastructure.Lifecycle;
 
 public class LightController : IBaseController, IActivatable
 {
-    private readonly Run run;
-    private readonly List<LightView> lightViews;
+	private readonly Run run;
+	private readonly List<LightView> lightViews;
 
-    public LightController(IEnumerable<LightView> lights, Run run)
-    {
-        this.run = run;
-        this.lightViews = new(lights);
-    }
+	public LightController(IEnumerable<LightView> lights, Run run)
+	{
+		this.run = run;
+		this.lightViews = new(lights);
+	}
 
-    public void Activate()
-    {
-        run.TickChanged += OnSessionsChanged;
-        OnSessionsChanged();
-    }
+	public void Activate()
+	{
+		run.TickChanged += OnSessionsChanged;
+		OnSessionsChanged();
+	}
 
-    public void Deactivate()
-    {
-        run.TickChanged -= OnSessionsChanged;
-    }
+	public void Deactivate()
+	{
+		run.TickChanged -= OnSessionsChanged;
+	}
 
-    private void OnSessionsChanged()
-    {
-        // todo: в конфиг 
-        var ratio = run.Tick > 0 ? (run.Tick / run.TicksPerDay) : 0;
-        var lightNeeded = ratio >= 0.5f;
+	private void OnSessionsChanged()
+	{
+		// todo: в конфиг 
+		var ratio = run.Tick > 0 ? (run.Tick / run.TicksPerDay) : 0;
+		var lightNeeded = ratio >= 0.5f;
 
-        foreach (var item in lightViews)
-        {
-            item.SetState(lightNeeded);
-        }
-    }
+		foreach (var item in lightViews)
+		{
+			item.SetState(lightNeeded);
+		}
+	}
 }
