@@ -179,8 +179,8 @@ Material:
     m_Colors:
     - Color_2E5415DE: {r: 1, g: 1, b: 1, a: 0}
     - Vector2_8044833E: {r: 1, g: 1, b: 0, a: 0}
-    - _BaseColor: {r: 0, g: 0.5089288, b: 1, a: 1}
-    - _Color: {r: 0, g: 0.5089287, b: 1, a: 1}
+    - _BaseColor: {r: 0.19223925, g: 0.50304925, b: 0.9056604, a: 1}
+    - _Color: {r: 0.19223922, g: 0.50304925, b: 0.9056604, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _VariationColorA: {r: 0, g: 0, b: 0, a: 0}
