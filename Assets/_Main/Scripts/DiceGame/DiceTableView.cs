@@ -17,7 +17,7 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnPlayClicked;
 	
 	[SerializeField] private CinemachineCamera cinemachineCamera;
-	[SerializeField] private Transform scoreListTransform;
+	[SerializeField] private Transform combosTransform;
 	
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
@@ -26,7 +26,9 @@ public class DiceTableView : MonoBehaviour
 
 	[Header("Turn")] 
 	[SerializeField] private TextMeshProUGUI turnText;
-	[SerializeField] private TextMeshProUGUI turnOwnerText;
+	[SerializeField] private TurnChipView _turnChipView;
+	[SerializeField] private Transform playerBankPlane;
+	[SerializeField] private Transform enemyBankPlane;
 
 	[Header("Score")]
 	[SerializeField] private TextMeshProUGUI targetScoreText;
@@ -133,8 +135,11 @@ public class DiceTableView : MonoBehaviour
 
 	public void SwitchTurn(bool isPlayerTurn)
 	{
-		turnOwnerText.text = isPlayerTurn ? "Your Turn" : "Enemy Turn";
-		turnOwnerText.color = isPlayerTurn ? Color.blue : Color.red;
+		_turnChipView.SwitchTurn(isPlayerTurn);
+
+		playerBankPlane.gameObject.SetActive(isPlayerTurn);
+		enemyBankPlane.gameObject.SetActive(!isPlayerTurn);
+
 		passButton.gameObject.SetActive(isPlayerTurn);
 		rollButton.gameObject.SetActive(isPlayerTurn);
 	}
@@ -208,6 +213,7 @@ public class DiceTableView : MonoBehaviour
 
 	public void DiceCombinationsToggle()
 	{
+		return;
 		if (inAnimProcess)
 		{
 			return;
@@ -216,7 +222,7 @@ public class DiceTableView : MonoBehaviour
 		if (!isCombinationsOpen)
 		{
 			inAnimProcess = true;
-			scoreListTransform.DOLocalRotate(Vector3.forward * 90, animDuration)
+			combosTransform.DOLocalRotate(Vector3.forward * 90, animDuration)
 				.OnComplete(() =>
 				{
 					isCombinationsOpen = true;
@@ -225,7 +231,7 @@ public class DiceTableView : MonoBehaviour
 		} else
 		{
 			inAnimProcess = true;
-			scoreListTransform.DOLocalRotate(Vector3.zero, animDuration)
+			combosTransform.DOLocalRotate(Vector3.zero, animDuration)
 				.OnComplete(() =>
 				{
 					isCombinationsOpen = false;
