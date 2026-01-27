@@ -49,7 +49,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceGameStateChangedHandler()
 		{
-			if (diceGameModel.DiceGameState is DiceGameState.GAME or DiceGameState.BET)
+			if (diceGameModel.DiceGameState is DiceGameState.BET)
 			{
 				_context.Hide();
 				_context.HideTooltip();
@@ -112,7 +112,7 @@ namespace _Main.Scripts.Dice
 				: tableView.TooltipPos;
 
 			_context.SetPositionFromWorld(
-				diceModel.CurrentPosition,
+				pos,
 				Vector3.zero, 
 				mainCamera
 			);

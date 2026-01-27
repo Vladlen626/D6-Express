@@ -26,12 +26,12 @@ namespace _Main.Scripts.UI
  
 		public void ShowTooltip()
 		{
-			tooltipTransform.DOScale(Vector3.one, 0.15f);
+			tooltipTransform.DOScale(Vector3.one, 0.075f);
 		}
 
 		public void HideTooltip()
 		{
-			tooltipTransform.DOScale(Vector3.zero, 0.1f);
+			tooltipTransform.DOScale(Vector3.zero, 0.05f);
 		}
 
 		public void SetHeaderText(string text)
