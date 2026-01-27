@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -17,6 +18,7 @@ namespace _Main.Scripts.Dice
 
 		private readonly HashSet<DiceModel> selectedDice = new();
 		private readonly Dictionary<DiceView, UnityAction> clickHandlers = new();
+		private readonly List<GameObject> floatingLabels = new();
 
 		private DiceGameModel boundGameModel;
 		private bool handlersAttached;
@@ -91,6 +93,7 @@ namespace _Main.Scripts.Dice
 
 			var animateSet = new HashSet<DiceModel>(selectedDice);
 			List<UniTask> animations = null;
+			List<GameObject> labels = null;
 
 			foreach (var dice in diceList)
 			{
@@ -107,6 +110,14 @@ namespace _Main.Scripts.Dice
 				    boundGameModel.ScreenDiceDict.TryGetValue(dice, out var view) &&
 				    view != null)
 				{
+					var label = SpawnLabel(view.transform, "+1");
+					if (label != null)
+					{
+						labels ??= new List<GameObject>();
+						labels.Add(label);
+						floatingLabels.Add(label);
+					}
+
 					animations ??= new List<UniTask>();
 					animations.Add(view.PlayRollAnimationAsync(0.25f));
 				}
@@ -115,6 +126,19 @@ namespace _Main.Scripts.Dice
 			if (animations is { Count: > 0 })
 			{
 				await UniTask.WhenAll(animations);
+			}
+
+			if (labels is { Count: > 0 })
+			{
+				await UniTask.Delay(600);
+				foreach (var go in labels)
+				{
+					if (go != null)
+					{
+						floatingLabels.Remove(go);
+						Object.Destroy(go);
+					}
+				}
 			}
 
 			UpdatePreview();
@@ -241,8 +265,46 @@ namespace _Main.Scripts.Dice
 			selectedDice.Clear();
 			isProcessing = false;
 			DetachDiceHandlers();
+			ClearLabels();
 		}
 
 		public DiceItemView GetViewPrefab() => customPrefab;
+
+		private GameObject SpawnLabel(Transform parent, string text)
+		{
+			if (parent == null)
+			{
+				return null;
+			}
+
+			var go = new GameObject("StepUp_Label");
+			go.transform.SetParent(parent, false);
+			go.transform.localPosition = Vector3.up * 0.4f;
+
+			var tmp = go.AddComponent<TextMeshPro>();
+			tmp.text = text;
+			tmp.fontSize = 1.2f;
+			tmp.enableAutoSizing = true;
+			tmp.fontSizeMin = 0.8f;
+			tmp.fontSizeMax = 1.6f;
+			tmp.color = Color.yellow;
+			tmp.alignment = TextAlignmentOptions.Center;
+			tmp.sortingOrder = 10;
+
+			return go;
+		}
+
+		private void ClearLabels()
+		{
+			foreach (var go in floatingLabels)
+			{
+				if (go != null)
+				{
+					Object.Destroy(go);
+				}
+			}
+
+			floatingLabels.Clear();
+		}
 	}
 }
