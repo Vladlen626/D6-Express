@@ -49,7 +49,7 @@ namespace _Main.Scripts.Dice
 			var rerollItemPrefab = Resources.Load<DiceItemView>("Items/RerollSelectedItem");
 			ItemsModel.AddItem(new PassMultiplierItem(prefabOverride: passMultiplierPrefab));
 			ItemsModel.AddItem(new RerollSelectedItem(prefabOverride: rerollItemPrefab));
-			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
+			//ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
 			ModifiersModel.AddModifier(new ShakeRerollModifier());
 			// ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
 			ModifiersModel.AddModifier(new AdjustTicksPerDayModifier(1));
@@ -240,6 +240,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
+			ModifiersModel.Reset();
 			tableModel.Reset();
 			PlayerDiceModelList.Clear();
 			EnemyDiceModelList.Clear();
