@@ -77,10 +77,12 @@ namespace _Main.Scripts.Dice
 			var passMultiplierPrefab = Resources.Load<DiceItemView>("Items/PassMultiplierItem");
 			var rerollItemPrefab = Resources.Load<DiceItemView>("Items/RerollSelectedItem");
 			var stepUpPrefab = Resources.Load<DiceItemView>("Items/ItemBase");
+			var silencerPrefab = Resources.Load<DiceItemView>("Items/ItemBase");
 
 			// AddItem(new PassMultiplierItem(prefabOverride: passMultiplierPrefab));
 			// AddItem(new RerollSelectedItem(prefabOverride: rerollItemPrefab));
-			AddItem(new StepUpItem(prefabOverride: stepUpPrefab));
+			// AddItem(new StepUpItem(prefabOverride: stepUpPrefab));
+			AddItem(new ModifierSilencerItem(prefabOverride: silencerPrefab));
 		}
 	}
 }
