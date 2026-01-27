@@ -12,19 +12,21 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceGameModel diceGameModel;
 		private readonly ConfigService configService;
+		private readonly DiceTableView tableView;
 
 		private TextsConfig textsConfig;
 		private IReadOnlyDictionary<string, DiceConfig> diceConfigsDict;
-		
+
 		private DiceModel currentDiceModel;
 		private Camera mainCamera;
 		public DiceTooltipsController(IUIService uiService, DiceGameModel diceGameModel, ConfigService configService,
-			Camera mainCamera) 
+			Camera mainCamera, DiceTableView tableView) 
 			: base(uiService)
 		{
 			this.mainCamera = mainCamera;
 			this.diceGameModel = diceGameModel;
 			this.configService = configService;
+			this.tableView = tableView;
 		}
 
 		protected override async UniTask OnPreloadAsync()
@@ -103,6 +105,11 @@ namespace _Main.Scripts.Dice
 			_context.SetHeaderText(header);
 			_context.SetDescriptionText(description);
 			_context.SetRarity(diceConfig.rarityEnum);
+
+
+			var pos = diceGameModel.DiceGameState != DiceGameState.GAME
+				? diceModel.CurrentPosition
+				: tableView.TooltipPos;
 
 			_context.SetPositionFromWorld(
 				diceModel.CurrentPosition,

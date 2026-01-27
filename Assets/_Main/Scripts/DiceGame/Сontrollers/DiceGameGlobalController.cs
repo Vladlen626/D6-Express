@@ -6,6 +6,7 @@ using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
+using PlatformCore.Services.UI;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -22,12 +23,14 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly LifecycleService lifecycleService;
 		private readonly ConfigService configService;
+		private readonly IUIService uiService;
 
 		private readonly SceneContext sceneContext;
 
 		private DiceView[] playerDiceViewsArray;
 		private DiceView[] enemyDiceViewsArray;
 
+		private List<IBaseController> persistentControllers = new();
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
 		private List<IBaseController> selectionControllers = new();
@@ -53,6 +56,7 @@ namespace _Main.Scripts.Dice
 			loggerService = serviceLocator.Get<ILoggerService>();
 			cameraShakeService = serviceLocator.Get<ICameraShakeService>();
 			audioService = serviceLocator.Get<IAudioService>();
+			uiService = serviceLocator.Get<IUIService>();
 		}
 
 		public void Activate()
@@ -111,18 +115,14 @@ namespace _Main.Scripts.Dice
 		{
 			gamePreviousStoped = false;
 			diceTableView.EnableCamera();
-			var diceGameConfig =
-				await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
 
-			int maxBetSize = playerModel.InventoryModel.CashCount;
-
-			var newTableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
-			diceGameModel.Setup(diceGameConfig, maxBetSize, newTableModel);
-			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
-
+			await SetupBaseModels();
+			await DiceGamePersistentControllers();
 			await SetupItemsDisplay();
 			await SelectionProcess();
+
 			MoveItemsToGameSlots();
+
 			await BetProcess();
 			await SetupEnemyDiceList();
 
@@ -136,12 +136,53 @@ namespace _Main.Scripts.Dice
 				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService),
 				new DiceGameResultController(diceGameModel)
 			});
-
-			foreach (var controller in gameControllers)
-			{
-				await lifecycleService.RegisterAsync(controller);
-			}
+			
+			await lifecycleService.RegisterControllersGroupAsync(gameControllers);
 		}
+
+		// ReSharper disable Unity.PerformanceAnalysis
+		private void StopDiceGame()
+		{
+			if (gamePreviousStoped)
+			{
+				return;
+			}
+
+			diceTableView.DisableCamera();
+			if (diceGameModel.IsDiceGameStarted)
+			{
+				run.RequestIncrementTick();
+			}
+
+			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
+			ResetModels();
+			CleanUpItems();
+			ClenUpSelectionControllers();
+			CleanUpMainGameControllers();
+			ClenUpBetControllers();
+			ClenUpPersistentControllers();
+			gamePreviousStoped = true;
+		}
+
+		private async UniTask SetupBaseModels()
+		{
+			var diceGameConfig = await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
+			var newTableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
+			diceGameModel.Setup(diceGameConfig, playerModel.InventoryModel.CashCount, newTableModel);
+			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
+		}
+		
+		private async UniTask DiceGamePersistentControllers()
+		{
+			persistentControllers.AddRange(
+				new IBaseController[]
+				{
+					new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main, diceTableView),
+				});
+
+			await lifecycleService.RegisterControllersGroupAsync(persistentControllers);
+		}
+
 
 		private async UniTask SelectionProcess()
 		{
@@ -231,46 +272,21 @@ namespace _Main.Scripts.Dice
 			ClenUpBetControllers();
 		}
 
-		// ReSharper disable Unity.PerformanceAnalysis
-		private void StopDiceGame()
+		private void ClenUpPersistentControllers()
 		{
-			if (gamePreviousStoped)
-			{
-				return;
-			}
-
-			diceTableView.DisableCamera();
-			if (diceGameModel.IsDiceGameStarted)
-			{
-				run.RequestIncrementTick();
-			}
-
-			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
-			ResetModels();
-			CleanUpItems();
-			ClenUpSelectionControllers();
-			CleanUpMainGameControllers();
-			ClenUpBetControllers();
-			gamePreviousStoped = true;
+			lifecycleService.UnregisterControllersGroup(persistentControllers);
+			persistentControllers.Clear();
 		}
 
 		private void ClenUpBetControllers()
 		{
-			foreach (var controller in betControllers)
-			{
-				lifecycleService.Unregister(controller);
-			}
-
+			lifecycleService.UnregisterControllersGroup(betControllers);
 			betControllers.Clear();
 		}
 
 		private void ClenUpSelectionControllers()
 		{
-			foreach (var controller in selectionControllers)
-			{
-				lifecycleService.Unregister(controller);
-			}
-
+			lifecycleService.UnregisterControllersGroup(selectionControllers);
 			selectionControllers.Clear();
 		}
 
@@ -296,11 +312,7 @@ namespace _Main.Scripts.Dice
 				enemyDiceViewsArray = null;
 			}
 
-			foreach (var controller in gameControllers)
-			{
-				lifecycleService.Unregister(controller);
-			}
-
+			lifecycleService.UnregisterControllersGroup(gameControllers);
 			gameControllers.Clear();
 		}
 
@@ -366,10 +378,7 @@ namespace _Main.Scripts.Dice
 
 		private void CleanUpItems()
 		{
-			foreach (var controller in itemControllers)
-			{
-				lifecycleService.Unregister(controller);
-			}
+			lifecycleService.UnregisterControllersGroup(itemControllers);
 			itemControllers.Clear();
 
 			foreach (var view in itemViews)

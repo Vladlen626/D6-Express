@@ -121,7 +121,6 @@ namespace _Main.Scripts.Core
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
 					run, configService),
-				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main),
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelViewController(run, sceneContext.InformationPanelView),
 				new LevelStartModifierController(run, diceGameModel),
@@ -145,10 +144,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(locationController);
 			controllersList.AddRange(baseControllers);
 
-			foreach (var controller in controllersList)
-			{
-				await _lifecycle.RegisterAsync(controller);
-			}
+			await _lifecycle.RegisterControllersGroupAsync(controllersList);
 			
 			var gameStateController = new GameStateController(game, run);
 			gameStateController.AddTask(async (x) => cursorService.LockCursor(), StateTransitionTask.LOCK_CURSOR);

@@ -33,6 +33,9 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
     {
         base.OnActivate();
 
+        _context.Hide();
+        _context.HideTooltip();
+
         interactor.Noticed += OnNoticed;
         interactor.Missed += OnMissed;
     }

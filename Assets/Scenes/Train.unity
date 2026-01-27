@@ -641,10 +641,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainBlock
       objectReference: {fileID: 0}
-    - target: {fileID: 6126608394170948181, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
-      propertyPath: 'm_Materials.Array.data[1]'
-      value: 
-      objectReference: {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -1,6 +1,5 @@
 ﻿using System;
 using _Main.Scripts.Dice;
-using _Main.Scripts.Game.Views;
 using _Main.Scripts.UI;
 using DG.Tweening;
 using TMPro;
@@ -16,8 +15,10 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnBetClicked;
 	public event Action OnPlayClicked;
 	
+	[Header("Global")]
 	[SerializeField] private CinemachineCamera cinemachineCamera;
 	[SerializeField] private Transform combosTransform;
+	[SerializeField] private Transform tooltipPos;
 	
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
@@ -65,6 +66,7 @@ public class DiceTableView : MonoBehaviour
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
 	public CinemachineCamera TableCamera => cinemachineCamera;
+	public Transform TooltipPos => tooltipPos;
 
 	private bool isCombinationsOpen;
 	private bool inAnimProcess;
