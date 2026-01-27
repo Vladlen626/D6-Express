@@ -11,8 +11,6 @@ public class InteractableActionSleep : InteractionAction
 	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.SLEEPING);
-
-		StopInteract();
 	}
 
 	protected override async void StopInteractInternal(bool immediate = false)

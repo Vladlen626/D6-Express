@@ -32,9 +32,12 @@ public class CharacterView : MonoBehaviour
 
 	[SerializeField]
 	private CameraState[] cameraStates;
-
+	[SerializeField]
+	private Animator animator;
+	
 	private readonly Dictionary<CharacterState, CameraState> cameraStatesDict = new();
 
+	public Animator Animator => animator;
 	public CharacterStateHandler[] CharacterStateHandlers => states.ToArray();
 	public IReadOnlyList<CameraState> CameraStates => cameraStates;
 

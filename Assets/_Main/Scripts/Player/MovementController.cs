@@ -37,15 +37,12 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 		playerModel.PlayerStateModel.StateAdded += OnCharacterStateChanged;
 		playerModel.PlayerStateModel.StateRemoved += OnCharacterStateChanged;
-		cursorService.LockCursor();
 	}
 
 	public void Deactivate()
 	{
 		playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateChanged;
 		playerModel.PlayerStateModel.StateAdded -= OnCharacterStateChanged;
-
-		cursorService.UnlockCursor();
 	}
 
 	public void OnUpdate(float deltaTime)

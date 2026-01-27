@@ -17,15 +17,13 @@ public class CharacterStateHandlerSleeping : CharacterStateHandler
 
 	protected override void EnterInternal()
 	{
-		// todo: это хак чтобы не включать капсулу
-		// base.EnterInternal();
-		inputService.DisableAllInputs();
+		inputService.DisablePlayerInputs();
+		inputService.DisableCameraInputs();
 	}
 
 	protected override void ExitInternal()
 	{
-		// todo: это хак
-		// base.ExitInternal();
-		inputService.EnableAllInputs();
+		inputService.EnablePlayerInputs();
+		inputService.EnableCameraInputs();
 	}
 }

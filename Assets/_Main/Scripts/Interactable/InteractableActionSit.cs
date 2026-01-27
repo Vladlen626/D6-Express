@@ -32,7 +32,7 @@ public class InteractableActionSit : InteractionAction
 
 			
 			// TODO: НУжна какая-то более адекватная тема, и инты поменять на енам
-			Interactor.GetComponent<NpcView>().Animator.SetInteger(State, 1);
+			Interactor.GetComponent<CharacterView>().Animator.SetInteger(State, 1);
 			await UniTask.WhenAll(moveTask, rotateTask);
 		}
 
@@ -45,7 +45,7 @@ public class InteractableActionSit : InteractionAction
 		StateModel.TryAddState(CharacterState.TRANSITION);
 
 		// TODO: НУжна какая-то более адекватная тема, и инты поменять на енам
-		Interactor.GetComponent<NpcView>().Animator.SetInteger(State, 0);
+		Interactor.GetComponent<CharacterView>().Animator.SetInteger(State, 0);
 
 		if (immediate)
 		{

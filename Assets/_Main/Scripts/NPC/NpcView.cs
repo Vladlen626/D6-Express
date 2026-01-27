@@ -6,11 +6,6 @@ public class NpcView : CharacterView
 {
 	[SerializeField]
 	private List<Transform> hatsTransforms;
-	
-	[SerializeField]
-	private Animator animator;
-	
-	public Animator Animator => animator;
 
 	void Start()
 	{

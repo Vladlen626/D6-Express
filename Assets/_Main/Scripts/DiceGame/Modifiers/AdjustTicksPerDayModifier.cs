@@ -59,7 +59,7 @@ namespace _Main.Scripts.Dice
 			Reset();
 		}
 
-		private void OnRunFinished()
+		private void OnRunFinished(bool result)
 		{
 			Reset();
 		}

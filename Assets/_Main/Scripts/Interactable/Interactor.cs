@@ -38,16 +38,6 @@ public class Interactor : MonoBehaviour
 		}
 	}
 
-	public void StopCurrentAction(bool immediate = false)
-	{
-		if (actionStack.Count > 0)
-		{
-			var action = actionStack.Pop();
-
-			action.StopInteract(immediate);
-		}
-	}
-
 	public bool CanInteract(Interactable interactable)
 	{
 		if (!CanInteract())

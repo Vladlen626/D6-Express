@@ -21,6 +21,9 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	private GameObject trainBlock;
 
 	[SerializeField]
+	private GameObject mainMenuBlock;
+
+	[SerializeField]
 	private Light sun;
 
 	[SerializeField]
@@ -37,6 +40,7 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public Transform PlayerStationSpawnPosition => playerStationSpawnPosition;
 	public GameObject StationBlock => stationBlock;
 	public GameObject TrainBlock => trainBlock;
+	public GameObject MainMenuBlock => mainMenuBlock;
 	public Light Sun => sun;
 	public ShopView Shop => shop;
 

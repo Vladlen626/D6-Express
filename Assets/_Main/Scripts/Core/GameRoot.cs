@@ -31,7 +31,6 @@ namespace _Main.Scripts.Core
 			var cameraService = new CameraService(objectFactory);
 			var cursorService = new CursorService(uiService);
 			var configService = new ConfigService(resourceService, logger);
-			var transitionService = new TransitionService();
 			var localizationService = new LocalizationServiceBase(configService);
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
@@ -45,7 +44,6 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<ICameraService, CameraService>(cameraService);
 			_serviceLocator.Register<ICursorService, CursorService>(cursorService);
 			_serviceLocator.Register<ConfigService, ConfigService>(configService);
-			_serviceLocator.Register<TransitionService, TransitionService>(transitionService);
 			_serviceLocator.Register<ILocalizationService, LocalizationServiceBase>(localizationService);
 
 			Debug.Log("[GameRoot] Services registered!");
@@ -61,16 +59,14 @@ namespace _Main.Scripts.Core
 			var cursorService = _serviceLocator.Get<ICursorService>();
 			var inputService = _serviceLocator.Get<IInputService>();
 			var configService = _serviceLocator.Get<ConfigService>();
-			var transitionService = _serviceLocator.Get<TransitionService>();
 
 			var run = new Run();
+			var game = new D6Game();
 
-			// Transition View Controller 
-			var transitionViewController = new TransitionViewController(uiService, transitionService, run, configService, inputService);
+			var transitionViewController = new TransitionViewController(uiService, run, configService);
 			await _lifecycle.RegisterAsync(transitionViewController);
 			await transitionViewController.ShowContext(0);
 
-			cursorService.UnlockCursor();
 			await UniTask.WaitUntil(() => RuntimeManager.IsInitialized);
 			// Controllers list
 			var controllersList = new List<IBaseController>();
@@ -83,36 +79,15 @@ namespace _Main.Scripts.Core
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
 
-			//Load MainMenu Scene
-			var sceneForLoad = SceneNames.MainMenu;
-			await sceneService.LoadSceneAsync(sceneForLoad);
-			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
-
-			await audioService.PlayMusicAsync(SoundNames.TrainSound);
-			var mainMenuController = new MainMenuController(uiService);
+			var mainMenuController = new MainMenuController(uiService, game, run, cursorService);
 			await _lifecycle.RegisterAsync(mainMenuController);
 
-			await transitionViewController.HideContext();
-
-			await mainMenuController.WaitForStartAsync();
-
-			await transitionViewController.ShowContext();
-
-			await sceneService.UnloadSceneAsync(sceneForLoad);
-
-			// Start Game
-			sceneForLoad = SceneNames.Train;
-			await sceneService.LoadSceneAsync(sceneForLoad);
-			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(sceneForLoad));
-			sceneService.SetActiveScene(sceneForLoad);
-
-			await audioService.StopMusicAsync(0.2f);
-			await audioService.PlayMusicAsync(SoundNames.GameplayEvent, 0.5f);
+			await sceneService.LoadSceneAsync(SceneNames.Train);
 
 			//TODO: Контекст сейчас будет обязательным на игровой сцене
-			if (!sceneService.TryGetSceneContext(sceneForLoad, out var context))
+			if (!sceneService.TryGetSceneContext(SceneNames.Train, out var context))
 			{
-				Debug.LogError($"[GameRoot] Scene {sceneForLoad} could not have SceneContext!");
+				Debug.LogError($"[GameRoot] Scene {SceneNames.Train} could not have SceneContext!");
 				return;
 			}
 
@@ -121,27 +96,28 @@ namespace _Main.Scripts.Core
 #if UNITY_EDITOR
 			var state = DebugVariables.StartSpawnLocation;
 #else
-				var state = LevelState.STATION;
+				var state = LevelState.MAIN_MENU;
 #endif
 
 			//NPC
-			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, run, sceneContext.SpawnPoints);
+			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, game, run, sceneContext.SpawnPoints);
 
 			//Player
 			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, playerModel, state == Location.STATION ? sceneContext.PlayerStationSpawnPosition : sceneContext.PlayerTrainSpawnPosition);
 			playerModel.PlayerStateModel.FillCharacterStatesDict(playerView.CharacterStateHandlers);
-			cameraService.AttachTo(playerView.CameraRoot);
-			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel, inputService, audioService));
+			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel, inputService, audioService, game, run));
 
 			// Level
-			controllersList.AddRange(RunFactory.GetSleepControllers(run, playerView));
-			controllersList.AddRange(await RunFactory.GetBaseControllers(sceneContext, uiService, run,
-				playerModel, configService));
+			controllersList.AddRange(await RunFactory.GetBaseControllers(game, run, playerModel, playerView,
+				configService, cameraService));
 
-			var baseControllers = new IBaseController[]
+            var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
+            var loseViewController = new LoseViewController(uiService, game, inputService, cursorService, configService);
+
+            var baseControllers = new IBaseController[]
 			{
-				new WinViewController(uiService, inputService, cursorService, configService, transitionService),
-				new LoseViewController(uiService, inputService, cursorService, configService, transitionService),
+				winViewController,
+				loseViewController,
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
 					run, configService),
@@ -153,26 +129,41 @@ namespace _Main.Scripts.Core
 
 			var shop = await ShopFactory.GetShopAsync(playerModel.InventoryModel, configService);
 			var notifications = NotificationsFactory.CreateNotifications();
-			var transitionController = new TransitionController(run, playerModel, playerView, sceneContext, audioService, npcSpawner, shop, transitionService);
+
+			var sleepController = RunFactory.GetSleepControllers(uiService, run, playerView, inputService);
+			var locationController = new LocationController(game, run, sceneContext, audioService, playerModel, playerView);
 
 			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, run, playerModel, playerView, configService, notifications));
-			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, run, configService));
+			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService));
 			// todo. не требуется к mvp. раскоментить позже
 			// controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
 			controllersList.Add(NotificationsFactory.GetNotificationsControler(notifications, playerModel.InventoryModel, configService));
-			controllersList.Add(transitionController);
-
+			controllersList.Add(sleepController);
+			controllersList.Add(locationController);
 			controllersList.AddRange(baseControllers);
 
 			foreach (var controller in controllersList)
 			{
 				await _lifecycle.RegisterAsync(controller);
 			}
+			
+			var gameStateController = new GameStateController(game, run);
+			gameStateController.AddTask(async (x) => cursorService.LockCursor(), StateTransitionTask.LOCK_CURSOR);
+			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), StateTransitionTask.UNLOCK_CURSOR);
+			gameStateController.AddTask((x) => npcSpawner.Respawn(), StateTransitionTask.NPC_RESPAWN);
+			gameStateController.AddTask(async (x) => shop.Restock(), StateTransitionTask.SHOP_RESTOCK);
+			gameStateController.AddChanger(transitionViewController);
+			gameStateController.AddChanger(locationController);
+			gameStateController.AddChanger(winViewController);
+			gameStateController.AddChanger(loseViewController);
+			gameStateController.AddChanger(sleepController);
 
-			run.Start();
+			await _lifecycle.RegisterAsync(gameStateController);
+
+			game.RequestSetLocation(Location.MAIN_MENU);
 		}
 	}
 }

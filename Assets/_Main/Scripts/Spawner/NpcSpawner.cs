@@ -9,15 +9,17 @@ public class NpcSpawner
     private const int NPC_SPAWNED_COUNT = 15;
 
     private readonly IObjectFactory factory;
+    private readonly D6Game d6Game;
     private readonly Run run;
     private readonly IEnumerable<SpawnPoint> trainSpawnPoints;
     private readonly IEnumerable<SpawnPoint> stationSpawnPoints;
 
     private readonly List<NpcView> npcList = new();
 
-    public NpcSpawner(IObjectFactory factory, Run run, IEnumerable<SpawnPoint> spawnPoints)
+    public NpcSpawner(IObjectFactory factory, D6Game d6Game, Run run, IEnumerable<SpawnPoint> spawnPoints)
     {
         this.factory = factory;
+        this.d6Game = d6Game;
         this.run = run;
         trainSpawnPoints = spawnPoints.Where(x => x.levelState == Location.TRAIN);
         stationSpawnPoints = spawnPoints.Where(x => x.levelState == Location.STATION);
@@ -31,7 +33,7 @@ public class NpcSpawner
 
     private async UniTask Spawn()
     {
-        var notUsedPoints = run.Location == Location.STATION ? stationSpawnPoints.ToList() : trainSpawnPoints.ToList();
+        var notUsedPoints = d6Game.Location == Location.STATION ? stationSpawnPoints.ToList() : trainSpawnPoints.ToList();
 
         for (int i = 0; i < NPC_SPAWNED_COUNT; i++)
         {

@@ -1,9 +1,4 @@
 using System.Threading.Tasks;
-using _Main.Scripts.Core;
-using Cysharp.Threading.Tasks;
-using PlatformCore.Core;
-using PlatformCore.Services;
-using PlatformCore.Services.UI;
 
 public abstract class DebugMenuItem
 {
@@ -48,26 +43,6 @@ public class DbgMenuItemIncrementTicks : DebugMenuItem
     }
 }
 
-public class DbgMenuItemIncrementSleep : DebugMenuItem
-{
-    public override string Path => "Sleep";
-
-    public override void Execute()
-    {
-        Locator.Resolve<IUIService>().GetWindow<UISleepView>().CloseEyes();
-    }
-}
-
-public class DbgMenuItemIncrementWakeUp : DebugMenuItem
-{
-    public override string Path => "Wake Up";
-
-    public override void Execute()
-    {
-        Locator.Resolve<IUIService>().GetWindow<UISleepView>().OpenEyes();
-    }
-}
-
 public class DbgMenuItemSwitchToStation : DebugMenuItem
 {
     private readonly Run run;
@@ -81,7 +56,7 @@ public class DbgMenuItemSwitchToStation : DebugMenuItem
 
     public override void Execute()
     {
-        run.RequestSetLocation(Location.STATION);
+        // run.RequestSetLocation(Location.STATION);
     }
 }
 
@@ -99,7 +74,7 @@ public class DbgMenuItemSwitchToTrain : DebugMenuItem
 
     public override void Execute()
     {
-        run.RequestSetLocation(Location.TRAIN);
+        // run.RequestSetLocation(Location.TRAIN);
     }
 }
 

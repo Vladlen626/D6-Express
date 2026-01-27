@@ -8,12 +8,13 @@ public static class SpeechFactory
         IUIService uiService,
         PlayerModel playerModel,
         PlayerView playerView,
+        D6Game game,
         Run run,
         ConfigService configService)
     {
         var textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 
-        var speechBuyTicket = GetConductorSpeech(playerModel, run, textsConfig);
+        var speechBuyTicket = GetConductorSpeech(playerModel, game, run, textsConfig);
         var speechPassengerGeneric = GetGenericPassengerSpeech(textsConfig);
         var speechPassengerComrade = GetComradeSpeech(textsConfig);
         var speechPassengerAnecdote = GetAnecdoteSpeech(textsConfig);
@@ -62,7 +63,7 @@ public static class SpeechFactory
         return parallel;
     }
 
-    private static Speech GetConductorSpeech(PlayerModel playerModel, Run run, TextsConfig textsConfig)
+    private static Speech GetConductorSpeech(PlayerModel playerModel, D6Game game, Run run, TextsConfig textsConfig)
     {
         var speechBuyTicket = new Speech(0);
 
@@ -79,7 +80,7 @@ public static class SpeechFactory
 
         var speechNodeMoveToTrain = new SpeechNodeDo(() =>
             {
-                run.RequestSetLocation(Location.TRAIN);
+                game.RequestSetLocation(Location.TRAIN);
                 playerModel.InventoryModel.TakeCash(run.TicketPrice);
             })
             .After(speechNodeHasMoney)
