@@ -21,6 +21,9 @@ public class TurnChipView : MonoBehaviour
 	
 	[SerializeField]
 	private float animDuration = 0.15f;
+	
+	[SerializeField]
+	private float jumpPower = 0.05f;
 
 	public void SwitchTurn(bool isPlayerTurn)
 	{
@@ -30,7 +33,7 @@ public class TurnChipView : MonoBehaviour
 		playerModel.SetActive(isPlayerTurn);
 		
 		var chipPos = isPlayerTurn ? playerTurnPos.position : enemyTurnPos.position;
-		transform.DOJump(chipPos, 0.25f, 2, animDuration);
+		transform.DOJump(chipPos, jumpPower, 2, animDuration);
 	}
 	
 }

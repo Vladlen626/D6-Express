@@ -1375,14 +1375,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3434231456207123396}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.417, y: 1.045, z: -0.106}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.41699997, y: -0.055000067, z: -0.106}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6108877682336522591}
   - {fileID: 3195363608766237320}
-  m_Father: {fileID: 1335222550371108976}
+  m_Father: {fileID: 5009877806223120308}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3658667203931710417
 GameObject:
@@ -1439,14 +1439,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3830533772738991122}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.178, y: 1.157, z: -0.134}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.178, y: 0.05699992, z: -0.134}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6617689020248034698}
   - {fileID: 4647549202815890360}
-  m_Father: {fileID: 1335222550371108976}
+  m_Father: {fileID: 1268640629025784159}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3997983770138896371
 GameObject:
@@ -1481,6 +1481,7 @@ Transform:
   - {fileID: 6774225347180004440}
   - {fileID: 2374063194774429597}
   - {fileID: 6893170634507495991}
+  - {fileID: 1338146240694127702}
   m_Father: {fileID: 3002558663366478614}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4014723120980141432
@@ -1998,7 +1999,7 @@ MonoBehaviour:
   enemyTurnPos: {fileID: 8575818456559373427}
   playerTurnPos: {fileID: 2672952980674160285}
   turnNameText: {fileID: 4784144679756727312}
-  animDuration: 0.15
+  animDuration: 0.4
 --- !u!1 &5051395236763133268
 GameObject:
   m_ObjectHideFlags: 0
@@ -2896,8 +2897,6 @@ Transform:
   - {fileID: 740278718700182516}
   - {fileID: 3002558663366478614}
   - {fileID: 2377353297439693544}
-  - {fileID: 1338146240694127702}
-  - {fileID: 6646717370196683383}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1360581831750028765
@@ -2913,7 +2912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DiceGameTableView
   cinemachineCamera: {fileID: 3313437823269135476}
-  combosTransform: {fileID: 0}
+  combosTransform: {fileID: 1771793052469890626}
   gameStateHandler: {fileID: 5009877806223120308}
   betStateHandler: {fileID: 6817963035103701041}
   selectStateHandler: {fileID: 1268640629025784159}
@@ -3148,6 +3147,7 @@ Transform:
   - {fileID: 8488293067137758761}
   - {fileID: 8575818456559373427}
   - {fileID: 2672952980674160285}
+  - {fileID: 6646717370196683383}
   m_Father: {fileID: 3002558663366478614}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6683473143922630081
