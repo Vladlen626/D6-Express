@@ -89,6 +89,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			var animateSet = new HashSet<DiceModel>(selectedDice);
 			List<UniTask> animations = null;
 
 			foreach (var dice in diceList)
@@ -101,7 +102,8 @@ namespace _Main.Scripts.Dice
 				var nextValue = GetNextValue(dice.CurrentValue);
 				dice.SetValue(nextValue);
 
-				if (boundGameModel.ScreenDiceDict != null &&
+				if (animateSet.Contains(dice) &&
+				    boundGameModel.ScreenDiceDict != null &&
 				    boundGameModel.ScreenDiceDict.TryGetValue(dice, out var view) &&
 				    view != null)
 				{
