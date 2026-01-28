@@ -4,11 +4,7 @@ using UnityEngine;
 public class InformationPanelView : MonoBehaviour
 {
     [SerializeField]
-    private Transform[] stations;
+    private InformationPanelStationView[] stations;
 
-    [SerializeField]
-    private Transform anchor;
-
-    public Transform Anchor => anchor;
-    public IReadOnlyList<Transform> Stations => stations;
+    public IReadOnlyList<InformationPanelStationView> Stations => stations;
 }

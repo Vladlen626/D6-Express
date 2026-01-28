@@ -1,22 +1,26 @@
-[
+    [
     {
-        "id": "np",
-        "name": "New-Pepe"
+        "id": "wb",
+        "name": "Willowbend"
     },
     {
-        "id": "ss",
-        "name": "Saint-Scheine"
+        "id": "sp",
+        "name": "Sunpetal"
     },
     {
-        "id": "ow",
-        "name": "Old Wtfa"
+        "id": "mh",
+        "name": "Maplewharf "
     },
     {
-        "id": "nf",
-        "name": "Northern Fa"
+        "id": "mp",
+        "name": "Misty Pines"
     },
     {
-        "id": "sf",
-        "name": "South Fa"
+        "id": "mg",
+        "name": "Moonlit Grove"
+    },
+    {
+        "id": "ah",
+        "name": "Acorn Hollow"
     }
 ]

@@ -122,7 +122,7 @@ namespace _Main.Scripts.Core
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
 					run, configService),
 				new LightController(sceneContext.Lights, run),
-				new InformationPanelViewController(run, sceneContext.InformationPanelView),
+				new InformationPanelViewController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
 			};
 

@@ -715,14 +715,46 @@ PrefabInstance:
       propertyPath: m_Name
       value: StationBlock
       objectReference: {fileID: 0}
-    - target: {fileID: 1355620770823827789, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7627659414323183162, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2037325876015972137, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 8496850184097804413, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 3913362134524404613, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7981106439244524089, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4911292333580437990, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 3314294512701542353, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2630053033443289127, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2060391645251260208, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 3448760002607153718, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 6433098753991082083, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 3633874919949340146, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
 --- !u!114 &7205606119079278649 stripped
 MonoBehaviour:
