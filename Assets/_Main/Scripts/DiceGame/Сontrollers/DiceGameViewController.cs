@@ -93,7 +93,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnRollClickedHandler()
 		{
-			cameraShakeService.ShakeAsync(diceTableView.TableCamera,0.3f, 0.05f);
+			cameraShakeService.ShakeAsync(0.3f, 0.05f);
 		}
 
 		private void OnRollHandler()

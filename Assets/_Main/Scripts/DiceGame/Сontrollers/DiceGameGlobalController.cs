@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using _Main.Scripts.Core;
+using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
@@ -24,6 +25,7 @@ namespace _Main.Scripts.Dice
 		private readonly LifecycleService lifecycleService;
 		private readonly ConfigService configService;
 		private readonly IUIService uiService;
+		private readonly IInputService inputService;
 
 		private readonly SceneContext sceneContext;
 
@@ -57,6 +59,7 @@ namespace _Main.Scripts.Dice
 			cameraShakeService = serviceLocator.Get<ICameraShakeService>();
 			audioService = serviceLocator.Get<IAudioService>();
 			uiService = serviceLocator.Get<IUIService>();
+			inputService = serviceLocator.Get<IInputService>();
 		}
 
 		public void Activate()
@@ -114,7 +117,7 @@ namespace _Main.Scripts.Dice
 		private async UniTask StartDiceGame()
 		{
 			gamePreviousStoped = false;
-			diceTableView.EnableCamera();
+			inputService.EnableDiceGameInputs();
 
 			await SetupBaseModels();
 			await DiceGamePersistentControllers();
@@ -148,7 +151,8 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			diceTableView.DisableCamera();
+			inputService.DisableDiceGameInputs();
+			
 			if (diceGameModel.IsDiceGameStarted)
 			{
 				run.RequestIncrementTick();

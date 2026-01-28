@@ -29,7 +29,7 @@ public class LevelViewController : IBaseController, IActivatable
 	{
 		if (game.Location == Location.STATION || game.Location == Location.TRAIN)
 		{
-			cameraService.AttachTo(playerView.CameraRoot);
+			cameraService.AttachPlayerCameraTo(playerView.CameraRoot);
 		}
 	}
 }

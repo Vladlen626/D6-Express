@@ -14,9 +14,6 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnPassClicked;
 	public event Action OnBetClicked;
 	public event Action OnPlayClicked;
-	
-	[Header("Cameras")]
-	[SerializeField] private CinemachineCamera cinemachineCamera;
 
 	[Header("Global")]
 	[SerializeField] private Transform combosTransform;
@@ -67,15 +64,10 @@ public class DiceTableView : MonoBehaviour
 	public DiceItemView ItemViewPrefab => itemViewPrefab;
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
-	public CinemachineCamera TableCamera => cinemachineCamera;
 	public Transform TooltipPos => tooltipPos;
 
 	private bool isCombinationsOpen;
 	private bool inAnimProcess;
-	private void Awake()
-	{
-		DisableCamera();
-	}
 
 	private void Start()
 	{
@@ -146,16 +138,6 @@ public class DiceTableView : MonoBehaviour
 
 		passButton.gameObject.SetActive(isPlayerTurn);
 		rollButton.gameObject.SetActive(isPlayerTurn);
-	}
-
-	public void EnableCamera()
-	{
-		cinemachineCamera.gameObject.SetActive(true);
-	}
-
-	public void DisableCamera()
-	{
-		cinemachineCamera.gameObject.SetActive(false);
 	}
 
 	public void SetPlayerBankedPointsText(int oldValue, int newValue)

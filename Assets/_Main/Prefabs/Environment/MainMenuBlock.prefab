@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4687426108633292988}
   - component: {fileID: 6703458017248340719}
+  - component: {fileID: 350033961283860708}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -75,6 +76,19 @@ MonoBehaviour:
       BarrelClipping: 0.25
       Anamorphism: 0
   BlendHint: 0
+--- !u!114 &350033961283860708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2540507746021076119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14c153bf792449deba89dfa3d053cf83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PlatformCore::PlatformCore.Services.CinemachineCameraRegister
+  cameraStateEnum: 1
 --- !u!1 &7314033402152303041
 GameObject:
   m_ObjectHideFlags: 0
