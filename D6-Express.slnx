@@ -65,6 +65,7 @@
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="FMODUnity.csproj" />
   <Project Path="MackySoft.SerializeReferenceExtensions.Editor.csproj" />
+  <Project Path="LineworkLite.Editor.csproj" />
   <Project Path="Unity.InputSystem.ForUI.csproj" />
   <Project Path="LineworkLite.Editor.csproj" />
   <Project Path="Unity.AI.Navigation.csproj" />

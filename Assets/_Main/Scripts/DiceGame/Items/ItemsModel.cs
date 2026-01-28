@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
@@ -10,10 +11,12 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly List<IDiceItem> items = new();
 		private readonly ModifiersModel modifiersModel;
+		private bool defaultsInitialized;
 
 		public ItemsModel(ModifiersModel modifiersModel)
 		{
 			this.modifiersModel = modifiersModel;
+			AddDefaultItems();
 		}
 
 		public event Action ItemsChanged;
@@ -25,7 +28,12 @@ namespace _Main.Scripts.Dice
 		/// </summary>
 		public void AddItem(IDiceItem item)
 		{
-			if (item == null || items.Contains(item))
+			if (item == null)
+			{
+				return;
+			}
+
+			if (items.Exists(existing => string.Equals(existing.Id, item.Id, StringComparison.Ordinal)))
 			{
 				return;
 			}
@@ -55,6 +63,26 @@ namespace _Main.Scripts.Dice
 
 			items.Clear();
 			ItemsChanged?.Invoke();
+		}
+
+		private void AddDefaultItems()
+		{
+			if (defaultsInitialized)
+			{
+				return;
+			}
+
+			defaultsInitialized = true;
+
+			var passMultiplierPrefab = Resources.Load<DiceItemView>("Items/PassMultiplierItem");
+			var rerollItemPrefab = Resources.Load<DiceItemView>("Items/RerollSelectedItem");
+			var stepUpPrefab = Resources.Load<DiceItemView>("Items/ItemBase");
+			var silencerPrefab = Resources.Load<DiceItemView>("Items/ItemBase");
+
+			// AddItem(new PassMultiplierItem(prefabOverride: passMultiplierPrefab));
+			// AddItem(new RerollSelectedItem(prefabOverride: rerollItemPrefab));
+			// AddItem(new StepUpItem(prefabOverride: stepUpPrefab));
+			AddItem(new ModifierSilencerItem(prefabOverride: silencerPrefab));
 		}
 	}
 }
