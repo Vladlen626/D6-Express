@@ -72,7 +72,7 @@ namespace _Main.Scripts.Core
 			var controllersList = new List<IBaseController>();
 			// --------------
 
-			var playerModel = await PlayerFactory.CreatePlayerModel(configService);
+			var playerModel = new PlayerModel();
 
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 

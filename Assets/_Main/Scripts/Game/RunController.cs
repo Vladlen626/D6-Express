@@ -1,18 +1,24 @@
-﻿using PlatformCore.Core;
+﻿using Cysharp.Threading.Tasks;
+using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
+using PlatformCore.Services.Factory;
 
-public class LevelController : IBaseController, IActivatable
+public class RunController : IBaseController, IActivatable, IPreloadable
 {
 	private readonly D6Game game;
 	private readonly Run run;
 	private readonly RunConfig runConfig;
 	private readonly PlayerModel playerModel;
+	private readonly ConfigService configService;
 
-	public LevelController(D6Game game, Run run, RunConfig runConfig, PlayerModel playerModel)
+	private PlayerConfig playerConfig;
+
+	public RunController(D6Game game, Run run, RunConfig runConfig, PlayerModel playerModel, ConfigService configService)
 	{
 		this.game = game;
 		this.run = run;
 		this.playerModel = playerModel;
+		this.configService = configService;
 		this.runConfig = runConfig;
 	}
 
@@ -21,15 +27,20 @@ public class LevelController : IBaseController, IActivatable
 		run.TickChangeRequested += OnTickChangeRequested;
 		run.LevelChangeRequested += OnLevelChangeRequested;
 		run.DayChangeRequested += OnDayChangeRequested;
-		run.RunStarted += UpdateLevelData;
+		run.RunStarted += OnRunStarted;
 	}
 
 	public void Deactivate()
 	{
-		run.RunStarted -= UpdateLevelData;
+		run.RunStarted -= OnRunStarted;
 		run.DayChangeRequested -= OnDayChangeRequested;
 		run.LevelChangeRequested -= OnLevelChangeRequested;
 		run.TickChangeRequested -= OnTickChangeRequested;
+	}
+
+	public async UniTask PreloadAsync()
+	{
+		playerConfig = await configService.GetFirstOrDefaultAsync<PlayerConfig>(ResourcePaths.Json.player);
 	}
 
 	private void OnTickChangeRequested(int value)
@@ -48,6 +59,20 @@ public class LevelController : IBaseController, IActivatable
 		var levelData = runConfig.levels[run.Level];
 		var ticketPrice = run.Level == 0 ? 0 : runConfig.levels[run.Level - 1].cash_goal;
 		run.SetLevelData(levelData.station_id, levelData.days, levelData.ticks_per_day, runConfig.levels.Length, ticketPrice, levelData.cash_goal);
+	}
+
+	private void OnRunStarted()
+	{
+		UpdateLevelData();
+
+		int startCash = playerConfig.cash;
+		playerModel.InventoryModel.SetCash(startCash);
+
+		playerModel.InventoryModel.RemoveAllDices();
+		foreach (var playerConfigDice in playerConfig.dices)
+		{
+			playerModel.InventoryModel.AddDice(playerConfigDice);
+		}
 	}
 
 	private void OnDayChangeRequested(int value)
@@ -79,6 +104,4 @@ public class LevelController : IBaseController, IActivatable
 			game.NotifyDayChanged();
 		}
 	}
-
-
 }
