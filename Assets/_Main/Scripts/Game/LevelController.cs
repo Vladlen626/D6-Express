@@ -64,7 +64,8 @@ public class LevelController : IBaseController, IActivatable
 				else
 				{
 					run.FinishLevel(true);
-					game.SetLocation(Location.STATION);
+					UpdateLevelData();
+					game.RequestSetLocation(Location.STATION);
 				}
 			}
 			else
