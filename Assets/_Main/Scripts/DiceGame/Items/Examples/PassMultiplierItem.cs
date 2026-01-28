@@ -126,7 +126,7 @@ namespace _Main.Scripts.Dice
 			RefreshDailyAllowance();
 		}
 
-		private void OnRunFinished()
+		private void OnRunFinished(bool result)
 		{
 			remaining = activationsPerDay;
 			SetState(DiceItemState.Ready);

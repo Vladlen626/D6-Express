@@ -2,8 +2,6 @@ using System;
 
 public class Run
 {
-    public Location Location { get; private set; }
-    public StateType State { get; private set; } = StateType.IN_PROGRESS;
     public int Level { get; private set; }
     public int Day { get; private set; }
     public int Tick { get; private set; }
@@ -14,12 +12,10 @@ public class Run
     public int TicketPrice { get; private set; }
     public int NextTicketPrice { get; private set; }
 
-    public event Action<Location> LocationChangeRequested;
     public event Action<int> TickChangeRequested;
     public event Action<int> DayChangeRequested;
     public event Action LevelChangeRequested;
 
-    public event Action LocationChanged;
     public event Action TickChanged;
     public event Action TicksPerDayChanged;
     public event Action DayChanged;
@@ -28,14 +24,8 @@ public class Run
     public event Action LevelsCountChanged;
     public event Action TicketPriceChanged;
     public event Action NextTicketPriceChanged;
-
-    public event Action RunFinished;
-    public event Action<ProgressType> ProgressChanged;
-
-    public void Start()
-    {
-        ProgressChanged?.Invoke(ProgressType.STARTED);
-    }
+    public event Action RunStarted;
+    public event Action<bool> RunFinished;
 
     public void SetLevelData(string stationId, int daysPerLevel, int tickPerDay, int levels, int ticketPrice, int nextTicketPrice)
     {
@@ -47,18 +37,11 @@ public class Run
         SetLevelsCount(levels);
         SetTicketPrice(ticketPrice);
         SetNextTicketPrice(nextTicketPrice);
-        SetLocation(Location.STATION);
     }
 
-    public void RequestSetLocation(Location location)
+    public void Start()
     {
-        LocationChangeRequested?.Invoke(location);
-    }
-
-    public void SetLocation(Location location)
-    {
-        Location = location;
-        LocationChanged?.Invoke();
+        RunStarted?.Invoke();
     }
 
     public void RequestIncrementTick()
@@ -102,10 +85,10 @@ public class Run
 
     public void SetDay(int value)
     {
-        SetTick(0);
-
         Day = value;
         DayChanged?.Invoke();
+
+        SetTick(0);
     }
 
     public void SetDaysPerLevel(int value)
@@ -148,30 +131,6 @@ public class Run
 
     public void FinishRun(bool result)
     {
-        State = result ? StateType.WIN : StateType.LOSE;
-        RunFinished?.Invoke();
-    }
-
-    public void UpdateProgress(ProgressType progressType)
-    {
-        ProgressChanged?.Invoke(progressType);
-    }
-
-    public enum StateType
-    {
-        IN_PROGRESS,
-        WIN,
-        LOSE
-    }
-
-    public enum ProgressType
-    {
-        STARTED,
-        LOCATION_CHANGED,
-        SESSION_FINISHED,
-        DAY_FINISHED,
-        LEVEL_FINISHED,
-        WIN,
-        LOSE
+        RunFinished?.Invoke(result);
     }
 }

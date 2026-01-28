@@ -1,29 +1,49 @@
+using System;
+using System.Collections.Generic;
+using _Main.Scripts.Core.Services;
+using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
-using PlatformCore.Infrastructure.Lifecycle;
+using PlatformCore.Services.UI;
 
-public class SleepController : IBaseController, IActivatable
+public class SleepController : BaseContextController<UISleepView>, IGameStateChanger
 {
 	private readonly Run run;
 	private readonly SleepView sleepView;
 	private readonly Interactor interactor;
+	private readonly IInputService inputService;
 
-	public SleepController(Run run, SleepView sleepView, Interactor interactor)
+	public SleepController(IUIService uIService, Run run, SleepView sleepView, Interactor interactor, IInputService inputService) : base(uIService)
 	{
 		this.run = run;
 		this.sleepView = sleepView;
 		this.interactor = interactor;
+		this.inputService = inputService;
 	}
 
-	public void Activate()
+	protected override void OnActivate()
 	{
+		base.OnActivate();
+
 		interactor.InteractionStarted += OnInteractionStarted;
 		interactor.InteractionEnded += OnInteractionEnded;
 	}
 
-	public void Deactivate()
+	protected override void OnDeactivate()
 	{
 		interactor.InteractionEnded -= OnInteractionEnded;
 		interactor.InteractionStarted -= OnInteractionStarted;
+
+		base.OnDeactivate();
+	}
+
+	public IEnumerable<(StateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+	{
+		yield return (StateTransitionTask.SHOW_WAKE_UP, async (x) =>
+		{
+			await ShowWakeUp();
+			await WaitAndHideWakeUp();
+		}
+		);
 	}
 
 	private void OnInteractionStarted(InteractionAction action)
@@ -32,6 +52,10 @@ public class SleepController : IBaseController, IActivatable
 		{
 			OnLayed();
 		}
+		else if (action is InteractableActionSleep)
+		{
+			run.RequestSetDay(run.Day + 1);
+		}
 	}
 
 	private void OnInteractionEnded(InteractionAction action)
@@ -39,10 +63,6 @@ public class SleepController : IBaseController, IActivatable
 		if (action is InteractableActionLay)
 		{
 			OnStoodUp();
-		}
-		else if (action is InteractableActionSleep)
-		{
-			run.RequestSetDay(run.Day + 1);
 		}
 	}
 
@@ -55,4 +75,28 @@ public class SleepController : IBaseController, IActivatable
 	{
 		sleepView.SleepObject.SetActive(false);
 	}
+
+	private UniTask ShowWakeUp()
+	{
+		return _context.ShowWakeUp();
+	}
+
+	private async UniTask WaitAndHideWakeUp()
+	{
+		var source = new UniTaskCompletionSource();
+
+		void OnInteracted()
+		{
+			inputService.OnSpeechLineSkip -= OnInteracted;
+			interactor.StopAllActions(true);
+			source.TrySetResult();
+		}
+
+		inputService.OnSpeechLineSkip += OnInteracted;
+
+		await source.Task;
+
+		await _context.HideWakeUp();
+	}
+
 }

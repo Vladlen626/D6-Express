@@ -21,20 +21,12 @@ namespace _Main.Scripts.Dice
 
 		public void Activate()
 		{
-			run.ProgressChanged += OnProgressChanged;
+			run.LevelChanged += OnLevelStarted;
 		}
 
 		public void Deactivate()
 		{
-			run.ProgressChanged -= OnProgressChanged;
-		}
-
-		private void OnProgressChanged(Run.ProgressType progressType)
-		{
-			if (progressType == Run.ProgressType.STARTED)
-			{
-				OnLevelStarted();
-			}
+			run.LevelChanged -= OnLevelStarted;
 		}
 
 		private void OnLevelStarted()

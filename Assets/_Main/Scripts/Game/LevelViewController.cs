@@ -1,63 +1,35 @@
 using PlatformCore.Core;
-using PlatformCore.Services.UI;
-using UnityEngine;
+using PlatformCore.Infrastructure.Lifecycle;
+using PlatformCore.Services;
 
-public class LevelViewController : BaseContextController<UILevelView>
+public class LevelViewController : IBaseController, IActivatable
 {
-	private readonly PlayerModel playerModel;
-	private readonly Run run;
-	private readonly Light sun;
+    private readonly D6Game game;
+	private readonly PlayerView playerView;
+	private readonly ICameraService cameraService;
 
-	public LevelViewController(IUIService uiService, PlayerModel playerModel, Run run, Light sun) : base(uiService)
+	public LevelViewController(D6Game game, PlayerView playerView, ICameraService cameraService)
 	{
-		this.playerModel = playerModel;
-		this.run = run;
-		this.sun = sun;
+        this.game = game;
+		this.playerView = playerView;
+		this.cameraService = cameraService;
 	}
 
-	protected override void OnActivate()
+    public void Activate()
+    {
+		game.LocationChanged += OnLocationChanged;
+    }
+
+    public void Deactivate()
+    {
+		game.LocationChanged -= OnLocationChanged;
+    }
+
+	private void OnLocationChanged()
 	{
-		run.TickChanged += OnTickChanged;
-		run.TicksPerDayChanged += OnTickChanged;
-
-		run.DayChanged += OnDaysChanged;
-		run.DaysPerLevelChanged += OnDaysChanged;
-		
-		playerModel.InventoryModel.OnCashCountChanged += OnCashChanged;
-		run.NextTicketPriceChanged += OnCashChanged;
-
-		OnCashChanged();
-		OnTickChanged();
-		OnDaysChanged();
-	}
-
-	protected override void OnDeactivate()
-	{
-		playerModel.InventoryModel.OnCashCountChanged -= OnCashChanged;
-
-		run.DayChanged -= OnDaysChanged;
-		run.TickChanged -= OnTickChanged;
-	}
-
-	private void OnTickChanged()
-	{
-		ChangeDayState();
-
-		_context.SetTicksText("ticks_progress", (run.TicksPerDay - run.Tick).ToString());
-	}
-
-	private void ChangeDayState()
-	{
-		//Todo: добавить смену дня на ночь.
-	}
-
-	private void OnDaysChanged()
-	{
-		_context.SetDaysText("days_progress", (run.DaysPerLevel - run.Day).ToString());
-	}
-
-	private void OnCashChanged()
-	{
-		_context.SetCashProgress("cash_progress", $"{playerModel.InventoryModel.CashCount}", $"{run.NextTicketPrice}");
+		if (game.Location == Location.STATION || game.Location == Location.TRAIN)
+		{
+			cameraService.AttachTo(playerView.CameraRoot);
+		}
 	}
 }

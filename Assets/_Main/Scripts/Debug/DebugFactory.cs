@@ -15,13 +15,11 @@ public static class DebugFactory
     {
         var incrementTick = new DbgMenuItemIncrementTicks(run);
         var incrementDay = new DbgMenuItemIncrementDays(run);
-        var sleep = new DbgMenuItemIncrementSleep();
-        var wakeUp = new DbgMenuItemIncrementWakeUp();
         var switchToStation = new DbgMenuItemSwitchToStation(run);
         var switchToTrain = new DbgMenuItemSwitchToTrain(run);
         var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(run, playerModel, playerView, configService, notifications);
 
-        var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, sleep, wakeUp, switchToStation, switchToTrain, openPlayerWindow);
+        var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, switchToStation, switchToTrain, openPlayerWindow);
 
         await gameMenu.Preload();
 

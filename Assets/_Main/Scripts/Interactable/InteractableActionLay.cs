@@ -29,7 +29,7 @@ public class InteractableActionLay : InteractionAction
 		{
 			var moveTask = Interactor.transform.DOMove(layable.SitTfm.position, .25f).AsyncWaitForCompletion().AsUniTask(); 
 			var rotateTask = Interactor.transform.DORotateQuaternion(layable.SitTfm.rotation, .25f).AsyncWaitForCompletion().AsUniTask();
-			Interactor.GetComponent<NpcView>().Animator.SetInteger(State, 2);
+			Interactor.GetComponent<CharacterView>().Animator.SetInteger(State, 2);
 			await UniTask.WhenAll(moveTask, rotateTask);
 		}
 
@@ -56,7 +56,7 @@ public class InteractableActionLay : InteractionAction
 			await UniTask.WhenAll(moveTask, rotateTask, rotateHeadTask);
 		}
 
-		Interactor.GetComponent<NpcView>().Animator.SetInteger(State, 0);
+		Interactor.GetComponent<CharacterView>().Animator.SetInteger(State, 0);
 		StateModel.TryRemoveState(CharacterState.TRANSITION);
 		StateModel.TryRemoveState(CharacterState.LAYING);
 	}

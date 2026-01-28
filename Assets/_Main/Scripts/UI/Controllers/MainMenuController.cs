@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services.UI;
 
@@ -6,35 +5,53 @@ namespace _Main.Scripts.UI
 {
 	public class MainMenuController : BaseContextController<UIMainMenu>
 	{
-		private UniTaskCompletionSource _startTcs;
+		private readonly D6Game game;
+        private readonly Run run;
+		private readonly ICursorService cursorService;
 
-		public MainMenuController(IUIService uiService)
-			: base(uiService)
-		{
-		}
+        public MainMenuController(IUIService uiService, D6Game game, Run run, ICursorService cursorService)
+            : base(uiService)
+        {
+            this.game = game;
+            this.run = run;
+            this.cursorService = cursorService;
+        }
 
-		protected override void OnActivate()
+        protected override void OnActivate()
 		{
+			_context.Hide();
+
 			_context.OnStartClicked += OnStartClickedHandler;
 			_context.OnSettingsClicked += OnSettingsClickedHandler;
+
+			game.LocationChanged += OnLocationChanged;
 		}
 
 		protected override void OnDeactivate()
 		{
+			game.LocationChanged -= OnLocationChanged;
+
 			_context.OnStartClicked -= OnStartClickedHandler;
 			_context.OnSettingsClicked -= OnSettingsClickedHandler;
 		}
 
-		public UniTask WaitForStartAsync()
+		private void OnLocationChanged()
 		{
-			_startTcs = new UniTaskCompletionSource();
-			return _startTcs.Task;
+			if (game.Location == Location.MAIN_MENU)
+			{
+				_context.Show();
+				cursorService.UnlockCursor();
+			}
+			else
+			{
+				_context.Hide();
+				cursorService.LockCursor();
+			}
 		}
 
 		private void OnStartClickedHandler()
 		{
-			_context.Hide();
-			_startTcs?.TrySetResult();
+			run.Start();
 		}
 
 		private void OnSettingsClickedHandler()

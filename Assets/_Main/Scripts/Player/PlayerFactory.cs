@@ -44,7 +44,7 @@ public static class PlayerFactory
 	}
 
 	public static IBaseController[] GetPlayerBaseControllers(PlayerView playerView, ServiceLocator serviceLocator,
-		PlayerModel playerModel, IInputService inputService, IAudioService audioService)
+		PlayerModel playerModel, IInputService inputService, IAudioService audioService, D6Game game, Run run)
 	{
 		var input = serviceLocator.Get<IInputService>();
 		var cursor = serviceLocator.Get<ICursorService>();
@@ -55,7 +55,7 @@ public static class PlayerFactory
 		var playerControllers = new IBaseController[]
 		{
 			new MovementController(playerView, playerModel, input, cursor),
-			new PlayerHudController(uiService, playerModel),
+			new PlayerHudController(uiService, playerModel, game, run),
 			new HintController(uiService, playerView),
 			new FartController(fartView, inputService, audioService)
 		};

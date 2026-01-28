@@ -145,7 +145,7 @@ namespace _Main.Scripts.Dice
 			PassActivationMultiplierOverlay.UpdateState(remainingActivations, isArmed, true);
 		}
 
-		private void OnRunFinished()
+		private void OnRunFinished(bool result)
 		{
 			remainingActivations = ActivationsPerDay;
 			isArmed = false;

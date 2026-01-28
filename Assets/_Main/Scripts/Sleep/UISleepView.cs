@@ -6,38 +6,19 @@ using UnityEngine;
 public class UISleepView : UIBaseElement
 {
     [SerializeField]
-    private RectTransform upper;
+    private CanvasGroup wakeUpCanvasGroup;
 
-    [SerializeField]
-    private RectTransform bottom;
-
-    [SerializeField]
-    private float duration;
-
-    [SerializeField]
-    private AnimationCurve curve;
-
-    private float initialUpperY, initialBottomY;
-
-    private void Start()
+    public async UniTask ShowWakeUp()
     {
-        initialUpperY = upper.anchoredPosition.y;
-        initialBottomY = bottom.anchoredPosition.y;
+        await wakeUpCanvasGroup
+            .DOFade(1f, 0.5f)
+            .SetEase(Ease.OutQuad);
     }
 
-    public UniTask CloseEyes()
+    public async UniTask HideWakeUp()
     {
-        var upperMove = upper.DOAnchorPosY(0f, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
-        var bottomMove = bottom.DOAnchorPosY(0f, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
-
-        return UniTask.WhenAll(upperMove, bottomMove);
-    }
-
-    public UniTask OpenEyes()
-    {
-        var upperMove = upper.DOAnchorPosY(initialUpperY, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
-        var bottomMove = bottom.DOAnchorPosY(initialBottomY, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
-
-        return UniTask.WhenAll(upperMove, bottomMove);
+        await wakeUpCanvasGroup
+            .DOFade(0f, 0.5f)
+            .SetEase(Ease.OutQuad);
     }
 }

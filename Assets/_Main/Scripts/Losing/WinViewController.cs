@@ -1,25 +1,31 @@
-using System.Linq;
+using System;
+using System.Collections.Generic;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
-public class WinViewController : BaseContextController<UIWinView>
+public class WinViewController : BaseContextController<UIWinView>, IGameStateChanger
 {
+	private readonly D6Game game;
 	private readonly IInputService inputService;
 	private readonly ICursorService cursorService;
 	private readonly ConfigService configService;
-    private readonly TransitionService transitionService;
-    private TextsConfig textsConfig;
+	private TextsConfig textsConfig;
 
-	public WinViewController(IUIService uiService, IInputService inputService, ICursorService cursorService, ConfigService configService, TransitionService transitionService) : base(uiService)
+	public WinViewController(IUIService uiService, D6Game game, IInputService inputService, ICursorService cursorService, ConfigService configService) : base(uiService)
 	{
+		this.game = game;
 		this.inputService = inputService;
 		this.cursorService = cursorService;
 		this.configService = configService;
-        this.transitionService = transitionService;
-    }
+	}
+
+	public IEnumerable<(StateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+	{
+		yield return (StateTransitionTask.SHOW_WIN, async (x) => ShowContext());
+	}
 
 	protected override async UniTask OnPreloadAsync()
 	{
@@ -33,46 +39,32 @@ public class WinViewController : BaseContextController<UIWinView>
 		_context.SetWinText(textsConfig.texts["win_header"]);
 		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
 
-		HideContext();
+		_context.Hide();
 
-		transitionService.TransitionRequested += OnTransitionRequested;
 		_context.ExitButtonClicked += OnExitButtonClickedHandler;
 	}
 
 	protected override void OnDeactivate()
 	{
 		_context.ExitButtonClicked -= OnExitButtonClickedHandler;
-		transitionService.TransitionRequested -= OnTransitionRequested;
-
-		HideContext();
+		_context.Hide();
 
 		base.OnDeactivate();
-	}
-
-	private void OnTransitionRequested()
-	{
-		if (transitionService.CurrentTransition.data.tasks.Contains(Transition.TaskType.WIN))
-		{
-			transitionService.CurrentTransition.AddTask(async () => ShowContext());
-		}
 	}
 
 	private void ShowContext()
 	{
 		_context.Show();
-		inputService.DisablePlayerInputs();
-		cursorService.UnlockCursor();
 	}
 
 	private void HideContext()
 	{
 		_context.Hide();
-		inputService.EnablePlayerInputs();
-		cursorService.LockCursor();
 	}
 
 	private void OnExitButtonClickedHandler()
 	{
-		_context.Hide();
+		game.RequestSetLocation(Location.MAIN_MENU);
+		HideContext();
 	}
 }

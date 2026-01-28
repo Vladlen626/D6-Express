@@ -235,6 +235,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
+			ModifiersModel.Reset();
 			tableModel.Reset();
 			PlayerDiceModelList.Clear();
 			EnemyDiceModelList.Clear();
