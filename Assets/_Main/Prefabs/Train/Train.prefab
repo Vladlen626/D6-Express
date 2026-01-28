@@ -232,6 +232,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1558494628716004490}
     m_Modifications:
+    - target: {fileID: 774051169711241978, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1219617283893941618, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
       propertyPath: m_Name
       value: TrainSection (2)
@@ -284,9 +288,33 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6982107536086988512, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8394471534761098945, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8872519827554604805, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
       propertyPath: blockInteract
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9101599584734864624, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 109.57
+      objectReference: {fileID: 0}
+    - target: {fileID: 9101599584734864624, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0033
+      objectReference: {fileID: 0}
+    - target: {fileID: 9101599584734864624, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.7261
+      objectReference: {fileID: 0}
+    - target: {fileID: 9101599584734864624, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.5939
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4844836890124876248, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
@@ -354,6 +382,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainHead
       objectReference: {fileID: 0}
+    - target: {fileID: 8464139902364429515, guid: edb640ea08f79374486a8fbe8f84ac90, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -15,8 +15,10 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnBetClicked;
 	public event Action OnPlayClicked;
 	
-	[Header("Global")]
+	[Header("Cameras")]
 	[SerializeField] private CinemachineCamera cinemachineCamera;
+
+	[Header("Global")]
 	[SerializeField] private Transform combosTransform;
 	[SerializeField] private Transform tooltipPos;
 	
