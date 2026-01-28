@@ -24,11 +24,12 @@ public static class RunFactory
 				game,
 				playerView,
 				cameraService),
-			new LevelController(
+			new RunController(
 				game,
 				run,
 				runConfig,
-				playerModel)
+				playerModel,
+				configService)
 		};
 	}
 

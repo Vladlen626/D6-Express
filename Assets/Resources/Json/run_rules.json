@@ -4,35 +4,42 @@
     "levels": [
       {
         "id": "default",
-        "station_id": "np",
+        "station_id": "wb",
         "days": 1,
         "ticks_per_day": 2,
         "cash_goal": 1000
       },
       {
         "id": "default",
-        "station_id": "ss",
+        "station_id": "sp",
         "days": 4,
         "ticks_per_day": 2,
         "cash_goal": 1500
       },
       {
         "id": "default",
-        "station_id": "ow",
+        "station_id": "mh",
         "days": 2,
         "ticks_per_day": 2,
         "cash_goal": 2000
       },
       {
         "id": "default",
-        "station_id": "nf",
+        "station_id": "mp",
         "days": 3,
         "ticks_per_day": 2,
         "cash_goal": 2500
       },
       {
         "id": "default",
-        "station_id": "sf"
+        "station_id": "mg",
+        "days": 3,
+        "ticks_per_day": 2,
+        "cash_goal": 3000
+      },
+      {
+        "id": "default",
+        "station_id": "ah"
       }
     ]
   }

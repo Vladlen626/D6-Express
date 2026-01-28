@@ -7,6 +7,7 @@ public static class DebugFactory
     public static async Task<DebugMenuUIController> GetBaseController(
         IInputService inputService,
         ICursorService cursorService,
+        D6Game game,
         Run run,
         PlayerModel playerModel,
         PlayerView playerView,
@@ -15,8 +16,8 @@ public static class DebugFactory
     {
         var incrementTick = new DbgMenuItemIncrementTicks(run);
         var incrementDay = new DbgMenuItemIncrementDays(run);
-        var switchToStation = new DbgMenuItemSwitchToStation(run);
-        var switchToTrain = new DbgMenuItemSwitchToTrain(run);
+        var switchToStation = new DbgMenuItemSwitchToStation(game);
+        var switchToTrain = new DbgMenuItemSwitchToTrain(game);
         var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(run, playerModel, playerView, configService, notifications);
 
         var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, switchToStation, switchToTrain, openPlayerWindow);

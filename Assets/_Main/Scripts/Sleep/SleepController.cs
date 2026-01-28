@@ -36,9 +36,9 @@ public class SleepController : BaseContextController<UISleepView>, IGameStateCha
 		base.OnDeactivate();
 	}
 
-	public IEnumerable<(StateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
 	{
-		yield return (StateTransitionTask.SHOW_WAKE_UP, async (x) =>
+		yield return (GameStateTransitionTask.SHOW_WAKE_UP, async (x) =>
 		{
 			await ShowWakeUp();
 			await WaitAndHideWakeUp();

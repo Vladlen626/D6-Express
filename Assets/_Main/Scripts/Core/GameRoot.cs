@@ -72,7 +72,7 @@ namespace _Main.Scripts.Core
 			var controllersList = new List<IBaseController>();
 			// --------------
 
-			var playerModel = await PlayerFactory.CreatePlayerModel(configService);
+			var playerModel = new PlayerModel();
 
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 
@@ -111,10 +111,10 @@ namespace _Main.Scripts.Core
 			controllersList.AddRange(await RunFactory.GetBaseControllers(game, run, playerModel, playerView,
 				configService, cameraService));
 
-            var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
-            var loseViewController = new LoseViewController(uiService, game, inputService, cursorService, configService);
+			var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
+			var loseViewController = new LoseViewController(uiService, game, inputService, cursorService, configService);
 
-            var baseControllers = new IBaseController[]
+			var baseControllers = new IBaseController[]
 			{
 				winViewController,
 				loseViewController,
@@ -122,7 +122,7 @@ namespace _Main.Scripts.Core
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
 					run, configService),
 				new LightController(sceneContext.Lights, run),
-				new InformationPanelViewController(run, sceneContext.InformationPanelView),
+				new InformationPanelViewController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
 			};
 
@@ -134,7 +134,7 @@ namespace _Main.Scripts.Core
 
 			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));
-			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, run, playerModel, playerView, configService, notifications));
+			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notifications));
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService));
 			// todo. не требуется к mvp. раскоментить позже
 			// controllersList.Add(QuestFactory.GetController(uiService, playerModel.Quests));
@@ -145,12 +145,12 @@ namespace _Main.Scripts.Core
 			controllersList.AddRange(baseControllers);
 
 			await _lifecycle.RegisterControllersGroupAsync(controllersList);
-			
+
 			var gameStateController = new GameStateController(game, run);
-			gameStateController.AddTask(async (x) => cursorService.LockCursor(), StateTransitionTask.LOCK_CURSOR);
-			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), StateTransitionTask.UNLOCK_CURSOR);
-			gameStateController.AddTask((x) => npcSpawner.Respawn(), StateTransitionTask.NPC_RESPAWN);
-			gameStateController.AddTask(async (x) => shop.Restock(), StateTransitionTask.SHOP_RESTOCK);
+			gameStateController.AddTask(async (x) => cursorService.LockCursor(), GameStateTransitionTask.LOCK_CURSOR);
+			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), GameStateTransitionTask.UNLOCK_CURSOR);
+			gameStateController.AddTask((x) => npcSpawner.Respawn(), GameStateTransitionTask.NPC_RESPAWN);
+			gameStateController.AddTask(async (x) => shop.Restock(), GameStateTransitionTask.SHOP_RESTOCK);
 			gameStateController.AddChanger(transitionViewController);
 			gameStateController.AddChanger(locationController);
 			gameStateController.AddChanger(winViewController);

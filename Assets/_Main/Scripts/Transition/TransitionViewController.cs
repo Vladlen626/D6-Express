@@ -19,11 +19,11 @@ public class TransitionViewController : BaseContextController<UITransitionView>,
         this.configService = configService;
     }
 
-    public IEnumerable<(StateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+    public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
     {
-        yield return (StateTransitionTask.VISUAL_TRANSITION_START, (x) => ShowContext(0.15f));
-        yield return (StateTransitionTask.VISUAL_TRANSITION_FINISH, (x) => HideContext(0.15f));
-        yield return (StateTransitionTask.CHANGE_LOCATION, async (x) =>
+        yield return (GameStateTransitionTask.VISUAL_TRANSITION_START, (x) => ShowContext(0.15f));
+        yield return (GameStateTransitionTask.VISUAL_TRANSITION_FINISH, (x) => HideContext(0.15f));
+        yield return (GameStateTransitionTask.CHANGE_LOCATION, async (x) =>
         {
             if (x.Location != Location.MAIN_MENU)
             {

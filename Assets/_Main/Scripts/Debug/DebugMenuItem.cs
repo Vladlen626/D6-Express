@@ -45,36 +45,36 @@ public class DbgMenuItemIncrementTicks : DebugMenuItem
 
 public class DbgMenuItemSwitchToStation : DebugMenuItem
 {
-    private readonly Run run;
+    private readonly D6Game game;
 
     public override string Path => "Switch to Station";
 
-    public DbgMenuItemSwitchToStation(Run run)
+    public DbgMenuItemSwitchToStation(D6Game game)
     {
-        this.run = run;
+        this.game = game;
     }
 
     public override void Execute()
     {
-        // run.RequestSetLocation(Location.STATION);
+        game.RequestSetLocation(Location.STATION);
     }
 }
 
 
 public class DbgMenuItemSwitchToTrain : DebugMenuItem
 {
-    private readonly Run run;
+    private readonly D6Game game;
 
     public override string Path => "Switch to Train";
 
-    public DbgMenuItemSwitchToTrain(Run run)
+    public DbgMenuItemSwitchToTrain(D6Game game)
     {
-        this.run = run;
+        this.game = game;
     }
 
     public override void Execute()
     {
-        // run.RequestSetLocation(Location.TRAIN);
+        game.RequestSetLocation(Location.TRAIN);
     }
 }
 

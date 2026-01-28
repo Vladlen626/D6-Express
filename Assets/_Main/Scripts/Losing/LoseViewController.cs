@@ -23,9 +23,9 @@ public class LoseViewController : BaseContextController<UILoseView>, IGameStateC
 		this.configService = configService;
 	}
 
-	public IEnumerable<(StateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
 	{
-		yield return (StateTransitionTask.SHOW_LOSE, async (x) => ShowContext());
+		yield return (GameStateTransitionTask.SHOW_LOSE, async (x) => ShowContext());
 	}
 
 	protected override async UniTask OnPreloadAsync()

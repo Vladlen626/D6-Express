@@ -9,25 +9,6 @@ using UnityEngine;
 
 public static class PlayerFactory
 {
-	public static async UniTask<PlayerModel> CreatePlayerModel(ConfigService configService)
-	{
-		var playerModel = new PlayerModel();
-
-		var playerConfig = await configService.GetFirstOrDefaultAsync<PlayerConfig>(ResourcePaths.Json.player);
-		int startCash = playerConfig.cash;
-
-		playerModel.InventoryModel.GiveCash(startCash);
-
-		foreach (var playerConfigDice in playerConfig.dices)
-		{
-			playerModel.InventoryModel.AddDice(playerConfigDice);
-		}
-
-
-		return playerModel;
-	}
-
-
 	public static async UniTask<PlayerView> SpawnPlayerView(
 		IObjectFactory factory,
 		IInputService inputService,

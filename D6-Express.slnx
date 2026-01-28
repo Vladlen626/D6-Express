@@ -13,6 +13,10 @@
   <Project Path="FMODUnity.csproj" />
   <Project Path="MackySoft.SerializeReferenceExtensions.Editor.csproj" />
   <Project Path="LineworkLite.Editor.csproj" />
+  <Project Path="Unity.InputSystem.ForUI.csproj" />
+  <Project Path="LineworkLite.Editor.csproj" />
+  <Project Path="Unity.AI.Navigation.csproj" />
+  <Project Path="Unity.Collections.CodeGen.csproj" />
   <Project Path="FMODUnityHaptics.csproj" />
   <Project Path="UniTask.TextMeshPro.csproj" />
   <Project Path="UImGui.Editor.csproj" />
