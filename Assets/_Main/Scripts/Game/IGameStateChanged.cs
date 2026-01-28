@@ -3,5 +3,5 @@ using System.Collections.Generic;
 
 public interface IGameStateChanger
 {
-	public IEnumerable<(StateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs();
+	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs();
 }

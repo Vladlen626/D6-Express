@@ -23,12 +23,12 @@ public class LocationController : IBaseController, IGameStateChanger
 		this.playerView = playerView;
 	}
 
-	public IEnumerable<(StateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
 	{
-		yield return (StateTransitionTask.CHANGE_LOCATION, (x) => Perform(x));
+		yield return (GameStateTransitionTask.CHANGE_LOCATION, (x) => Perform(x));
 	}
 
-	private UniTask Perform(GameStateChange data)
+	private UniTask Perform(GameStateTransition data)
 	{
 		playerModel.PlayerStateModel.TryAddState(CharacterState.LOCATION_TRANSITIONING);
 		playerView.SetCharacterGhost(true);

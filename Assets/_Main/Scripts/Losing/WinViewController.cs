@@ -22,9 +22,9 @@ public class WinViewController : BaseContextController<UIWinView>, IGameStateCha
 		this.configService = configService;
 	}
 
-	public IEnumerable<(StateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
 	{
-		yield return (StateTransitionTask.SHOW_WIN, async (x) => ShowContext());
+		yield return (GameStateTransitionTask.SHOW_WIN, async (x) => ShowContext());
 	}
 
 	protected override async UniTask OnPreloadAsync()

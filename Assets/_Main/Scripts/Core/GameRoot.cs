@@ -147,10 +147,10 @@ namespace _Main.Scripts.Core
 			await _lifecycle.RegisterControllersGroupAsync(controllersList);
 			
 			var gameStateController = new GameStateController(game, run);
-			gameStateController.AddTask(async (x) => cursorService.LockCursor(), StateTransitionTask.LOCK_CURSOR);
-			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), StateTransitionTask.UNLOCK_CURSOR);
-			gameStateController.AddTask((x) => npcSpawner.Respawn(), StateTransitionTask.NPC_RESPAWN);
-			gameStateController.AddTask(async (x) => shop.Restock(), StateTransitionTask.SHOP_RESTOCK);
+			gameStateController.AddTask(async (x) => cursorService.LockCursor(), GameStateTransitionTask.LOCK_CURSOR);
+			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), GameStateTransitionTask.UNLOCK_CURSOR);
+			gameStateController.AddTask((x) => npcSpawner.Respawn(), GameStateTransitionTask.NPC_RESPAWN);
+			gameStateController.AddTask(async (x) => shop.Restock(), GameStateTransitionTask.SHOP_RESTOCK);
 			gameStateController.AddChanger(transitionViewController);
 			gameStateController.AddChanger(locationController);
 			gameStateController.AddChanger(winViewController);

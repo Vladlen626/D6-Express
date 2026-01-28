@@ -1,4 +1,4 @@
-public enum StateTransitionTask
+public enum GameStateTransitionTask
 {
 	VISUAL_TRANSITION_START,
 	START_RUN,

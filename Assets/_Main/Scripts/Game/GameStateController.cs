@@ -4,82 +4,82 @@ using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 
-public delegate UniTask GameStateChangeFunc(GameStateChange data);
+public delegate UniTask GameStateChangeFunc(GameStateTransition data);
 
 public class GameStateController : IBaseController, IActivatable
 {
-	private readonly List<GameStateChangeFunc>[] funcs = new List<GameStateChangeFunc>[Enum.GetValues(typeof(StateTransitionTask)).Length];
+	private readonly List<GameStateChangeFunc>[] funcs = new List<GameStateChangeFunc>[Enum.GetValues(typeof(GameStateTransitionTask)).Length];
 
 	private readonly D6Game game;
 	private readonly Run run;
 
-	private static readonly StateTransitionTask[] RunStartRecipe =
+	private static readonly GameStateTransitionTask[] RunStartRecipe =
 	{
-		StateTransitionTask.LOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_START,
-		StateTransitionTask.CHANGE_LOCATION,
-		StateTransitionTask.NPC_RESPAWN,
-		StateTransitionTask.SHOP_RESTOCK,
-		StateTransitionTask.VISUAL_TRANSITION_FINISH
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHANGE_LOCATION,
+		GameStateTransitionTask.NPC_RESPAWN,
+		GameStateTransitionTask.SHOP_RESTOCK,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH
 	};
 
-	private static readonly StateTransitionTask[] TickRecipe =
+	private static readonly GameStateTransitionTask[] TickRecipe =
 	{
-		StateTransitionTask.LOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_START,
-		StateTransitionTask.NPC_RESPAWN,
-		StateTransitionTask.SHOP_RESTOCK,
-		StateTransitionTask.VISUAL_TRANSITION_FINISH,
-		StateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.NPC_RESPAWN,
+		GameStateTransitionTask.SHOP_RESTOCK,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_CURSOR,
 	};
 
-	private static readonly StateTransitionTask[] DayRecipe =
+	private static readonly GameStateTransitionTask[] DayRecipe =
 	{
-		StateTransitionTask.LOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_START,
-		StateTransitionTask.NPC_RESPAWN,
-		StateTransitionTask.SHOP_RESTOCK,
-		StateTransitionTask.SHOW_WAKE_UP,
-		StateTransitionTask.VISUAL_TRANSITION_FINISH
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.NPC_RESPAWN,
+		GameStateTransitionTask.SHOP_RESTOCK,
+		GameStateTransitionTask.SHOW_WAKE_UP,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH
 	};
 
-	private static readonly StateTransitionTask[] LocationRecipe =
+	private static readonly GameStateTransitionTask[] LocationRecipe =
 	{
-		StateTransitionTask.LOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_START,
-		StateTransitionTask.CHANGE_LOCATION,
-		StateTransitionTask.NPC_RESPAWN,
-		StateTransitionTask.SHOP_RESTOCK,
-		StateTransitionTask.VISUAL_TRANSITION_FINISH
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHANGE_LOCATION,
+		GameStateTransitionTask.NPC_RESPAWN,
+		GameStateTransitionTask.SHOP_RESTOCK,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH
 	};
 
-	private static readonly StateTransitionTask[] LocationMainMenuRecipe =
+	private static readonly GameStateTransitionTask[] LocationMainMenuRecipe =
 	{
-		StateTransitionTask.LOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_START,
-		StateTransitionTask.CHANGE_LOCATION,
-		StateTransitionTask.NPC_RESPAWN,
-		StateTransitionTask.SHOP_RESTOCK,
-		StateTransitionTask.VISUAL_TRANSITION_FINISH,
-		StateTransitionTask.UNLOCK_CURSOR
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHANGE_LOCATION,
+		GameStateTransitionTask.NPC_RESPAWN,
+		GameStateTransitionTask.SHOP_RESTOCK,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_CURSOR
 	};
 
-	private static readonly StateTransitionTask[] RunFinishedWinRecipe =
+	private static readonly GameStateTransitionTask[] RunFinishedWinRecipe =
 	{
-		StateTransitionTask.LOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_START,
-		StateTransitionTask.SHOW_WIN,
-		StateTransitionTask.UNLOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.SHOW_WIN,
+		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
-	private static readonly StateTransitionTask[] RunFinishedLoseRecipe =
+	private static readonly GameStateTransitionTask[] RunFinishedLoseRecipe =
 	{
-		StateTransitionTask.LOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_START,
-		StateTransitionTask.SHOW_LOSE,
-		StateTransitionTask.UNLOCK_CURSOR,
-		StateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.SHOW_LOSE,
+		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
 	public GameStateController(D6Game game, Run run)
@@ -108,7 +108,7 @@ public class GameStateController : IBaseController, IActivatable
 		}
 	}
 
-	public void AddTask(GameStateChangeFunc func, StateTransitionTask task = StateTransitionTask.OTHER)
+	public void AddTask(GameStateChangeFunc func, GameStateTransitionTask task = GameStateTransitionTask.OTHER)
 	{
 		int index = (int)task;
 		if (funcs[index] == null)
@@ -124,28 +124,28 @@ public class GameStateController : IBaseController, IActivatable
 		game.DayChanged += OnDayChanged;
 		run.RunFinished += OnRunFinished;
 
-		RequestChange(new GameStateChange(RunStartRecipe, Location.STATION));
+		RequestChange(new GameStateTransition(RunStartRecipe, Location.STATION));
 	}
 
 	private void OnTickChanged()
 	{
-		RequestChange(new GameStateChange(TickRecipe));
+		RequestChange(new GameStateTransition(TickRecipe));
 	}
 
 	private void OnDayChanged()
 	{
-		RequestChange(new GameStateChange(DayRecipe));
+		RequestChange(new GameStateTransition(DayRecipe));
 	}
 
 	private void OnLocationChangeRequested(Location location)
 	{
 		if (location == Location.MAIN_MENU)
 		{
-			RequestChange(new GameStateChange(LocationMainMenuRecipe, location));
+			RequestChange(new GameStateTransition(LocationMainMenuRecipe, location));
 		}
 		else
 		{
-			RequestChange(new GameStateChange(LocationRecipe, location));
+			RequestChange(new GameStateTransition(LocationRecipe, location));
 		}
 	}
 
@@ -156,10 +156,10 @@ public class GameStateController : IBaseController, IActivatable
 		game.TickChanged -= OnTickChanged;
 
 		var recipe = finished ? RunFinishedWinRecipe : RunFinishedLoseRecipe;
-		RequestChange(new GameStateChange(recipe));
+		RequestChange(new GameStateTransition(recipe));
 	}
 
-	private async void RequestChange(GameStateChange data)
+	private async void RequestChange(GameStateTransition data)
 	{
 		foreach (var task in data.Tasks)
 		{
