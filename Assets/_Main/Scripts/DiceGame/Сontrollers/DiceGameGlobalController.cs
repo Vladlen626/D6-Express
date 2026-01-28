@@ -169,6 +169,9 @@ namespace _Main.Scripts.Dice
 			var diceGameConfig = await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
 			var newTableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
 			diceGameModel.Setup(diceGameConfig, playerModel.InventoryModel.CashCount, newTableModel);
+			// Keep the base cap aligned with available board slots; items can extend beyond this value.
+			var baseCap = Mathf.Min(6, dicePositionsHandler.DicePositions.Length, dicePositionsHandler.BankedPositions.Length);
+			diceGameModel.SetBaseMaxDiceCount(baseCap);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
 		}
 		
@@ -198,13 +201,15 @@ namespace _Main.Scripts.Dice
 			await selectionController.WaitSelection();
 
 			var selectedModels = diceGameModel.PlayerDiceModelList;
-			playerDiceViewsArray = new DiceView[selectedModels.Count];
+			var activeSlots = dicePositionsHandler.DicePositions;
+			var playerLimit = Mathf.Min(selectedModels.Count, activeSlots.Length);
+			playerDiceViewsArray = new DiceView[playerLimit];
 
-			for (int i = 0; i < selectedModels.Count; i++)
+			for (int i = 0; i < playerLimit; i++)
 			{
 				var model = selectedModels[i];
 				var view = diceGameModel.ScreenDiceDict[model];
-				var gamePos = dicePositionsHandler.DicePositions[i];
+				var gamePos = activeSlots[i];
 
 				view.transform.SetParent(gamePos);
 				view.MoveToPosition(gamePos.position);
@@ -219,9 +224,13 @@ namespace _Main.Scripts.Dice
 		private async UniTask SetupEnemyDiceList()
 		{
 			var config = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_game_rules);
-			for (int i = 0; i < 6; i++)
+			var bankSlots = diceTableView.GameStatePosHandler.BankedPositions;
+			var activeSlots = dicePositionsHandler.DicePositions;
+			var enemyLimit = Mathf.Min(diceGameModel.MaxDiceCount, bankSlots.Length, activeSlots.Length);
+
+			for (int i = 0; i < enemyLimit; i++)
 			{
-				var startPos = diceTableView.GameStatePosHandler.BankedPositions[i];
+				var startPos = bankSlots[i];
 				DiceView view = await objectFactory.CreateAsync<DiceView>(
 					ResourcePaths.Items.DicePrefab, Vector3.zero, Quaternion.identity);
 
@@ -236,13 +245,13 @@ namespace _Main.Scripts.Dice
 			}
 
 			var enemyModels = diceGameModel.EnemyDiceModelList;
-			enemyDiceViewsArray = new DiceView[enemyModels.Count];
+			enemyDiceViewsArray = new DiceView[Mathf.Min(enemyModels.Count, activeSlots.Length)];
 
-			for (int i = 0; i < enemyModels.Count; i++)
+			for (int i = 0; i < enemyDiceViewsArray.Length; i++)
 			{
 				var model = enemyModels[i];
 				var view = diceGameModel.ScreenDiceDict[model];
-				var gamePos = dicePositionsHandler.DicePositions[i];
+				var gamePos = activeSlots[i];
 
 				view.transform.SetParent(gamePos);
 				view.MoveToPosition(gamePos.position);
@@ -296,7 +305,10 @@ namespace _Main.Scripts.Dice
 			{
 				foreach (var dice in playerDiceViewsArray)
 				{
-					objectFactory.Destroy(dice.gameObject);
+					if (dice != null)
+					{
+						objectFactory.Destroy(dice.gameObject);
+					}
 				}
 
 				playerDiceViewsArray = null;
@@ -306,7 +318,10 @@ namespace _Main.Scripts.Dice
 			{
 				foreach (var dice in enemyDiceViewsArray)
 				{
-					objectFactory.Destroy(dice.gameObject);
+					if (dice != null)
+					{
+						objectFactory.Destroy(dice.gameObject);
+					}
 				}
 
 				enemyDiceViewsArray = null;
