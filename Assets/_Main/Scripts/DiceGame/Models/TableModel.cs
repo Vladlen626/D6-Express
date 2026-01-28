@@ -16,6 +16,8 @@ namespace _Main.Scripts.Dice
 		public int PreviewPoints { get; private set; }
 		public int PlayerBankedPoints { get; private set; }
 		public int EnemyBankedPoints {get; private set;}
+		public int ActiveSlotsCount => _activePositions?.Length ?? 0;
+		public int BankedSlotsCount => _bankedPositions?.Length ?? 0;
 
 		public bool isFirstRoll { get; set; } = true;
 

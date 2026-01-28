@@ -11,11 +11,13 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly List<IDiceItem> items = new();
 		private readonly ModifiersModel modifiersModel;
+		private readonly DiceGameModel diceGameModel;
 		private bool defaultsInitialized;
 
-		public ItemsModel(ModifiersModel modifiersModel)
+		public ItemsModel(ModifiersModel modifiersModel, DiceGameModel diceGameModel = null)
 		{
 			this.modifiersModel = modifiersModel;
+			this.diceGameModel = diceGameModel;
 			AddDefaultItems();
 		}
 
@@ -40,6 +42,7 @@ namespace _Main.Scripts.Dice
 
 			items.Add(item);
 			modifiersModel?.AddModifier(item);
+			(item as IGameModelBoundItem)?.OnAddedToGameModel(diceGameModel);
 			ItemsChanged?.Invoke();
 		}
 
@@ -51,6 +54,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			// Intentionally NOT removing from modifiers pipeline; stages may already be mid-flight.
+			(item as IGameModelBoundItem)?.OnRemovedFromGameModel(diceGameModel);
 			ItemsChanged?.Invoke();
 		}
 
@@ -58,6 +62,7 @@ namespace _Main.Scripts.Dice
 		{
 			foreach (var item in items)
 			{
+				(item as IGameModelBoundItem)?.OnRemovedFromGameModel(diceGameModel);
 				item.ResetItem();
 			}
 
@@ -78,11 +83,23 @@ namespace _Main.Scripts.Dice
 			var rerollItemPrefab = Resources.Load<DiceItemView>("Items/RerollSelectedItem");
 			var stepUpPrefab = Resources.Load<DiceItemView>("Items/ItemBase");
 			var silencerPrefab = Resources.Load<DiceItemView>("Items/ItemBase");
+			var extraDicePrefab = Resources.Load<DiceItemView>("Items/ItemBase");
 
 			// AddItem(new PassMultiplierItem(prefabOverride: passMultiplierPrefab));
 			// AddItem(new RerollSelectedItem(prefabOverride: rerollItemPrefab));
 			// AddItem(new StepUpItem(prefabOverride: stepUpPrefab));
 			AddItem(new ModifierSilencerItem(prefabOverride: silencerPrefab));
+			AddItem(new ExtraDiceCapItem(4, extraDicePrefab));
 		}
+	}
+
+	/// <summary>
+	/// Optional interface for items that need a direct hook into the current DiceGameModel
+	/// as soon as they are added/removed (before any modifier stages are fired).
+	/// </summary>
+	public interface IGameModelBoundItem
+	{
+		void OnAddedToGameModel(DiceGameModel gameModel);
+		void OnRemovedFromGameModel(DiceGameModel gameModel);
 	}
 }
