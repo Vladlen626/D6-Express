@@ -13,12 +13,13 @@ namespace PlatformCore.Services
 		private void Awake()
 		{
 			var cinemachineCamera = GetComponent<CinemachineCamera>();
+			Locator.Resolve<ICameraService>().AddCamera(cameraStateEnum, cinemachineCamera);
+			
 			if (cameraStateEnum == CameraStateEnum.MainMenu)
 			{
 				cinemachineCamera.Priority.Value = 100;
+				gameObject.SetActive(true);
 			}
-			
-			Locator.Resolve<ICameraService>().AddCamera(cameraStateEnum, cinemachineCamera);
 		}
 	}
 }
