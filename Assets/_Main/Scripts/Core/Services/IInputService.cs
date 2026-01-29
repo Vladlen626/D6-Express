@@ -14,6 +14,9 @@ namespace _Main.Scripts.Core.Services
 		public event Action<Vector2> OnLooked;
 		public event Action OnFarted;
 		
+		public event Action OnDiceGameNext;
+		public event Action OnDiceGamePrevious;
+		
 		public event Action OnDebugSwitchPressed;
 
 		public event Action OnSpeechLineSkip;
@@ -36,5 +39,8 @@ namespace _Main.Scripts.Core.Services
 
 		void EnableUIInputs();
 		void DisableUIInputs();
+		
+		void EnableDiceGameInputs();
+		void DisableDiceGameInputs();
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -15,6 +14,7 @@ namespace _Main.Scripts.Dice
 		public event Action OnBetSizeChanged;
 		public event Action<int, int> OnTargetPointsChanged;
 		public event Action<int, int> OnCurrentTurnChanged;
+		public event Action<int, int> OnMaxDiceCountChanged;
 		public event Action OnDiceGameStateChanged;
 		public event Action OnRollClicked;
 		public event Action OnPassClicked;
@@ -39,11 +39,16 @@ namespace _Main.Scripts.Dice
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
+		public int MaxDiceCount => Mathf.Max(1, baseMaxDiceCount + GetDiceCapBonusSum());
+
+		private const int DefaultMaxDiceCount = 6;
+		private int baseMaxDiceCount = DefaultMaxDiceCount;
+		private readonly Dictionary<string, int> diceCapBonuses = new();
 
 		public DiceGameModel()
 		{
 			ModifiersModel = new ModifiersModel();
-			ItemsModel = new ItemsModel(ModifiersModel);
+			ItemsModel = new ItemsModel(ModifiersModel, this);
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
 			ModifiersModel.AddModifier(new ShakeRerollModifier());
 			// ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
@@ -59,6 +64,67 @@ namespace _Main.Scripts.Dice
 			SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
 			SetTargetScore(diceGameConfig.target_score);
 			SetCurrentTurn(1, true);
+		}
+
+		/// <summary>
+		/// Sets the base dice cap (without bonuses) and notifies listeners if the effective cap changes.
+		/// </summary>
+		public void SetBaseMaxDiceCount(int value)
+		{
+			value = Mathf.Max(1, value);
+			var old = MaxDiceCount;
+			baseMaxDiceCount = value;
+			NotifyMaxDiceChanged(old);
+		}
+
+		/// <summary>
+		/// Adds or replaces a dice cap bonus identified by a unique source id (e.g., item id).
+		/// This makes the mechanic reusable by other modifiers/items.
+		/// </summary>
+		public void SetDiceCapModifier(string sourceId, int bonus)
+		{
+			if (string.IsNullOrWhiteSpace(sourceId))
+			{
+				return;
+			}
+
+			bonus = Mathf.Max(0, bonus);
+			var old = MaxDiceCount;
+			diceCapBonuses[sourceId] = bonus;
+			NotifyMaxDiceChanged(old);
+		}
+
+		public void RemoveDiceCapModifier(string sourceId)
+		{
+			if (string.IsNullOrWhiteSpace(sourceId))
+			{
+				return;
+			}
+
+			var old = MaxDiceCount;
+			if (diceCapBonuses.Remove(sourceId))
+			{
+				NotifyMaxDiceChanged(old);
+			}
+		}
+
+		private int GetDiceCapBonusSum()
+		{
+			var sum = 0;
+			foreach (var bonus in diceCapBonuses.Values)
+			{
+				sum += bonus;
+			}
+			return sum;
+		}
+
+		private void NotifyMaxDiceChanged(int previous)
+		{
+			var current = MaxDiceCount;
+			if (previous != current)
+			{
+				OnMaxDiceCountChanged?.Invoke(previous, current);
+			}
 		}
 		
 		public void ChangeDiceGameState(DiceGameState diceGameState)

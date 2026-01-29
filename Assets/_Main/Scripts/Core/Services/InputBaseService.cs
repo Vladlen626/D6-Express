@@ -13,6 +13,8 @@ namespace _Main.Scripts.Core.Services
 		public event Action<Vector2> OnMoved;
 		public event Action<Vector2> OnLooked;
 		public event Action OnFarted;
+		public event Action OnDiceGameNext;
+		public event Action OnDiceGamePrevious;
 
 		public event Action OnDebugSwitchPressed;
 
@@ -49,6 +51,16 @@ namespace _Main.Scripts.Core.Services
 			DisableUIInputs();
 			DisablePlayerInputs();
 			DisableDebugInputs();
+		}
+
+		public void EnableDiceGameInputs()
+		{
+			_actions.DiceGame.Enable();
+		}
+
+		public void DisableDiceGameInputs()
+		{
+			_actions.DiceGame.Disable();
 		}
 
 		public void EnableUIInputs()
@@ -152,6 +164,16 @@ namespace _Main.Scripts.Core.Services
 			_actions.Player.Fart.performed += _ =>
 			{
 				OnFarted?.Invoke();
+			};
+			
+			_actions.DiceGame.Next.performed += _ =>
+			{
+				OnDiceGameNext?.Invoke();
+			};
+
+			_actions.DiceGame.Previous.performed += _ =>
+			{
+				OnDiceGamePrevious?.Invoke();
 			};
 		}
 

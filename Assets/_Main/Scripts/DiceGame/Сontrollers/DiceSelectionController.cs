@@ -24,6 +24,8 @@ namespace _Main.Scripts.Dice
 		private DicePositionsHandler _posHandler;
 		private bool _isFinished;
 
+		private int SelectionLimit => GetSelectionLimit();
+
 		public DiceSelectionController(InventoryModel inventory, DiceTableView view, IObjectFactory factory, 
 			ConfigService configService, DiceGameModel diceGameModel, IAudioService audioService)
 		{
@@ -57,9 +59,13 @@ namespace _Main.Scripts.Dice
 		{
 			var configs = await _configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
 
-			for (int i = 0; i < _inventory.DiceIdList.Count; i++)
+			var diceIds = _inventory.DiceIdList;
+			var gameSlotLimit = _diceGameModel.tableModel?.ActiveSlotsCount ?? int.MaxValue;
+			var spawnLimit = Mathf.Min(diceIds.Count, _posHandler.DicePositions.Length, gameSlotLimit);
+
+			for (int i = 0; i < spawnLimit; i++)
 			{
-				string id = _inventory.DiceIdList[i];
+				string id = diceIds[i];
 
 				if (configs.TryGetValue(id, out var config))
 				{
@@ -94,12 +100,12 @@ namespace _Main.Scripts.Dice
 			{
 				SelectedModel.Remove(model);
 			}
-			else if (SelectedModel.Count < 6)
+			else if (SelectedModel.Count < SelectionLimit)
 			{
 				SelectedModel.Add(model);
 			}
 
-			_view.SetButtonInteractable("Play", SelectedModel.Count == 6);
+			_view.SetButtonInteractable("Play", SelectedModel.Count == SelectionLimit);
 
 			UpdateVisualPositions();
 		}
@@ -109,14 +115,20 @@ namespace _Main.Scripts.Dice
 			// 1. Расставляем выбранные кубы в забанкированные слоты
 			for (int i = 0; i < SelectedModel.Count; i++)
 			{
-				MoveToSlot(SelectedModel[i], _posHandler.BankedPositions[i]);
+				if (i < _posHandler.BankedPositions.Length)
+				{
+					MoveToSlot(SelectedModel[i], _posHandler.BankedPositions[i]);
+				}
 			}
 
 			// 2. Все остальные кубы расставляем по порядку в основные слоты стола
 			var unselected = _allModels.Where(m => !SelectedModel.Contains(m)).ToList();
 			for (int i = 0; i < unselected.Count; i++)
 			{
-				MoveToSlot(unselected[i], _posHandler.DicePositions[i]);
+				if (i < _posHandler.DicePositions.Length)
+				{
+					MoveToSlot(unselected[i], _posHandler.DicePositions[i]);
+				}
 			}
 		}
 
@@ -126,9 +138,17 @@ namespace _Main.Scripts.Dice
 			_diceGameModel.ScreenDiceDict[model].MoveToPosition(slot.position);
 		}
 
+		private int GetSelectionLimit()
+		{
+			var bankSlots = _posHandler.BankedPositions?.Length ?? int.MaxValue;
+			var gameActiveSlots = _diceGameModel.tableModel?.ActiveSlotsCount ?? int.MaxValue;
+			var gameBankSlots = _diceGameModel.tableModel?.BankedSlotsCount ?? int.MaxValue;
+			return Mathf.Min(_diceGameModel.MaxDiceCount, bankSlots, gameActiveSlots, gameBankSlots, _allModels.Count);
+		}
+
 		private void OnPlayClickedHandler()
 		{
-			if (SelectedModel.Count == 6)
+			if (SelectedModel.Count == SelectionLimit)
 			{
 				_isFinished = true;
 			}

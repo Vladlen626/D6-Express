@@ -73,7 +73,6 @@ namespace _Main.Scripts.Core
 			// --------------
 
 			var playerModel = new PlayerModel();
-
 			var diceGameModel = DiceFactory.CreateDiceGameModel();
 
 			var activeSceneName = sceneService.GetActiveSceneName();
@@ -124,6 +123,7 @@ namespace _Main.Scripts.Core
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
+				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
 			};
 
 			var shop = await ShopFactory.GetShopAsync(playerModel.InventoryModel, configService);
