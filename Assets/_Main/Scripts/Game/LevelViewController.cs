@@ -4,26 +4,26 @@ using PlatformCore.Services;
 
 public class LevelViewController : IBaseController, IActivatable
 {
-    private readonly D6Game game;
+	private readonly D6Game game;
 	private readonly PlayerView playerView;
 	private readonly ICameraService cameraService;
 
 	public LevelViewController(D6Game game, PlayerView playerView, ICameraService cameraService)
 	{
-        this.game = game;
+		this.game = game;
 		this.playerView = playerView;
 		this.cameraService = cameraService;
 	}
 
-    public void Activate()
-    {
+	public void Activate()
+	{
 		game.LocationChanged += OnLocationChanged;
-    }
+	}
 
-    public void Deactivate()
-    {
+	public void Deactivate()
+	{
 		game.LocationChanged -= OnLocationChanged;
-    }
+	}
 
 	private void OnLocationChanged()
 	{

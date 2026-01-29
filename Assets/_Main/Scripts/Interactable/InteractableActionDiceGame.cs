@@ -13,7 +13,7 @@ public class InteractableActionDiceGame : InteractionAction
 
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable.Type == InteractionType.PLAY_DICE && StateModel.HasState(CharacterState.DEFAULT) && base.CanInteract(interactable);
+		return interactable.Type == InteractionType.PLAY_DICE && base.CanInteract(interactable);
 	}
 
 	protected override async void StartInteractInternal(bool immediate = false)

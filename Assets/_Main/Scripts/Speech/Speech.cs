@@ -11,6 +11,7 @@ public class Speech
     private SpeechNode next;
 
     public int Id { get; private set; }
+    public bool IsActive { get; private set; }
 
     public event Action Started;
     public event Action Finished;
@@ -35,6 +36,7 @@ public class Speech
 
     public void RequestStart()
     {
+        IsActive = true;
         Started?.Invoke();
 
         SetNextNode(root);
@@ -65,6 +67,7 @@ public class Speech
         {
             blackboard.Clear();
 
+            IsActive = false;
             Finished?.Invoke();
             return;
         }
@@ -77,12 +80,12 @@ public class Speech
         current.Start();
     }
 
-    private void OnNodeStarted()
+    private void OnNodeStarted(SpeechNode speechNode)
     {
         NodeStarted?.Invoke(current);
     }
 
-    private void OnNodeFinished()
+    private void OnNodeFinished(SpeechNode speechNode)
     {
         NodeFinished?.Invoke(current);
         ProcessNextNode();

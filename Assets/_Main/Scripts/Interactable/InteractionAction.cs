@@ -21,7 +21,7 @@ public abstract class InteractionAction
 
 	public virtual bool CanInteract(IInteractable interactable)
 	{
-		return !StateModel.HasState(CharacterState.TRANSITION) && !StateModel.HasState(CharacterState.LOCATION_TRANSITIONING);
+		return !StateModel.HasState(CharacterState.TRANSITION);
 	}
 
 	public void StartInteract(IInteractable interactable, bool immediate = false)

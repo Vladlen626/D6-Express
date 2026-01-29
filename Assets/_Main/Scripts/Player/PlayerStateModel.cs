@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class PlayerStateModel
 {
@@ -22,9 +23,9 @@ public class PlayerStateModel
 
 	public bool HasState(CharacterState state)
 	{
-		if (state == CharacterState.DEFAULT && currentStates.Count == 0)
+		if (state == CharacterState.DEFAULT)
 		{
-			return true;
+			return currentStates.Count == 0;
 		}
 
 		return currentStates.Contains(state);

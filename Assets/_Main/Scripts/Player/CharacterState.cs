@@ -7,5 +7,4 @@ public enum CharacterState
 	DICE_GAME,
 	SPEAKING,
 	SLEEPING,
-	LOCATION_TRANSITIONING
 }

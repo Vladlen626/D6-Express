@@ -21,10 +21,12 @@ public class SpeechController : BaseContextController<UISpeechView>
 		base.OnActivate();
 
 		interactor.InteractionStarted += OnInteractionStarted;
+		interactor.InteractionEnded += OnInteractionEnded;
 	}
 
 	protected override void OnDeactivate()
 	{
+		interactor.InteractionEnded -= OnInteractionEnded;
 		interactor.InteractionStarted -= OnInteractionStarted;
 
 		base.OnDeactivate();
@@ -47,6 +49,17 @@ public class SpeechController : BaseContextController<UISpeechView>
 
 			currentSpeech.Finished += OnSpeechFinished;
 			currentSpeech.RequestStart();
+		}
+	}
+
+	private void OnInteractionEnded(InteractionAction action)
+	{
+		if (action is InteractableActionSpeak speechAction)
+		{
+			if (currentSpeech != null && currentSpeech.IsActive)
+			{
+				currentSpeech?.RequestFinish();
+			}
 		}
 	}
 

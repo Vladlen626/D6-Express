@@ -568,7 +568,6 @@ MonoBehaviour:
   states:
   - rid: 704733243231436877
   - rid: 704733243231436878
-  - rid: 704733243231436879
   - rid: 704733243231436880
   - rid: 704733243231436881
   - rid: 704733243231436882
@@ -625,10 +624,6 @@ MonoBehaviour:
         switchGhost: 1
     - rid: 704733243231436878
       type: {class: CharacterStateHandlerLaying, ns: , asm: Assembly-CSharp}
-      data:
-        switchGhost: 1
-    - rid: 704733243231436879
-      type: {class: CharacterStateHandlerLocationTransitioning, ns: , asm: Assembly-CSharp}
       data:
         switchGhost: 1
     - rid: 704733243231436880

@@ -27,7 +27,7 @@ public class SpeechNodeParallel : SpeechNode
         }
     }
 
-    private void OnFinished()
+    private void OnFinished(SpeechNode speechNode)
     {
         completedCount++;
 

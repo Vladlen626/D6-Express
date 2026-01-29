@@ -5,6 +5,7 @@ public class InteractableSpeakable : Interactable
     [SerializeField] private int id = -1;
 
     private int currentId;
+    private bool occupied;
 
     public override InteractionType Type => InteractionType.SPEAK;
     public int Id => currentId;
@@ -24,10 +25,12 @@ public class InteractableSpeakable : Interactable
         currentId = id;
     }
 
-    public override bool CanInteract(Interactor interactor) => base.CanInteract(interactor) && currentId != -1;
+    public override bool CanInteract(Interactor interactor) => base.CanInteract(interactor) && currentId != -1 && !occupied;
 
     public override async void StartInteract(Interactor interactor)
     {
+        occupied = true;
+        
         // todo: NpcInitializer это атавизм
         GetComponent<NpcInitializer>().playerStateModel.TryAddState(CharacterState.SPEAKING);
         var rotationController = GetComponent<NpcRotationController>();
@@ -40,5 +43,7 @@ public class InteractableSpeakable : Interactable
 
         var rotationController = GetComponent<NpcRotationController>();
         rotationController.Target = null;
+
+        occupied = false;
     }
 }

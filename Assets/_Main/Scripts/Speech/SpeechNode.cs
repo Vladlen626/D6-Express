@@ -5,8 +5,8 @@ public abstract class SpeechNode
 {
     protected Speech Speech { get; private set; }
 
-    public event Action Started;
-    public event Action Finished;
+    public event Action<SpeechNode> Started;
+    public event Action<SpeechNode> Finished;
 
     public SpeechNode Init(Speech speech)
     {
@@ -17,7 +17,7 @@ public abstract class SpeechNode
 
     public void Start()
     {
-        Started?.Invoke();
+        Started?.Invoke(this);
 
         StartInternal();
     }
@@ -26,7 +26,7 @@ public abstract class SpeechNode
     {
         FinishInternal();
 
-        Finished?.Invoke();
+        Finished?.Invoke(this);
     }
 
     protected virtual void StartInternal() { }
@@ -34,7 +34,7 @@ public abstract class SpeechNode
 
     public SpeechNode After(SpeechNode right)
     {
-        right.Finished += () =>
+        right.Finished += (node) =>
         {
             Speech.SetNextNode(this);
         };

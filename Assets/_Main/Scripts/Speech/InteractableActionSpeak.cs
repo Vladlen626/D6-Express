@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using UnityEngine;
 
 [Serializable]
 public class InteractableActionSpeak : InteractionAction
@@ -9,7 +10,8 @@ public class InteractableActionSpeak : InteractionAction
 
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable.Type == InteractionType.SPEAK && StateModel.HasState(CharacterState.DEFAULT);
+		return interactable.Type == InteractionType.SPEAK 
+		&& base.CanInteract(interactable);
 	}
 
 	protected override async void StartInteractInternal(bool immediate = false)

@@ -88,7 +88,6 @@ public class SleepController : BaseContextController<UISleepView>, IGameStateCha
 		void OnInteracted()
 		{
 			inputService.OnSpeechLineSkip -= OnInteracted;
-			interactor.StopAllActions(true);
 			source.TrySetResult();
 		}
 

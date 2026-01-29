@@ -65,7 +65,7 @@ namespace _Main.Scripts.Core
 
 			var transitionViewController = new TransitionViewController(uiService, run, configService);
 			await _lifecycle.RegisterAsync(transitionViewController);
-			await transitionViewController.ShowContext(0);
+			// await transitionViewController.ShowContext(0);
 
 			await UniTask.WaitUntil(() => RuntimeManager.IsInitialized);
 			// Controllers list
@@ -130,7 +130,8 @@ namespace _Main.Scripts.Core
 			var notifications = NotificationsFactory.CreateNotifications();
 
 			var sleepController = RunFactory.GetSleepControllers(uiService, run, playerView, inputService);
-			var locationController = new LocationController(game, run, sceneContext, audioService, playerModel, playerView);
+			var locationController = new LocationController(game, sceneContext, audioService);
+			var playerController = new PlayerController(playerModel, playerView, sceneContext);
 
 			controllersList.Add(new LedTrainController(run, sceneContext.Leds));
 			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
@@ -152,6 +153,7 @@ namespace _Main.Scripts.Core
 			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), GameStateTransitionTask.UNLOCK_CURSOR);
 			gameStateController.AddTask((x) => npcSpawner.Respawn(), GameStateTransitionTask.NPC_RESPAWN);
 			gameStateController.AddTask(async (x) => shop.Restock(), GameStateTransitionTask.SHOP_RESTOCK);
+			gameStateController.AddChanger(playerController);
 			gameStateController.AddChanger(transitionViewController);
 			gameStateController.AddChanger(locationController);
 			gameStateController.AddChanger(winViewController);
