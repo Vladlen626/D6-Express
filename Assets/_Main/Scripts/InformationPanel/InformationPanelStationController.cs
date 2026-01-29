@@ -4,7 +4,7 @@ using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Factory;
 
-public class InformationPanelViewController : IBaseController, IActivatable, IPreloadable
+public class InformationPanelStationController : IBaseController, IActivatable, IPreloadable
 {
     private readonly Run run;
     private readonly InformationPanelView informationPanelView;
@@ -13,7 +13,7 @@ public class InformationPanelViewController : IBaseController, IActivatable, IPr
     private InformationPanelStationView activeStation;
     private List<StationConfig> stationConfigs;
 
-    public InformationPanelViewController(Run run, InformationPanelView informationPanelView, ConfigService configService)
+    public InformationPanelStationController(Run run, InformationPanelView informationPanelView, ConfigService configService)
     {
         this.run = run;
         this.informationPanelView = informationPanelView;

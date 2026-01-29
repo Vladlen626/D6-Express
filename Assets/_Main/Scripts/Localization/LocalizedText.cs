@@ -7,6 +7,8 @@ public class LocalizedText : MonoBehaviour
     [SerializeField]
     private TMP_Text text;
 
+    public TMP_Text Tmp => text;
+
     public void SetText(string id)
     {
         text.text = Locator.Resolve<ILocalizationService>().GetLocalized(id);

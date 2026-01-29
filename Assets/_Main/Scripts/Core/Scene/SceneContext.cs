@@ -48,6 +48,7 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public InformationPanelView InformationPanelView => informationPanelView;
 
 
+	public IEnumerable<LedTrainView> Leds => FindObjectsByType<LedTrainView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 	public IEnumerable<LightView> Lights => FindObjectsByType<LightView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 	public IEnumerable<SpawnPoint> SpawnPoints => FindObjectsByType<SpawnPoint>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 }

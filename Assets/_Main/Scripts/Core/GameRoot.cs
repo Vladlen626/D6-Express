@@ -122,7 +122,7 @@ namespace _Main.Scripts.Core
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
 					run, configService),
 				new LightController(sceneContext.Lights, run),
-				new InformationPanelViewController(run, sceneContext.InformationPanelView, configService),
+				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
 			};
 
@@ -132,6 +132,7 @@ namespace _Main.Scripts.Core
 			var sleepController = RunFactory.GetSleepControllers(uiService, run, playerView, inputService);
 			var locationController = new LocationController(game, run, sceneContext, audioService, playerModel, playerView);
 
+			controllersList.Add(new LedTrainController(run, sceneContext.Leds));
 			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notifications));

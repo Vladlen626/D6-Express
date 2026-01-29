@@ -55,7 +55,7 @@
         "dice_added_to_inventory_notification": "{0} added",
         "fart_reaction": "What is that smell?!",
         "ticks_progress": "ticks left: {0}",
-        "days_progress": "days left: {0}",
+        "days_progress": "days remaining: {0}",
         "cash_progress": "progress: \n{0}$ / {1}$",
         "enemy_offer": "Hey! Wanna play some dices?",
         "enemy_refuse": "Oh. Another time maybe?"
