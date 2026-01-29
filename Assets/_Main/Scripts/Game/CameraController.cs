@@ -10,7 +10,8 @@ public class CameraController : IBaseController, IActivatable
 	{
 		CameraStateEnum.DiceGame,
 		CameraStateEnum.DiceGameCombinations,
-		CameraStateEnum.Inventory
+		CameraStateEnum.Inventory,
+		CameraStateEnum.TrainWatch,
 	};
 
 	private readonly IInputService inputService;

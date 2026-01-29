@@ -165,7 +165,7 @@ MonoBehaviour:
   isOpened: 1
   opened: {fileID: 4014397728831366928}
   closed: {fileID: 6768514178299144970}
-  hintableDynamic: {fileID: 0}
+  hintableDynamic: {fileID: 8846764923529484213}
 --- !u!114 &8846764923529484213
 MonoBehaviour:
   m_ObjectHideFlags: 0
