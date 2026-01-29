@@ -21,6 +21,12 @@ namespace _Main.Scripts.Dice
 
 		private IDiceItem boundItem;
 		public UnityEvent OnClicked = new();
+		private Camera _cam;
+
+		private void Awake()
+		{
+			_cam = Camera.main;
+		}
 
 		public void Bind(IDiceItem item)
 		{
@@ -62,7 +68,7 @@ namespace _Main.Scripts.Dice
 
 		private void Update()
 		{
-			if (boundItem == null || clickCollider == null)
+			if (boundItem == null || !clickCollider)
 			{
 				return;
 			}
@@ -73,13 +79,12 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			var cam = Camera.main;
-			if (cam == null)
+			if (!_cam)
 			{
 				return;
 			}
 
-			Ray ray = cam.ScreenPointToRay(mouse.position.ReadValue());
+			Ray ray = _cam.ScreenPointToRay(mouse.position.ReadValue());
 			if (clickCollider.Raycast(ray, out _, 200f))
 			{
 				Debug.Log($"[DiceItemView] Click detected on {boundItem.Id}");
@@ -119,7 +124,10 @@ namespace _Main.Scripts.Dice
 
 			foreach (var r in renderers)
 			{
-				if (r == null) continue;
+				if (!r)
+				{
+					continue;
+				}
 				r.material.color = color;
 			}
 		}

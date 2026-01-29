@@ -73,7 +73,7 @@ namespace _Main.Scripts.Core
 			// --------------
 
 			var playerModel = new PlayerModel();
-			var diceGameModel = DiceFactory.CreateDiceGameModel();
+			var diceGameModel = new DiceGameModel();
 
 			var activeSceneName = sceneService.GetActiveSceneName();
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));

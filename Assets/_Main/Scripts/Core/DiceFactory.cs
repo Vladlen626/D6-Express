@@ -7,13 +7,6 @@ namespace _Main.Scripts.Core
 {
 	public static class DiceFactory
 	{
-		public static DiceGameModel CreateDiceGameModel()
-		{
-			var diceGameModel = new DiceGameModel();
-
-			return diceGameModel;
-		}
-
 		public static IBaseController[] GetDiceGameBetControllers(
 			SceneContext sceneContext,
 			DiceGameModel diceGameModel)

@@ -7,6 +7,9 @@ namespace _Main.Scripts.Dice
 {
 	public class ModifiersModel
 	{
+		public IReadOnlyList<IModifier> AllModifiers => allModifiers;
+
+		private readonly List<IModifier> allModifiers = new (); 
 		private readonly List<IOnLevelStartModifier> onLevelStartActionsHandler = new ();
 		private readonly List<IOnRoundStartModifier> onRoundStartActionsHandler = new ();
 		private readonly List<IOnRollModifier> onRollActionsHandler = new ();
@@ -15,6 +18,8 @@ namespace _Main.Scripts.Dice
 
 		public void AddModifier(IModifier modifier)
 		{
+			allModifiers.Add(modifier);
+
 			if (modifier is IOnLevelStartModifier onLevelStartAction)
 			{
 				onLevelStartActionsHandler.Add(onLevelStartAction);
@@ -38,6 +43,36 @@ namespace _Main.Scripts.Dice
 			if (modifier is IOnRoundEndModifier onRoundEndAction)
 			{
 				onRoundEndActionsHandler.Add(onRoundEndAction);
+			}
+		}
+
+		public void RemoveModifier(IModifier modifier)
+		{
+			allModifiers.Remove(modifier);
+
+			if (modifier is IOnLevelStartModifier onLevelStartAction)
+			{
+				onLevelStartActionsHandler.Remove(onLevelStartAction);
+			}
+
+			if (modifier is IOnRoundStartModifier onRoundStartAction)
+			{
+				onRoundStartActionsHandler.Remove(onRoundStartAction);
+			}
+
+			if (modifier is IOnRollModifier onRollAction)
+			{
+				onRollActionsHandler.Remove(onRollAction);
+			}
+
+			if (modifier is IOnPassModifier onPassAction)
+			{
+				onPassActionsHandler.Remove(onPassAction);
+			}
+
+			if (modifier is IOnRoundEndModifier onRoundEndAction)
+			{
+				onRoundEndActionsHandler.Remove(onRoundEndAction);
 			}
 		}
 
