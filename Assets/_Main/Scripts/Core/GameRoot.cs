@@ -125,7 +125,8 @@ namespace _Main.Scripts.Core
 				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
 			};
 
-			var shop = await ShopFactory.GetShopAsync(playerModel.InventoryModel, configService);
+			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService);
+			var stationShop = await ShopFactory.GetStationShopAsync(playerModel.InventoryModel, configService);
 			var notifications = NotificationsFactory.CreateNotifications();
 
 			var sleepController = RunFactory.GetSleepControllers(uiService, run, playerView, inputService);
@@ -133,8 +134,10 @@ namespace _Main.Scripts.Core
 			var playerController = new PlayerController(playerModel, playerView, sceneContext);
 
 			controllersList.Add(new LedTrainController(run, sceneContext.Leds));
-			controllersList.Add(ShopFactory.GetShopViewController(shop, sceneContext.Shop, factory, playerView.Interactor, sceneContext.Shopkeeper));
-			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, shop, playerView.Interactor, Camera.main));
+			controllersList.Add(ShopFactory.GetShopViewController(stationShop, sceneContext.StationShop, factory, playerView.Interactor, sceneContext.StationShopkeeper));
+			controllersList.Add(ShopFactory.GetShopViewController(trainShop, sceneContext.TrainShop, factory, playerView.Interactor, sceneContext.TrainShopkeeper));
+			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, stationShop, playerView.Interactor, Camera.main));
+			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, trainShop, playerView.Interactor, Camera.main));
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notifications));
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService));
 			// todo. не требуется к mvp. раскоментить позже
@@ -151,7 +154,17 @@ namespace _Main.Scripts.Core
 			gameStateController.AddTask(async (x) => cursorService.LockCursor(), GameStateTransitionTask.LOCK_CURSOR);
 			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), GameStateTransitionTask.UNLOCK_CURSOR);
 			gameStateController.AddTask((x) => npcSpawner.Respawn(), GameStateTransitionTask.NPC_RESPAWN);
-			gameStateController.AddTask(async (x) => shop.Restock(), GameStateTransitionTask.SHOP_RESTOCK);
+			gameStateController.AddTask(async (x) =>
+			{
+				if (x.Location == Location.TRAIN)
+				{
+					trainShop.Restock();
+				}
+				else if (x.Location == Location.STATION)
+				{
+					stationShop.Restock();
+				}
+			}, GameStateTransitionTask.SHOP_RESTOCK);
 			gameStateController.AddChanger(playerController);
 			gameStateController.AddChanger(transitionViewController);
 			gameStateController.AddChanger(locationController);

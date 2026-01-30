@@ -27,10 +27,16 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	private Light sun;
 
 	[SerializeField]
-	private ShopView shop;
+	private ShopView stationShop;
 
 	[SerializeField]
-	private CharacterView shopkeeper;
+	private ShopView trainShop;
+
+	[SerializeField]
+	private CharacterView stationShopkeeper;
+
+	[SerializeField]
+	private CharacterView trainShopkeeper;
 
 	[SerializeField]
 	private InformationPanelView informationPanelView;
@@ -38,7 +44,7 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	// todo: должно создаваться в гейм руте
 	// но сейчас npcinitializer не умеет смотреть не на сцену
 	// уйдет отсюда когда урмет npcinitializer
-	private InteractionToStateTable interactionToStateTable = InteractionFactory.CreateTable(); 
+	private InteractionToStateTable interactionToStateTable = InteractionFactory.CreateTable();
 
 	public InteractionToStateTable InteractionToStateTable => interactionToStateTable;
 	public DiceTableView DiceGameTableView => diceGameTableView;
@@ -48,9 +54,11 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public GameObject TrainBlock => trainBlock;
 	public GameObject MainMenuBlock => mainMenuBlock;
 	public Light Sun => sun;
-	public ShopView Shop => shop;
+	public ShopView StationShop => stationShop;
+	public ShopView TrainShop => trainShop;
 
-	public CharacterView Shopkeeper => shopkeeper;
+	public CharacterView StationShopkeeper => stationShopkeeper;
+	public CharacterView TrainShopkeeper => trainShopkeeper;
 	public InformationPanelView InformationPanelView => informationPanelView;
 
 

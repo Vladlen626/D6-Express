@@ -178,10 +178,47 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2343718285314815937, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4140331414045997381, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2924403399952219594, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2030351459616605247, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 4967532590972391119, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 7290099626774017074, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
     - targetCorrespondingSourceObject: {fileID: 5609965791739828959, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+--- !u!114 &91070832 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1212315753583504150, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+  m_PrefabInstance: {fileID: 91070831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bcbddc1118687e4c91112ab41326cee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShopView
+--- !u!114 &91070833 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 131004465133592315, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+  m_PrefabInstance: {fileID: 91070831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68929bd01a4045846b9d591c65f87e10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NpcView
 --- !u!1 &157643399
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,8 +270,10 @@ MonoBehaviour:
   trainBlock: {fileID: 1911067291}
   mainMenuBlock: {fileID: 595279958}
   sun: {fileID: 410087040}
-  shop: {fileID: 1935522581}
-  shopkeeper: {fileID: 1944120481}
+  stationShop: {fileID: 1935522581}
+  trainShop: {fileID: 91070832}
+  stationShopkeeper: {fileID: 1944120481}
+  trainShopkeeper: {fileID: 91070833}
   informationPanelView: {fileID: 7205606119079278649}
 --- !u!1 &410087039
 GameObject:

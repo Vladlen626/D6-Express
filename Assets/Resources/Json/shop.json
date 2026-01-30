@@ -1,14 +1,30 @@
 {
-    "restock_price": 100,
-    "items": [
-        {
-            "itemId": "default"
-        },
-        {
-            "itemId": "gen_1_focus"
-        },
-        {
-            "itemId": "strat_straight_1_6_hunter"
-        }
-    ]
+    "train": {
+        "restock_price": 100,
+        "items": [
+            {
+                "itemId": "default"
+            },
+            {
+                "itemId": "gen_1_focus"
+            },
+            {
+                "itemId": "strat_straight_1_6_hunter"
+            }
+        ]
+    },
+    "station": {
+        "restock_price": 50,
+        "items": [
+            {
+                "itemId": "default"
+            },
+            {
+                "itemId": "gen_1_focus"
+            },
+            {
+                "itemId": "strat_straight_1_6_hunter"
+            }
+        ]
+    }
 }

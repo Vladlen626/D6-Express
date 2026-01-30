@@ -5,11 +5,20 @@ using UnityEngine;
 
 public static class ShopFactory
 {
-    public static async Task<Shop> GetShopAsync(InventoryModel inventoryModel, ConfigService configService)
+    public static async Task<Shop> GetStationShopAsync(InventoryModel inventoryModel, ConfigService configService)
     {
-        var shopConfig = await configService.GetFirstOrDefaultAsync<ShopConfig>(ResourcePaths.Json.shop);
+        var shopsConfig = await configService.GetFirstOrDefaultAsync<ShopsConfig>(ResourcePaths.Json.shop);
+
         var diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
-        return new Shop(inventoryModel, diceConfigsDict, shopConfig);
+        return new Shop(inventoryModel, diceConfigsDict, shopsConfig.station);
+    }
+
+    public static async Task<Shop> GetTrainShopAsync(InventoryModel inventoryModel, ConfigService configService)
+    {
+        var shopsConfig = await configService.GetFirstOrDefaultAsync<ShopsConfig>(ResourcePaths.Json.shop);
+
+        var diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+        return new Shop(inventoryModel, diceConfigsDict, shopsConfig.train);
     }
 
     public static ShopViewController GetShopViewController(Shop shop, ShopView shopView, IObjectFactory objectFactory, Interactor interactor, CharacterView shopkeeper)
