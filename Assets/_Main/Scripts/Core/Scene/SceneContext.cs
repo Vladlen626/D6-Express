@@ -35,6 +35,12 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	[SerializeField]
 	private InformationPanelView informationPanelView;
 
+	// todo: должно создаваться в гейм руте
+	// но сейчас npcinitializer не умеет смотреть не на сцену
+	// уйдет отсюда когда урмет npcinitializer
+	private InteractionToStateTable interactionToStateTable = InteractionFactory.CreateTable(); 
+
+	public InteractionToStateTable InteractionToStateTable => interactionToStateTable;
 	public DiceTableView DiceGameTableView => diceGameTableView;
 	public Transform PlayerTrainSpawnPosition => playerTrainSpawnPosition;
 	public Transform PlayerStationSpawnPosition => playerStationSpawnPosition;

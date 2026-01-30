@@ -15,9 +15,9 @@ public class InteractorPlayer : Interactor
 
 	private IInputService inputService;
 
-	public void Initialize(IInputService inputService, PlayerStateModel playerStateModel)
+	public void Initialize(IInputService inputService, PlayerStateModel playerStateModel, InteractionToStateTable interactionToStateTable)
 	{
-		Initialize(playerStateModel);
+		Initialize(playerStateModel, interactionToStateTable);
 
 		this.inputService = inputService;
 		this.inputService.OnInteractPressed += OnInteract;

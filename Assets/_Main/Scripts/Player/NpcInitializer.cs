@@ -18,7 +18,10 @@ public class NpcInitializer : MonoBehaviour
 		var npcView = GetComponent<NpcView>();
 
 		var interactor = GetComponent<Interactor>();
-		interactor.Initialize(playerStateModel);
+
+		var sceneContext = FindFirstObjectByType<SceneContext>();
+
+		interactor.Initialize(playerStateModel, sceneContext.InteractionToStateTable);
 
 		npcRotationController = GetComponent<NpcRotationController>();
 		npcRotationController.Initialize(npcView, playerStateModel);

@@ -13,13 +13,14 @@ public static class PlayerFactory
 		IObjectFactory factory,
 		IInputService inputService,
 		PlayerModel playerModel,
-		Transform spawnTfm)
+		Transform spawnTfm,
+		InteractionToStateTable interactionToStateTable)
 	{
 		var playerView = await factory.CreateAsync<PlayerView>(ResourcePaths.Player.PlayerBase, spawnTfm.position,
 			spawnTfm.rotation);
 
 		var playerInteractSystem = playerView.GetComponent<InteractorPlayer>();
-		playerInteractSystem.Initialize(inputService, playerModel.PlayerStateModel);
+		playerInteractSystem.Initialize(inputService, playerModel.PlayerStateModel, interactionToStateTable);
 
 		return playerView;
 	}

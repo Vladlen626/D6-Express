@@ -21,11 +21,11 @@ public class Interactor : MonoBehaviour
 	public event Action<Interactable> Noticed;
 	public event Action<Interactable> Missed;
 
-	public void Initialize(PlayerStateModel playerStateModel)
+	public void Initialize(PlayerStateModel playerStateModel, InteractionToStateTable interactionToStateTable)
 	{
 		foreach (var item in actions)
 		{
-			item.Init(this, playerStateModel);
+			item.Init(this, playerStateModel, interactionToStateTable);
 		}
 	}
 
