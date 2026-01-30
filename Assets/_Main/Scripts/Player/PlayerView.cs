@@ -13,14 +13,15 @@ public class PlayerView : CharacterView
 
 	public CharacterController CharacterController => characterController;
 
-    public override void SetCharacterGhost(bool isGhost)
+    protected override void SetGhostActive()
     {
-        base.SetCharacterGhost(isGhost);
-		SetCharacterControllerEnabled(!isGhost);
+        base.SetGhostActive(); 
+		CharacterCollider.enabled = false;
     }
 
-	public void SetCharacterControllerEnabled(bool isEnabled)
-	{
-		characterController.enabled = isEnabled;
-	}
+    protected override void SetGhostInactive()
+    {
+        base.SetGhostInactive();
+		CharacterCollider.enabled = true;
+    }
 }

@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Threading;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class CharacterView : MonoBehaviour
@@ -32,10 +35,13 @@ public class CharacterView : MonoBehaviour
 
 	[SerializeField]
 	private CameraState[] cameraStates;
+
 	[SerializeField]
 	private Animator animator;
-	
+
 	private readonly Dictionary<CharacterState, CameraState> cameraStatesDict = new();
+
+	private int ghostCount;
 
 	public Animator Animator => animator;
 	public CharacterStateHandler[] CharacterStateHandlers => states.ToArray();
@@ -75,13 +81,36 @@ public class CharacterView : MonoBehaviour
 		return cameraStatesDict[characterState];
 	}
 
-	public void SetColliderEnabled(bool isEnabled)
+	public void SetCharacterGhost(bool isGhost)
 	{
-		CharacterCollider.enabled = isEnabled;
+		int prev = ghostCount;
+
+		if (isGhost)
+		{
+			ghostCount++;
+		}
+		else
+		{
+			ghostCount = Math.Max(0, ghostCount - 1);
+		}
+
+		if (prev == 0 && ghostCount > 0)
+		{
+			SetGhostActive();
+		}
+		else if (prev > 0 && ghostCount == 0)
+		{
+			SetGhostInactive();
+		}
 	}
 
-	public virtual void SetCharacterGhost(bool isGhost)
+	protected virtual void SetGhostActive()
 	{
-		SetColliderEnabled(!isGhost);
+		CharacterCollider.enabled = false;
+	}
+
+	protected virtual void SetGhostInactive()
+	{
+		CharacterCollider.enabled = true;
 	}
 }
