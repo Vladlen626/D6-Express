@@ -45,10 +45,11 @@ namespace _Main.Scripts.Dice
 		private int baseMaxDiceCount = DefaultMaxDiceCount;
 		private readonly Dictionary<string, int> diceCapBonuses = new();
 
-		public DiceGameModel()
+		public DiceGameModel(InventoryModel inventoryModel)
 		{
-			ModifiersModel = new ModifiersModel();
-			ItemsModel = new ItemsModel(ModifiersModel, this);
+			ModifiersModel = inventoryModel?.ModifiersModel ?? new ModifiersModel();
+			ItemsModel = inventoryModel?.ItemsModel ?? new ItemsModel(ModifiersModel);
+			ItemsModel.BindGameModel(this);
 			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
 			ModifiersModel.AddModifier(new ShakeRerollModifier());
 			// ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
@@ -301,7 +302,6 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
-			ModifiersModel.Reset();
 			tableModel.Reset();
 			PlayerDiceModelList.Clear();
 			EnemyDiceModelList.Clear();

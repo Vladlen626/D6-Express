@@ -11,7 +11,7 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly List<IDiceItem> items = new();
 		private readonly ModifiersModel modifiersModel;
-		private readonly DiceGameModel diceGameModel;
+		private DiceGameModel diceGameModel;
 		private bool defaultsInitialized;
 
 		public ItemsModel(ModifiersModel modifiersModel, DiceGameModel diceGameModel = null)
@@ -24,6 +24,24 @@ namespace _Main.Scripts.Dice
 		public event Action ItemsChanged;
 
 		public IReadOnlyList<IDiceItem> Items => items;
+
+		/// <summary>
+		/// Allows late binding of the active DiceGameModel (e.g., when items live in inventory and the game model is created later).
+		/// Calls OnAddedToGameModel for already owned items so their effects apply.
+		/// </summary>
+		public void BindGameModel(DiceGameModel gameModel)
+		{
+			diceGameModel = gameModel;
+			if (diceGameModel == null)
+			{
+				return;
+			}
+
+			foreach (var item in items)
+			{
+				(item as IGameModelBoundItem)?.OnAddedToGameModel(diceGameModel);
+			}
+		}
 
 		/// <summary>
 		/// Adds an item to the collection and registers it as a modifier so it participates in all stages.

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _Main.Scripts.Dice;
 
 public class InventoryModel
 {
@@ -8,6 +9,9 @@ public class InventoryModel
 
 	public int CashCount => cashCount;
 	public IReadOnlyList<string> DiceIdList => diceIdList;
+	public ModifiersModel ModifiersModel { get; }
+	public ItemsModel ItemsModel { get; }
+	public event Action ItemsChanged;
 
 	public event Action OnCashCountChanged;
 	public event Action<string> DiceAdded;
@@ -50,5 +54,12 @@ public class InventoryModel
 			DiceRemoved?.Invoke(item);
 		}
 		diceIdList.Clear();
+	}
+
+	public InventoryModel()
+	{
+		ModifiersModel = new ModifiersModel();
+		ItemsModel = new ItemsModel(ModifiersModel);
+		ItemsModel.ItemsChanged += () => ItemsChanged?.Invoke();
 	}
 }
