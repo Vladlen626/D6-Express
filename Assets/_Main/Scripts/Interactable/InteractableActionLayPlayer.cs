@@ -7,11 +7,6 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionLayPlayer : InteractableActionLay
 {
-	public override bool CanInteract(IInteractable interactable)
-	{
-		return interactable is InteractableLayable && !StateModel.HasState(CharacterState.LAYING) && base.CanInteract(interactable);
-	}
-
 	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		base.StartInteractInternal(immediate);

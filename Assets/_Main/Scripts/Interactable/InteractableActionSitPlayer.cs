@@ -6,11 +6,6 @@ using UnityEngine;
 [Serializable]
 public class InteractableActionSitPlayer : InteractableActionSit
 {
-	public override bool CanInteract(IInteractable interactable)
-	{
-		return interactable is InteractableSittable && !StateModel.HasState(CharacterState.SITTING) && base.CanInteract(interactable);
-	}
-
 	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		base.StartInteractInternal(immediate);

@@ -10,7 +10,7 @@ public class InteractableActionLay : InteractionAction
 
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable.Type == InteractionType.LAY && !StateModel.HasState(CharacterState.LAYING) && base.CanInteract(interactable);
+		return interactable.Type == InteractionType.LAY && base.CanInteract(interactable);
 	}
 
 	protected override async void StartInteractInternal(bool immediate = false)

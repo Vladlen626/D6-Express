@@ -5,9 +5,9 @@ public class InteractableActionSleep : InteractionAction
 {
 	public override bool CanInteract(IInteractable interactable)
 	{
-		return interactable.Type == InteractionType.SLEEP && !StateModel.HasState(CharacterState.SLEEPING) && base.CanInteract(interactable);
+		return interactable.Type == InteractionType.SLEEP &&  base.CanInteract(interactable);
 	}
-
+	
 	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.SLEEPING);
