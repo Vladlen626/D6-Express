@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using DG.Tweening;
 
@@ -28,6 +27,7 @@ public class LedTrainView : MonoBehaviour
     public void SetText(string id, params string[] args)
     {
         informationText.SetText(id, args);
+        RestartMarquee();
     }
 
     void RestartMarquee()
