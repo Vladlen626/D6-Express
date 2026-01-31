@@ -13,6 +13,9 @@ namespace _Main.Scripts.Dice
 		[Tooltip("For straights: faces that must appear once each. For singles/of-a-kind: restrict to these faces, leave empty to allow any.")]
 		public int[] Faces;
 
+		[Tooltip("Optional: maximum length allowed for this straight (when using variable-length straights).")]
+		public int MaxLengthCap = 0;
+
 		[Tooltip("Minimum dice needed to trigger the rule (e.g., 3 for three-of-a-kind).")]
 		public int MinCount = 1;
 

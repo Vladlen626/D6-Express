@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using _Main.Scripts.Core;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
@@ -6,6 +7,7 @@ using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
+using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
@@ -16,6 +18,8 @@ namespace _Main.Scripts.Dice
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
 		private readonly Run run;
+		private readonly Notifications notifications;
+		private readonly DiceScoringService scoringService = DiceScoringService.Instance;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
@@ -25,13 +29,15 @@ namespace _Main.Scripts.Dice
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
 			IAudioService audioService,
-			Run run)
+			Run run,
+			Notifications notifications)
 		{
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
 			this.audioService = audioService;
 			this.run = run;
+			this.notifications = notifications;
 		}
 
 		public void Activate()
@@ -244,6 +250,8 @@ namespace _Main.Scripts.Dice
 
 			await UniTaskUtils.WaitAllTweens(tweenList.ToArray());
 
+			await TryTriggerStraightUpgradeIfNeeded(combinationResult);
+
 			return diceGameModel.AllBanked();
 		}
 
@@ -262,6 +270,98 @@ namespace _Main.Scripts.Dice
 			}
 
 			await UniTaskUtils.WaitAllTweens(tweens.ToArray());
+		}
+
+		private bool IsStraightCombination(DiceCombination combination)
+		{
+			return combination == DiceCombination.Straight_1_6
+			       || combination == DiceCombination.Straight_1_5
+			       || combination == DiceCombination.Straight_2_6
+			       || combination == DiceCombination.StraightLength4
+			       || combination == DiceCombination.StraightLength5
+			       || combination == DiceCombination.StraightLength6;
+		}
+
+		private DiceModel PickUpgradeDie(StraightUpgradeConfig upgradeConfig)
+		{
+			// MVP Option A: choose from equipped dice list (player side)
+			if (diceGameModel.PlayerDiceModelList.Count == 0)
+			{
+				return null;
+			}
+
+			// For now pick the first available die; extend later with UI selection.
+			return diceGameModel.PlayerDiceModelList[0];
+		}
+
+		private async UniTask TryTriggerStraightUpgradeIfNeeded(DiceCombinationResult combinationResult)
+		{
+			if (combinationResult.Combinations == null || combinationResult.Combinations.Count == 0)
+			{
+				return;
+			}
+
+			bool hasStraight = combinationResult.Combinations.Any(e => IsStraightCombination(e.Combination));
+			if (!hasStraight)
+			{
+				return;
+			}
+
+			var upgradeConfig = scoringService.GetStraightUpgradeConfig();
+			if (upgradeConfig == null || upgradeConfig.Chance <= 0f)
+			{
+				return;
+			}
+
+			if (UnityEngine.Random.value > upgradeConfig.Chance)
+			{
+				if (upgradeConfig.Debug)
+				{
+					logger?.Log($"[StraightUpgrade] Chance failed ({upgradeConfig.Chance:P0}).");
+				}
+				return;
+			}
+
+			diceGameModel.tableModel.DisableButtons();
+			notifications?.Add(new Notifications.Notification { message = "Upgrade opportunity! Rolling an upgrade die..." });
+			logger?.Log("[StraightUpgrade] Triggered upgrade opportunity after straight.");
+
+			var die = PickUpgradeDie(upgradeConfig);
+			if (die == null)
+			{
+				logger?.LogWarning("[StraightUpgrade] No dice available for upgrade roll.");
+				return;
+			}
+
+			if (upgradeConfig.Debug)
+			{
+				var weights = die.Weights != null ? string.Join(",", die.Weights) : "null";
+				logger?.Log($"[StraightUpgrade] Using die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]");
+			}
+
+			int rolledFace;
+			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
+			{
+				await view.PlayRollAnimationAsync(0.8f);
+				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
+				die.SetValue(rolledFace);
+				view.SetRotation(rolledFace);
+			}
+			else
+			{
+				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
+			}
+
+			var outcome = scoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, notifications, run);
+			if (upgradeConfig.Debug)
+			{
+				var delta = outcome != null
+					? $"Δmin {outcome.DeltaMinLen}, Δmax {outcome.DeltaMaxLen}, Δbonus {outcome.DeltaScoreBonus}"
+					: "no outcome";
+				logger?.Log($"[StraightUpgrade] Die {die.ConfigId} rolled {rolledFace}. {delta}");
+			}
+
+			UpdateUI();
 		}
 
 		private void UpdateUI()

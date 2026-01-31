@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using PlatformCore.Services;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -15,6 +16,8 @@ namespace _Main.Scripts.Dice
 		private const string ConfigResourcePath = "DiceScoringConfig";
 		private const string ConfigFileName = "DiceScoringConfig.json";
 		private const string OverridesFileName = "DiceScoringOverrides.json";
+		private const string StraightConfigResourcePath = "StraightConfig";
+		private const string StraightConfigFileName = "StraightConfig.json";
 
 		private static DiceScoringService instance;
 		public static DiceScoringService Instance => instance ??= new DiceScoringService();
@@ -23,11 +26,21 @@ namespace _Main.Scripts.Dice
 		private readonly List<ComboRuleDefinition> addedRules = new();
 		private readonly HashSet<string> disabledRuleIds = new();
 		private readonly Dictionary<string, int> baseScoreOverrides = new();
+		private readonly StraightCombination straightCombination;
+		private StraightConfig straightConfig;
 
 		private DiceScoringService()
 		{
 			LoadDefaults();
 			LoadOverrides();
+			straightConfig = LoadStraightConfig();
+			straightCombination = new StraightCombination(
+				straightConfig,
+				new StraightRuntimeState(straightConfig?.Defaults),
+				msg => Debug.Log(msg))
+			{
+				DebugLogging = straightConfig?.Upgrade?.Debug ?? false
+			};
 		}
 
 		#region Public API ----------------------------------------------------
@@ -127,6 +140,9 @@ namespace _Main.Scripts.Dice
 					DiceCombination.Straight_1_6 => "Straight 1-6",
 					DiceCombination.Straight_1_5 => "Straight 1-5",
 					DiceCombination.Straight_2_6 => "Straight 2-6",
+					DiceCombination.StraightLength4 => "Straight (4)",
+					DiceCombination.StraightLength5 => "Straight (5)",
+					DiceCombination.StraightLength6 => "Straight (6)",
 					DiceCombination.ThreeOfAKind => "Three of a kind",
 					DiceCombination.FourOfAKind => "Four of a kind",
 					DiceCombination.FiveOfAKind => "Five of a kind",
@@ -230,17 +246,62 @@ namespace _Main.Scripts.Dice
 		/// <summary>Returns snapshot of active rules (order-sensitive).</summary>
 		public IReadOnlyList<ComboRuleDefinition> GetActiveRules() => activeRules;
 
+		public StraightDefaults GetStraightDefaults() => straightConfig?.Defaults;
+		public StraightUpgradeConfig GetStraightUpgradeConfig() => straightConfig?.Upgrade;
+		public StraightRuntimeState GetStraightState() => straightCombination.Snapshot();
+
+		public void SetStraightState(StraightRuntimeState state)
+		{
+			straightCombination.LoadState(state, logClamp: straightCombination.DebugLogging);
+		}
+
+		public StraightUpgradeOutcome[] GetStraightUpgradeOutcomes()
+		{
+			return straightConfig?.Upgrade?.Outcomes;
+		}
+
+		public void ResetStraightToDefaults()
+		{
+			straightCombination.ResetToDefaults(straightConfig?.Defaults);
+		}
+
+		public StraightUpgradeOutcome ApplyStraightUpgradeOutcome(int face, ILoggerService logger = null, Notifications notifications = null, Run run = null)
+		{
+			var outcomes = straightConfig?.Upgrade?.Outcomes;
+			if (outcomes == null || outcomes.Length == 0)
+			{
+				return null;
+			}
+
+			var outcome = outcomes.FirstOrDefault(o => o.Face == face) ?? outcomes[0];
+			var before = straightCombination.Snapshot();
+			straightCombination.Adjust(outcome);
+			var after = straightCombination.Snapshot();
+
+			logger?.Log($"[StraightUpgrade] Die face {face} -> Δ(min {outcome.DeltaMinLen}, max {outcome.DeltaMaxLen}, bonus {outcome.DeltaScoreBonus}). Result: min={after.MinLen}, max={after.MaxLen}, bonus={after.ScoreBonus}");
+			if (notifications != null)
+			{
+				notifications.Add(new Notifications.Notification
+				{
+					message = $"Straight upgraded! Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}"
+				});
+			}
+
+			if (run != null)
+			{
+				run.SetStraightState(after);
+			}
+
+			return outcome;
+		}
+
 		#endregion
 
 		#region Rule application ---------------------------------------------
 
 		private void ApplyStraightRule(ComboRuleDefinition rule, int[] remaining, List<DiceCombinationEntry> output)
 		{
-			if (rule.Faces == null || rule.Faces.Length == 0)
-			{
-				return;
-			}
-
+			// Variable-length straight logic driven by StraightCombination
 			while (true)
 			{
 				if (!rule.Repeatable && output.Any(e => e.Id == rule.Id))
@@ -248,24 +309,21 @@ namespace _Main.Scripts.Dice
 					return;
 				}
 
-				if (!rule.Faces.All(face => remaining[face] > 0))
+				if (!straightCombination.TryConsumeStraight(remaining, out var match))
 				{
 					return;
 				}
 
-				foreach (var face in rule.Faces)
-				{
-					remaining[face]--;
-				}
-
+				var baseScore = straightCombination.GetBaseScore(match.Length);
+				var entryId = $"{rule.Id}_{match.Length}";
 				var entry = new DiceCombinationEntry
 				{
-					Id = rule.Id,
+					Id = entryId,
 					DisplayName = rule.DisplayName,
-					Combination = MapToCombination(rule.Id),
-					Face = 0,
-					Count = rule.Faces.Length,
-					BaseScore = GetScoreWithOverrides(rule.Id, rule.BaseScore)
+					Combination = MapToCombination(match.Length >= 4 ? $"straight_len_{match.Length}" : rule.Id),
+					Face = match.StartFace,
+					Count = match.Length,
+					BaseScore = GetScoreWithOverrides(entryId, baseScore) + straightCombination.ScoreBonus
 				};
 
 				output.Add(entry);
@@ -404,6 +462,9 @@ namespace _Main.Scripts.Dice
 				"straight_1_6" => DiceCombination.Straight_1_6,
 				"straight_1_5" => DiceCombination.Straight_1_5,
 				"straight_2_6" => DiceCombination.Straight_2_6,
+				"straight_len_4" => DiceCombination.StraightLength4,
+				"straight_len_5" => DiceCombination.StraightLength5,
+				"straight_len_6" => DiceCombination.StraightLength6,
 				"ofakind" when count == 3 => DiceCombination.ThreeOfAKind,
 				"ofakind" when count == 4 => DiceCombination.FourOfAKind,
 				"ofakind" when count == 5 => DiceCombination.FiveOfAKind,
@@ -489,6 +550,59 @@ namespace _Main.Scripts.Dice
 			{
 				Debug.LogError($"[DiceScoringService] Failed to load overrides: {ex.Message}");
 			}
+		}
+
+		private StraightConfig LoadStraightConfig()
+		{
+			// Persistent path first
+			var persistentPath = Path.Combine(Application.persistentDataPath, StraightConfigFileName);
+			if (File.Exists(persistentPath))
+			{
+				var json = File.ReadAllText(persistentPath);
+				var payload = JsonUtility.FromJson<StraightConfig>(json);
+				if (payload != null)
+				{
+					return payload;
+				}
+			}
+
+			// Resources fallback
+			var textAsset = Resources.Load<TextAsset>(StraightConfigResourcePath);
+			if (textAsset != null)
+			{
+				var payload = JsonUtility.FromJson<StraightConfig>(textAsset.text);
+				if (payload != null)
+				{
+					return payload;
+				}
+			}
+
+			return new StraightConfig
+			{
+				BaseScores = new[]
+				{
+					new StraightBaseScoreEntry{Length = 4, BaseScore = 400},
+					new StraightBaseScoreEntry{Length = 5, BaseScore = 750},
+					new StraightBaseScoreEntry{Length = 6, BaseScore = 1500},
+				},
+				Defaults = new StraightDefaults{ MinLen = 5, MaxLen = 6, ScoreBonus = 0 },
+				Constraints = new StraightConstraints{ MinLenMin = 4, MaxLenMax = 6 },
+				Upgrade = new StraightUpgradeConfig
+				{
+					Chance = 0.15f,
+					Debug = false,
+					AllowInventorySelection = false,
+					Outcomes = new []
+					{
+						new StraightUpgradeOutcome{Face = 1, DeltaScoreBonus = 50},
+						new StraightUpgradeOutcome{Face = 2, DeltaMinLen = -1},
+						new StraightUpgradeOutcome{Face = 3, DeltaScoreBonus = 100},
+						new StraightUpgradeOutcome{Face = 4, DeltaScoreBonus = -50},
+						new StraightUpgradeOutcome{Face = 5, DeltaMinLen = 1},
+						new StraightUpgradeOutcome{Face = 6, DeltaMaxLen = -1}
+					}
+				}
+			};
 		}
 
 		private void SaveOverrides()

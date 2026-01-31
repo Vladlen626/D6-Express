@@ -1,0 +1,29 @@
+{
+  "BaseScores": [
+    { "Length": 4, "BaseScore": 400 },
+    { "Length": 5, "BaseScore": 750 },
+    { "Length": 6, "BaseScore": 1500 }
+  ],
+  "Defaults": {
+    "MinLen": 5,
+    "MaxLen": 6,
+    "ScoreBonus": 0
+  },
+  "Constraints": {
+    "MinLenMin": 4,
+    "MaxLenMax": 6
+  },
+  "Upgrade": {
+    "Chance": 0.15,
+    "Debug": false,
+    "AllowInventorySelection": false,
+    "Outcomes": [
+      { "Face": 1, "DeltaScoreBonus": 50 },
+      { "Face": 2, "DeltaMinLen": -1 },
+      { "Face": 3, "DeltaScoreBonus": 100 },
+      { "Face": 4, "DeltaScoreBonus": -50 },
+      { "Face": 5, "DeltaMinLen": 1 },
+      { "Face": 6, "DeltaMaxLen": -1 }
+    ]
+  }
+}
