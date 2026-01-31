@@ -152,7 +152,7 @@ Material:
     - _Glossiness: 0.1503787
     - _GlossyReflections: 1
     - _Metalic: 0
-    - _Metallic: 0.08
+    - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
