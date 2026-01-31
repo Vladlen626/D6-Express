@@ -69,6 +69,7 @@ public static class SpeechFactory
 
         var speechNodeConductorSaysHi = Say(speechBuyTicket, textsConfig.texts["conductor_enter_hi"]);
         var speechNodeHasMoney = Say(speechBuyTicket, textsConfig.texts["conductor_enter_positive"]);
+
         var speechNodeHasNoMoney = Say(speechBuyTicket, textsConfig.texts["conductor_enter_negative"]);
 
         var speechNodeConditional = new SpeechNodeConditional(
@@ -79,12 +80,16 @@ public static class SpeechFactory
             .Init(speechBuyTicket);
 
         var speechNodeMoveToTrain = new SpeechNodeDo(() =>
-            {
-                game.RequestSetLocation(Location.TRAIN);
-                playerModel.InventoryModel.TakeCash(run.TicketPrice);
-            })
-            .After(speechNodeHasMoney)
-            .Init(speechBuyTicket);
+        {
+            game.RequestSetLocation(Location.TRAIN);
+            playerModel.InventoryModel.TakeCash(run.TicketPrice);
+        })
+        .Init(speechBuyTicket);
+
+        var speechNodeChoiceEnter = new SpeechNodeChoice(textsConfig.texts["choice_enter_train"])
+        .OnAccepted(speechNodeMoveToTrain)
+        .After(speechNodeHasMoney)
+        .Init(speechBuyTicket);
 
         speechBuyTicket.SetRootNode(speechNodeConductorSaysHi);
         return speechBuyTicket;

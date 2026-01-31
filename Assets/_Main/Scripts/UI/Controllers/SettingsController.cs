@@ -27,7 +27,7 @@ namespace _Main.Scripts.UI
 		{
 			base.OnActivate();
 			_context.Hide();
-			inputService.OnPausePressed += OnPausePressedHandler;
+			// inputService.OnPausePressed += OnPausePressedHandler;
 			_context.OnMasterChanged += OnMasterChangedHandler;
 			_context.OnMusicChanged += OnMusicChangedHandler;
 			_context.OnSfxChanged += OnSfxChangedHandler;

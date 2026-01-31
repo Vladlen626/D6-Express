@@ -1,5 +1,6 @@
 {
     "texts": {
+        "choice_enter_train": "Enter the train?",
         "conductor_enter_hi": "Well, well",
         "conductor_enter_positive": "Welcome aboard D6-Express",
         "conductor_enter_negative": "Get lost, you filthy beggar!",

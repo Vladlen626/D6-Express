@@ -6,15 +6,16 @@ public class SpeechController : BaseContextController<UISpeechView>
 {
 	private readonly Interactor interactor;
 	private readonly SpeechModel speechModel;
+    private readonly IInputService inputService;
 
-	private Speech currentSpeech;
+    private Speech currentSpeech;
 	private InteractionAction speechAction;
 
 	public SpeechController(IUIService uiService, Interactor interactor, SpeechModel speechModel) : base(uiService)
 	{
 		this.interactor = interactor;
 		this.speechModel = speechModel;
-	}
+    }
 
 	protected override void OnActivate()
 	{

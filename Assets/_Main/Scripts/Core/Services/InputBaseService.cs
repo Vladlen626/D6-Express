@@ -19,6 +19,8 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnDebugSwitchPressed;
 
 		public event Action OnSpeechLineSkip;
+		public event Action OnSpeechAccept;
+		public event Action OnSpeechDecline;
 
 		public Vector2 Move { get; private set; }
 		public Vector2 Look { get; private set; }
@@ -44,6 +46,7 @@ namespace _Main.Scripts.Core.Services
 			EnableUIInputs();
 			EnablePlayerInputs();
 			EnableDebugInputs();
+			EnableSpeechInputs();
 		}
 
 		public void DisableAllInputs()
@@ -51,6 +54,7 @@ namespace _Main.Scripts.Core.Services
 			DisableUIInputs();
 			DisablePlayerInputs();
 			DisableDebugInputs();
+			DisableSpeechInputs();
 		}
 
 		public void EnableDiceGameInputs()
@@ -103,6 +107,16 @@ namespace _Main.Scripts.Core.Services
 			_actions.Debug.Disable();
 		}
 
+		public void EnableSpeechInputs()
+		{
+			_actions.Speech.Enable();
+		}
+
+		public void DisableSpeechInputs()
+		{
+			_actions.Speech.Disable();
+		}
+
 		private void BindActions()
 		{
 			_actions.Player.Move.performed += ctx =>
@@ -132,7 +146,7 @@ namespace _Main.Scripts.Core.Services
 			{
 				IsInteract = false;
 			};
-			
+
 			_actions.Player.Interact.performed += _ =>
 			{
 				OnInteractPerformed?.Invoke();
@@ -156,16 +170,26 @@ namespace _Main.Scripts.Core.Services
 				OnDebugSwitchPressed?.Invoke();
 			};
 
-			_actions.UI.SpeechLineSkip.performed += _ =>
+			_actions.Speech.SkipLine.performed += _ =>
 			{
 				OnSpeechLineSkip?.Invoke();
+			};
+
+			_actions.Speech.Accept.performed += _ =>
+			{
+				OnSpeechAccept?.Invoke();
+			};
+
+			_actions.Speech.Decline.performed += _ =>
+			{
+				OnSpeechDecline?.Invoke();
 			};
 
 			_actions.Player.Fart.performed += _ =>
 			{
 				OnFarted?.Invoke();
 			};
-			
+
 			_actions.DiceGame.Next.performed += _ =>
 			{
 				OnDiceGameNext?.Invoke();

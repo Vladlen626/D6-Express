@@ -8,6 +8,9 @@ public class UISpeechView : UIBaseElement
 	private GameObject speechPanel;
 
 	[SerializeField]
+	private GameObject choiceOptions;
+
+	[SerializeField]
 	private TextMeshProUGUI speechText;
 
 	[SerializeField]
@@ -25,5 +28,15 @@ public class UISpeechView : UIBaseElement
 		// todo уебищная эвристика
 		speechPanel.SetActive(text != string.Empty);
 		speechText.text = text;
+	}
+
+	public void ShowChoiceOptions()
+	{
+		choiceOptions.SetActive(true);
+	}
+
+	public void HideChoiceOptions()
+	{
+		choiceOptions.SetActive(false);
 	}
 }

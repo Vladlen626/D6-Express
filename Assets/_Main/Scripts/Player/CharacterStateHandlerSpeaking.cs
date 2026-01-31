@@ -21,14 +21,18 @@ public class CharacterStateHandlerSpeaking : CharacterStateHandler
 	protected override void EnterInternal()
 	{
 		base.EnterInternal();
+		
 		inputService.DisableCameraInputs();
-		cursorService.UnlockCursor();
+		inputService.DisableUIInputs();
+		inputService.EnableSpeechInputs();
 	}
 
 	protected override void ExitInternal()
 	{
-		base.ExitInternal();
 		inputService.EnableCameraInputs();
-		cursorService.LockCursor();
+		inputService.DisableSpeechInputs();
+		inputService.EnableUIInputs();
+
+		base.ExitInternal();
 	}
 }
