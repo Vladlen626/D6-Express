@@ -218,7 +218,8 @@ namespace _Main.Scripts.Dice
 					}
 				}
 
-				var candidateLength = Mathf.Clamp(length, MinLen, MaxLen);
+				// Only cap at MaxLen; never inflate lengths below MinLen.
+				var candidateLength = Mathf.Min(length, MaxLen);
 				if (candidateLength < MinLen)
 				{
 					continue;
