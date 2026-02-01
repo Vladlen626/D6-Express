@@ -133,12 +133,12 @@ public class DebugWindowPlayer : DebugWindowModel
 
 		if (ImGui.CollapsingHeader("Quests"))
 		{
-			if (ImGui.Button("Add random"))
-			{
-				var quest = QuestFactory.GenerateRandomQuest(playerView);
-				quest.RequestStart();
-				playerModel.Quests.Add(quest);
-			}
+			// if (ImGui.Button("Add random"))
+			// {
+			// 	var quest = QuestFactory.GenerateRandomQuest(playerView);
+			// 	quest.RequestInProgress();
+			// 	playerModel.Quests.Add(quest);
+			// }
 
 			if (ImGui.Button("Clear"))
 			{

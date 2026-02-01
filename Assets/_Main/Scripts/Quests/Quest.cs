@@ -3,44 +3,51 @@ using System.Collections.Generic;
 
 public class Quest
 {
+    public enum State
+    {
+        IN_PROGRESS,
+        COMPLETED,
+        FAILED,
+        FINISHED
+    }
+
     private readonly Dictionary<Type, QuestComponent> components = new();
 
-    private QuestNode current;
-    private QuestNode next;
+    public string Title { get; private set; }
+    public State CurrentState { get; private set; }
+    public IEnumerable<QuestComponent> Components => components.Values;
 
-
-    public int Id { get; private set; }
-    public bool IsFinished { get; private set; }
-
-    public event Action<Quest> Started;
-    public event Action<Quest> Finished;
-
-    public event Action<QuestNode> NodeStarted;
-    public event Action<QuestNode> NodeFinished;
-
+    public event Action<Quest, State> StateChanged;
     public event Action<QuestComponent> ComponentAdded;
     public event Action<QuestComponent> ComponentRemoved;
 
-    public Quest(int id)
+    public Quest(string title)
     {
-        this.Id = id;
+        Title = title;
     }
 
-    public void RequestStart()
+    public void RequestInProgress()
     {
-        Started?.Invoke(this);
+        CurrentState = State.IN_PROGRESS;
+        StateChanged?.Invoke(this, CurrentState);
+    }
 
-        ProcessNextNode();
+    public void RequestComplete()
+    {
+        CurrentState = State.COMPLETED;
+        StateChanged?.Invoke(this, CurrentState);
+    }
+
+    public void RequestFail()
+    {
+        CurrentState = State.FAILED;
+        StateChanged?.Invoke(this, CurrentState);
     }
 
     public void RequestFinish()
     {
-        current.Finish();
-    }
-
-    public void SetNextNode(QuestNode next)
-    {
-        this.next = next;
+        CurrentState = State.IN_PROGRESS;
+        StateChanged?.Invoke(this, CurrentState);
     }
 
     public T AddComponent<T>() where T : QuestComponent, new()
@@ -71,52 +78,5 @@ public class Quest
     {
         var component = components.GetValueOrDefault(typeof(T), null);
         return component as T;
-    }
-
-    private void ProcessNextNode()
-    {
-        if (current != null)
-        {
-            current.Started -= OnNodeStarted;
-            current.Finished -= OnNodeFinished;
-
-            current = null;
-        }
-
-        if (next == null)
-        {
-            FinishQuest();
-            return;
-        }
-
-        current = next;
-        next = null;
-        current.Started += OnNodeStarted;
-        current.Finished += OnNodeFinished;
-
-        current.Start();
-    }
-
-    private void OnNodeStarted()
-    {
-        NodeStarted?.Invoke(current);
-    }
-
-    private void OnNodeFinished()
-    {
-        NodeFinished?.Invoke(current);
-        ProcessNextNode();
-    }
-
-    private void FinishQuest()
-    {
-        IsFinished = true;
-
-        foreach (var item in components.Values)
-        {
-            item.Deactivate();
-        }
-
-        Finished?.Invoke(this);
     }
 }

@@ -30,18 +30,12 @@ namespace _Main.Scripts.UI
 			run.DayChanged += OnDaysChanged;
 			run.DaysPerLevelChanged += OnDaysChanged;
 
-			playerModel.InventoryModel.OnCashCountChanged += OnCashChanged;
-			run.NextTicketPriceChanged += OnCashChanged;
-
-			OnCashChanged();
 			OnTickChanged();
 			OnDaysChanged();
 		}
 
 		protected override void OnDeactivate()
 		{
-			playerModel.InventoryModel.OnCashCountChanged -= OnCashChanged;
-
 			run.DayChanged -= OnDaysChanged;
 			run.TickChanged -= OnTickChanged;
 
@@ -65,11 +59,6 @@ namespace _Main.Scripts.UI
 		private void OnDaysChanged()
 		{
 			_context.SetDaysText("days_progress", (run.DaysPerLevel - run.Day).ToString());
-		}
-
-		private void OnCashChanged()
-		{
-			_context.SetCashProgressText("cash_progress", $"{playerModel.InventoryModel.CashCount}", $"{run.NextTicketPrice}");
 		}
 
 		private void OnLocationChanged()

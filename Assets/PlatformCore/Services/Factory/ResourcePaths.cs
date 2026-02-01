@@ -15,6 +15,9 @@ namespace PlatformCore.Services.Factory
 		public static class Items
 		{
 			public const string DicePrefab = "Items/DicePrefab";
+			public const string ItemBase = "Items/ItemBase";
+			public const string PassMultiplierItem = "Items/PassMultiplierItem";
+			public const string RerollSelectedItem = "Items/RerollSelectedItem";
 		}
 
 		public static class Json
@@ -31,15 +34,14 @@ namespace PlatformCore.Services.Factory
 
 		public static class Player
 		{
-			public const string Character = "Player/Character";
 			public const string CinemachineCamera = "Player/CinemachineCamera";
-			public const string NpcAnim = "Player/NpcAnim";
 			public const string NpcBase = "Player/NpcBase";
 			public const string NpcConductor = "Player/NpcConductor";
 			public const string NpcEnemy = "Player/NpcEnemy";
 			public const string NpcPassenger = "Player/NpcPassenger";
 			public const string NpcShopKeeper = "Player/NpcShopKeeper";
 			public const string PlayerBase = "Player/PlayerBase";
+			public const string PlayerInventory = "Player/PlayerInventory";
 			public const string Sit = "Player/Sit";
 			public const string StandUp = "Player/StandUp";
 		}
@@ -59,13 +61,13 @@ namespace PlatformCore.Services.Factory
 		{
 			public const string UICursorView = "UI/UICursorView";
 			public const string UIHintView = "UI/UIHintView";
-			public const string UILevelView = "UI/UILevelView";
 			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";
 			public const string UINotificationsView = "UI/UINotificationsView";
 			public const string UINotificationView = "UI/UINotificationView";
 			public const string UIPlayerHud = "UI/UIPlayerHud";
 			public const string UIQuestsView = "UI/UIQuestsView";
+			public const string UIQuestView = "UI/UIQuestView";
 			public const string UISettings = "UI/UISettings";
 			public const string UISleepView = "UI/UISleepView";
 			public const string UISpeechView = "UI/UISpeechView";

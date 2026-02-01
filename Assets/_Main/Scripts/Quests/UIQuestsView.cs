@@ -1,14 +1,18 @@
 using PlatformCore.Services.UI;
-using TMPro;
 using UnityEngine;
 
 public class UIQuestsView : UIBaseElement
 {
     [SerializeField]
-    private TextMeshProUGUI hints;
+    private Transform questsContainer;
 
-    public void SetHints(string hint)
+    public void AddQuest(UIQuestView uIQuestView)
     {
-        hints.text = hint;
+        uIQuestView.transform.SetParent(questsContainer);
+    }
+
+    public void RemoveQuest(UIQuestView uIQuestView)
+    {
+        uIQuestView.transform.SetParent(null);
     }
 }

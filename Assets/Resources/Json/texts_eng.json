@@ -59,6 +59,8 @@
         "days_progress": "days remaining: {0}",
         "cash_progress": "progress: \n{0}$ / {1}$",
         "enemy_offer": "Hey! Wanna play some dices?",
-        "enemy_refuse": "Oh. Another time maybe?"
+        "enemy_refuse": "Oh. Another time maybe?",
+        "quest_main_title": "Train adventure",
+        "quest_main_goal": "Get money for the next train ticket: {0}/{1}"
     }
 }
