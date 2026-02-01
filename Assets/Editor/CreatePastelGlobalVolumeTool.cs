@@ -65,13 +65,6 @@ public static class CreatePastelGlobalVolumeTool
 		wb.tint.Override(-4f);
 		wb.active = true;
 
-		// Lift / Gamma / Gain
-		LiftGammaGain lgg = GetOrAdd<LiftGammaGain>(profile);
-		lgg.lift.Override(new Vector4(0.035f, 0.025f, 0.015f, 0f));
-		lgg.gamma.Override(new Vector4(0.030f, 0.015f, -0.005f, 0f));
-		lgg.gain.Override(new Vector4(0.015f, 0.010f, 0.000f, 0f));
-		lgg.active = true;
-
 		// Bloom (очень мягкий)
 		Bloom bloom = GetOrAdd<Bloom>(profile);
 		bloom.intensity.Override(0.25f);
