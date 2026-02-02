@@ -18,6 +18,11 @@ public class Quests : IEnumerable<Quest>
 
     public void Remove(Quest quest)
     {
+        if (quest.CurrentState != Quest.State.FINISHED)
+        {
+            quest.RequestFinish();
+        }
+
         quests.Remove(quest);
 
         QuestRemoved?.Invoke(quest);
@@ -30,12 +35,7 @@ public class Quests : IEnumerable<Quest>
             Remove(quests[i]);
         }
     }
-
-    private void OnQuestFinished(Quest quest)
-    {
-        // Remove(quest);
-    }
-
+    
     public IEnumerator<Quest> GetEnumerator()
     {
         return quests.GetEnumerator();

@@ -66,18 +66,31 @@ public class QuestsViewController : BaseContextController<UIQuestsView>
 
     private void OnQuestComponentAdded(Quest quest, QuestComponent component)
     {
-        if (component is QuestComponentHint componentHint)
+        if (component is QuestComponentObjectives objectives)
         {
-            componentHint.HintUpdated += () => OnHintUpdated(quest);
-            OnHintUpdated(quest);
+            objectives.Added += (o) => ObjectiveAdded(quest, o);
+            foreach (var item in objectives)
+            {
+                ObjectiveAdded(quest, item);
+            }
         }
     }
 
-    private void OnHintUpdated(Quest quest)
+    private void ObjectiveAdded(Quest quest, QuestObjective questObjective)
     {
         var view = questViews[quest];
-        var questComponentHint = quest.GetComponent<QuestComponentHint>();
-        view.SetGoalText(questComponentHint.Hint);
-        view.SetMarked(questComponentHint.Marked);
+        var objectives = quest.GetComponent<QuestComponentObjectives>();
+
+        questObjective.TitleChanged += (t) => view.UpdateObjectives(objectives);
+        questObjective.CompletedChanged += (t) => view.UpdateObjectives(objectives);
+
+        view.UpdateObjectives(objectives);
+    }
+
+    private void ObjectiveRemoved(Quest quest, QuestObjective questObjective)
+    {
+        var view = questViews[quest];
+        var objectives = quest.GetComponent<QuestComponentObjectives>();
+        view.UpdateObjectives(objectives);
     }
 }

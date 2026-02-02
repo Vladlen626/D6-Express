@@ -1,64 +1,37 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Factory;
 
-public class MainQuestContoller : IBaseController, IActivatable, IPreloadable
+public class MainQuestContoller : IBaseController, IPreloadable, IQuestGenerator
 {
-    private readonly Quests quests;
     private readonly Run run;
     private readonly PlayerModel playerModel;
     private readonly ConfigService configService;
 
-    private Quest main;
     private TextsConfig textsConfig;
 
     public MainQuestContoller(Run run, PlayerModel playerModel, ConfigService configService)
     {
-        quests = playerModel.Quests;
         this.run = run;
         this.playerModel = playerModel;
         this.configService = configService;
     }
 
-    public void Activate()
-    {
-        run.LevelChanged += OnLevelChanged;
-        OnLevelChanged();
-    }
-
-    public void Deactivate()
-    {
-        if (main != null)
-        {
-            main.RequestFinish();
-            quests.Remove(main);
-        }
-    }
+    public void Deactivate() { }
 
     public async UniTask PreloadAsync()
     {
         textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
     }
 
-    private void OnLevelChanged()
-    {
-        if (main != null)
-        {
-            main.RequestFinish();
-            quests.Remove(main);
-        }
-        main = CreateMainQuest();
-        quests.Add(main);
-        main.RequestInProgress();
-    }
-
-    private Quest CreateMainQuest()
+    public Quest Generate()
     {
         var quest = new Quest(textsConfig.texts["quest_main_title"]);
 
-        var hintComponent = quest.AddComponent<QuestComponentHint>();
+        var objectives = quest.AddComponent<QuestComponentObjectives>();
+
+        var getMoneyObjective = objectives.Add();
 
         run.LevelChangeRequested += () =>
         {
@@ -98,19 +71,19 @@ public class MainQuestContoller : IBaseController, IActivatable, IPreloadable
 
         quest.StateChanged += (q, s) =>
         {
-            switch (s)
+            getMoneyObjective.Completed = s switch
             {
-                case Quest.State.COMPLETED:
-                    hintComponent.Mark(true);
-                    break;
-                default:
-                    hintComponent.Mark(false);
-                    break;
-            }
+                Quest.State.COMPLETED => true,
+                _ => false,
+            };
             var localized = textsConfig.texts["quest_main_goal"];
             var result = string.Format(localized, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
-            hintComponent.SetHint(result);
+            getMoneyObjective.Title = result;
         };
+
+        var localized = textsConfig.texts["quest_main_goal"];
+        var result = string.Format(localized, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
+        getMoneyObjective.Title = result;
 
         return quest;
     }

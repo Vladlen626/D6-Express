@@ -141,12 +141,22 @@ namespace _Main.Scripts.Core
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notifications));
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService));
 			controllersList.Add(new QuestsViewController(uiService, playerModel.Quests, factory));
-			controllersList.Add(new MainQuestContoller(run, playerModel, configService));
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
 			controllersList.Add(NotificationsFactory.GetNotificationsControler(notifications, playerModel.InventoryModel, configService));
 			controllersList.Add(sleepController);
 			controllersList.Add(locationController);
 			controllersList.AddRange(baseControllers);
+
+			var mainQuestController = new MainQuestContoller(run, playerModel, configService);
+
+			await _lifecycle.RegisterAsync(mainQuestController);
+
+			var questsController = new QuestsController(run, playerModel.Quests, new[]
+			{
+				mainQuestController
+			});
+
+			await _lifecycle.RegisterAsync(questsController);
 
 			await _lifecycle.RegisterControllersGroupAsync(controllersList);
 

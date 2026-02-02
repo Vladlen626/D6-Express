@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Text;
 using PlatformCore.Services.UI;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIQuestView : UIBaseElement
@@ -20,27 +23,21 @@ public class UIQuestView : UIBaseElement
         title.SetRawText(text);
     }
 
-    public void SetGoalText(string text)
+    public void UpdateObjectives(IEnumerable<QuestObjective> objectives)
     {
-        goal.SetRawText(text);
-    }
+        StringBuilder sb = new();
+        foreach (var item in objectives)
+        {
+            if (item.Completed)
+            {
+                sb.AppendLine($"<color=#{completedColor.ToHexString()}><s>{item.Title}</s></color>");
+            }
+            else
+            {
+                sb.AppendLine($"<color=#{activeColor.ToHexString()}>{item.Title}</color>");
+            }
+        }
 
-    // todo: подумать мб есть умнее способ
-    public void SetMarked(bool marked)
-    {
-        if (marked)
-        {
-            goal.Tmp.color = completedColor;
-            goal.Tmp.text = $"<s>{goal.Tmp.text}</s>";
-        }
-        else
-        {
-            goal.Tmp.color = activeColor;
-            goal.Tmp.text = goal.Tmp.text
-                .Replace("<s>", "")
-                .Replace("</s>", "")
-                .Replace("<strikethrough>", "")
-                .Replace("</strikethrough>", "");
-        }
+        goal.SetRawText(sb.ToString());
     }
 }

@@ -5,6 +5,7 @@ public class Quest
 {
     public enum State
     {
+        INACTIVE,
         IN_PROGRESS,
         COMPLETED,
         FAILED,
@@ -14,7 +15,7 @@ public class Quest
     private readonly Dictionary<Type, QuestComponent> components = new();
 
     public string Title { get; private set; }
-    public State CurrentState { get; private set; }
+    public State CurrentState { get; private set; } = State.INACTIVE;
     public IEnumerable<QuestComponent> Components => components.Values;
 
     public event Action<Quest, State> StateChanged;
