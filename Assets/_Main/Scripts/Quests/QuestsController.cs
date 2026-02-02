@@ -47,7 +47,7 @@ public class QuestsController : IBaseController, IActivatable
             {
                 break;
             }
-            
+
             var generatorIdx = Random.Range(0, notUsedGenerators.Count);
             var generator = notUsedGenerators[i];
             notUsedGenerators.RemoveAt(generatorIdx);

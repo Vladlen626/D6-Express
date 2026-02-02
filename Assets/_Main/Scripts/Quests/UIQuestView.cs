@@ -30,11 +30,11 @@ public class UIQuestView : UIBaseElement
         {
             if (item.Completed)
             {
-                sb.AppendLine($"<color=#{completedColor.ToHexString()}><s>{item.Title}</s></color>");
+                sb.AppendLine($"- <color=#{completedColor.ToHexString()}><s>{item.Title}</s></color>");
             }
             else
             {
-                sb.AppendLine($"<color=#{activeColor.ToHexString()}>{item.Title}</color>");
+                sb.AppendLine($"- <color=#{activeColor.ToHexString()}>{item.Title}</color>");
             }
         }
 

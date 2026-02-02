@@ -8,17 +8,21 @@ public class QuestsViewController : BaseContextController<UIQuestsView>
 {
     private readonly Quests quests;
     private readonly IObjectFactory objectFactory;
+    private readonly D6Game game;
     private readonly Dictionary<Quest, UIQuestView> questViews = new();
 
-    public QuestsViewController(IUIService uiService, Quests quests, IObjectFactory objectFactory) : base(uiService)
+    public QuestsViewController(IUIService uiService, Quests quests, IObjectFactory objectFactory, D6Game game) : base(uiService)
     {
         this.quests = quests;
         this.objectFactory = objectFactory;
+        this.game = game;
     }
 
     protected override void OnActivate()
     {
         base.OnActivate();
+
+        game.LocationChanged += OnLocationChanged;
 
         quests.QuestAdded += OnQuestAdded;
         quests.QuestRemoved += OnQuestRemoved;
@@ -31,6 +35,8 @@ public class QuestsViewController : BaseContextController<UIQuestsView>
 
     protected override void OnDeactivate()
     {
+        game.LocationChanged -= OnLocationChanged;
+
         quests.QuestRemoved -= OnQuestRemoved;
         quests.QuestAdded -= OnQuestAdded;
 
@@ -92,5 +98,17 @@ public class QuestsViewController : BaseContextController<UIQuestsView>
         var view = questViews[quest];
         var objectives = quest.GetComponent<QuestComponentObjectives>();
         view.UpdateObjectives(objectives);
+    }
+
+    private void OnLocationChanged()
+    {
+        if (game.Location == Location.MAIN_MENU)
+        {
+            _context.Hide();
+        }
+        else
+        {
+            _context.Show();
+        }
     }
 }
