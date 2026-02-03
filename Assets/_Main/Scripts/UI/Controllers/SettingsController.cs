@@ -12,8 +12,6 @@ namespace _Main.Scripts.UI
 		private readonly ICursorService cursorService;
 		private readonly IInputService inputService;
 
-		private bool isCursorLocked;
-
 		public SettingsController(IUIService uiService, IAudioService audioService, ICursorService cursorService,
 			IInputService inputService) : base(uiService)
 		{
@@ -27,7 +25,7 @@ namespace _Main.Scripts.UI
 		{
 			base.OnActivate();
 			_context.Hide();
-			// inputService.OnPausePressed += OnPausePressedHandler;
+			inputService.OnPausePressed += OnPausePressedHandler;
 			_context.OnMasterChanged += OnMasterChangedHandler;
 			_context.OnMusicChanged += OnMusicChangedHandler;
 			_context.OnSfxChanged += OnSfxChangedHandler;
@@ -44,7 +42,7 @@ namespace _Main.Scripts.UI
 
 			base.OnDeactivate();
 		}
-		
+
 		private void OnPausePressedHandler()
 		{
 			if (_context.isShown())
@@ -60,8 +58,6 @@ namespace _Main.Scripts.UI
 
 		private void ShowContext()
 		{
-			isCursorLocked = cursorService.IsCursorLocked;
-			
 			_context.Show();
 			inputService.DisablePlayerInputs();
 			cursorService.UnlockCursor();
@@ -71,22 +67,14 @@ namespace _Main.Scripts.UI
 		{
 			_context.Hide();
 			inputService.EnablePlayerInputs();
-				
-			if (isCursorLocked)
-			{
-				cursorService.LockCursor();
-			}
-			else
-			{
-				cursorService.UnlockCursor();
-			}
+			cursorService.LockCursor();
 		}
 
 		private void OnMasterChangedHandler(float obj)
 		{
 			audioService.SetMasterVolume(obj);
 		}
-		
+
 		private void OnMusicChangedHandler(float obj)
 		{
 			audioService.SetMusicVolume(obj);

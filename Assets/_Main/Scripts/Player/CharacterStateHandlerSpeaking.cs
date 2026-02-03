@@ -24,13 +24,11 @@ public class CharacterStateHandlerSpeaking : CharacterStateHandler
 		
 		inputService.DisableCameraInputs();
 		inputService.DisableUIInputs();
-		inputService.EnableSpeechInputs();
 	}
 
 	protected override void ExitInternal()
 	{
 		inputService.EnableCameraInputs();
-		inputService.DisableSpeechInputs();
 		inputService.EnableUIInputs();
 
 		base.ExitInternal();

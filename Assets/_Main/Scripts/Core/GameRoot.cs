@@ -139,7 +139,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, stationShop, playerView.Interactor, Camera.main));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, trainShop, playerView.Interactor, Camera.main));
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notifications));
-			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService));
+			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService, inputService));
 			controllersList.Add(new QuestsViewController(uiService, playerModel.Quests, factory, game));
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
 			controllersList.Add(NotificationsFactory.GetNotificationsControler(notifications, playerModel.InventoryModel, configService));

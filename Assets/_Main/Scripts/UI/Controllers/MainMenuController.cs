@@ -40,12 +40,10 @@ namespace _Main.Scripts.UI
 			if (game.Location == Location.MAIN_MENU)
 			{
 				_context.Show();
-				cursorService.UnlockCursor();
 			}
 			else
 			{
 				_context.Hide();
-				cursorService.LockCursor();
 			}
 		}
 
