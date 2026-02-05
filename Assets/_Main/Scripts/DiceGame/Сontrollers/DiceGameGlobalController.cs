@@ -150,6 +150,7 @@ namespace _Main.Scripts.Dice
 			{
 				return;
 			}
+			gamePreviousStoped = true;
 
 			inputService.DisableDiceGameInputs();
 			
@@ -165,7 +166,6 @@ namespace _Main.Scripts.Dice
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
 			ClenUpPersistentControllers();
-			gamePreviousStoped = true;
 		}
 
 		private async UniTask SetupBaseModels()
