@@ -48,7 +48,7 @@ namespace PlatformCore.Services.UI
 			OnHide();
 		}
 
-		public bool isShown()
+		public bool IsShown()
 		{
 			return _group.alpha > 0;
 		}

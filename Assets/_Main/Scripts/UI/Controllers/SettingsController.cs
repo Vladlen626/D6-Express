@@ -45,7 +45,7 @@ namespace _Main.Scripts.UI
 
 		private void OnPausePressedHandler()
 		{
-			if (_context.isShown())
+			if (_context.IsShown())
 			{
 				HideContext();
 			}

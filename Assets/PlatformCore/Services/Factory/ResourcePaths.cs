@@ -24,6 +24,7 @@ namespace PlatformCore.Services.Factory
 		{
 			public const string dice_game_rules = "Json/dice_game_rules";
 			public const string dice_types = "Json/dice_types";
+			public const string modifiers_ui = "Json/modifiers_ui";
 			public const string player = "Json/player";
 			public const string run_rules = "Json/run_rules";
 			public const string shop = "Json/shop";
@@ -63,6 +64,8 @@ namespace PlatformCore.Services.Factory
 			public const string UIHintView = "UI/UIHintView";
 			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";
+			public const string UIModifiersView = "UI/UIModifiersView";
+			public const string UIModifierView = "UI/UIModifierView";
 			public const string UINotificationsView = "UI/UINotificationsView";
 			public const string UINotificationView = "UI/UINotificationView";
 			public const string UIPlayerHud = "UI/UIPlayerHud";

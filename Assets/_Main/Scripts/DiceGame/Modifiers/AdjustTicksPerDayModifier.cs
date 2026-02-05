@@ -8,7 +8,7 @@ namespace _Main.Scripts.Dice
 	/// </summary>
 	public class AdjustTicksPerDayModifier : IOnLevelStartModifier
 	{
-		private readonly int delta;
+		public readonly int delta;
 		private bool isApplied;
 		private Run run;
 

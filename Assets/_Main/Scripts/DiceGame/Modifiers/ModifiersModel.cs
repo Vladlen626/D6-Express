@@ -9,12 +9,15 @@ namespace _Main.Scripts.Dice
 	{
 		public IReadOnlyList<IModifier> AllModifiers => allModifiers;
 
-		private readonly List<IModifier> allModifiers = new (); 
-		private readonly List<IOnLevelStartModifier> onLevelStartActionsHandler = new ();
-		private readonly List<IOnRoundStartModifier> onRoundStartActionsHandler = new ();
-		private readonly List<IOnRollModifier> onRollActionsHandler = new ();
-		private readonly List<IOnPassModifier> onPassActionsHandler = new ();
-		private readonly List<IOnRoundEndModifier> onRoundEndActionsHandler = new ();
+		private readonly List<IModifier> allModifiers = new();
+		private readonly List<IOnLevelStartModifier> onLevelStartActionsHandler = new();
+		private readonly List<IOnRoundStartModifier> onRoundStartActionsHandler = new();
+		private readonly List<IOnRollModifier> onRollActionsHandler = new();
+		private readonly List<IOnPassModifier> onPassActionsHandler = new();
+		private readonly List<IOnRoundEndModifier> onRoundEndActionsHandler = new();
+
+		public event Action<IModifier> ModifierAdded;
+		public event Action<IModifier> ModifierRemoved;
 
 		public void AddModifier(IModifier modifier)
 		{
@@ -44,6 +47,8 @@ namespace _Main.Scripts.Dice
 			{
 				onRoundEndActionsHandler.Add(onRoundEndAction);
 			}
+
+			ModifierAdded?.Invoke(modifier);
 		}
 
 		public void RemoveModifier(IModifier modifier)
@@ -74,6 +79,8 @@ namespace _Main.Scripts.Dice
 			{
 				onRoundEndActionsHandler.Remove(onRoundEndAction);
 			}
+
+			ModifierRemoved?.Invoke(modifier);
 		}
 
 		public async UniTask PlayLevelStartActions(DiceModifierContext modifierContext)

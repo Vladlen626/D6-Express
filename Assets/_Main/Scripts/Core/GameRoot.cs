@@ -143,6 +143,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(new QuestsViewController(uiService, playerModel.Quests, factory, game));
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
 			controllersList.Add(NotificationsFactory.GetNotificationsControler(notifications, playerModel.InventoryModel, configService));
+			controllersList.Add(new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory, inputService, configService));
 			controllersList.Add(sleepController);
 			controllersList.Add(locationController);
 			controllersList.AddRange(baseControllers);

@@ -9,7 +9,7 @@ namespace _Main.Scripts.Dice
 	/// </summary>
 	public class PassActivationMultiplierModifier : IOnPassModifier, IOnRoundStartModifier
 	{
-		private const float ScoreMultiplier = 1.5f;
+		public const float ScoreMultiplier = 1.5f;
 		private const int ActivationsPerDay = 1;
 
 		private Run run;

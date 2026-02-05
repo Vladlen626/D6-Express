@@ -61,6 +61,24 @@
         "enemy_offer": "Hey! Wanna play some dices?",
         "enemy_refuse": "Oh. Another time maybe?",
         "quest_main_title": "Train adventure",
-        "quest_main_goal": "Get money for the next train ticket: {0}/{1}"
+        "quest_main_goal": "Get money for the next train ticket: {0}/{1}",
+        "modifiers_header": "Modifiers",
+        "modifier_scramble_combinations_title": "Scramble Combinations",
+        "modifier_scramble_combinations_description": "At the start of each round, combination scores are shuffled. The same rolled combination can be worth a different base score this round",
+        "modifier_shake_reroll_title": "Shake reroll",
+        "modifier_shake_reroll_description": "On roll: has a chance to shake one unsaved die and reroll it, then recalculates your combinations",
+        "modifier_shake_reroll_value": "Reroll chance: {0}",
+        "modifier_multiply_combo_title": "Multiply Combo",
+        "modifier_multiply_combo_description": "On Pass: if you have the specified combination, it gains +1 multiplier",
+        "modifier_multiply_combo_value": "Combo: {0}",
+        "modifier_multiply_kind_title": "Multiply Kind",
+        "modifier_multiply_kind_description": "On Pass: if you have the specified combination with the specified face value, it gains +1 multiplier",
+        "modifier_multiply_kind_Value": "Kind: {0}",
+        "modifier_pass_activation_multiplier_title": "Pass Activation",
+        "modifier_pass_activation_multiplier_description": "Active ability: press to arm it. Your next Pass gets a score multiplier (1 use per in-game day)",
+        "modifier_pass_activation_multiplier_value": "Multiplier: {0}",
+        "modifier_adjust_tick_title": "Adjust Tick",
+        "modifier_adjust_tick_description": "Adjusts the number of ticks (games per day) for the current level by a fixed delta (can increase or decrease)",
+        "modifier_adjust_tick_value": "Tick delta: {0}"
     }
 }

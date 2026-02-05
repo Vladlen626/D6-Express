@@ -4,7 +4,7 @@ namespace _Main.Scripts.Dice
 {
 	public class MultiplyComboModifier : IOnPassModifier
 	{
-		private readonly DiceCombination combination;
+		public readonly DiceCombination combination;
 
 		public MultiplyComboModifier(DiceCombination combination)
 		{

@@ -6,7 +6,7 @@ namespace _Main.Scripts.Dice
 {
 	public class ShakeRerollModifier : IOnRollModifier
 	{
-		private readonly float shakeChance;
+		public readonly float shakeChance;
 		private readonly float rerollAnimationDuration;
 
 		public ShakeRerollModifier(float shakeChance = 0.95f, float rerollAnimationDuration = 0.5f)

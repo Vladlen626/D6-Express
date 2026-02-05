@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class UISettings : UIBaseElement
 {
-	[Header("Controls")] 
+	[Header("Controls")]
 	[SerializeField] private Slider _master;
 	[SerializeField] private Slider _music;
 	[SerializeField] private Slider _sfx;

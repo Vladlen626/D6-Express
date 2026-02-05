@@ -1,0 +1,38 @@
+[
+    {
+        "id": "ScrambleCombinations",
+        "title": "modifier_scramble_combinations_title",
+        "description": "modifier_scramble_combinations_description",
+        "value": "modifier_scramble_combinations_value"
+    },
+    {
+        "id": "ShakeRerollModifier",
+        "title": "modifier_shake_reroll_title",
+        "description": "modifier_shake_reroll_description",
+        "value": "modifier_shake_reroll_value"
+    },
+    {
+        "id": "MultiplyComboModifier",
+        "title": "modifier_multiply_combo_title",
+        "description": "modifier_multiply_combo_description",
+        "value": "modifier_multiply_combo_value"
+    },
+    {
+        "id": "MultiplyKindOfModifiers",
+        "title": "modifier_multiply_kind_title",
+        "description": "modifier_multiply_kind_description",
+        "value": "modifier_multiply_kind_value"
+    },
+    {
+        "id": "PassActivationMultiplierModifier",
+        "title": "modifier_pass_activation_multiplier_title",
+        "description": "modifier_pass_activation_multiplier_description",
+        "value": "modifier_pass_activation_multiplier_value"
+    },
+    {
+        "id": "AdjustTicksPerDayModifier",
+        "title": "modifier_adjust_tick_title",
+        "description": "modifier_adjust_tick_description",
+        "value": "modifier_adjust_tick_value"
+    }
+]
