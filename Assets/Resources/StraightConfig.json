@@ -14,7 +14,7 @@
     "MaxLenMax": 6
   },
   "Upgrade": {
-    "Chance": 0.15,
+    "Chance": 1,
     "Debug": false,
     "AllowInventorySelection": false,
     "Outcomes": [

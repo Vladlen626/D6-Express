@@ -18,6 +18,8 @@ namespace _Main.Scripts.Dice
 		private const string OverridesFileName = "DiceScoringOverrides.json";
 		private const string StraightConfigResourcePath = "StraightConfig";
 		private const string StraightConfigFileName = "StraightConfig.json";
+		private const string ComboUpgradeConfigResourcePath = "ComboUpgradesConfig";
+		private const string ComboUpgradeConfigFileName = "ComboUpgradesConfig.json";
 
 		private static DiceScoringService instance;
 		public static DiceScoringService Instance => instance ??= new DiceScoringService();
@@ -27,6 +29,8 @@ namespace _Main.Scripts.Dice
 		private readonly HashSet<string> disabledRuleIds = new();
 		private readonly Dictionary<string, int> baseScoreOverrides = new();
 		private readonly StraightCombination straightCombination;
+		private readonly Dictionary<string, ComboUpgradeConfig> comboUpgradeConfigs = new();
+		private readonly Dictionary<string, ComboUpgradeState> comboUpgradeStates = new();
 		private StraightConfig straightConfig;
 
 		private DiceScoringService()
@@ -41,6 +45,8 @@ namespace _Main.Scripts.Dice
 			{
 				DebugLogging = straightConfig?.Upgrade?.Debug ?? false
 			};
+			LoadComboUpgradeConfig();
+			InitializeDefaultUpgradeStates();
 		}
 
 		#region Public API ----------------------------------------------------
@@ -249,6 +255,15 @@ namespace _Main.Scripts.Dice
 		public StraightDefaults GetStraightDefaults() => straightConfig?.Defaults;
 		public StraightUpgradeConfig GetStraightUpgradeConfig() => straightConfig?.Upgrade;
 		public StraightRuntimeState GetStraightState() => straightCombination.Snapshot();
+		public ComboUpgradeConfig GetComboUpgradeConfig(string comboId)
+		{
+			return comboUpgradeConfigs.TryGetValue(comboId, out var cfg) ? cfg : null;
+		}
+
+		public ComboUpgradeState GetComboUpgradeState(string comboId)
+		{
+			return comboUpgradeStates.TryGetValue(comboId, out var state) ? state.Clone() : null;
+		}
 
 		public void SetStraightState(StraightRuntimeState state)
 		{
@@ -260,9 +275,32 @@ namespace _Main.Scripts.Dice
 			return straightConfig?.Upgrade?.Outcomes;
 		}
 
+		public ComboUpgradeOutcome[] GetComboUpgradeOutcomes(string comboId)
+		{
+			return GetComboUpgradeConfig(comboId)?.Outcomes;
+		}
+
 		public void ResetStraightToDefaults()
 		{
 			straightCombination.ResetToDefaults(straightConfig?.Defaults);
+		}
+
+		private void InitializeDefaultUpgradeStates()
+		{
+			comboUpgradeStates["straight"] = new ComboUpgradeState
+			{
+				Min = straightCombination.MinLen,
+				Max = straightCombination.MaxLen,
+				ScoreBonus = straightCombination.ScoreBonus
+			};
+
+			// Default OfAKind state mirrors current rule min/max with zero bonus
+			comboUpgradeStates["ofakind"] = new ComboUpgradeState
+			{
+				Min = 3,
+				Max = 6,
+				ScoreBonus = 0
+			};
 		}
 
 		public StraightUpgradeOutcome ApplyStraightUpgradeOutcome(int face, ILoggerService logger = null, Notifications notifications = null, Run run = null)
@@ -281,16 +319,56 @@ namespace _Main.Scripts.Dice
 			logger?.Log($"[StraightUpgrade] Die face {face} -> Δ(min {outcome.DeltaMinLen}, max {outcome.DeltaMaxLen}, bonus {outcome.DeltaScoreBonus}). Result: min={after.MinLen}, max={after.MaxLen}, bonus={after.ScoreBonus}");
 			if (notifications != null)
 			{
+				var note = $"Straight upgraded! Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
 				notifications.Add(new Notifications.Notification
 				{
-					message = $"Straight upgraded! Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}"
+					message = note
 				});
+				logger?.Log(note);
 			}
 
 			if (run != null)
 			{
 				run.SetStraightState(after);
+				comboUpgradeStates["straight"] = new ComboUpgradeState
+				{
+					Min = after.MinLen,
+					Max = after.MaxLen,
+					ScoreBonus = after.ScoreBonus
+				};
 			}
+
+			return outcome;
+		}
+
+		public ComboUpgradeOutcome ApplyGenericUpgradeOutcome(string comboId, int face, ILoggerService logger = null, Notifications notifications = null, Run run = null)
+		{
+			if (!comboUpgradeConfigs.TryGetValue(comboId, out var cfg))
+			{
+				return null;
+			}
+
+			var outcomes = cfg.Outcomes;
+			if (outcomes == null || outcomes.Length == 0)
+			{
+				return null;
+			}
+
+			var outcome = outcomes.FirstOrDefault(o => o.Face == face) ?? outcomes[0];
+			var state = GetComboUpgradeState(comboId) ?? new ComboUpgradeState();
+			var before = state.Clone();
+
+			state.Min += outcome.DeltaMin;
+			state.Max += outcome.DeltaMax;
+			state.ScoreBonus += outcome.DeltaScoreBonus;
+
+			var constraints = cfg.Constraints ?? new ComboUpgradeConstraints { MinLowerBound = 1, MaxUpperBound = 6 };
+			state.Min = Mathf.Clamp(state.Min, constraints.MinLowerBound, constraints.MaxUpperBound);
+			state.Max = Mathf.Clamp(state.Max, state.Min, constraints.MaxUpperBound);
+
+			comboUpgradeStates[comboId] = state;
+
+			logger?.Log($"[ComboUpgrade:{comboId}] Face {face} -> Δ(min {outcome.DeltaMin}, max {outcome.DeltaMax}, bonus {outcome.DeltaScoreBonus}). Result: min={state.Min}, max={state.Max}, bonus={state.ScoreBonus}");
 
 			return outcome;
 		}
@@ -332,13 +410,19 @@ namespace _Main.Scripts.Dice
 
 		private void ApplyOfAKindRule(ComboRuleDefinition rule, int[] remaining, List<DiceCombinationEntry> output)
 		{
+			// Apply upgrade-adjusted min/max and score bonus
+			var ofaState = GetComboUpgradeState("ofakind");
+			var effectiveMin = ofaState?.Min > 0 ? ofaState.Min : rule.MinCount;
+			var effectiveMax = ofaState?.Max > 0 ? ofaState.Max : rule.MaxCount;
+			var extraBonus = ofaState?.ScoreBonus ?? 0;
+
 			var faces = (rule.Faces != null && rule.Faces.Length > 0)
 				? rule.Faces
 				: new[] { 1, 2, 3, 4, 5, 6 };
 
 			foreach (var face in faces)
 			{
-				while (remaining[face] >= rule.MinCount)
+				while (remaining[face] >= effectiveMin)
 				{
 					if (!rule.Repeatable && output.Any(e => e.Id == rule.Id && e.Face == face))
 					{
@@ -346,12 +430,12 @@ namespace _Main.Scripts.Dice
 					}
 
 					int take = remaining[face];
-					if (rule.MaxCount > 0)
+					if (effectiveMax > 0)
 					{
-						take = Math.Min(take, rule.MaxCount);
+						take = Math.Min(take, effectiveMax);
 					}
 
-					if (take < rule.MinCount)
+					if (take < effectiveMin)
 					{
 						break;
 					}
@@ -359,6 +443,7 @@ namespace _Main.Scripts.Dice
 					remaining[face] -= take;
 
 					int baseScore = ComputeOfAKindScore(rule, face, take);
+					baseScore += extraBonus;
 					var entryId = $"{rule.Id}_{face}_{take}";
 
 					var entry = new DiceCombinationEntry
@@ -603,6 +688,41 @@ namespace _Main.Scripts.Dice
 					}
 				}
 			};
+		}
+
+		private void LoadComboUpgradeConfig()
+		{
+			ComboUpgradeConfigRoot payload = null;
+
+			// Persistent path first
+			var persistentPath = Path.Combine(Application.persistentDataPath, ComboUpgradeConfigFileName);
+			if (File.Exists(persistentPath))
+			{
+				payload = JsonUtility.FromJson<ComboUpgradeConfigRoot>(File.ReadAllText(persistentPath));
+			}
+
+			if (payload == null || payload.Upgrades == null || payload.Upgrades.Length == 0)
+			{
+				var textAsset = Resources.Load<TextAsset>(ComboUpgradeConfigResourcePath);
+				if (textAsset != null)
+				{
+					payload = JsonUtility.FromJson<ComboUpgradeConfigRoot>(textAsset.text);
+				}
+			}
+
+			if (payload?.Upgrades == null)
+			{
+				return;
+			}
+
+			comboUpgradeConfigs.Clear();
+			foreach (var cfg in payload.Upgrades)
+			{
+				if (!string.IsNullOrWhiteSpace(cfg?.ComboId))
+				{
+					comboUpgradeConfigs[cfg.ComboId] = cfg;
+				}
+			}
 		}
 
 		private void SaveOverrides()

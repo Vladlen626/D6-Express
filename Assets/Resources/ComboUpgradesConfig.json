@@ -1,0 +1,32 @@
+{
+  "Upgrades": [
+    {
+      "ComboId": "straight",
+      "Chance": 0.15,
+      "Debug": false,
+      "Constraints": { "MinLowerBound": 4, "MaxUpperBound": 6 },
+      "Outcomes": [
+        { "Face": 1, "DeltaScoreBonus": 50 },
+        { "Face": 2, "DeltaMin": -1 },
+        { "Face": 3, "DeltaScoreBonus": 100 },
+        { "Face": 4, "DeltaScoreBonus": -50 },
+        { "Face": 5, "DeltaMin": 1 },
+        { "Face": 6, "DeltaMax": -1 }
+      ]
+    },
+    {
+      "ComboId": "ofakind",
+      "Chance": 0.10,
+      "Debug": false,
+      "Constraints": { "MinLowerBound": 2, "MaxUpperBound": 6 },
+      "Outcomes": [
+        { "Face": 1, "DeltaScoreBonus": 50 },
+        { "Face": 2, "DeltaScoreBonus": 100 },
+        { "Face": 3, "DeltaScoreBonus": -50 },
+        { "Face": 4, "DeltaMin": -1 },
+        { "Face": 5, "DeltaMax": 1 },
+        { "Face": 6, "DeltaScoreBonus": 150 }
+      ]
+    }
+  ]
+}

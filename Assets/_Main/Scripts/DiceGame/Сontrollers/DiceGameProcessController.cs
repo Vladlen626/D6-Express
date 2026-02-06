@@ -8,6 +8,8 @@ using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
 using UnityEngine;
+using System.Text;
+using TMPro;
 
 namespace _Main.Scripts.Dice
 {
@@ -250,7 +252,7 @@ namespace _Main.Scripts.Dice
 
 			await UniTaskUtils.WaitAllTweens(tweenList.ToArray());
 
-			await TryTriggerStraightUpgradeIfNeeded(combinationResult);
+			await TryTriggerUpgradeIfNeeded(combinationResult);
 
 			return diceGameModel.AllBanked();
 		}
@@ -284,65 +286,158 @@ namespace _Main.Scripts.Dice
 
 		private DiceModel PickUpgradeDie(StraightUpgradeConfig upgradeConfig)
 		{
-			// MVP Option A: choose from equipped dice list (player side)
-			if (diceGameModel.PlayerDiceModelList.Count == 0)
+			// MVP: choose randomly from currently equipped player dice (Option A).
+			var pool = diceGameModel.PlayerDiceModelList;
+			if (pool == null || pool.Count == 0)
 			{
 				return null;
 			}
 
-			// For now pick the first available die; extend later with UI selection.
-			return diceGameModel.PlayerDiceModelList[0];
+			int index = UnityEngine.Random.Range(0, pool.Count);
+			return pool[index];
 		}
 
-		private async UniTask TryTriggerStraightUpgradeIfNeeded(DiceCombinationResult combinationResult)
+		private string FormatOutcomeTable(StraightUpgradeOutcome[] outcomes)
+		{
+			if (outcomes == null || outcomes.Length == 0)
+			{
+				return "No outcomes configured.";
+			}
+
+			var sb = new StringBuilder();
+			for (int i = 0; i < outcomes.Length; i++)
+			{
+				var o = outcomes[i];
+				sb.Append($"Face {o.Face}: ΔMin {o.DeltaMinLen}, ΔMax {o.DeltaMaxLen}, ΔBonus {o.DeltaScoreBonus}");
+				if (i < outcomes.Length - 1)
+				{
+					sb.Append(" | ");
+				}
+			}
+			return sb.ToString();
+		}
+
+		private void NotifyAndLog(string message, Vector3? worldPos = null, float displaySeconds = 1.2f)
+		{
+			if (string.IsNullOrWhiteSpace(message))
+			{
+				return;
+			}
+
+			logger?.Log(message);
+			ShowFloatingText(message, worldPos, displaySeconds);
+		}
+
+		private void ShowFloatingText(string text, Vector3? worldPos = null, float displaySeconds = 1.2f)
+		{
+			var position = worldPos ?? Vector3.zero;
+			var go = new GameObject("UpgradeFloatingText");
+			go.transform.position = position;
+			go.AddComponent<FaceCameraBillboard>();
+			var tmp = go.AddComponent<TextMeshPro>();
+			tmp.text = text;
+			tmp.enableAutoSizing = true;
+			tmp.fontSizeMin = 0.15f;
+			tmp.fontSizeMax = 0.5f;
+			tmp.fontSize = 0.35f;
+			tmp.alignment = TextAlignmentOptions.Center;
+			tmp.color = Color.yellow;
+			tmp.enableWordWrapping = true;
+			tmp.sortingOrder = 50;
+			tmp.lineSpacing = -10f;
+			tmp.rectTransform.sizeDelta = new Vector2(3.2f, 1.6f);
+			tmp.rectTransform.localScale = Vector3.one * 0.4f;
+
+			tmp.DOFade(0f, 0.3f).SetDelay(displaySeconds);
+			DOTween.Sequence()
+				.AppendInterval(displaySeconds + 0.35f)
+				.OnComplete(() => UnityEngine.Object.Destroy(go));
+		}
+
+		private class FaceCameraBillboard : MonoBehaviour
+		{
+			private void LateUpdate()
+			{
+				var cam = Camera.main;
+				if (cam == null)
+				{
+					return;
+				}
+
+				transform.rotation = Quaternion.LookRotation(cam.transform.forward, cam.transform.up);
+			}
+		}
+
+		private async UniTask TryTriggerUpgradeIfNeeded(DiceCombinationResult combinationResult)
 		{
 			if (combinationResult.Combinations == null || combinationResult.Combinations.Count == 0)
 			{
 				return;
 			}
 
-			bool hasStraight = combinationResult.Combinations.Any(e => IsStraightCombination(e.Combination));
-			if (!hasStraight)
+			// 1) Straight first
+			var straightConfig = scoringService.GetStraightUpgradeConfig();
+			if (straightConfig != null && straightConfig.Chance > 0f && combinationResult.Combinations.Any(e => IsStraightCombination(e.Combination)))
 			{
+				await HandleUpgradeForCombo("straight", straightConfig);
 				return;
 			}
 
-			var upgradeConfig = scoringService.GetStraightUpgradeConfig();
-			if (upgradeConfig == null || upgradeConfig.Chance <= 0f)
+			// 2) Of-a-kind
+			var ofaConfig = scoringService.GetComboUpgradeConfig("ofakind");
+			if (ofaConfig != null && ofaConfig.Chance > 0f && combinationResult.Combinations.Any(e => e.Combination == DiceCombination.ThreeOfAKind || e.Combination == DiceCombination.FourOfAKind || e.Combination == DiceCombination.FiveOfAKind || e.Combination == DiceCombination.SixOfAKind))
 			{
+				await HandleUpgradeForCombo("ofakind", ofaConfig);
 				return;
 			}
+		}
 
+		private async UniTask HandleUpgradeForCombo(string comboId, ComboUpgradeConfig upgradeConfig)
+		{
 			if (UnityEngine.Random.value > upgradeConfig.Chance)
 			{
 				if (upgradeConfig.Debug)
 				{
-					logger?.Log($"[StraightUpgrade] Chance failed ({upgradeConfig.Chance:P0}).");
+					logger?.Log($"[Upgrade:{comboId}] Chance failed ({upgradeConfig.Chance:P0}).");
 				}
 				return;
 			}
 
-			diceGameModel.tableModel.DisableButtons();
-			notifications?.Add(new Notifications.Notification { message = "Upgrade opportunity! Rolling an upgrade die..." });
-			logger?.Log("[StraightUpgrade] Triggered upgrade opportunity after straight.");
-
-			var die = PickUpgradeDie(upgradeConfig);
+			var die = PickUpgradeDie(new StraightUpgradeConfig { Debug = upgradeConfig.Debug, Chance = upgradeConfig.Chance }); // reuse picker
 			if (die == null)
 			{
-				logger?.LogWarning("[StraightUpgrade] No dice available for upgrade roll.");
+				logger?.LogWarning($"[Upgrade:{comboId}] No dice available for upgrade roll.");
 				return;
 			}
+
+			diceGameModel.tableModel.DisableButtons();
+			var announcePos = die.CurrentPosition != null
+				? die.CurrentPosition.position
+				: diceGameModel.tableModel?.GetFreeActivePosition()?.position ?? Vector3.zero;
+			NotifyAndLog($"Upgrade opportunity: {comboId}", announcePos, 1.2f);
+			logger?.Log($"[Upgrade:{comboId}] Triggered upgrade opportunity.");
 
 			if (upgradeConfig.Debug)
 			{
 				var weights = die.Weights != null ? string.Join(",", die.Weights) : "null";
-				logger?.Log($"[StraightUpgrade] Using die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]");
+				var outcomes = scoringService.GetComboUpgradeOutcomes(comboId);
+				var outcomeTable = outcomes != null
+					? string.Join(", ", outcomes.Select(o => $"{o.Face}:Δmin{o.DeltaMin}/Δmax{o.DeltaMax}/Δb{o.DeltaScoreBonus}"))
+					: "none";
+				logger?.Log($"[Upgrade:{comboId}] Die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]; outcomes={outcomeTable}");
 			}
+
+			// Show outcome table before rolling (5s)
+			var configuredOutcomes = scoringService.GetComboUpgradeOutcomes(comboId);
+			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
+			NotifyAndLog($"Outcomes: {FormatOutcomeTable(configuredOutcomes)}", infoPos, 5f);
+			await UniTask.Delay(5000);
 
 			int rolledFace;
 			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
 			{
-				await view.PlayRollAnimationAsync(0.8f);
+				view.Show();
+				await view.PlayRollAnimationAsync(1.2f);
 				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
 				die.SetValue(rolledFace);
 				view.SetRotation(rolledFace);
@@ -352,13 +447,31 @@ namespace _Main.Scripts.Dice
 				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
 			}
 
-			var outcome = scoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, notifications, run);
-			if (upgradeConfig.Debug)
+			if (comboId == "straight")
 			{
-				var delta = outcome != null
-					? $"Δmin {outcome.DeltaMinLen}, Δmax {outcome.DeltaMaxLen}, Δbonus {outcome.DeltaScoreBonus}"
-					: "no outcome";
-				logger?.Log($"[StraightUpgrade] Die {die.ConfigId} rolled {rolledFace}. {delta}");
+				var before = scoringService.GetStraightState();
+				var outcome = scoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
+				var after = scoringService.GetStraightState();
+				if (outcome != null)
+				{
+					var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
+					NotifyAndLog(summary, infoPos, 5f);
+					await UniTask.Delay(5000);
+					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
+				}
+			}
+			else
+			{
+				var before = scoringService.GetComboUpgradeState(comboId);
+				var outcome = scoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
+				var after = scoringService.GetComboUpgradeState(comboId);
+				if (outcome != null && before != null && after != null)
+				{
+					var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
+					NotifyAndLog(summary, infoPos, 5f);
+					await UniTask.Delay(5000);
+					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
+				}
 			}
 
 			UpdateUI();
