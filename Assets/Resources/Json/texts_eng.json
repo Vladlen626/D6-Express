@@ -73,7 +73,7 @@
         "modifier_multiply_combo_value": "Combo: {0}",
         "modifier_multiply_kind_title": "Multiply Kind",
         "modifier_multiply_kind_description": "On Pass: if you have the specified combination with the specified face value, it gains +1 multiplier",
-        "modifier_multiply_kind_Value": "Kind: {0}",
+        "modifier_multiply_kind_value": "Kind: {0}",
         "modifier_pass_activation_multiplier_title": "Pass Activation",
         "modifier_pass_activation_multiplier_description": "Active ability: press to arm it. Your next Pass gets a score multiplier (1 use per in-game day)",
         "modifier_pass_activation_multiplier_value": "Multiplier: {0}",

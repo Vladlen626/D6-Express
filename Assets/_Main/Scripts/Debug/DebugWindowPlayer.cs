@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _Main.Scripts.Dice;
 using ImGuiNET;
 using PlatformCore.Services.Factory;
 using UnityEngine;
@@ -16,10 +17,45 @@ public class DebugWindowPlayer : DebugWindowModel
 	private int cashInputBuffer;
 	private int questIdBuffer;
 	private string diceIdBuffer;
+	private int modifierIdxBuffer;
 	private string notificationMessageBuffer = string.Empty;
 	private int diceIdxBuffer;
 
+	private readonly List<(string name, IModifier mod)> modifiers = new()
+	{
+		("Single One", new MultiplyKindOfModifiers(DiceCombination.SingleOnes, 0)),
+		("Single Fives", new MultiplyKindOfModifiers(DiceCombination.SingleFives, 0)),
+		("Straight 1 to 5", new MultiplyKindOfModifiers(DiceCombination.Straight_1_5, 0)),
+		("Straight 2 to 6", new MultiplyKindOfModifiers(DiceCombination.Straight_2_6, 0)),
+		("Straight 1 to 6", new MultiplyKindOfModifiers(DiceCombination.Straight_1_6, 0)),
+		("Three of a Kind 1", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 1)),
+		("Three of a Kind 2", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 2)),
+		("Three of a Kind 3", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 3)),
+		("Three of a Kind 4", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 4)),
+		("Three of a Kind 5", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 5)),
+		("Three of a Kind 6", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 6)),
+		("Four of a Kind 1", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 1)),
+		("Four of a Kind 2", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 2)),
+		("Four of a Kind 3", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 3)),
+		("Four of a Kind 4", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 4)),
+		("Four of a Kind 5", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 5)),
+		("Four of a Kind 6", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 6)),
+		("Five of a Kind 1", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 1)),
+		("Five of a Kind 2", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 2)),
+		("Five of a Kind 3", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 3)),
+		("Five of a Kind 4", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 4)),
+		("Five of a Kind 5", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 5)),
+		("Five of a Kind 6", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 6)),
+		("Six of a Kind 1", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 1)),
+		("Six of a Kind 2", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 2)),
+		("Six of a Kind 3", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 3)),
+		("Six of a Kind 4", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 4)),
+		("Six of a Kind 5", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 5)),
+		("Six of a Kind 6", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 6))
+	};
+
 	private Dictionary<string, DiceConfig> diceConfig;
+	private Dictionary<string, ModifierUIConfig> modifiersConfig;
 
 	public override string Id => "Player";
 
@@ -28,6 +64,7 @@ public class DebugWindowPlayer : DebugWindowModel
 		await base.Preload();
 
 		diceConfig = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+		modifiersConfig = await configService.GetConfigsAsync<ModifierUIConfig>(ResourcePaths.Json.modifiers_ui);
 	}
 
 	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
@@ -146,7 +183,6 @@ public class DebugWindowPlayer : DebugWindowModel
 			}
 		}
 
-
 		if (ImGui.CollapsingHeader("Inventory"))
 		{
 			var configsArray = diceConfig.Keys.ToArray();
@@ -193,6 +229,33 @@ public class DebugWindowPlayer : DebugWindowModel
 				{
 					message = notificationMessageBuffer
 				});
+			}
+		}
+
+		if (ImGui.CollapsingHeader("Modifiers"))
+		{
+			if (ImGui.TreeNode("Active"))
+			{
+				foreach (var item in playerModel.InventoryModel.ModifiersModel.AllModifiers)
+				{
+					if (modifiersConfig.TryGetValue(item.GetType().Name, out var config))
+					{
+						ImGui.Text(config.id);
+					}
+				}
+
+				ImGui.Separator();
+				ImGui.TreePop();
+			}
+
+			if (ImGui.Combo("Avaliable", ref modifierIdxBuffer, modifiers.Select(x => x.name).ToArray(), diceConfig.Count))
+			{
+			}
+
+			if (ImGui.Button("Add Modifier"))
+			{
+				var modifier = modifiers[modifierIdxBuffer].mod;
+				playerModel.InventoryModel.ModifiersModel.AddModifier(modifier);
 			}
 		}
 

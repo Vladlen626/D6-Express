@@ -4,6 +4,9 @@
 	{
 		None = 0,
 
+		SingleOnes,
+		SingleFives,
+
 		Straight_1_6,
 		Straight_1_5,
 		Straight_2_6,
@@ -12,8 +15,5 @@
 		FourOfAKind,
 		FiveOfAKind,
 		SixOfAKind,
-
-		SingleOnes,
-		SingleFives
 	}
 }
