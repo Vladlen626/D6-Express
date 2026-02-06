@@ -16,8 +16,6 @@ namespace _Main.Scripts.Dice
 		private const string ConfigResourcePath = "DiceScoringConfig";
 		private const string ConfigFileName = "DiceScoringConfig.json";
 		private const string OverridesFileName = "DiceScoringOverrides.json";
-		private const string StraightConfigResourcePath = "StraightConfig";
-		private const string StraightConfigFileName = "StraightConfig.json";
 		private const string ComboUpgradeConfigResourcePath = "ComboUpgradesConfig";
 		private const string ComboUpgradeConfigFileName = "ComboUpgradesConfig.json";
 
@@ -32,12 +30,14 @@ namespace _Main.Scripts.Dice
 		private readonly Dictionary<string, ComboUpgradeConfig> comboUpgradeConfigs = new();
 		private readonly Dictionary<string, ComboUpgradeState> comboUpgradeStates = new();
 		private StraightConfig straightConfig;
+		private ComboUpgradeConfigRoot upgradeBundle;
 
 		private DiceScoringService()
 		{
 			LoadDefaults();
 			LoadOverrides();
-			straightConfig = LoadStraightConfig();
+			upgradeBundle = LoadComboUpgradeConfig();
+			straightConfig = upgradeBundle?.Straight;
 			straightCombination = new StraightCombination(
 				straightConfig,
 				new StraightRuntimeState(straightConfig?.Defaults),
@@ -45,7 +45,7 @@ namespace _Main.Scripts.Dice
 			{
 				DebugLogging = straightConfig?.Upgrade?.Debug ?? false
 			};
-			LoadComboUpgradeConfig();
+			BuildComboUpgradeDictionary(upgradeBundle);
 			InitializeDefaultUpgradeStates();
 		}
 
@@ -637,60 +637,7 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		private StraightConfig LoadStraightConfig()
-		{
-			// Persistent path first
-			var persistentPath = Path.Combine(Application.persistentDataPath, StraightConfigFileName);
-			if (File.Exists(persistentPath))
-			{
-				var json = File.ReadAllText(persistentPath);
-				var payload = JsonUtility.FromJson<StraightConfig>(json);
-				if (payload != null)
-				{
-					return payload;
-				}
-			}
-
-			// Resources fallback
-			var textAsset = Resources.Load<TextAsset>(StraightConfigResourcePath);
-			if (textAsset != null)
-			{
-				var payload = JsonUtility.FromJson<StraightConfig>(textAsset.text);
-				if (payload != null)
-				{
-					return payload;
-				}
-			}
-
-			return new StraightConfig
-			{
-				BaseScores = new[]
-				{
-					new StraightBaseScoreEntry{Length = 4, BaseScore = 400},
-					new StraightBaseScoreEntry{Length = 5, BaseScore = 750},
-					new StraightBaseScoreEntry{Length = 6, BaseScore = 1500},
-				},
-				Defaults = new StraightDefaults{ MinLen = 5, MaxLen = 6, ScoreBonus = 0 },
-				Constraints = new StraightConstraints{ MinLenMin = 4, MaxLenMax = 6 },
-				Upgrade = new StraightUpgradeConfig
-				{
-					Chance = 0.15f,
-					Debug = false,
-					AllowInventorySelection = false,
-					Outcomes = new []
-					{
-						new StraightUpgradeOutcome{Face = 1, DeltaScoreBonus = 50},
-						new StraightUpgradeOutcome{Face = 2, DeltaMinLen = -1},
-						new StraightUpgradeOutcome{Face = 3, DeltaScoreBonus = 100},
-						new StraightUpgradeOutcome{Face = 4, DeltaScoreBonus = -50},
-						new StraightUpgradeOutcome{Face = 5, DeltaMinLen = 1},
-						new StraightUpgradeOutcome{Face = 6, DeltaMaxLen = -1}
-					}
-				}
-			};
-		}
-
-		private void LoadComboUpgradeConfig()
+		private ComboUpgradeConfigRoot LoadComboUpgradeConfig()
 		{
 			ComboUpgradeConfigRoot payload = null;
 
@@ -710,6 +657,11 @@ namespace _Main.Scripts.Dice
 				}
 			}
 
+			return payload;
+		}
+
+		private void BuildComboUpgradeDictionary(ComboUpgradeConfigRoot payload)
+		{
 			if (payload?.Upgrades == null)
 			{
 				return;
@@ -722,6 +674,11 @@ namespace _Main.Scripts.Dice
 				{
 					comboUpgradeConfigs[cfg.ComboId] = cfg;
 				}
+			}
+
+			if (payload.Straight != null)
+			{
+				straightConfig = payload.Straight;
 			}
 		}
 

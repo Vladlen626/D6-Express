@@ -32,6 +32,7 @@ namespace _Main.Scripts.Dice
 	[Serializable]
 	public class ComboUpgradeConfigRoot
 	{
+		public StraightConfig Straight;
 		public ComboUpgradeConfig[] Upgrades;
 	}
 
