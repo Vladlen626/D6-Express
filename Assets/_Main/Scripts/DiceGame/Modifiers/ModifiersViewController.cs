@@ -59,7 +59,8 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
         modifiers.ModifierRemoved -= OnModifierRemoved;
         modifiers.ModifierAdded -= OnModifierAdded;
 
-        foreach (var item in modifierViews.Keys)
+        var toDelete = new List<IModifier>(modifierViews.Keys);
+        foreach (var item in toDelete)
         {
             OnModifierRemoved(item);
         }
