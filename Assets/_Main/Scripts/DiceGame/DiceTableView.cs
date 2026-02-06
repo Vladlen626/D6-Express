@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class DiceTableView : MonoBehaviour
 {
-	public event Action<int> OnBetSliderChange; 
+	public event Action<int> OnBetSliderChange;
 	public event Action OnRollClicked;
 	public event Action OnPassClicked;
 	public event Action OnBetClicked;
@@ -18,13 +18,13 @@ public class DiceTableView : MonoBehaviour
 	[Header("Global")]
 	[SerializeField] private Transform combosTransform;
 	[SerializeField] private Transform tooltipPos;
-	
+
 	[Header("StateHandlers")]
 	[SerializeField] private Transform gameStateHandler;
 	[SerializeField] private Transform betStateHandler;
 	[SerializeField] private Transform selectStateHandler;
 
-	[Header("Turn")] 
+	[Header("Turn")]
 	[SerializeField] private TextMeshProUGUI turnText;
 	[SerializeField] private TurnChipView _turnChipView;
 	[SerializeField] private Transform playerBankPlane;
@@ -49,18 +49,22 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshPro currentBetText;
 	[SerializeField] private TextMeshPro minBetText;
 	[SerializeField] private TextMeshPro maxBetText;
-	
+
 	[SerializeField] private DicePositionsHandler gameStatePosHandler;
 	[SerializeField] private DicePositionsHandler selectionStatePosHandler;
-	
+
 	[Header("Items")]
 	[SerializeField] private DiceItemView itemViewPrefab;
 	[SerializeField] private Transform[] itemSlotsSelection;
 	[SerializeField] private Transform[] itemSlotsGame;
-	
+
+	[Header("Items")]
+	[SerializeField] private CombinationsView combinationsView;
+
 	[SerializeField] private float animDuration = 0.15f;
 	public DicePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public DicePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
+	public CombinationsView CombinationsView => combinationsView;
 	public DiceItemView ItemViewPrefab => itemViewPrefab;
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
@@ -86,7 +90,7 @@ public class DiceTableView : MonoBehaviour
 		playButton.onClick.RemoveAllListeners();
 		betSlider.onValueChanged.RemoveAllListeners();
 	}
-	
+
 	private void OnSliderChanged(float value)
 	{
 		OnBetSliderChange?.Invoke((int)value);
@@ -114,7 +118,7 @@ public class DiceTableView : MonoBehaviour
 		gameStateHandler.gameObject.SetActive(false);
 		betStateHandler.gameObject.SetActive(false);
 		selectStateHandler.gameObject.SetActive(false);
-		
+
 		switch (state)
 		{
 			case DiceGameState.GAME:
@@ -204,7 +208,7 @@ public class DiceTableView : MonoBehaviour
 		{
 			return;
 		}
-		
+
 		if (!isCombinationsOpen)
 		{
 			inAnimProcess = true;
@@ -214,7 +218,8 @@ public class DiceTableView : MonoBehaviour
 					isCombinationsOpen = true;
 					inAnimProcess = false;
 				});
-		} else
+		}
+		else
 		{
 			inAnimProcess = true;
 			combosTransform.DOLocalRotate(Vector3.zero, animDuration)

@@ -3143,6 +3143,7 @@ MonoBehaviour:
   itemSlotsGame:
   - {fileID: 6108877682336522591}
   - {fileID: 3195363608766237320}
+  combinationsView: {fileID: 7635726863499773152}
   animDuration: 0.15
 --- !u!65 &6565419455448806131
 BoxCollider:
@@ -5888,6 +5889,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6449558137352624993, guid: bcb38569e95da3b4b99477c224a2e260, type: 3}
   m_PrefabInstance: {fileID: 4690431463694996771}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7635726863499773152 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2945441777124168131, guid: bcb38569e95da3b4b99477c224a2e260, type: 3}
+  m_PrefabInstance: {fileID: 4690431463694996771}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74186b1190ceeea4c9eab8f8f9830a7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombinationsView
 --- !u!1001 &5235965795540611312
 PrefabInstance:
   m_ObjectHideFlags: 0

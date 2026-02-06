@@ -144,6 +144,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
 			controllersList.Add(NotificationsFactory.GetNotificationsControler(notifications, playerModel.InventoryModel, configService));
 			controllersList.Add(new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory, inputService, configService));
+			controllersList.Add(new CombinationsController(playerModel.InventoryModel.ModifiersModel, sceneContext.DiceGameTableView.CombinationsView));
 			controllersList.Add(sleepController);
 			controllersList.Add(locationController);
 			controllersList.AddRange(baseControllers);

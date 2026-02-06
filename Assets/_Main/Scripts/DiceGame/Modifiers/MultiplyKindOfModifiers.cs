@@ -2,7 +2,8 @@
 {
 	public class MultiplyKindOfModifiers : MultiplyComboModifier
 	{
-		private readonly int face;
+		public readonly int face;
+		
 		public MultiplyKindOfModifiers(DiceCombination combination, int face) : base(combination)
 		{
 			this.face = face;

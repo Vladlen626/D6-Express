@@ -33,7 +33,7 @@ namespace _Main.Scripts.Dice
 
 			return info;
 		}
-		
+
 		private static void TryAddStraight(
 			DiceInfo info,
 			int[] faces,
@@ -63,7 +63,7 @@ namespace _Main.Scripts.Dice
 				});
 			}
 		}
-		
+
 		public static int CalculateTotalScore(DiceCombinationResult result)
 		{
 			int total = 0;
@@ -236,6 +236,39 @@ namespace _Main.Scripts.Dice
 
 		// === УДОБНЫЕ ОБЁРТКИ ДЛЯ ТЕКУЩЕГО КОДА ===
 
+		public static int BaseScoreSetup(DiceCombination diceCombination, int face)
+		{
+			switch (diceCombination)
+			{
+				case DiceCombination.Straight_1_6:
+					return 1500;
+
+				case DiceCombination.Straight_1_5:
+					return 500;
+
+				case DiceCombination.Straight_2_6:
+					return 750;
+
+				case DiceCombination.ThreeOfAKind:
+					return ScoreNOfKind(face, 3);
+				case DiceCombination.FourOfAKind:
+					return ScoreNOfKind(face, 4);
+				case DiceCombination.FiveOfAKind:
+					return ScoreNOfKind(face, 5);
+				case DiceCombination.SixOfAKind:
+					return ScoreNOfKind(face, 6);
+
+				case DiceCombination.SingleOnes:
+					return 100;
+
+				case DiceCombination.SingleFives:
+					return 50;
+
+				default:
+					return 0;
+			}
+		}
+
 		private static void BaseScoreSetup(DiceCombinationResult combinations)
 		{
 			foreach (var entry in combinations.Combinations)
@@ -297,7 +330,7 @@ namespace _Main.Scripts.Dice
 			{
 				totalWeight += weight;
 			}
-				
+
 
 			float randomValue = Random.Range(0f, totalWeight);
 			float cumulativeWeight = 0f;
@@ -313,7 +346,7 @@ namespace _Main.Scripts.Dice
 
 			return 1;
 		}
-		
+
 		public static int[] GetDiceValues(DiceModel[] dice)
 		{
 			int[] values = new int[dice.Length];
