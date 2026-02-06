@@ -112,6 +112,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
     private void OnModifierRemoved(IModifier modifier)
     {
         var view = modifierViews[modifier];
+        modifierViews.Remove(modifier);
 
         view.Hide();
 
