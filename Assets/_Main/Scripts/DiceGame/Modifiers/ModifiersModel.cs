@@ -83,6 +83,15 @@ namespace _Main.Scripts.Dice
 			ModifierRemoved?.Invoke(modifier);
 		}
 
+		public void ClearModifiers()
+		{
+			for (int i = allModifiers.Count - 1; i >= 0; i--)
+			{
+				RemoveModifier(allModifiers[i]);
+				allModifiers.RemoveAt(i);
+			}
+		}
+
 		public async UniTask PlayLevelStartActions(DiceModifierContext modifierContext)
 		{
 			foreach (var onLevelStartAction in onLevelStartActionsHandler)

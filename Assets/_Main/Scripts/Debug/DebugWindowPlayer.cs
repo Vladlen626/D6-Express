@@ -234,19 +234,36 @@ public class DebugWindowPlayer : DebugWindowModel
 
 		if (ImGui.CollapsingHeader("Modifiers"))
 		{
+			IModifier toRemove = null;
+
 			if (ImGui.TreeNode("Active"))
 			{
-				foreach (var item in playerModel.InventoryModel.ModifiersModel.AllModifiers)
+				var list = playerModel.InventoryModel.ModifiersModel.AllModifiers;
+
+				for (int i = 0; i < list.Count; i++)
 				{
-					if (modifiersConfig.TryGetValue(item.GetType().Name, out var config))
+					var item = list[i];
+					if (!modifiersConfig.TryGetValue(item.GetType().Name, out var config))
+						continue;
+
+					ImGui.TextUnformatted(config.id);
+					ImGui.SameLine();
+
+					ImGui.PushID(i);
+					if (ImGui.Button("X"))
 					{
-						ImGui.Text(config.id);
+						toRemove = item;
 					}
+					ImGui.PopID();
 				}
+
+				if (toRemove != null)
+					playerModel.InventoryModel.ModifiersModel.RemoveModifier(toRemove);
 
 				ImGui.Separator();
 				ImGui.TreePop();
 			}
+
 
 			if (ImGui.Combo("Avaliable", ref modifierIdxBuffer, modifiers.Select(x => x.name).ToArray(), diceConfig.Count))
 			{
@@ -256,6 +273,11 @@ public class DebugWindowPlayer : DebugWindowModel
 			{
 				var modifier = modifiers[modifierIdxBuffer].mod;
 				playerModel.InventoryModel.ModifiersModel.AddModifier(modifier);
+			}
+
+			if (ImGui.Button("Clear Modifiers"))
+			{
+				playerModel.InventoryModel.ModifiersModel.ClearModifiers();
 			}
 		}
 
