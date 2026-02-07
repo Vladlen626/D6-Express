@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using _Main.Scripts.Core;
 using Cysharp.Threading.Tasks;
@@ -10,6 +11,7 @@ using PlatformCore.Services.Audio;
 using UnityEngine;
 using System.Text;
 using TMPro;
+using UnityEngine.UI;
 
 namespace _Main.Scripts.Dice
 {
@@ -328,7 +330,7 @@ namespace _Main.Scripts.Dice
 			ShowFloatingText(message, worldPos, displaySeconds);
 		}
 
-		private void ShowFloatingText(string text, Vector3? worldPos = null, float displaySeconds = 1.2f)
+		private GameObject ShowFloatingText(string text, Vector3? worldPos = null, float displaySeconds = 1.2f)
 		{
 			var position = worldPos ?? Vector3.zero;
 			var go = new GameObject("UpgradeFloatingText");
@@ -352,6 +354,88 @@ namespace _Main.Scripts.Dice
 			DOTween.Sequence()
 				.AppendInterval(displaySeconds + 0.35f)
 				.OnComplete(() => UnityEngine.Object.Destroy(go));
+
+			return go;
+		}
+
+		private List<GameObject> ShowOutcomeRing(ComboUpgradeOutcome[] outcomes, Vector3 center, float radius = 1.2f, float displaySeconds = 5f)
+		{
+			var list = new List<GameObject>();
+			if (outcomes == null || outcomes.Length == 0)
+			{
+				return list;
+			}
+
+			float step = 360f / outcomes.Length;
+			for (int i = 0; i < outcomes.Length; i++)
+			{
+				float angle = step * i;
+				var dir = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), 0f, Mathf.Sin(angle * Mathf.Deg2Rad));
+				var pos = center + dir * radius + Vector3.up * 0.15f;
+				var text = $"Face {outcomes[i].Face}\nΔMin {outcomes[i].DeltaMin}\nΔMax {outcomes[i].DeltaMax}\nΔB {outcomes[i].DeltaScoreBonus}";
+				var go = ShowFloatingText(text, pos, displaySeconds);
+				var tmp = go.GetComponent<TextMeshPro>();
+				if (tmp != null)
+				{
+					tmp.fontSizeMin = 0.25f;
+					tmp.fontSizeMax = 0.9f;
+					tmp.fontSize = 0.6f;
+					tmp.rectTransform.sizeDelta = new Vector2(5f, 2f);
+					tmp.rectTransform.localScale = Vector3.one * 0.7f;
+				}
+				list.Add(go);
+			}
+
+			return list;
+		}
+
+		private void ShowOutcomeRingScreen(ComboUpgradeOutcome[] outcomes, Vector3 worldCenter, float radiusPx = 160f, float displaySeconds = 5f)
+		{
+			if (outcomes == null || outcomes.Length == 0)
+			{
+				return;
+			}
+
+			var canvasGo = new GameObject("UpgradeOutcomeCanvas");
+			var canvas = canvasGo.AddComponent<Canvas>();
+			canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+			canvas.sortingOrder = 500;
+			canvasGo.AddComponent<CanvasScaler>();
+			canvasGo.AddComponent<GraphicRaycaster>();
+
+			var cam = Camera.main;
+			Vector3 screenCenter = cam != null ? cam.WorldToScreenPoint(worldCenter) : new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
+			var canvasRect = canvas.GetComponent<RectTransform>();
+			RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenCenter, null, out var localCenter);
+
+			float step = 360f / outcomes.Length;
+			for (int i = 0; i < outcomes.Length; i++)
+			{
+				float angle = step * i * Mathf.Deg2Rad;
+				var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+				var screenPos = screenCenter + new Vector3(dir.x, dir.y, 0f) * radiusPx;
+				RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, null, out var localPos);
+
+				var go = new GameObject($"Outcome_{outcomes[i].Face}");
+				go.transform.SetParent(canvas.transform, false);
+				var rect = go.AddComponent<RectTransform>();
+				rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+				rect.anchoredPosition = localPos;
+
+				var tmp = go.AddComponent<TextMeshProUGUI>();
+				tmp.text = $"Face {outcomes[i].Face}\nΔMin {outcomes[i].DeltaMin}\nΔMax {outcomes[i].DeltaMax}\nΔB {outcomes[i].DeltaScoreBonus}";
+				tmp.fontSizeMin = 18f;
+				tmp.fontSizeMax = 28f;
+				tmp.enableAutoSizing = true;
+				tmp.alignment = TextAlignmentOptions.Center;
+				tmp.color = Color.yellow;
+				tmp.rectTransform.sizeDelta = new Vector2(180f, 90f);
+				tmp.lineSpacing = -8f;
+			}
+
+			DOTween.Sequence()
+				.AppendInterval(displaySeconds)
+				.OnComplete(() => UnityEngine.Object.Destroy(canvasGo));
 		}
 
 		private class FaceCameraBillboard : MonoBehaviour
@@ -379,7 +463,7 @@ namespace _Main.Scripts.Dice
 			var straightConfig = scoringService.GetStraightUpgradeConfig();
 			if (straightConfig != null && straightConfig.Chance > 0f && combinationResult.Combinations.Any(e => IsStraightCombination(e.Combination)))
 			{
-				await HandleUpgradeForCombo("straight", straightConfig);
+				await HandleStraightUpgrade(straightConfig);
 				return;
 			}
 
@@ -430,7 +514,7 @@ namespace _Main.Scripts.Dice
 			// Show outcome table before rolling (5s)
 			var configuredOutcomes = scoringService.GetComboUpgradeOutcomes(comboId);
 			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
-			NotifyAndLog($"Outcomes: {FormatOutcomeTable(configuredOutcomes)}", infoPos, 5f);
+			ShowOutcomeRingScreen(configuredOutcomes, infoPos, 180f, 5f);
 			await UniTask.Delay(5000);
 
 			int rolledFace;
@@ -472,6 +556,86 @@ namespace _Main.Scripts.Dice
 					await UniTask.Delay(5000);
 					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
 				}
+			}
+
+			UpdateUI();
+		}
+
+		private ComboUpgradeOutcome[] ConvertStraightOutcomes(StraightUpgradeOutcome[] src)
+		{
+			if (src == null) return Array.Empty<ComboUpgradeOutcome>();
+			return src.Select(o => new ComboUpgradeOutcome
+			{
+				Face = o.Face,
+				DeltaMin = o.DeltaMinLen,
+				DeltaMax = o.DeltaMaxLen,
+				DeltaScoreBonus = o.DeltaScoreBonus
+			}).ToArray();
+		}
+
+		private async UniTask HandleStraightUpgrade(StraightUpgradeConfig upgradeConfig)
+		{
+			if (UnityEngine.Random.value > upgradeConfig.Chance)
+			{
+				if (upgradeConfig.Debug)
+				{
+					logger?.Log($"[Upgrade:straight] Chance failed ({upgradeConfig.Chance:P0}).");
+				}
+				return;
+			}
+
+			var die = PickUpgradeDie(upgradeConfig);
+			if (die == null)
+			{
+				logger?.LogWarning("[Upgrade:straight] No dice available for upgrade roll.");
+				return;
+			}
+
+			diceGameModel.tableModel.DisableButtons();
+			var announcePos = die.CurrentPosition != null
+				? die.CurrentPosition.position
+				: diceGameModel.tableModel?.GetFreeActivePosition()?.position ?? Vector3.zero;
+			NotifyAndLog("Upgrade opportunity: straight", announcePos, 1.2f);
+			logger?.Log("[Upgrade:straight] Triggered upgrade opportunity.");
+
+			if (upgradeConfig.Debug)
+			{
+				var weights = die.Weights != null ? string.Join(",", die.Weights) : "null";
+				var outcomes = upgradeConfig.Outcomes;
+				var outcomeTable = outcomes != null
+					? string.Join(", ", outcomes.Select(o => $"{o.Face}:Δmin{o.DeltaMinLen}/Δmax{o.DeltaMaxLen}/Δb{o.DeltaScoreBonus}"))
+					: "none";
+				logger?.Log($"[Upgrade:straight] Die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]; outcomes={outcomeTable}");
+			}
+
+			// Show outcome table before rolling (5s)
+			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
+			ShowOutcomeRingScreen(ConvertStraightOutcomes(upgradeConfig.Outcomes), infoPos, 180f, 5f);
+			await UniTask.Delay(5000);
+
+			int rolledFace;
+			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
+			{
+				view.Show();
+				await view.PlayRollAnimationAsync(1.2f);
+				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
+				die.SetValue(rolledFace);
+				view.SetRotation(rolledFace);
+			}
+			else
+			{
+				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
+			}
+
+			var before = scoringService.GetStraightState();
+			var outcome = scoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
+			var after = scoringService.GetStraightState();
+			if (outcome != null)
+			{
+				var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
+				NotifyAndLog(summary, infoPos, 5f);
+				await UniTask.Delay(5000);
+				logger?.Log($"[Upgrade:straight] {summary} via die {die.ConfigId}");
 			}
 
 			UpdateUI();

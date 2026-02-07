@@ -15,7 +15,7 @@
       "MaxLenMax": 6
     },
     "Upgrade": {
-      "Chance": 0.15,
+      "Chance": 1,
       "Debug": false,
       "AllowInventorySelection": false,
       "Outcomes": [
@@ -31,7 +31,7 @@
   "Upgrades": [
     {
       "ComboId": "straight",
-      "Chance": 0.15,
+      "Chance": 1,
       "Debug": false,
       "Constraints": { "MinLowerBound": 4, "MaxUpperBound": 6 },
       "Outcomes": [
@@ -45,7 +45,7 @@
     },
     {
       "ComboId": "ofakind",
-      "Chance": 0.10,
+      "Chance": 1,
       "Debug": false,
       "Constraints": { "MinLowerBound": 2, "MaxUpperBound": 6 },
       "Outcomes": [
