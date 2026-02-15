@@ -19,8 +19,9 @@ namespace _Main.Scripts.Dice
 
 		private DiceModel currentDiceModel;
 		private Camera mainCamera;
+
 		public DiceTooltipsController(IUIService uiService, DiceGameModel diceGameModel, ConfigService configService,
-			Camera mainCamera, DiceTableView tableView) 
+			Camera mainCamera, DiceTableView tableView = null)
 			: base(uiService)
 		{
 			this.mainCamera = mainCamera;
@@ -39,7 +40,7 @@ namespace _Main.Scripts.Dice
 		{
 			base.OnActivate();
 
-			_context.Hide();
+			_context.Show();
 			_context.HideTooltip();
 			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
 			diceGameModel.ScreenDiceDictChanged += ScreenDiceDictChangedHandler;
@@ -64,16 +65,16 @@ namespace _Main.Scripts.Dice
 		{
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.ScreenDiceDictChanged -= ScreenDiceDictChangedHandler;
-			
+
 			base.OnDeactivate();
 		}
-		
+
 		private void ScreenDiceDictChangedHandler()
 		{
 			UnsubscribeFromDiceHoverEvents();
 			SubscribeOnDiceHoverEvents();
 		}
-		
+
 		private void SubscribeOnDiceHoverEvents()
 		{
 			foreach (var keyValuePair in diceGameModel.ScreenDiceDict)
@@ -98,6 +99,7 @@ namespace _Main.Scripts.Dice
 			{
 				return;
 			}
+
 			currentDiceModel = diceModel;
 
 			var header = textsConfig.texts[diceConfig.name];
@@ -107,19 +109,21 @@ namespace _Main.Scripts.Dice
 			_context.SetRarity(diceConfig.rarityEnum);
 
 
-			var pos = diceGameModel.DiceGameState != DiceGameState.GAME
-				? diceModel.CurrentPosition
-				: tableView.TooltipPos;
+			var pos = diceModel.CurrentPosition;
+			if (diceGameModel.DiceGameState != DiceGameState.GAME && tableView)
+			{
+				pos = tableView.TooltipPos;
+			}
 
 			_context.SetPositionFromWorld(
 				pos,
-				Vector3.zero, 
+				Vector3.zero,
 				mainCamera
 			);
 
 			_context.ShowTooltip();
 		}
-		
+
 		private void OnDiceHoverExit(DiceModel diceModel)
 		{
 			if (diceModel == currentDiceModel)

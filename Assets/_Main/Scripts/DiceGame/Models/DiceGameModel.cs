@@ -27,6 +27,7 @@ namespace _Main.Scripts.Dice
 		
 		public readonly List<DiceModel> EnemyDiceModelList = new();
 		public readonly List<DiceModel> PlayerDiceModelList = new();
+		public readonly List<DiceModel> SelectionDiceModelList = new();
 		public IReadOnlyDictionary<DiceModel, DiceView> ScreenDiceDict => screenDiceDict;
 		public Dictionary<DiceModel, DiceView> screenDiceDict = new ();
 

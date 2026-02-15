@@ -50,8 +50,8 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshPro minBetText;
 	[SerializeField] private TextMeshPro maxBetText;
 
-	[SerializeField] private DicePositionsHandler gameStatePosHandler;
-	[SerializeField] private DicePositionsHandler selectionStatePosHandler;
+	[SerializeField] private CouplePositionsHandler gameStatePosHandler;
+	[SerializeField] private CouplePositionsHandler selectionStatePosHandler;
 
 	[Header("Items")]
 	[SerializeField] private DiceItemView itemViewPrefab;
@@ -62,8 +62,8 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private CombinationsView combinationsView;
 
 	[SerializeField] private float animDuration = 0.15f;
-	public DicePositionsHandler GameStatePosHandler => gameStatePosHandler;
-	public DicePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
+	public CouplePositionsHandler GameStatePosHandler => gameStatePosHandler;
+	public CouplePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
 	public CombinationsView CombinationsView => combinationsView;
 	public DiceItemView ItemViewPrefab => itemViewPrefab;
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;

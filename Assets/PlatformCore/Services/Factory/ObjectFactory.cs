@@ -21,13 +21,13 @@ namespace PlatformCore.Services.Factory.PlatformCore.Services.Factory
 
 			var prefab = await _resourceService.LoadAsync<GameObject>(address);
 
-			if (prefab == null)
+			if (!prefab)
 			{
 				_loggerService?.LogError($"[ObjectFactory] ❌ Failed to load prefab at '{address}' (type: GameObject)");
 				return null;
 			}
 
-			var instance = parent != null
+			var instance = parent
 				? Object.Instantiate(prefab, position, rotation, parent)
 				: Object.Instantiate(prefab, position, rotation);
 
@@ -42,14 +42,14 @@ namespace PlatformCore.Services.Factory.PlatformCore.Services.Factory
 			_loggerService?.Log($"[ObjectFactory] Creating component '{typeof(T).Name}' from: {address}");
 
 			var gameObject = await CreateAsync(address, position, rotation, parent);
-			if (gameObject == null)
+			if (!gameObject)
 			{
 				_loggerService?.LogError($"[ObjectFactory] ❌ Prefab not found for '{typeof(T).Name}' at '{address}'");
 				return null;
 			}
 
 			var component = gameObject.GetComponent<T>();
-			if (component == null)
+			if (!component)
 			{
 				_loggerService?.LogError($"[ObjectFactory] ❌ Component '{typeof(T).Name}' missing on prefab '{address}'");
 				Object.Destroy(gameObject);
@@ -62,7 +62,7 @@ namespace PlatformCore.Services.Factory.PlatformCore.Services.Factory
 
 		public void Destroy(GameObject obj)
 		{
-			if (obj == null)
+			if (!obj)
 			{
 				_loggerService?.LogWarning("[ObjectFactory] ⚠️ Tried to destroy null object");
 				return;

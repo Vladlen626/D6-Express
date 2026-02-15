@@ -123,6 +123,8 @@ namespace _Main.Scripts.Core
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
 				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
+				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService, sceneContext.InventoryView),
+				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main, sceneContext.DiceGameTableView),
 			};
 
 			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService);

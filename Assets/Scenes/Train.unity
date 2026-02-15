@@ -20,13 +20,13 @@ RenderSettings:
   m_FogDensity: 0.002
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.9716981, g: 0.95619893, b: 0.93961376, a: 1}
-  m_AmbientEquatorColor: {r: 0.745283, g: 0.745283, b: 0.745283, a: 1}
-  m_AmbientGroundColor: {r: 1, g: 1, b: 1, a: 1}
-  m_AmbientIntensity: 0.5
+  m_AmbientSkyColor: {r: 0.54427737, g: 0.58835775, b: 0.764151, a: 1}
+  m_AmbientEquatorColor: {r: 1, g: 1, b: 1, a: 1}
+  m_AmbientGroundColor: {r: 0.6886792, g: 0.56426907, b: 0.54249734, a: 1}
+  m_AmbientIntensity: 0.9
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.65, g: 0.7, b: 0.75, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 12ccb828343c3405fb94289774b51aad, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 0abb308d27287d24c8430daeffdc8e46, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -35,7 +35,7 @@ RenderSettings:
   m_DefaultReflectionMode: 0
   m_DefaultReflectionResolution: 512
   m_ReflectionBounces: 5
-  m_ReflectionIntensity: 0.4
+  m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 410087040}
   m_UseRadianceAmbientProbe: 0
@@ -264,6 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneContext
   diceGameTableView: {fileID: 667316948}
+  inventoryView: {fileID: 1187389548}
   playerTrainSpawnPosition: {fileID: 1425447065}
   playerStationSpawnPosition: {fileID: 1994989543}
   stationBlock: {fileID: 1235700352}
@@ -290,10 +291,10 @@ MonoBehaviour:
   active: 1
   postExposure:
     m_OverrideState: 1
-    m_Value: 0.25
+    m_Value: 0.15
   contrast:
     m_OverrideState: 1
-    m_Value: -10
+    m_Value: 5
   colorFilter:
     m_OverrideState: 1
     m_Value: {r: 1, g: 1, b: 1, a: 1}
@@ -302,7 +303,7 @@ MonoBehaviour:
     m_Value: 0
   saturation:
     m_OverrideState: 1
-    m_Value: -15
+    m_Value: -5
 --- !u!114 &330156232
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -393,7 +394,7 @@ Light:
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
   m_ColorTemperature: 5000
-  m_UseColorTemperature: 1
+  m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
@@ -411,13 +412,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2293816, y: 0.30505386, z: 0.13175678, w: 0.9148587}
+  m_LocalRotation: {x: 0.5186553, y: 0.40665305, z: 0.44273302, w: 0.6079618}
   m_LocalPosition: {x: -1.55, y: 1.32, z: 1.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 19.835, y: 41.119, z: 23.895}
+  m_LocalEulerAnglesHint: {x: 164.302, y: -97.836, z: -94.168}
 --- !u!114 &410087042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -595,6 +596,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1187389548 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5974187653295672825, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+  m_PrefabInstance: {fileID: 91070831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16765908f02d678419864958171ab443, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InventoryView
 --- !u!1 &1235700352 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1355620770823827789, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
@@ -639,7 +651,7 @@ MonoBehaviour:
     m_Value: 0
   maxIterations:
     m_OverrideState: 1
-    m_Value: 6
+    m_Value: 4
   dirtTexture:
     m_OverrideState: 1
     m_Value: {fileID: 0}
@@ -758,6 +770,10 @@ PrefabInstance:
     - target: {fileID: 5778480787660781294, guid: 4da58cde89cb46341ab98760aa330037, type: 3}
       propertyPath: m_Name
       value: Global Volume - Pastel Warm
+      objectReference: {fileID: 0}
+    - target: {fileID: 5778480787660781294, guid: 4da58cde89cb46341ab98760aa330037, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8330877765104118405, guid: 4da58cde89cb46341ab98760aa330037, type: 3}
       propertyPath: m_LocalPosition.x

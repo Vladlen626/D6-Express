@@ -41,7 +41,7 @@ namespace _Main.Scripts.Dice
 
 		private bool gamePreviousStoped = false;
 
-		private DicePositionsHandler dicePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
+		private CouplePositionsHandler CouplePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
 		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
 		private TableModel tableModel => diceGameModel.tableModel;
 
@@ -171,10 +171,10 @@ namespace _Main.Scripts.Dice
 		private async UniTask SetupBaseModels()
 		{
 			var diceGameConfig = await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
-			var newTableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
+			var newTableModel = new TableModel(CouplePositionsHandler.FirstPosArray, CouplePositionsHandler.SecondPosArray);
 			diceGameModel.Setup(diceGameConfig, playerModel.InventoryModel.CashCount, newTableModel);
 			// Keep the base cap aligned with available board slots; items can extend beyond this value.
-			var baseCap = Mathf.Min(6, dicePositionsHandler.DicePositions.Length, dicePositionsHandler.BankedPositions.Length);
+			var baseCap = Mathf.Min(6, CouplePositionsHandler.FirstPosArray.Length, CouplePositionsHandler.SecondPosArray.Length);
 			diceGameModel.SetBaseMaxDiceCount(baseCap);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
 		}
@@ -184,7 +184,6 @@ namespace _Main.Scripts.Dice
 			persistentControllers.AddRange(
 				new IBaseController[]
 				{
-					new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main, diceTableView),
 				});
 
 			await lifecycleService.RegisterControllersGroupAsync(persistentControllers);
@@ -205,7 +204,7 @@ namespace _Main.Scripts.Dice
 			await selectionController.WaitSelection();
 
 			var selectedModels = diceGameModel.PlayerDiceModelList;
-			var activeSlots = dicePositionsHandler.DicePositions;
+			var activeSlots = CouplePositionsHandler.FirstPosArray;
 			var playerLimit = Mathf.Min(selectedModels.Count, activeSlots.Length);
 			playerDiceViewsArray = new DiceView[playerLimit];
 
@@ -228,24 +227,25 @@ namespace _Main.Scripts.Dice
 		private async UniTask SetupEnemyDiceList()
 		{
 			var config = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_game_rules);
-			var bankSlots = diceTableView.GameStatePosHandler.BankedPositions;
-			var activeSlots = dicePositionsHandler.DicePositions;
+			var bankSlots = diceTableView.GameStatePosHandler.SecondPosArray;
+			var activeSlots = CouplePositionsHandler.FirstPosArray;
 			var enemyLimit = Mathf.Min(diceGameModel.MaxDiceCount, bankSlots.Length, activeSlots.Length);
 
 			for (int i = 0; i < enemyLimit; i++)
 			{
 				var startPos = bankSlots[i];
-				DiceView view = await objectFactory.CreateAsync<DiceView>(
-					ResourcePaths.Items.DicePrefab, Vector3.zero, Quaternion.identity);
-
-				view.Initialize(config.id, false, audioService);
-				view.transform.SetParent(startPos);
-				view.Hide();
-
-				DiceModel model = new DiceModel(config);
-				model.SetCurrentPosition(startPos);
+				var model = await DiceFactory.SpawnDiceViewAsync(
+					objectFactory,
+					config,
+					Vector3.zero,
+					Quaternion.identity,
+					startPos,
+					false,
+					audioService,
+					diceGameModel,
+					hideOnSpawn: true);
+				
 				diceGameModel.EnemyDiceModelList.Add(model);
-				diceGameModel.AddDiceOnScreen(model, view);
 			}
 
 			var enemyModels = diceGameModel.EnemyDiceModelList;

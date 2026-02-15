@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using _Main.Scripts.Core;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Audio;
@@ -17,11 +18,10 @@ namespace _Main.Scripts.Dice
 		private readonly IObjectFactory _factory;
 		private readonly IAudioService _audioService;
 		private readonly ConfigService _configService;
-
-		private List<DiceModel> _allModels => _diceGameModel.ScreenDiceDict.Keys.ToList();
+		
 		private List<DiceModel> SelectedModel => _diceGameModel.PlayerDiceModelList;
 
-		private DicePositionsHandler _posHandler;
+		private CouplePositionsHandler _posHandler;
 		private bool _isFinished;
 
 		private int SelectionLimit => GetSelectionLimit();
@@ -61,7 +61,7 @@ namespace _Main.Scripts.Dice
 
 			var diceIds = _inventory.DiceIdList;
 			var gameSlotLimit = _diceGameModel.tableModel?.ActiveSlotsCount ?? int.MaxValue;
-			var spawnLimit = Mathf.Min(diceIds.Count, _posHandler.DicePositions.Length, gameSlotLimit);
+			var spawnLimit = Mathf.Min(diceIds.Count, _posHandler.FirstPosArray.Length, gameSlotLimit);
 
 			for (int i = 0; i < spawnLimit; i++)
 			{
@@ -78,20 +78,20 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask CreateDice(DiceConfig config, int index)
 		{
-			Transform startPos = _posHandler.DicePositions[index];
+			Transform startPos = _posHandler.FirstPosArray[index];
 
-			DiceView view = await _factory.CreateAsync<DiceView>(
-				ResourcePaths.Items.DicePrefab, startPos.position, Quaternion.identity);
+			DiceModel model = await DiceFactory.SpawnDiceViewAsync(
+				_factory,
+				config,
+				startPos.position,
+				Quaternion.identity,
+				startPos,
+				true,
+				_audioService,
+				_diceGameModel);
 
-			view.Initialize(config.id, true, _audioService);
-			view.transform.SetParent(startPos);
-
-			DiceModel model = new DiceModel(config);
-			model.SetCurrentPosition(startPos);
-			
-			_diceGameModel.AddDiceOnScreen(model, view);
-
-			view.OnDiceClicked.AddListener(() => OnDiceClickedHandler(model));
+			_diceGameModel.SelectionDiceModelList.Add(model);
+			_diceGameModel.ScreenDiceDict[model].OnDiceClicked.AddListener(() => OnDiceClickedHandler(model));
 		}
 
 		private void OnDiceClickedHandler(DiceModel model)
@@ -115,19 +115,19 @@ namespace _Main.Scripts.Dice
 			// 1. Расставляем выбранные кубы в забанкированные слоты
 			for (int i = 0; i < SelectedModel.Count; i++)
 			{
-				if (i < _posHandler.BankedPositions.Length)
+				if (i < _posHandler.SecondPosArray.Length)
 				{
-					MoveToSlot(SelectedModel[i], _posHandler.BankedPositions[i]);
+					MoveToSlot(SelectedModel[i], _posHandler.SecondPosArray[i]);
 				}
 			}
 
 			// 2. Все остальные кубы расставляем по порядку в основные слоты стола
-			var unselected = _allModels.Where(m => !SelectedModel.Contains(m)).ToList();
+			var unselected = _diceGameModel.SelectionDiceModelList.Where(m => !SelectedModel.Contains(m)).ToList();
 			for (int i = 0; i < unselected.Count; i++)
 			{
-				if (i < _posHandler.DicePositions.Length)
+				if (i < _posHandler.FirstPosArray.Length)
 				{
-					MoveToSlot(unselected[i], _posHandler.DicePositions[i]);
+					MoveToSlot(unselected[i], _posHandler.FirstPosArray[i]);
 				}
 			}
 		}
@@ -140,10 +140,10 @@ namespace _Main.Scripts.Dice
 
 		private int GetSelectionLimit()
 		{
-			var bankSlots = _posHandler.BankedPositions?.Length ?? int.MaxValue;
+			var bankSlots = _posHandler.SecondPosArray?.Length ?? int.MaxValue;
 			var gameActiveSlots = _diceGameModel.tableModel?.ActiveSlotsCount ?? int.MaxValue;
 			var gameBankSlots = _diceGameModel.tableModel?.BankedSlotsCount ?? int.MaxValue;
-			return Mathf.Min(_diceGameModel.MaxDiceCount, bankSlots, gameActiveSlots, gameBankSlots, _allModels.Count);
+			return Mathf.Min(_diceGameModel.MaxDiceCount, bankSlots, gameActiveSlots, gameBankSlots, _diceGameModel.SelectionDiceModelList.Count);
 		}
 
 		private void OnPlayClickedHandler()
@@ -158,7 +158,7 @@ namespace _Main.Scripts.Dice
 
 		public void CleanupUnselectedDices()
 		{
-			foreach (var model in _allModels)
+			foreach (var model in _diceGameModel.SelectionDiceModelList)
 			{
 				if (!SelectedModel.Contains(model))
 				{

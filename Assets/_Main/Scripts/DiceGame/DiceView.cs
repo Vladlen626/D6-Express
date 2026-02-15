@@ -57,6 +57,7 @@ namespace _Main.Scripts.Dice
 
 			this.isPlayerDice = isPlayerDice;
 			_audioService = audioService;
+			// ReSharper disable once Unity.PerformanceCriticalCodeCameraMain
 			_mainCamera = Camera.main;
 			isActive = true;
 			SetupVisual(diceConfigId);
