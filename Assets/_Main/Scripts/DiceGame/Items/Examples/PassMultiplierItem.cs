@@ -7,7 +7,7 @@ namespace _Main.Scripts.Dice
 	/// Example clickable item: when armed, the next Pass gains a score multiplier.
 	/// Shows how to reuse the modifier pipeline while driving behaviour from a 3D item.
 	/// </summary>
-	public class PassMultiplierItem : DiceItemBase, IOnPassModifier, IOnRoundStartModifier, IDiceItemViewProvider
+	public class PassMultiplierItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
 	{
 		private readonly float scoreMultiplier;
 		private readonly int activationsPerDay;
@@ -16,8 +16,8 @@ namespace _Main.Scripts.Dice
 		private int lastDay = -1;
 		private int remaining;
 
-		public PassMultiplierItem(float scoreMultiplier = 1.5f, int activationsPerDay = 1, DiceItemView prefabOverride = null)
-			: base("pass_multiplier_item", "Pass Multiplier", DiceItemActivationType.ClickToActivate)
+		public PassMultiplierItem(string id, float scoreMultiplier = 1.5f, int activationsPerDay = 1, DiceItemView prefabOverride = null)
+			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoreMultiplier = Mathf.Max(1f, scoreMultiplier);
 			this.activationsPerDay = Mathf.Max(1, activationsPerDay);

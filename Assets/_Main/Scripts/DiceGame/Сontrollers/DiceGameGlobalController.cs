@@ -226,7 +226,12 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask SetupEnemyDiceList()
 		{
-			var config = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_game_rules);
+			var catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+			if (!catalog.TryGetValue("default", out var config) || config.typeEnum != ItemCatalogType.Dice)
+			{
+				Debug.LogWarning("[DiceGame] Default dice entry not found in catalog.");
+				return;
+			}
 			var bankSlots = diceTableView.GameStatePosHandler.SecondPosArray;
 			var activeSlots = CouplePositionsHandler.FirstPosArray;
 			var enemyLimit = Mathf.Min(diceGameModel.MaxDiceCount, bankSlots.Length, activeSlots.Length);
@@ -309,7 +314,7 @@ namespace _Main.Scripts.Dice
 			{
 				foreach (var dice in playerDiceViewsArray)
 				{
-					if (dice != null)
+					if (dice)
 					{
 						objectFactory.Destroy(dice.gameObject);
 					}
@@ -322,7 +327,7 @@ namespace _Main.Scripts.Dice
 			{
 				foreach (var dice in enemyDiceViewsArray)
 				{
-					if (dice != null)
+					if (dice)
 					{
 						objectFactory.Destroy(dice.gameObject);
 					}
@@ -337,13 +342,13 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask SetupItemsDisplay()
 		{
-			var items = diceGameModel.ItemsModel.Items;
-			if (items == null || items.Count == 0)
+			var items = diceGameModel.ModifierItemsModel.Items;
+			if (items.Count == 0)
 			{
 				return;
 			}
 
-			if (diceTableView.ItemViewPrefab == null)
+			if (!diceTableView.ItemViewPrefab)
 			{
 				Debug.LogWarning("[DiceGame] ItemViewPrefab is not assigned on DiceTableView. Items will not be spawned.");
 				return;
@@ -354,18 +359,18 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < items.Count; i++)
 			{
 				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				var prefab = (items[i] as IDiceItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
+				var prefab = (items[i] as IModifierItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
 				var view = UnityEngine.Object.Instantiate(
 					prefab,
 					slot ? slot.position : Vector3.zero,
 					slot ? slot.rotation : Quaternion.identity);
 
-				if (slot != null)
+				if (slot)
 				{
 					view.transform.SetParent(slot);
 				}
 
-				var controller = new DiceItemController(items[i], view);
+				var controller = new ModifierItemController(items[i], view);
 				itemControllers.Add(controller);
 				itemViews.Add(view);
 				await lifecycleService.RegisterAsync(controller);
@@ -383,7 +388,7 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < itemViews.Count; i++)
 			{
 				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				if (slot == null)
+				if (!slot)
 				{
 					continue;
 				}
@@ -402,7 +407,7 @@ namespace _Main.Scripts.Dice
 
 			foreach (var view in itemViews)
 			{
-				if (view != null)
+				if (view)
 				{
 					objectFactory.Destroy(view.gameObject);
 				}

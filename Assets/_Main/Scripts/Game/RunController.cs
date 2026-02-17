@@ -69,9 +69,21 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		playerModel.InventoryModel.SetCash(startCash);
 
 		playerModel.InventoryModel.RemoveAllDices();
-		foreach (var playerConfigDice in playerConfig.dices)
+		if (playerConfig.dices != null)
 		{
-			playerModel.InventoryModel.AddDice(playerConfigDice);
+			foreach (var playerConfigDice in playerConfig.dices)
+			{
+				playerModel.InventoryModel.AddDice(playerConfigDice);
+			}
+		}
+
+		playerModel.InventoryModel.RemoveAllModifierItems();
+		if (playerConfig.modifiers != null)
+		{
+			foreach (var modifierId in playerConfig.modifiers)
+			{
+				playerModel.InventoryModel.AddModifierItem(modifierId);
+			}
 		}
 	}
 

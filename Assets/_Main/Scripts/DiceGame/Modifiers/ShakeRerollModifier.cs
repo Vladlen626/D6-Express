@@ -4,18 +4,19 @@ using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
-	public class ShakeRerollModifier : IOnRollModifier
+	public class ShakeRerollModifier : ModifierItemBase, IOnRollModifier
 	{
 		public readonly float shakeChance;
 		private readonly float rerollAnimationDuration;
 
-		public ShakeRerollModifier(float shakeChance = 0.95f, float rerollAnimationDuration = 0.5f)
+		public ShakeRerollModifier(string id, float shakeChance = 0.95f, float rerollAnimationDuration = 0.5f)
+			: base(id, id, DiceItemActivationType.Passive)
 		{
 			this.shakeChance = Mathf.Clamp01(shakeChance);
 			this.rerollAnimationDuration = Mathf.Max(0.05f, rerollAnimationDuration);
 		}
 
-		public async UniTask ModifyValues(DiceModifierContext modifierContext)
+		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			if (modifierContext.Dice == null || modifierContext.Dice.Length == 0)
 			{

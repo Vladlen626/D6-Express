@@ -75,15 +75,18 @@ namespace _Main.Scripts.Core
 			var playerModel = new PlayerModel();
 			var diceGameModel = new DiceGameModel(playerModel.InventoryModel);
 
-			var activeSceneName = sceneService.GetActiveSceneName();
-			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
+			// persistent scene load
+			var persistentSceneName = sceneService.GetActiveSceneName();
+			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(persistentSceneName));
+			// --------------
 
 			var mainMenuController = new MainMenuController(uiService, game, run, cursorService);
 			await _lifecycle.RegisterAsync(mainMenuController);
 
 			await sceneService.LoadSceneAsync(SceneNames.Train);
+			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(SceneNames.Train));
+			sceneService.SetActiveScene(SceneNames.Train);
 
-			//TODO: Контекст сейчас будет обязательным на игровой сцене
 			if (!sceneService.TryGetSceneContext(SceneNames.Train, out var context))
 			{
 				Debug.LogError($"[GameRoot] Scene {SceneNames.Train} could not have SceneContext!");
@@ -124,6 +127,7 @@ namespace _Main.Scripts.Core
 				new LevelStartModifierController(run, diceGameModel),
 				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
 				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService, sceneContext.InventoryView),
+				new ModifierItemsSyncController(playerModel.InventoryModel, playerModel.InventoryModel.ModifierItemsModel, configService),
 				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main, sceneContext.DiceGameTableView),
 			};
 

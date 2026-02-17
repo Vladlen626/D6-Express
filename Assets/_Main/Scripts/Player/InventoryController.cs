@@ -17,7 +17,7 @@ public class InventoryController : IBaseController, IActivatable, IPreloadable
 	private readonly IAudioService audioService;
 
 	private List<DiceModel> spawnedDiceModelList = new();
-	private Dictionary<string, DiceConfig> diceConfigs = new();
+	private Dictionary<string, ItemCatalogEntry> diceConfigs = new();
 	private readonly InventoryView inventoryView;
 	private readonly DiceGameModel diceGameModel;
 
@@ -41,7 +41,7 @@ public class InventoryController : IBaseController, IActivatable, IPreloadable
 
 	public async UniTask PreloadAsync()
 	{
-		diceConfigs = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+		diceConfigs = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
 	}
 
 	public void Activate()
@@ -83,10 +83,10 @@ public class InventoryController : IBaseController, IActivatable, IPreloadable
 	{
 		if (diceConfigs == null || diceConfigs.Count == 0)
 		{
-			diceConfigs = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+			diceConfigs = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
 		}
 
-		if (!diceConfigs.TryGetValue(diceId, out var config))
+		if (!diceConfigs.TryGetValue(diceId, out var config) || config.typeEnum != ItemCatalogType.Dice)
 		{
 			Debug.LogWarning($"[InventoryController] Dice config '{diceId}' not found.");
 			return;

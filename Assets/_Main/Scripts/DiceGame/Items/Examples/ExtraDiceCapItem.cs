@@ -7,18 +7,19 @@ namespace _Main.Scripts.Dice
 	/// Passive item that increases the maximum dice cap by a fixed amount (default +4).
 	/// The mechanic is reusable by other items/modifiers via DiceGameModel.SetDiceCapModifier.
 	/// </summary>
-	public class ExtraDiceCapItem : DiceItemBase, IOnLevelStartModifier, IGameModelBoundItem, IDiceItemViewProvider
+	public class ExtraDiceCapItem : ModifierItemBase, IOnLevelStartModifier, IGameModelBoundItem, IModifierItemViewProvider
 	{
 		private readonly int bonus;
 		private readonly DiceItemView customPrefab;
 		private DiceGameModel boundGameModel;
-		private const string BonusKey = "extra_dice_cap_item";
+		private readonly string bonusKey;
 
-		public ExtraDiceCapItem(int bonus = 4, DiceItemView prefabOverride = null)
-			: base("extra_dice_cap", "Extra Dice", DiceItemActivationType.Passive)
+		public ExtraDiceCapItem(string id, int bonus = 4, DiceItemView prefabOverride = null)
+			: base(id, id, DiceItemActivationType.Passive)
 		{
 			this.bonus = Mathf.Max(1, bonus);
 			customPrefab = prefabOverride;
+			bonusKey = id;
 		}
 
 		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
@@ -39,14 +40,14 @@ namespace _Main.Scripts.Dice
 
 		public void OnRemovedFromGameModel(DiceGameModel gameModel)
 		{
-			gameModel?.RemoveDiceCapModifier(BonusKey);
+			gameModel?.RemoveDiceCapModifier(bonusKey);
 			boundGameModel = null;
 		}
 
 		public override void ResetItem()
 		{
 			base.ResetItem();
-			boundGameModel?.RemoveDiceCapModifier(BonusKey);
+			boundGameModel?.RemoveDiceCapModifier(bonusKey);
 			boundGameModel = null;
 		}
 
@@ -60,7 +61,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			boundGameModel = gameModel;
-			boundGameModel.SetDiceCapModifier(BonusKey, bonus);
+			boundGameModel.SetDiceCapModifier(bonusKey, bonus);
 		}
 	}
 }

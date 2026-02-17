@@ -57,7 +57,7 @@ namespace _Main.Scripts.Dice
 
 		private async UniTaskVoid SetupSelectionStage()
 		{
-			var configs = await _configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+			var configs = await _configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
 
 			var diceIds = _inventory.DiceIdList;
 			var gameSlotLimit = _diceGameModel.tableModel?.ActiveSlotsCount ?? int.MaxValue;
@@ -67,7 +67,7 @@ namespace _Main.Scripts.Dice
 			{
 				string id = diceIds[i];
 
-				if (configs.TryGetValue(id, out var config))
+				if (configs.TryGetValue(id, out var config) && config.typeEnum == ItemCatalogType.Dice)
 				{
 					await CreateDice(config, i);
 				}
@@ -76,7 +76,7 @@ namespace _Main.Scripts.Dice
 			UpdateVisualPositions();
 		}
 
-		private async UniTask CreateDice(DiceConfig config, int index)
+		private async UniTask CreateDice(ItemCatalogEntry config, int index)
 		{
 			Transform startPos = _posHandler.FirstPosArray[index];
 

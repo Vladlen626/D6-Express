@@ -100,7 +100,7 @@ public class ShopViewController : IBaseController, IActivatable
             tradeItemView.transform.position,
             tradeItemView.transform.rotation,
             tradeItemView.transform);
-        view.Initialize(tradeItem.ItemId);
+        view.Initialize(tradeItem.VisualId);
         shopView.Slots[index].SetPrice(tradeItem.Price.ToString());
 
         itemsByIndex[index] = (tradeItem, tradeItemView);

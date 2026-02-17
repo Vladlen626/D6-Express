@@ -79,6 +79,16 @@
         "modifier_pass_activation_multiplier_value": "Multiplier: {0}",
         "modifier_adjust_tick_title": "Adjust Tick",
         "modifier_adjust_tick_description": "Adjusts the number of ticks (games per day) for the current level by a fixed delta (can increase or decrease)",
-        "modifier_adjust_tick_value": "Tick delta: {0}"
+        "modifier_adjust_tick_value": "Tick delta: {0}",
+        "modifier_extra_dice_cap_title": "Extra Dice",
+        "modifier_extra_dice_cap_description": "Increases the maximum dice cap by a fixed amount.",
+        "modifier_silencer_item_title": "Modifier Silencer",
+        "modifier_silencer_item_description": "Silences all other modifiers until the end of the round.",
+        "modifier_pass_multiplier_item_title": "Pass Multiplier",
+        "modifier_pass_multiplier_item_description": "When armed, your next Pass gains a score multiplier.",
+        "modifier_reroll_selected_item_title": "Second Chance",
+        "modifier_reroll_selected_item_description": "When armed, the next clicked unsaved die rerolls immediately.",
+        "modifier_step_up_item_title": "Step Up",
+        "modifier_step_up_item_description": "Select several dice, then all dice advance their face by +1."
     }
 }

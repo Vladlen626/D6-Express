@@ -10,13 +10,13 @@ namespace _Main.Scripts.Dice
 	/// When activated, it removes all other modifiers from the pipeline until the end of the current round
 	/// (RoundEnd stage), then restores them and enters a configurable cooldown tracked in passes.
 	/// </summary>
-	public class ModifierSilencerItem : DiceItemBase,
+	public class ModifierSilencerItem : ModifierItemBase,
 		IOnLevelStartModifier,
 		IOnRoundStartModifier,
 		IOnRollModifier,
 		IOnPassModifier,
 		IOnRoundEndModifier,
-		IDiceItemViewProvider
+		IModifierItemViewProvider
 	{
 		private const string LevelStartField = "onLevelStartActionsHandler";
 		private const string RoundStartField = "onRoundStartActionsHandler";
@@ -34,8 +34,8 @@ namespace _Main.Scripts.Dice
 		private bool restoreScheduled;
 		private int cooldownRemaining;
 
-		public ModifierSilencerItem(int cooldownPasses = 2, DiceItemView prefabOverride = null)
-			: base("modifier_silencer_item", "Silencer", DiceItemActivationType.ClickToActivate)
+		public ModifierSilencerItem(string id, int cooldownPasses = 2, DiceItemView prefabOverride = null)
+			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses);
 			customPrefab = prefabOverride;

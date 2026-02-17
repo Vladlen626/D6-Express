@@ -6,7 +6,7 @@ namespace _Main.Scripts.Dice
 	/// Base implementation for dice items that double as modifiers.
 	/// Derive from this and implement ModifyValues to plug into the modifier pipeline.
 	/// </summary>
-	public abstract class DiceItemBase : IDiceItem
+	public abstract class ModifierItemBase : IModifierItem
 	{
 		public string Id { get; }
 		public string DisplayName { get; }
@@ -16,9 +16,9 @@ namespace _Main.Scripts.Dice
 
 		protected DiceItemView AttachedView { get; private set; }
 
-		public event Action<IDiceItem> OnChanged;
+		public event Action<IModifierItem> OnChanged;
 
-		protected DiceItemBase(string id, string displayName, DiceItemActivationType activationType)
+		protected ModifierItemBase(string id, string displayName, DiceItemActivationType activationType)
 		{
 			Id = id;
 			DisplayName = displayName;
@@ -34,7 +34,7 @@ namespace _Main.Scripts.Dice
 
 		public void DetachView()
 		{
-			if (AttachedView == null)
+			if (!AttachedView)
 			{
 				return;
 			}
@@ -50,13 +50,7 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
-			var handled = OnClick();
-			if (handled)
-			{
-				NotifyChanged();
-				UpdateView();
-			}
-			return handled;
+			return OnClick();
 		}
 
 		/// <summary>

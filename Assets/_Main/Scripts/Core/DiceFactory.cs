@@ -17,7 +17,7 @@ namespace _Main.Scripts.Core
 		{
 			var controllersList = new List<IBaseController>();
 
-			if (sceneContext.DiceGameTableView == null)
+			if (!sceneContext.DiceGameTableView)
 			{
 				return controllersList.ToArray();
 			}
@@ -35,7 +35,7 @@ namespace _Main.Scripts.Core
 
 		public static async UniTask<DiceModel> SpawnDiceViewAsync(
 			IObjectFactory factory,
-			DiceConfig config,
+			ItemCatalogEntry config,
 			Vector3 position,
 			Quaternion rotation,
 			Transform startPos,
@@ -60,7 +60,8 @@ namespace _Main.Scripts.Core
 				view.transform.SetParent(startPos);
 			}
 
-			view.Initialize(config.id, isPlayerDice, audioService);
+			var visualId = string.IsNullOrEmpty(config.visualId) ? config.id : config.visualId;
+			view.Initialize(visualId, isPlayerDice, audioService);
 
 			if (resetYRotation)
 			{
@@ -72,11 +73,22 @@ namespace _Main.Scripts.Core
 				view.Hide();
 			}
 
-			DiceModel model = new DiceModel(config);
+			var weights = ResolveWeights(config);
+			DiceModel model = new DiceModel(config.id, weights);
 			model.SetCurrentPosition(view.transform);
 			diceGameModel.AddDiceOnScreen(model, view);
 
 			return model;
+		}
+
+		private static int[] ResolveWeights(ItemCatalogEntry config)
+		{
+			if (config != null && config.TryGetDiceData(out var diceData) && diceData?.weights != null && diceData.weights.Length == 6)
+			{
+				return diceData.weights;
+			}
+
+			return new[] { 1, 1, 1, 1, 1, 1 };
 		}
 	}
 }

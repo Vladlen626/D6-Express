@@ -10,8 +10,8 @@ namespace PlatformCore.Services.UI
 	{
 		[SerializeField] protected CanvasGroup _group;
 
-		[Header("Canvas Performance Settings")] [SerializeField]
-		private UICanvasType _canvasType = UICanvasType.Static;
+		[Header("Canvas Layer Settings")] [SerializeField]
+		private UICanvasType _canvasType = UICanvasType.Default;
 		public UICanvasType CanvasType => _canvasType;
 
 		private void Awake()

@@ -1,29 +1,26 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
 	/// Holds item instances and mirrors them into the modifiers pipeline so they receive stage callbacks.
 	/// </summary>
-	public class ItemsModel
+	public class ModifierItemsModel
 	{
-		private readonly List<IDiceItem> items = new();
+		private readonly List<IModifierItem> items = new();
 		private readonly ModifiersModel modifiersModel;
 		private DiceGameModel diceGameModel;
-		private bool defaultsInitialized;
 
-		public ItemsModel(ModifiersModel modifiersModel, DiceGameModel diceGameModel = null)
+		public ModifierItemsModel(ModifiersModel modifiersModel, DiceGameModel diceGameModel = null)
 		{
 			this.modifiersModel = modifiersModel;
 			this.diceGameModel = diceGameModel;
-			AddDefaultItems();
 		}
 
 		public event Action ItemsChanged;
 
-		public IReadOnlyList<IDiceItem> Items => items;
+		public IReadOnlyList<IModifierItem> Items => items;
 
 		/// <summary>
 		/// Allows late binding of the active DiceGameModel (e.g., when items live in inventory and the game model is created later).
@@ -46,7 +43,7 @@ namespace _Main.Scripts.Dice
 		/// <summary>
 		/// Adds an item to the collection and registers it as a modifier so it participates in all stages.
 		/// </summary>
-		public void AddItem(IDiceItem item)
+		public void AddItem(IModifierItem item)
 		{
 			if (item == null)
 			{
@@ -64,22 +61,37 @@ namespace _Main.Scripts.Dice
 			ItemsChanged?.Invoke();
 		}
 
-		public void RemoveItem(IDiceItem item)
+		public void RemoveItem(IModifierItem item)
 		{
 			if (item == null || !items.Remove(item))
 			{
 				return;
 			}
 
-			// Intentionally NOT removing from modifiers pipeline; stages may already be mid-flight.
+			modifiersModel?.RemoveModifier(item);
 			(item as IGameModelBoundItem)?.OnRemovedFromGameModel(diceGameModel);
 			ItemsChanged?.Invoke();
+		}
+
+		public void RemoveItemById(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return;
+			}
+
+			var item = items.Find(x => string.Equals(x.Id, id, StringComparison.Ordinal));
+			if (item != null)
+			{
+				RemoveItem(item);
+			}
 		}
 
 		public void Reset()
 		{
 			foreach (var item in items)
 			{
+				modifiersModel?.RemoveModifier(item);
 				(item as IGameModelBoundItem)?.OnRemovedFromGameModel(diceGameModel);
 				item.ResetItem();
 			}
@@ -88,27 +100,6 @@ namespace _Main.Scripts.Dice
 			ItemsChanged?.Invoke();
 		}
 
-		private void AddDefaultItems()
-		{
-			if (defaultsInitialized)
-			{
-				return;
-			}
-
-			defaultsInitialized = true;
-
-			var passMultiplierPrefab = Resources.Load<DiceItemView>("Items/PassMultiplierItem");
-			var rerollItemPrefab = Resources.Load<DiceItemView>("Items/RerollSelectedItem");
-			var stepUpPrefab = Resources.Load<DiceItemView>("Items/ItemBase");
-			var silencerPrefab = Resources.Load<DiceItemView>("Items/ItemBase");
-			var extraDicePrefab = Resources.Load<DiceItemView>("Items/ItemBase");
-
-			// AddItem(new PassMultiplierItem(prefabOverride: passMultiplierPrefab));
-			// AddItem(new RerollSelectedItem(prefabOverride: rerollItemPrefab));
-			// AddItem(new StepUpItem(prefabOverride: stepUpPrefab));
-			AddItem(new ModifierSilencerItem(prefabOverride: silencerPrefab));
-			AddItem(new ExtraDiceCapItem(4, extraDicePrefab));
-		}
 	}
 
 	/// <summary>

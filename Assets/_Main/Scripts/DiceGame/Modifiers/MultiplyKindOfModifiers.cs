@@ -4,7 +4,7 @@
 	{
 		public readonly int face;
 		
-		public MultiplyKindOfModifiers(DiceCombination combination, int face) : base(combination)
+		public MultiplyKindOfModifiers(string id, DiceCombination combination, int face) : base(id, combination)
 		{
 			this.face = face;
 		}

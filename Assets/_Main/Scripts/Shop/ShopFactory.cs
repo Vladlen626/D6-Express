@@ -9,16 +9,16 @@ public static class ShopFactory
     {
         var shopsConfig = await configService.GetFirstOrDefaultAsync<ShopsConfig>(ResourcePaths.Json.shop);
 
-        var diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
-        return new Shop(inventoryModel, diceConfigsDict, shopsConfig.station);
+        var catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+        return new Shop(inventoryModel, catalog, shopsConfig.station);
     }
 
     public static async Task<Shop> GetTrainShopAsync(InventoryModel inventoryModel, ConfigService configService)
     {
         var shopsConfig = await configService.GetFirstOrDefaultAsync<ShopsConfig>(ResourcePaths.Json.shop);
 
-        var diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
-        return new Shop(inventoryModel, diceConfigsDict, shopsConfig.train);
+        var catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+        return new Shop(inventoryModel, catalog, shopsConfig.train);
     }
 
     public static ShopViewController GetShopViewController(Shop shop, ShopView shopView, IObjectFactory objectFactory, Interactor interactor, CharacterView shopkeeper)

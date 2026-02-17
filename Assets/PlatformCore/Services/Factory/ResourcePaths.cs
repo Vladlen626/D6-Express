@@ -24,6 +24,7 @@ namespace PlatformCore.Services.Factory
 		{
 			public const string dice_game_rules = "Json/dice_game_rules";
 			public const string dice_types = "Json/dice_types";
+			public const string items_catalog = "Json/items_catalog";
 			public const string modifiers_ui = "Json/modifiers_ui";
 			public const string player = "Json/player";
 			public const string run_rules = "Json/run_rules";

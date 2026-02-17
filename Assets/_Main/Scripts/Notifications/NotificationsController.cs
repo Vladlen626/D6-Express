@@ -11,7 +11,7 @@ public class NotificationsController : IBaseController, IActivatable, IPreloadab
     private readonly InventoryModel inventory;
     private readonly ConfigService configService;
 
-    private IReadOnlyDictionary<string, DiceConfig> diceConfigsDict;
+    private IReadOnlyDictionary<string, ItemCatalogEntry> diceConfigsDict;
     private TextsConfig textsConfig;
     private string buyText;
 
@@ -34,15 +34,18 @@ public class NotificationsController : IBaseController, IActivatable, IPreloadab
 
     public async UniTask PreloadAsync()
     {
-        diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+        diceConfigsDict = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
         textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
         buyText = textsConfig.texts["dice_added_to_inventory_notification"];
     }
 
     private void OnDiceAdded(string diceId)
     {
-        var dice = diceConfigsDict[diceId];
-        var header = textsConfig.texts[dice.name];
+        if (!diceConfigsDict.TryGetValue(diceId, out var dice) || dice.typeEnum != ItemCatalogType.Dice)
+        {
+            return;
+        }
+        var header = textsConfig.texts[dice.nameKey];
 
         notifications.Add(new Notifications.Notification()
         {

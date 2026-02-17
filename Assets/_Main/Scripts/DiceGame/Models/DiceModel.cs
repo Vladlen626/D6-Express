@@ -17,10 +17,10 @@ namespace _Main.Scripts.Dice
 		public int[] Weights { get; private set; }
 		public string ConfigId { get; private set; }
 
-		public DiceModel(DiceConfig config)
+		public DiceModel(string configId, int[] weights)
 		{
-			ConfigId = config.id;
-			Weights = config.weights;
+			ConfigId = configId;
+			Weights = weights;
 			Reset();
 		}
 

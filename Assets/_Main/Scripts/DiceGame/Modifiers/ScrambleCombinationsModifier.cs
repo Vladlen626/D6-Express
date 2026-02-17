@@ -8,7 +8,7 @@ using Random=UnityEngine.Random;
 
 namespace _Main.Scripts.Dice
 {
-	public class ScrambleCombinationsModifier : IOnRoundStartModifier, IOnRollModifier
+	public class ScrambleCombinationsModifier : ModifierItemBase, IOnRoundStartModifier, IOnRollModifier
 	{
 		private static readonly DiceCombination[] AvailableCombinations = Enum
 			.GetValues(typeof(DiceCombination))
@@ -31,7 +31,12 @@ namespace _Main.Scripts.Dice
 
 		private readonly Dictionary<DiceCombination, int> scrambledScores = new ();
 
-		public UniTask ModifyValues(DiceModifierContext modifierContext)
+		public ScrambleCombinationsModifier(string id)
+			: base(id, id, DiceItemActivationType.Passive)
+		{
+		}
+
+		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			switch (modifierContext.Stage)
 			{

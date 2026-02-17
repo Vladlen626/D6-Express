@@ -15,7 +15,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceTableView tableView;
 
 		private TextsConfig textsConfig;
-		private IReadOnlyDictionary<string, DiceConfig> diceConfigsDict;
+		private IReadOnlyDictionary<string, ItemCatalogEntry> diceConfigsDict;
 
 		private DiceModel currentDiceModel;
 		private Camera mainCamera;
@@ -32,7 +32,7 @@ namespace _Main.Scripts.Dice
 
 		protected override async UniTask OnPreloadAsync()
 		{
-			diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+			diceConfigsDict = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
 			textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 		}
 
@@ -95,15 +95,15 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceHoverEnter(DiceModel diceModel)
 		{
-			if (!diceConfigsDict.TryGetValue(diceModel.ConfigId, out DiceConfig diceConfig))
+			if (!diceConfigsDict.TryGetValue(diceModel.ConfigId, out var diceConfig) || diceConfig.typeEnum != ItemCatalogType.Dice)
 			{
 				return;
 			}
 
 			currentDiceModel = diceModel;
 
-			var header = textsConfig.texts[diceConfig.name];
-			var description = textsConfig.texts[diceConfig.description];
+			var header = textsConfig.texts[diceConfig.nameKey];
+			var description = textsConfig.texts[diceConfig.descriptionKey];
 			_context.SetHeaderText(header);
 			_context.SetDescriptionText(description);
 			_context.SetRarity(diceConfig.rarityEnum);
