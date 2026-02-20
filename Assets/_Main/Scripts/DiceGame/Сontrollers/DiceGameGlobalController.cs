@@ -234,7 +234,8 @@ namespace _Main.Scripts.Dice
 			}
 			var bankSlots = diceTableView.GameStatePosHandler.SecondPosArray;
 			var activeSlots = CouplePositionsHandler.FirstPosArray;
-			var enemyLimit = Mathf.Min(diceGameModel.MaxDiceCount, bankSlots.Length, activeSlots.Length);
+			// Enemy should not benefit from player dice cap bonuses.
+			var enemyLimit = Mathf.Min(diceGameModel.BaseMaxDiceCount, bankSlots.Length, activeSlots.Length);
 
 			for (int i = 0; i < enemyLimit; i++)
 			{

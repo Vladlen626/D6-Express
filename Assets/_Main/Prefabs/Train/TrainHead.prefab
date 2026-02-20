@@ -3971,10 +3971,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 261097203850199138}
     m_Modifications:
-    - target: {fileID: 2457915230549854631, guid: 906435ceb4eab3849a332a7640fec219, type: 3}
-      propertyPath: lights.Array.size
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 4671922077702795984, guid: 906435ceb4eab3849a332a7640fec219, type: 3}
       propertyPath: m_Name
       value: Train Light (1)
@@ -4891,14 +4887,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 261097203850199138}
     m_Modifications:
-    - target: {fileID: 2457915230549854631, guid: 906435ceb4eab3849a332a7640fec219, type: 3}
-      propertyPath: lights.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2457915230549854631, guid: 906435ceb4eab3849a332a7640fec219, type: 3}
-      propertyPath: 'lights.Array.data[4]'
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 4671922077702795984, guid: 906435ceb4eab3849a332a7640fec219, type: 3}
       propertyPath: m_Name
       value: Train Light (2)

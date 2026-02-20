@@ -21,7 +21,10 @@ namespace _Main.Scripts.Dice
 
 		private IModifierItem boundItem;
 		public UnityEvent OnClicked = new();
+		public event Action<IModifierItem> OnHoverEnter;
+		public event Action<IModifierItem> OnHoverExit;
 		private Camera _cam;
+		private bool _isHovered;
 
 		private void Awake()
 		{
@@ -51,6 +54,12 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			if (_isHovered)
+			{
+				_isHovered = false;
+				OnHoverExit?.Invoke(boundItem);
+			}
+
 			Debug.Log($"[DiceItemView] Unbind -> {item.Id}");
 			boundItem.OnChanged -= OnItemChanged;
 			boundItem = null;
@@ -60,6 +69,12 @@ namespace _Main.Scripts.Dice
 		{
 			if (boundItem != null)
 			{
+				if (_isHovered)
+				{
+					_isHovered = false;
+					OnHoverExit?.Invoke(boundItem);
+				}
+
 				boundItem.OnChanged -= OnItemChanged;
 				boundItem = null;
 			}
@@ -74,7 +89,24 @@ namespace _Main.Scripts.Dice
 			}
 
 			var mouse = Mouse.current;
-			if (mouse == null || !mouse.leftButton.wasPressedThisFrame)
+			if (mouse == null)
+			{
+				return;
+			}
+
+			var isMouseOver = IsMouseOver(mouse);
+			if (isMouseOver && !_isHovered)
+			{
+				_isHovered = true;
+				OnHoverEnter?.Invoke(boundItem);
+			}
+			else if (!isMouseOver && _isHovered)
+			{
+				_isHovered = false;
+				OnHoverExit?.Invoke(boundItem);
+			}
+
+			if (!mouse.leftButton.wasPressedThisFrame)
 			{
 				return;
 			}
@@ -84,12 +116,22 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			Ray ray = _cam.ScreenPointToRay(mouse.position.ReadValue());
-			if (clickCollider.Raycast(ray, out _, 200f))
+			if (isMouseOver)
 			{
 				Debug.Log($"[DiceItemView] Click detected on {boundItem.Id}");
 				OnClicked.Invoke();
 			}
+		}
+
+		private bool IsMouseOver(Mouse mouse)
+		{
+			if (!_cam || !clickCollider)
+			{
+				return false;
+			}
+
+			Ray ray = _cam.ScreenPointToRay(mouse.position.ReadValue());
+			return clickCollider.Raycast(ray, out _, 200f);
 		}
 
 		private void OnItemChanged(IModifierItem item)
@@ -100,6 +142,15 @@ namespace _Main.Scripts.Dice
 
 		public void UpdateState(DiceItemState state, bool isVisible)
 		{
+			if (!isVisible && _isHovered)
+			{
+				_isHovered = false;
+				if (boundItem != null)
+				{
+					OnHoverExit?.Invoke(boundItem);
+				}
+			}
+
 			gameObject.SetActive(isVisible);
 			var color = readyColor;
 			switch (state)

@@ -128,7 +128,7 @@ namespace _Main.Scripts.Core
 				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
 				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService, sceneContext.InventoryView),
 				new ModifierItemsSyncController(playerModel.InventoryModel, playerModel.InventoryModel.ModifierItemsModel, configService),
-				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main, sceneContext.DiceGameTableView),
+				new TooltipsController(uiService, diceGameModel, configService, Camera.main, sceneContext.DiceGameTableView),
 			};
 
 			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService);

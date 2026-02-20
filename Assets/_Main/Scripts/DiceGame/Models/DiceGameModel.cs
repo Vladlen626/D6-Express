@@ -41,6 +41,7 @@ namespace _Main.Scripts.Dice
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
 		public int MaxDiceCount => Mathf.Max(1, baseMaxDiceCount + GetDiceCapBonusSum());
+		public int BaseMaxDiceCount => baseMaxDiceCount;
 
 		private const int DefaultMaxDiceCount = 6;
 		private int baseMaxDiceCount = DefaultMaxDiceCount;

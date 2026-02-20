@@ -8,19 +8,21 @@ using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
-	public class DiceTooltipsController : BaseContextController<UITooltip>
+	public class TooltipsController : BaseContextController<UITooltip>
 	{
 		private readonly DiceGameModel diceGameModel;
 		private readonly ConfigService configService;
 		private readonly DiceTableView tableView;
 
 		private TextsConfig textsConfig;
-		private IReadOnlyDictionary<string, ItemCatalogEntry> diceConfigsDict;
+		private IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
 
 		private DiceModel currentDiceModel;
+		private IModifierItem currentItem;
+		private readonly List<DiceItemView> itemViews = new();
 		private Camera mainCamera;
 
-		public DiceTooltipsController(IUIService uiService, DiceGameModel diceGameModel, ConfigService configService,
+		public TooltipsController(IUIService uiService, DiceGameModel diceGameModel, ConfigService configService,
 			Camera mainCamera, DiceTableView tableView = null)
 			: base(uiService)
 		{
@@ -32,7 +34,7 @@ namespace _Main.Scripts.Dice
 
 		protected override async UniTask OnPreloadAsync()
 		{
-			diceConfigsDict = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+			catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
 			textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 		}
 
@@ -50,21 +52,14 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceGameStateChangedHandler()
 		{
-			if (diceGameModel.DiceGameState is DiceGameState.BET)
-			{
-				_context.Hide();
-				_context.HideTooltip();
-			}
-			else
-			{
-				_context.Show();
-			}
+			SubscribeOnItemHoverEvents();
 		}
 
 		protected override void OnDeactivate()
 		{
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.ScreenDiceDictChanged -= ScreenDiceDictChangedHandler;
+			UnsubscribeFromItemHoverEvents();
 
 			base.OnDeactivate();
 		}
@@ -73,6 +68,7 @@ namespace _Main.Scripts.Dice
 		{
 			UnsubscribeFromDiceHoverEvents();
 			SubscribeOnDiceHoverEvents();
+			SubscribeOnItemHoverEvents();
 		}
 
 		private void SubscribeOnDiceHoverEvents()
@@ -93,14 +89,53 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
+		private void SubscribeOnItemHoverEvents()
+		{
+			UnsubscribeFromItemHoverEvents();
+
+			var views = UnityEngine.Object.FindObjectsByType<DiceItemView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+			foreach (var view in views)
+			{
+				if (!view)
+				{
+					continue;
+				}
+
+				view.OnHoverEnter += OnItemHoverEnter;
+				view.OnHoverExit += OnItemHoverExit;
+				itemViews.Add(view);
+			}
+		}
+
+		private void UnsubscribeFromItemHoverEvents()
+		{
+			foreach (var view in itemViews)
+			{
+				if (!view)
+				{
+					continue;
+				}
+
+				view.OnHoverEnter -= OnItemHoverEnter;
+				view.OnHoverExit -= OnItemHoverExit;
+			}
+
+			itemViews.Clear();
+		}
+
 		private void OnDiceHoverEnter(DiceModel diceModel)
 		{
-			if (!diceConfigsDict.TryGetValue(diceModel.ConfigId, out var diceConfig) || diceConfig.typeEnum != ItemCatalogType.Dice)
+			if (!catalog.TryGetValue(diceModel.ConfigId, out var diceConfig) || diceConfig.typeEnum != ItemCatalogType.Dice)
 			{
 				return;
 			}
 
 			currentDiceModel = diceModel;
+
+			if (currentItem != null)
+			{
+				return;
+			}
 
 			var header = textsConfig.texts[diceConfig.nameKey];
 			var description = textsConfig.texts[diceConfig.descriptionKey];
@@ -128,8 +163,58 @@ namespace _Main.Scripts.Dice
 		{
 			if (diceModel == currentDiceModel)
 			{
-				_context.HideTooltip();
+				currentDiceModel = null;
+				if (currentItem == null)
+				{
+					_context.HideTooltip();
+				}
 			}
+		}
+
+		private void OnItemHoverEnter(IModifierItem item)
+		{
+			if (item == null)
+			{
+				return;
+			}
+
+			if (!catalog.TryGetValue(item.Id, out var entry) || entry.typeEnum != ItemCatalogType.Modifier)
+			{
+				return;
+			}
+
+			currentItem = item;
+
+			var header = textsConfig.texts[entry.nameKey];
+			var description = textsConfig.texts[entry.descriptionKey];
+			_context.SetHeaderText(header);
+			_context.SetDescriptionText(description);
+			_context.SetRarity(entry.rarityEnum);
+
+			if (tableView && tableView.TooltipPos)
+			{
+				_context.SetPositionFromWorld(tableView.TooltipPos, Vector3.zero, mainCamera);
+			}
+
+			_context.ShowTooltip();
+		}
+
+		private void OnItemHoverExit(IModifierItem item)
+		{
+			if (item == null || currentItem != item)
+			{
+				return;
+			}
+
+			currentItem = null;
+
+			if (currentDiceModel != null)
+			{
+				OnDiceHoverEnter(currentDiceModel);
+				return;
+			}
+
+			_context.HideTooltip();
 		}
 	}
 }

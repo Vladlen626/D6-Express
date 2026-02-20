@@ -4,6 +4,7 @@ using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
+using UnityEngine;
 
 public class EnemyTurnController : IBaseController, IActivatable
 {
@@ -11,7 +12,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 	private readonly DiceGameModel diceGameModel;
 	private TableModel tableModel => diceGameModel.tableModel;
 
-	private int delay => GlobalParameters.Delay/2;
+	private int delay => Mathf.Max(1, Mathf.RoundToInt(GlobalParameters.Delay * GlobalParameters.EnemyTurnDelayMultiplier));
 
 	private bool isRunning;
 
