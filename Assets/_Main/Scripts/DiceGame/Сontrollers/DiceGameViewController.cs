@@ -112,15 +112,6 @@ namespace _Main.Scripts.Dice
 			bool canPass = hasValidComboSelected || (tableModel.TurnPoints > 0 && diceGameModel.GetSelected().Length == 0);
 			bool canRoll = tableModel.isFirstRoll || hasValidComboSelected;
 
-			/*if (scorePreview == 0)
-			{
-				diceTableView.SetComboNameText(string.Empty);
-			}
-			else
-			{
-				diceTableView.SetComboNameText(DiceGameUtils.GetCombinationName());
-			}*/
-
 			diceTableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);
 			diceTableView.SetButtonInteractable("Pass", canPass && diceGameModel.IsPlayerTurn);
 		}

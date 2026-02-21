@@ -27,6 +27,7 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService configService;
 		private readonly IUIService uiService;
 		private readonly IInputService inputService;
+		private readonly DiceScoringService scoringService;
 
 		private readonly SceneContext sceneContext;
 
@@ -62,6 +63,7 @@ namespace _Main.Scripts.Dice
 			audioService = serviceLocator.Get<IAudioService>();
 			uiService = serviceLocator.Get<IUIService>();
 			inputService = serviceLocator.Get<IInputService>();
+			scoringService = serviceLocator.Get<DiceScoringService>();
 		}
 
 		public void Activate()
@@ -132,12 +134,12 @@ namespace _Main.Scripts.Dice
 			await SetupEnemyDiceList();
 
 			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService, run, notifications);
+				loggerService, diceGameModel, cameraShakeService, audioService, scoringService, run, notifications);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
 				processController,
-				new EnemyTurnController(processController, diceGameModel),
+				new EnemyTurnController(processController, diceGameModel, scoringService),
 				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService),
 				new DiceGameResultController(diceGameModel)
 			});

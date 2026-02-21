@@ -10,15 +10,17 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	private readonly Run run;
 	private readonly RunConfig runConfig;
 	private readonly PlayerModel playerModel;
+	private readonly DiceScoringService scoringService;
 	private readonly ConfigService configService;
 
 	private PlayerConfig playerConfig;
 
-	public RunController(D6Game game, Run run, RunConfig runConfig, PlayerModel playerModel, ConfigService configService)
+	public RunController(D6Game game, Run run, RunConfig runConfig, PlayerModel playerModel, DiceScoringService scoringService, ConfigService configService)
 	{
 		this.game = game;
 		this.run = run;
 		this.playerModel = playerModel;
+		this.scoringService = scoringService;
 		this.configService = configService;
 		this.runConfig = runConfig;
 	}
@@ -88,9 +90,9 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		}
 
 		// Initialize straight upgrade state for the new run
-		var defaults = DiceScoringService.Instance.GetStraightDefaults();
+		var defaults = scoringService.GetStraightDefaults();
 		var straightState = new StraightRuntimeState(defaults);
-		DiceScoringService.Instance.SetStraightState(straightState);
+		scoringService.SetStraightState(straightState);
 		run.SetStraightState(straightState);
 	}
 

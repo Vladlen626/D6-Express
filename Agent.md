@@ -22,6 +22,7 @@
 - Null checks use Unity style: `if (!obj)` instead of `obj == null`.
 - Follow project code style.
 - `if` statements always use braces. No single-line `if (cond) do;`.
+- Do not use static `Locator` for services. If a class needs a service, get it via an injected `ServiceLocator` or pass the service through the constructor when a parent already has the locator.
 
 ## Utils Placement
 - When adding static calculation helpers, first look for an existing `Utils` class near the target class.

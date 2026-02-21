@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _Main.Scripts.Core.Services;
+using _Main.Scripts.Dice;
 using PlatformCore.Core;
 using PlatformCore.Services;
 using PlatformCore.Services.Factory;
@@ -14,7 +15,8 @@ public static class RunFactory
 		PlayerModel playerModel,
 		PlayerView playerView,
 		ConfigService configService,
-		ICameraService cameraService)
+		ICameraService cameraService,
+		DiceScoringService scoringService)
 	{
 		var runConfig = await configService.GetFirstOrDefaultAsync<RunConfig>(ResourcePaths.Json.run_rules);
 
@@ -29,6 +31,7 @@ public static class RunFactory
 				run,
 				runConfig,
 				playerModel,
+				scoringService,
 				configService)
 		};
 	}

@@ -10,6 +10,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 {
 	private readonly DiceGameProcessController processController;
 	private readonly DiceGameModel diceGameModel;
+	private readonly DiceScoringService scoringService;
 	private TableModel tableModel => diceGameModel.tableModel;
 
 	private int delay => Mathf.Max(1, Mathf.RoundToInt(GlobalParameters.Delay * GlobalParameters.EnemyTurnDelayMultiplier));
@@ -18,10 +19,12 @@ public class EnemyTurnController : IBaseController, IActivatable
 
 	public EnemyTurnController(
 		DiceGameProcessController processController,
-		DiceGameModel diceGameModel)
+		DiceGameModel diceGameModel,
+		DiceScoringService scoringService)
 	{
 		this.processController = processController;
 		this.diceGameModel = diceGameModel;
+		this.scoringService = scoringService;
 	}
 
 	public void Activate()
@@ -80,7 +83,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 				}
 
 				int[] values = DiceGameUtils.GetDiceValues(unbanked);
-				var combinations = DiceGameUtils.GetCombinations(values);
+				var combinations = scoringService.Evaluate(values);
 				if (combinations.Combinations.Count == 0)
 				{
 					await UniTask.Delay(delay);
@@ -169,8 +172,8 @@ public class EnemyTurnController : IBaseController, IActivatable
 				}
 			}
 
-			var combinations = DiceGameUtils.GetCombinations(subset.ToArray());
-			int score = DiceGameUtils.CalculateTotalScore(combinations);
+			var combinations = scoringService.Evaluate(subset.ToArray());
+			int score = scoringService.CalculateTotalScore(combinations);
 
 			if (score > bestScore)
 			{

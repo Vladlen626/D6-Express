@@ -6,12 +6,14 @@ namespace _Main.Scripts.Dice
 {
 	public class ShakeRerollModifier : ModifierItemBase, IOnRollModifier
 	{
+		private readonly DiceScoringService scoringService;
 		public readonly float shakeChance;
 		private readonly float rerollAnimationDuration;
 
-		public ShakeRerollModifier(string id, float shakeChance = 0.95f, float rerollAnimationDuration = 0.5f)
+		public ShakeRerollModifier(string id, DiceScoringService scoringService, float shakeChance = 0.95f, float rerollAnimationDuration = 0.5f)
 			: base(id, id, DiceItemActivationType.Passive)
 		{
+			this.scoringService = scoringService;
 			this.shakeChance = Mathf.Clamp01(shakeChance);
 			this.rerollAnimationDuration = Mathf.Max(0.05f, rerollAnimationDuration);
 		}
@@ -45,9 +47,9 @@ namespace _Main.Scripts.Dice
 			RefreshCombinationResult(modifierContext);
 		}
 
-		private static void RefreshCombinationResult(DiceModifierContext modifierContext)
+		private void RefreshCombinationResult(DiceModifierContext modifierContext)
 		{
-			var updatedResult = DiceGameUtils.GetCombinations(DiceGameUtils.GetDiceValues(modifierContext.Dice));
+			var updatedResult = scoringService.Evaluate(DiceGameUtils.GetDiceValues(modifierContext.Dice));
 			var targetList = modifierContext.CombinationResult.Combinations;
 			targetList.Clear();
 			targetList.AddRange(updatedResult.Combinations);

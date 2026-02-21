@@ -12,6 +12,7 @@ namespace _Main.Scripts.Dice
 	/// </summary>
 	public class StepUpItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
 	{
+		private readonly DiceScoringService scoringService;
 		private readonly int selectionTarget;
 		private readonly int cooldownLengthInPasses;
 		private readonly DiceItemView customPrefab;
@@ -25,9 +26,10 @@ namespace _Main.Scripts.Dice
 		private bool isProcessing;
 		private int cooldownRemaining;
 
-		public StepUpItem(string id, int selectionCount = 3, int? cooldownPasses = null, DiceItemView prefabOverride = null)
+		public StepUpItem(string id, DiceScoringService scoringService, int selectionCount = 3, int? cooldownPasses = null, DiceItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
+			this.scoringService = scoringService;
 			selectionTarget = Mathf.Max(1, selectionCount);
 			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses ?? selectionTarget);
 			customPrefab = prefabOverride;
@@ -245,14 +247,14 @@ namespace _Main.Scripts.Dice
 			var selected = boundGameModel.GetSelected();
 			var values = DiceGameUtils.GetDiceValues(selected);
 
-			if (DiceGameUtils.HasTrashInSelected(values))
+			if (scoringService.HasTrash(values))
 			{
 				boundGameModel.tableModel.SetPreviewPoints(0);
 			}
 			else
 			{
-				var combo = DiceGameUtils.GetCombinations(values);
-				boundGameModel.tableModel.SetPreviewPoints(DiceGameUtils.CalculateTotalScore(combo));
+				var combo = scoringService.Evaluate(values);
+				boundGameModel.tableModel.SetPreviewPoints(scoringService.CalculateTotalScore(combo));
 			}
 
 			boundGameModel.tableModel.SendUpdateUI();

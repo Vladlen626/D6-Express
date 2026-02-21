@@ -11,16 +11,13 @@ namespace _Main.Scripts.Dice
 	/// Central scoring engine. Loads defaults from JSON config, applies runtime overrides from persistent storage,
 	/// evaluates dice combinations, and exposes mutation APIs for runtime editing in builds.
 	/// </summary>
-	public class DiceScoringService
+	public class DiceScoringService : IService
 	{
 		private const string ConfigResourcePath = "DiceScoringConfig";
 		private const string ConfigFileName = "DiceScoringConfig.json";
 		private const string OverridesFileName = "DiceScoringOverrides.json";
 		private const string ComboUpgradeConfigResourcePath = "ComboUpgradesConfig";
 		private const string ComboUpgradeConfigFileName = "ComboUpgradesConfig.json";
-
-		private static DiceScoringService instance;
-		public static DiceScoringService Instance => instance ??= new DiceScoringService();
 
 		private readonly List<ComboRuleDefinition> activeRules = new();
 		private readonly List<ComboRuleDefinition> addedRules = new();
@@ -32,7 +29,7 @@ namespace _Main.Scripts.Dice
 		private StraightConfig straightConfig;
 		private ComboUpgradeConfigRoot upgradeBundle;
 
-		private DiceScoringService()
+		public DiceScoringService()
 		{
 			LoadDefaults();
 			LoadOverrides();
@@ -283,6 +280,10 @@ namespace _Main.Scripts.Dice
 		public void ResetStraightToDefaults()
 		{
 			straightCombination.ResetToDefaults(straightConfig?.Defaults);
+		}
+
+		public void Dispose()
+		{
 		}
 
 		private void InitializeDefaultUpgradeStates()

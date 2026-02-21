@@ -19,7 +19,7 @@ namespace _Main.Scripts.Dice
 			EnsureInstance();
 		}
 
-		public static void UpdateMap(Dictionary<DiceCombination, int> scrambledScores)
+		public static void UpdateMap(DiceScoringService scoringService, Dictionary<DiceCombination, int> scrambledScores)
 		{
 			EnsureInstance();
 
@@ -27,7 +27,10 @@ namespace _Main.Scripts.Dice
 			sb.AppendLine("Scrambled score map:");
 			foreach (var pair in scrambledScores)
 			{
-				sb.AppendLine($"{DiceGameUtils.GetCombinationName(pair.Key)} -> {pair.Value}");
+				var displayName = scoringService != null
+					? scoringService.GetDisplayName(null, pair.Key)
+					: pair.Key.ToString();
+				sb.AppendLine($"{displayName} -> {pair.Value}");
 			}
 
 			instance.mapText = sb.ToString();

@@ -23,7 +23,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly Run run;
 		private readonly Notifications notifications;
-		private readonly DiceScoringService scoringService = DiceScoringService.Instance;
+		private readonly DiceScoringService scoringService;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
@@ -33,6 +33,7 @@ namespace _Main.Scripts.Dice
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
 			IAudioService audioService,
+			DiceScoringService scoringService,
 			Run run,
 			Notifications notifications)
 		{
@@ -40,6 +41,7 @@ namespace _Main.Scripts.Dice
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
 			this.audioService = audioService;
+			this.scoringService = scoringService;
 			this.run = run;
 			this.notifications = notifications;
 		}
@@ -111,7 +113,7 @@ namespace _Main.Scripts.Dice
 				}
 				
 	
-				bool isHotDice = await TrySaveSelected(diceGameModel.GetSelected(), DiceGameUtils.GetCombinations(GetValues(diceGameModel.GetSelected())));
+				bool isHotDice = await TrySaveSelected(diceGameModel.GetSelected(), scoringService.Evaluate(GetValues(diceGameModel.GetSelected())));
 				tableModel.SetPreviewPoints(0);
 
 				// Если все кубы забанкированы после сохранения, сбросить пул
@@ -136,7 +138,7 @@ namespace _Main.Scripts.Dice
 
 				await UniTask.Delay(GlobalParameters.Delay / 2);
 				
-				var diceCombinationResult = DiceGameUtils.GetCombinations(GetValues(diceToRoll));
+				var diceCombinationResult = scoringService.Evaluate(GetValues(diceToRoll));
 				var rollModifierContext = new DiceModifierContext(
 					diceCombinationResult,
 					diceToRoll,
@@ -195,7 +197,7 @@ namespace _Main.Scripts.Dice
 				diceGameModel.tableModel.DisableButtons();
 				
 				var selected = diceGameModel.GetSelected();
-				var combo = DiceGameUtils.GetCombinations(GetValues(selected));
+				var combo = scoringService.Evaluate(GetValues(selected));
 				var passModifierContext = new DiceModifierContext(
 					combo,
 					selected,
@@ -232,7 +234,7 @@ namespace _Main.Scripts.Dice
 
 		public async UniTask<bool> TrySaveSelected(DiceModel[] selected, DiceCombinationResult combinationResult)
 		{
-			int points = DiceGameUtils.CalculateTotalScore(combinationResult);
+			int points = scoringService.CalculateTotalScore(combinationResult);
 			if (points <= 0)
 			{
 				return false;
@@ -660,14 +662,14 @@ namespace _Main.Scripts.Dice
 			}
 
 
-			if (DiceGameUtils.HasTrashInSelected(selectedValues))
+			if (scoringService.HasTrash(selectedValues))
 			{
 				tableModel.SetPreviewPoints(0);
 			}
 			else
 			{
-				var combo = DiceGameUtils.GetCombinations(selectedValues);
-				tableModel.SetPreviewPoints(DiceGameUtils.CalculateTotalScore(combo));
+				var combo = scoringService.Evaluate(selectedValues);
+				tableModel.SetPreviewPoints(scoringService.CalculateTotalScore(combo));
 			}
 
 

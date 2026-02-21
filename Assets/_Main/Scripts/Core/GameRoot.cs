@@ -32,6 +32,7 @@ namespace _Main.Scripts.Core
 			var cursorService = new CursorService(uiService);
 			var configService = new ConfigService(resourceService, logger);
 			var localizationService = new LocalizationServiceBase(configService);
+			var diceScoringService = new DiceScoringService();
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
 			_serviceLocator.Register<IResourceService, ResourceService>(resourceService);
@@ -45,6 +46,7 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<ICursorService, CursorService>(cursorService);
 			_serviceLocator.Register<ConfigService, ConfigService>(configService);
 			_serviceLocator.Register<ILocalizationService, LocalizationServiceBase>(localizationService);
+			_serviceLocator.Register<DiceScoringService, DiceScoringService>(diceScoringService);
 
 			Debug.Log("[GameRoot] Services registered!");
 		}
@@ -59,6 +61,7 @@ namespace _Main.Scripts.Core
 			var cursorService = _serviceLocator.Get<ICursorService>();
 			var inputService = _serviceLocator.Get<IInputService>();
 			var configService = _serviceLocator.Get<ConfigService>();
+			var scoringService = _serviceLocator.Get<DiceScoringService>();
 
 			var run = new Run();
 			var game = new D6Game();
@@ -110,7 +113,7 @@ namespace _Main.Scripts.Core
 
 			// Level
 			controllersList.AddRange(await RunFactory.GetBaseControllers(game, run, playerModel, playerView,
-				configService, cameraService));
+				configService, cameraService, scoringService));
 
 			var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
 			var loseViewController = new LoseViewController(uiService, game, inputService, cursorService, configService);
@@ -128,7 +131,7 @@ namespace _Main.Scripts.Core
 				new LevelStartModifierController(run, diceGameModel),
 				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
 				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService, sceneContext.InventoryView),
-				new ModifierItemsSyncController(playerModel.InventoryModel, playerModel.InventoryModel.ModifierItemsModel, configService),
+				new ModifierItemsSyncController(playerModel.InventoryModel, playerModel.InventoryModel.ModifierItemsModel, configService, scoringService),
 				new TooltipsController(uiService, diceGameModel, configService, Camera.main, sceneContext.DiceGameTableView),
 			};
 

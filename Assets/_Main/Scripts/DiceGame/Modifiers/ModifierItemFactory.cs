@@ -5,11 +5,11 @@ namespace _Main.Scripts.Dice
 {
 	public static class ModifierItemFactory
 	{
-		public static IModifierItem Create(ItemCatalogEntry entry)
+	public static IModifierItem Create(ItemCatalogEntry entry, DiceScoringService scoringService)
+	{
+		if (entry == null || entry.typeEnum != ItemCatalogType.Modifier)
 		{
-			if (entry == null || entry.typeEnum != ItemCatalogType.Modifier)
-			{
-				return null;
+			return null;
 			}
 
 			var data = entry.data;
@@ -36,11 +36,11 @@ namespace _Main.Scripts.Dice
 				{
 					var chance = ReadFloat(data?["shakeChance"], 0.95f);
 					var duration = ReadFloat(data?["rerollAnimationDuration"], 0.5f);
-					return new ShakeRerollModifier(entry.id, chance, duration);
+					return new ShakeRerollModifier(entry.id, scoringService, chance, duration);
 				}
 				case nameof(ScrambleCombinationsModifier):
 				{
-					return new ScrambleCombinationsModifier(entry.id);
+					return new ScrambleCombinationsModifier(entry.id, scoringService);
 				}
 				case nameof(PassActivationMultiplierModifier):
 				{
@@ -70,13 +70,13 @@ namespace _Main.Scripts.Dice
 				case nameof(RerollSelectedItem):
 				{
 					var cooldown = ReadInt(data?["cooldownPasses"], 2);
-					return new RerollSelectedItem(entry.id, cooldown);
+					return new RerollSelectedItem(entry.id, scoringService, cooldown);
 				}
 				case nameof(StepUpItem):
 				{
 					var selection = ReadInt(data?["selectionCount"], 3);
 					var cooldown = ReadInt(data?["cooldownPasses"], selection);
-					return new StepUpItem(entry.id, selection, cooldown);
+					return new StepUpItem(entry.id, scoringService, selection, cooldown);
 				}
 			}
 

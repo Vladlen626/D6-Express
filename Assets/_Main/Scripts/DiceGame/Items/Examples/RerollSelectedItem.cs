@@ -11,6 +11,7 @@ namespace _Main.Scripts.Dice
 	/// </summary>
 	public class RerollSelectedItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
 	{
+		private readonly DiceScoringService scoringService;
 		private readonly int cooldownLengthInPasses;
 		private readonly DiceItemView customPrefab;
 		private int cooldownRemaining;
@@ -18,9 +19,10 @@ namespace _Main.Scripts.Dice
 		private readonly Dictionary<DiceView, UnityAction> clickHandlers = new();
 		private bool handlersAttached;
 
-		public RerollSelectedItem(string id, int cooldownPasses = 2, DiceItemView prefabOverride = null)
+		public RerollSelectedItem(string id, DiceScoringService scoringService, int cooldownPasses = 2, DiceItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
+			this.scoringService = scoringService;
 			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses);
 			customPrefab = prefabOverride;
 		}
@@ -86,7 +88,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			// Refresh combinations to reflect the new dice values.
-			var recomputed = DiceGameUtils.GetCombinations(DiceGameUtils.GetDiceValues(context.Dice));
+			var recomputed = scoringService.Evaluate(DiceGameUtils.GetDiceValues(context.Dice));
 			var targetList = context.CombinationResult.Combinations;
 			targetList.Clear();
 			targetList.AddRange(recomputed.Combinations);
@@ -174,14 +176,14 @@ namespace _Main.Scripts.Dice
 			var selected = boundGameModel.GetSelected();
 			var values = DiceGameUtils.GetDiceValues(selected);
 
-			if (DiceGameUtils.HasTrashInSelected(values))
+			if (scoringService.HasTrash(values))
 			{
 				boundGameModel.tableModel.SetPreviewPoints(0);
 			}
 			else
 			{
-				var combo = DiceGameUtils.GetCombinations(values);
-				var total = DiceGameUtils.CalculateTotalScore(combo);
+				var combo = scoringService.Evaluate(values);
+				var total = scoringService.CalculateTotalScore(combo);
 				boundGameModel.tableModel.SetPreviewPoints(total);
 			}
 

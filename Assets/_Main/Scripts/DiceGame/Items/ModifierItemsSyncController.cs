@@ -12,13 +12,15 @@ namespace _Main.Scripts.Dice
 		private readonly InventoryModel inventory;
 		private readonly ModifierItemsModel itemsModel;
 		private readonly ConfigService configService;
+		private readonly DiceScoringService scoringService;
 		private IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
 
-		public ModifierItemsSyncController(InventoryModel inventory, ModifierItemsModel itemsModel, ConfigService configService)
+		public ModifierItemsSyncController(InventoryModel inventory, ModifierItemsModel itemsModel, ConfigService configService, DiceScoringService scoringService)
 		{
 			this.inventory = inventory;
 			this.itemsModel = itemsModel;
 			this.configService = configService;
+			this.scoringService = scoringService;
 		}
 
 		public async UniTask PreloadAsync()
@@ -71,7 +73,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			var item = ModifierItemFactory.Create(entry);
+			var item = ModifierItemFactory.Create(entry, scoringService);
 			itemsModel.AddItem(item);
 			if (item == null)
 			{
