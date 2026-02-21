@@ -1,4 +1,5 @@
 using System;
+using _Main.Scripts.Dice;
 
 public class Run
 {
@@ -26,6 +27,12 @@ public class Run
     public event Action NextTicketPriceChanged;
     public event Action RunStarted;
     public event Action<bool> RunFinished;
+    public StraightRuntimeState StraightState { get; private set; } = new StraightRuntimeState();
+
+    public void SetStraightState(StraightRuntimeState state)
+    {
+        StraightState = state?.Clone() ?? new StraightRuntimeState();
+    }
 
     public void SetLevelData(string stationId, int daysPerLevel, int tickPerDay, int levels, int ticketPrice, int nextTicketPrice)
     {

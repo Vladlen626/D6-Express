@@ -17,6 +17,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly PlayerModel playerModel;
 		private readonly Run run;
+		private readonly Notifications notifications;
 
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly IObjectFactory objectFactory;
@@ -46,11 +47,12 @@ namespace _Main.Scripts.Dice
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
-			ServiceLocator serviceLocator, Run run, ConfigService configService)
+			ServiceLocator serviceLocator, Run run, ConfigService configService, Notifications notifications)
 		{
 			this.diceGameModel = diceGameModel;
 			this.playerModel = playerModel;
 			this.run = run;
+			this.notifications = notifications;
 			this.sceneContext = sceneContext;
 			this.configService = configService;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
@@ -130,7 +132,7 @@ namespace _Main.Scripts.Dice
 			await SetupEnemyDiceList();
 
 			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService, run);
+				loggerService, diceGameModel, cameraShakeService, audioService, run, notifications);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
