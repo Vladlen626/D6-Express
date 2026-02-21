@@ -111,6 +111,7 @@ namespace _Main.Scripts.Core
 
 			var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
 			var loseViewController = new LoseViewController(uiService, game, inputService, cursorService, configService);
+			var notifications = NotificationsFactory.CreateNotifications();
 
 			var baseControllers = new IBaseController[]
 			{
@@ -118,7 +119,7 @@ namespace _Main.Scripts.Core
 				loseViewController,
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
-					run, configService),
+					run, configService, notifications),
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
@@ -129,7 +130,6 @@ namespace _Main.Scripts.Core
 
 			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService);
 			var stationShop = await ShopFactory.GetStationShopAsync(playerModel.InventoryModel, configService);
-			var notifications = NotificationsFactory.CreateNotifications();
 
 			var sleepController = RunFactory.GetSleepControllers(uiService, run, playerView, inputService);
 			var locationController = new LocationController(game, sceneContext, audioService);

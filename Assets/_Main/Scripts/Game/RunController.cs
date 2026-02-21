@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using _Main.Scripts.Dice;
+using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Factory;
@@ -73,6 +74,12 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		{
 			playerModel.InventoryModel.AddDice(playerConfigDice);
 		}
+
+		// Initialize straight upgrade state for the new run
+		var defaults = DiceScoringService.Instance.GetStraightDefaults();
+		var straightState = new StraightRuntimeState(defaults);
+		DiceScoringService.Instance.SetStraightState(straightState);
+		run.SetStraightState(straightState);
 	}
 
 	private void OnDayChangeRequested(int value)
