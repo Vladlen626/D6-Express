@@ -148,10 +148,10 @@ MonoBehaviour:
   _canvasType: 5
   canvasGroup: {fileID: 1506111907810260061}
   contentRoot: {fileID: 29008654239193646}
-  initialShift: 10
-  smoothDuration: 0.3
+  initialShift: 50
+  smoothDuration: 0.5
   fadeDuration: 0.3
-  showDelay: 0.5
+  showDelay: 2
   text: {fileID: 5572449897106820572}
 --- !u!1 &3032675701027171632
 GameObject:
