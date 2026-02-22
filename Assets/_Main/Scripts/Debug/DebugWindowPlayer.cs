@@ -14,7 +14,7 @@ public class DebugWindowPlayer : DebugWindowModel
 	private readonly PlayerModel playerModel;
 	private readonly PlayerView playerView;
 	private readonly ConfigService configService;
-	private readonly Notifications notifications;
+	private readonly GlobalNotificationService notificationService;
 	private int cashInputBuffer;
 	private int questIdBuffer;
 	private string diceIdBuffer;
@@ -38,13 +38,13 @@ public class DebugWindowPlayer : DebugWindowModel
 		modifierIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.Modifier).Select(x => x.Key).ToArray();
 	}
 
-	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
+	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService)
 	{
 		this.run = run;
 		this.playerModel = playerModel;
 		this.playerView = playerView;
 		this.configService = configService;
-		this.notifications = notifications;
+		this.notificationService = notificationService;
 	}
 
 	protected override void OnLayout(UImGui.UImGui uImGui)
@@ -196,10 +196,7 @@ public class DebugWindowPlayer : DebugWindowModel
 
 			if (ImGui.Button("Send"))
 			{
-				notifications.Add(new Notifications.Notification()
-				{
-					message = notificationMessageBuffer
-				});
+				notificationService?.EnqueueToastRaw(notificationMessageBuffer);
 			}
 		}
 

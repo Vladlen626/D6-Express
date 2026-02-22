@@ -7,19 +7,20 @@ using PlatformCore.Services.Factory;
 
 public class NotificationsController : IBaseController, IActivatable, IPreloadable
 {
-    private readonly Notifications notifications;
+    private readonly GlobalNotificationService notificationService;
     private readonly InventoryModel inventory;
     private readonly ConfigService configService;
+    private readonly ILocalizationService localizationService;
 
     private IReadOnlyDictionary<string, ItemCatalogEntry> diceConfigsDict;
-    private TextsConfig textsConfig;
     private string buyText;
 
-    public NotificationsController(Notifications notifications, InventoryModel inventory, ConfigService configService)
+    public NotificationsController(GlobalNotificationService notificationService, InventoryModel inventory, ConfigService configService, ILocalizationService localizationService)
     {
-        this.notifications = notifications;
+        this.notificationService = notificationService;
         this.inventory = inventory;
         this.configService = configService;
+        this.localizationService = localizationService;
     }
 
     public void Activate()
@@ -35,7 +36,7 @@ public class NotificationsController : IBaseController, IActivatable, IPreloadab
     public async UniTask PreloadAsync()
     {
         diceConfigsDict = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
-        textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
+        var textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
         buyText = textsConfig.texts["dice_added_to_inventory_notification"];
     }
 
@@ -45,11 +46,7 @@ public class NotificationsController : IBaseController, IActivatable, IPreloadab
         {
             return;
         }
-        var header = textsConfig.texts[dice.nameKey];
-
-        notifications.Add(new Notifications.Notification()
-        {
-            message = string.Format(buyText, header)
-        });
+        var header = localizationService != null ? localizationService.GetLocalized(dice.nameKey) : dice.nameKey;
+        notificationService?.EnqueueToastRaw(string.Format(buyText, header));
     }
 }

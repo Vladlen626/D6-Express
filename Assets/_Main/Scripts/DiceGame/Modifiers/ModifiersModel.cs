@@ -8,6 +8,11 @@ namespace _Main.Scripts.Dice
 	public class ModifiersModel
 	{
 		public IReadOnlyList<IModifier> AllModifiers => allModifiers;
+		public int LevelStartCount => onLevelStartActionsHandler.Count;
+		public int RoundStartCount => onRoundStartActionsHandler.Count;
+		public int RollCount => onRollActionsHandler.Count;
+		public int PassCount => onPassActionsHandler.Count;
+		public int RoundEndCount => onRoundEndActionsHandler.Count;
 
 		private readonly List<IModifier> allModifiers = new();
 		private readonly List<IOnLevelStartModifier> onLevelStartActionsHandler = new();
@@ -18,6 +23,7 @@ namespace _Main.Scripts.Dice
 
 		public event Action<IModifier> ModifierAdded;
 		public event Action<IModifier> ModifierRemoved;
+		public event Action<IModifier, ModifierStage> ModifierApplied;
 
 		public void AddModifier(IModifier modifier)
 		{
@@ -97,6 +103,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onLevelStartAction in onLevelStartActionsHandler)
 			{
 				await onLevelStartAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onLevelStartAction, ModifierStage.LevelStart);
 			}
 		}
 
@@ -105,6 +112,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onRoundStartAction in onRoundStartActionsHandler)
 			{
 				await onRoundStartAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onRoundStartAction, ModifierStage.RoundStart);
 			}
 		}
 
@@ -113,6 +121,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onRollAction in onRollActionsHandler)
 			{
 				await onRollAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onRollAction, ModifierStage.Roll);
 			}
 		}
 
@@ -121,6 +130,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onPassAction in onPassActionsHandler)
 			{
 				await onPassAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onPassAction, ModifierStage.Pass);
 			}
 		}
 
@@ -129,6 +139,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onRoundEndAction in onRoundEndActionsHandler)
 			{
 				await onRoundEndAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onRoundEndAction, ModifierStage.RoundEnd);
 			}
 		}
 

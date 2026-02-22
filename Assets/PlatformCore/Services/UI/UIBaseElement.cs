@@ -24,6 +24,16 @@ namespace PlatformCore.Services.UI
 			OnAwake();
 		}
 
+#if UNITY_EDITOR
+		private void OnValidate()
+		{
+			if (!_group)
+			{
+				_group = GetComponent<CanvasGroup>();
+			}
+		}
+#endif
+
 		public void Show()
 		{
 			if (_group)

@@ -12,13 +12,13 @@ public static class DebugFactory
         PlayerModel playerModel,
         PlayerView playerView,
         ConfigService configService,
-        Notifications notifications)
+        GlobalNotificationService notificationService)
     {
         var incrementTick = new DbgMenuItemIncrementTicks(run);
         var incrementDay = new DbgMenuItemIncrementDays(run);
         var switchToStation = new DbgMenuItemSwitchToStation(game);
         var switchToTrain = new DbgMenuItemSwitchToTrain(game);
-        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(run, playerModel, playerView, configService, notifications);
+        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(run, playerModel, playerView, configService, notificationService);
 
         var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, switchToStation, switchToTrain, openPlayerWindow);
 

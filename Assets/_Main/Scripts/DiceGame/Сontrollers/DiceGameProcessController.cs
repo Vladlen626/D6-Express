@@ -22,7 +22,7 @@ namespace _Main.Scripts.Dice
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
 		private readonly Run run;
-		private readonly Notifications notifications;
+		private readonly GlobalNotificationService notificationService;
 		private readonly DiceScoringService scoringService;
 		private TableModel tableModel => diceGameModel.tableModel;
 
@@ -35,7 +35,7 @@ namespace _Main.Scripts.Dice
 			IAudioService audioService,
 			DiceScoringService scoringService,
 			Run run,
-			Notifications notifications)
+			GlobalNotificationService notificationService)
 		{
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
@@ -43,7 +43,7 @@ namespace _Main.Scripts.Dice
 			this.audioService = audioService;
 			this.scoringService = scoringService;
 			this.run = run;
-			this.notifications = notifications;
+			this.notificationService = notificationService;
 		}
 
 		public void Activate()
@@ -99,6 +99,10 @@ namespace _Main.Scripts.Dice
 
 				if (tableModel.isFirstRoll)
 				{
+					if (notificationService != null)
+					{
+						await notificationService.ShowBannerAsync("dice_banner_round_start", 0.8f);
+					}
 					var roundStartContext = new DiceModifierContext(
 						new DiceCombinationResult { Combinations = new List<DiceCombinationEntry>() },
 						diceGameModel.GetUnbanked(),
@@ -119,6 +123,10 @@ namespace _Main.Scripts.Dice
 				// Если все кубы забанкированы после сохранения, сбросить пул
 				if (isHotDice)
 				{
+					if (notificationService != null)
+					{
+						await notificationService.ShowBannerAsync("dice_banner_hot_dice", 1.1f);
+					}
 					await ResetAllDiceToActiveAsync();
 					diceGameModel.ResetAllDices();
 				}
@@ -146,12 +154,16 @@ namespace _Main.Scripts.Dice
 					diceGameModel,
 					ModifierStage.Roll,
 					run);
-				
+
 				await diceGameModel.ModifiersModel.PlayRollActions(rollModifierContext);
 
 				if (diceCombinationResult.Combinations.Count == 0)
 				{
 					audioService.PlaySound(SoundNames.Fail);
+					if (notificationService != null)
+					{
+						await notificationService.ShowBannerAsync("dice_banner_failed", 1.1f);
+					}
 					await UniTask.Delay(GlobalParameters.Delay);
 					var roundEndContext = new DiceModifierContext(
 						diceCombinationResult,
@@ -500,7 +512,6 @@ namespace _Main.Scripts.Dice
 			var announcePos = die.CurrentPosition != null
 				? die.CurrentPosition.position
 				: diceGameModel.tableModel?.GetFreeActivePosition()?.position ?? Vector3.zero;
-			NotifyAndLog($"Upgrade opportunity: {comboId}", announcePos, 1.2f);
 			logger?.Log($"[Upgrade:{comboId}] Triggered upgrade opportunity.");
 
 			if (upgradeConfig.Debug)
@@ -513,11 +524,7 @@ namespace _Main.Scripts.Dice
 				logger?.Log($"[Upgrade:{comboId}] Die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]; outcomes={outcomeTable}");
 			}
 
-			// Show outcome table before rolling (5s)
-			var configuredOutcomes = scoringService.GetComboUpgradeOutcomes(comboId);
 			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
-			ShowOutcomeRingScreen(configuredOutcomes, infoPos, 180f, 5f);
-			await UniTask.Delay(5000);
 
 			int rolledFace;
 			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
@@ -541,8 +548,6 @@ namespace _Main.Scripts.Dice
 				if (outcome != null)
 				{
 					var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-					NotifyAndLog(summary, infoPos, 5f);
-					await UniTask.Delay(5000);
 					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
 				}
 			}
@@ -554,8 +559,6 @@ namespace _Main.Scripts.Dice
 				if (outcome != null && before != null && after != null)
 				{
 					var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-					NotifyAndLog(summary, infoPos, 5f);
-					await UniTask.Delay(5000);
 					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
 				}
 			}
@@ -597,7 +600,6 @@ namespace _Main.Scripts.Dice
 			var announcePos = die.CurrentPosition != null
 				? die.CurrentPosition.position
 				: diceGameModel.tableModel?.GetFreeActivePosition()?.position ?? Vector3.zero;
-			NotifyAndLog("Upgrade opportunity: straight", announcePos, 1.2f);
 			logger?.Log("[Upgrade:straight] Triggered upgrade opportunity.");
 
 			if (upgradeConfig.Debug)
@@ -610,10 +612,7 @@ namespace _Main.Scripts.Dice
 				logger?.Log($"[Upgrade:straight] Die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]; outcomes={outcomeTable}");
 			}
 
-			// Show outcome table before rolling (5s)
 			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
-			ShowOutcomeRingScreen(ConvertStraightOutcomes(upgradeConfig.Outcomes), infoPos, 180f, 5f);
-			await UniTask.Delay(5000);
 
 			int rolledFace;
 			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
@@ -635,8 +634,6 @@ namespace _Main.Scripts.Dice
 			if (outcome != null)
 			{
 				var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-				NotifyAndLog(summary, infoPos, 5f);
-				await UniTask.Delay(5000);
 				logger?.Log($"[Upgrade:straight] {summary} via die {die.ConfigId}");
 			}
 

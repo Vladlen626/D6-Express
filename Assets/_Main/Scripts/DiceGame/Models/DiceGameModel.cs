@@ -150,9 +150,14 @@ namespace _Main.Scripts.Dice
 		
 		public void ShowAllDiceGameModels()
 		{
-			foreach (var diceModel in CurrentDiceModelList)
+			foreach (var diceModel in PlayerDiceModelList)
 			{
-				diceModel.SetHide(false);
+				diceModel.SetHide(!IsPlayerTurn);
+			}
+
+			foreach (var diceModel in EnemyDiceModelList)
+			{
+				diceModel.SetHide(IsPlayerTurn);
 			}
 		}
 

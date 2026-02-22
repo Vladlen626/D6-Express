@@ -52,6 +52,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceGameStateChangedHandler()
 		{
+			_context.Show();
 			SubscribeOnItemHoverEvents();
 		}
 
@@ -121,6 +122,19 @@ namespace _Main.Scripts.Dice
 			}
 
 			itemViews.Clear();
+
+			if (currentItem != null)
+			{
+				currentItem = null;
+				if (currentDiceModel != null)
+				{
+					OnDiceHoverEnter(currentDiceModel);
+				}
+				else
+				{
+					_context.HideTooltip();
+				}
+			}
 		}
 
 		private void OnDiceHoverEnter(DiceModel diceModel)
