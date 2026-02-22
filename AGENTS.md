@@ -27,3 +27,8 @@
 ## Utils Placement
 - When adding static calculation helpers, first look for an existing `Utils` class near the target class.
 - If none exists, create a new `Utils` class in the project style and place helpers there.
+
+## UI
+- Create UI only via `UIBaseElement` + `BaseContextController<T>` and `IUIService` (no runtime-created canvases for UI).
+- Each UI element must have a prefab at `Assets/Resources/UI/<TypeName>.prefab` with the matching component.
+- Controllers should preload and show/hide UI through `IUIService`/`BaseContextController`.

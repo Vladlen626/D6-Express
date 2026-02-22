@@ -89,6 +89,15 @@
         "modifier_reroll_selected_item_title": "Second Chance",
         "modifier_reroll_selected_item_description": "When armed, the next clicked unsaved die rerolls immediately.",
         "modifier_step_up_item_title": "Step Up",
-        "modifier_step_up_item_description": "Select several dice, then all dice advance their face by +1."
+        "modifier_step_up_item_description": "Select several dice, then all dice advance their face by +1.",
+        "dice_banner_turn_player": "Your turn",
+        "dice_banner_turn_enemy": "Enemy turn",
+        "dice_banner_round_start": "Round start",
+        "dice_banner_modifiers_round_start": "Applying round start modifiers",
+        "dice_banner_modifiers_roll": "Applying roll modifiers",
+        "dice_banner_modifiers_pass": "Applying pass modifiers",
+        "dice_banner_modifiers_round_end": "Applying round end modifiers",
+        "dice_banner_hot_dice": "Hot Dice!",
+        "dice_banner_failed": "No scoring combinations"
     }
 }
