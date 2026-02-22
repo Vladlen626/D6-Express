@@ -90,7 +90,7 @@ namespace _Main.Scripts.Dice
 			Debug.Log(sb.ToString());
 		}
 
-		private static int GetBaseScoreFromSample(DiceCombination combination)
+		private int GetBaseScoreFromSample(DiceCombination combination)
 		{
 			if (!CombinationSamples.TryGetValue(combination, out var sample))
 			{
@@ -158,7 +158,7 @@ namespace _Main.Scripts.Dice
 			LogScramble(combinations);
 		}
 
-		private static void LogScramble(List<DiceCombinationEntry> combinations)
+		private void LogScramble(List<DiceCombinationEntry> combinations)
 		{
 			var logBuilder = new StringBuilder();
 			logBuilder.AppendLine("[ScrambleCombinationsModifier] New scrambled combinations:");
