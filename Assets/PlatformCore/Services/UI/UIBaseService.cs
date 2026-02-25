@@ -105,7 +105,7 @@ namespace PlatformCore.Services.UI
 				return null;
 			}
 
-			var target = prefabComponent.CanvasType == UICanvasType.Static ? _staticCanvas : _dynamicCanvas;
+			var target = prefabComponent.CanvasType == UICanvasType.Default ? _staticCanvas : _dynamicCanvas;
 			var instance = Object.Instantiate(prefab, target);
 			var component = instance.GetComponent<T>();
 

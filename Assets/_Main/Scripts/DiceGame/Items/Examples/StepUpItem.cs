@@ -10,8 +10,9 @@ namespace _Main.Scripts.Dice
 	/// Click-to-activate item: select N dice (default 3); after the Nth selection, every die
 	/// on the board advances its face by +1 (wrapping 6 -> 1). Then it goes on cooldown for N passes.
 	/// </summary>
-	public class StepUpItem : DiceItemBase, IOnPassModifier, IOnRoundStartModifier, IDiceItemViewProvider
+	public class StepUpItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
 	{
+		private readonly DiceScoringService scoringService;
 		private readonly int selectionTarget;
 		private readonly int cooldownLengthInPasses;
 		private readonly DiceItemView customPrefab;
@@ -25,9 +26,10 @@ namespace _Main.Scripts.Dice
 		private bool isProcessing;
 		private int cooldownRemaining;
 
-		public StepUpItem(int selectionCount = 3, int? cooldownPasses = null, DiceItemView prefabOverride = null)
-			: base("step_up_item", "Step Up", DiceItemActivationType.ClickToActivate)
+		public StepUpItem(string id, DiceScoringService scoringService, int selectionCount = 3, int? cooldownPasses = null, DiceItemView prefabOverride = null)
+			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
+			this.scoringService = scoringService;
 			selectionTarget = Mathf.Max(1, selectionCount);
 			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses ?? selectionTarget);
 			customPrefab = prefabOverride;
@@ -108,10 +110,10 @@ namespace _Main.Scripts.Dice
 				if (animateSet.Contains(dice) &&
 				    boundGameModel.ScreenDiceDict != null &&
 				    boundGameModel.ScreenDiceDict.TryGetValue(dice, out var view) &&
-				    view != null)
+				    view)
 				{
 					var label = SpawnLabel(view.transform, "+1");
-					if (label != null)
+					if (label)
 					{
 						labels ??= new List<GameObject>();
 						labels.Add(label);
@@ -133,7 +135,7 @@ namespace _Main.Scripts.Dice
 				await UniTask.Delay(600);
 				foreach (var go in labels)
 				{
-					if (go != null)
+					if (go)
 					{
 						floatingLabels.Remove(go);
 						Object.Destroy(go);
@@ -207,7 +209,7 @@ namespace _Main.Scripts.Dice
 			{
 				var model = kv.Key;
 				var view = kv.Value;
-				if (view == null)
+				if (!view)
 				{
 					continue;
 				}
@@ -224,7 +226,7 @@ namespace _Main.Scripts.Dice
 		{
 			foreach (var kv in clickHandlers)
 			{
-				if (kv.Key != null)
+				if (kv.Key)
 				{
 					kv.Key.OnDiceClicked.RemoveListener(kv.Value);
 				}
@@ -245,14 +247,14 @@ namespace _Main.Scripts.Dice
 			var selected = boundGameModel.GetSelected();
 			var values = DiceGameUtils.GetDiceValues(selected);
 
-			if (DiceGameUtils.HasTrashInSelected(values))
+			if (scoringService.HasTrash(values))
 			{
 				boundGameModel.tableModel.SetPreviewPoints(0);
 			}
 			else
 			{
-				var combo = DiceGameUtils.GetCombinations(values);
-				boundGameModel.tableModel.SetPreviewPoints(DiceGameUtils.CalculateTotalScore(combo));
+				var combo = scoringService.Evaluate(values);
+				boundGameModel.tableModel.SetPreviewPoints(scoringService.CalculateTotalScore(combo));
 			}
 
 			boundGameModel.tableModel.SendUpdateUI();
@@ -272,7 +274,7 @@ namespace _Main.Scripts.Dice
 
 		private GameObject SpawnLabel(Transform parent, string text)
 		{
-			if (parent == null)
+			if (!parent)
 			{
 				return null;
 			}
@@ -298,7 +300,7 @@ namespace _Main.Scripts.Dice
 		{
 			foreach (var go in floatingLabels)
 			{
-				if (go != null)
+				if (go)
 				{
 					Object.Destroy(go);
 				}

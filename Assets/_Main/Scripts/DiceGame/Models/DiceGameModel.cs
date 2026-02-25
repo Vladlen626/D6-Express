@@ -21,7 +21,7 @@ namespace _Main.Scripts.Dice
 		
 		public TableModel tableModel;
 		public ModifiersModel ModifiersModel;
-		public ItemsModel ItemsModel;
+		public ModifierItemsModel ModifierItemsModel;
 		
 		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
 		
@@ -41,6 +41,7 @@ namespace _Main.Scripts.Dice
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
 		public int MaxDiceCount => Mathf.Max(1, baseMaxDiceCount + GetDiceCapBonusSum());
+		public int BaseMaxDiceCount => baseMaxDiceCount;
 
 		private const int DefaultMaxDiceCount = 6;
 		private int baseMaxDiceCount = DefaultMaxDiceCount;
@@ -49,13 +50,8 @@ namespace _Main.Scripts.Dice
 		public DiceGameModel(InventoryModel inventoryModel)
 		{
 			ModifiersModel = inventoryModel?.ModifiersModel ?? new ModifiersModel();
-			ItemsModel = inventoryModel?.ItemsModel ?? new ItemsModel(ModifiersModel);
-			ItemsModel.BindGameModel(this);
-			ModifiersModel.AddModifier(new MultiplyComboModifier(DiceCombination.ThreeOfAKind));
-			ModifiersModel.AddModifier(new ShakeRerollModifier());
-			// ModifiersModel.AddModifier(new ScrambleCombinationsModifier());
-			ModifiersModel.AddModifier(new AdjustTicksPerDayModifier(1));
-			ModifiersModel.AddModifier(new PassActivationMultiplierModifier());
+			ModifierItemsModel = inventoryModel?.ModifierItemsModel ?? new ModifierItemsModel(ModifiersModel);
+			ModifierItemsModel.BindGameModel(this);
 		}
 		
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
@@ -154,9 +150,14 @@ namespace _Main.Scripts.Dice
 		
 		public void ShowAllDiceGameModels()
 		{
-			foreach (var diceModel in CurrentDiceModelList)
+			foreach (var diceModel in PlayerDiceModelList)
 			{
-				diceModel.SetHide(false);
+				diceModel.SetHide(!IsPlayerTurn);
+			}
+
+			foreach (var diceModel in EnemyDiceModelList)
+			{
+				diceModel.SetHide(IsPlayerTurn);
 			}
 		}
 

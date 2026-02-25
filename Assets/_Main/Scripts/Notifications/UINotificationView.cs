@@ -7,6 +7,7 @@ using UnityEngine;
 public class UINotificationView : UIBaseElement
 {
     [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private RectTransform contentRoot;
     [SerializeField] private float initialShift = 50f;
     [SerializeField] private float smoothDuration = 0.5f;
     [SerializeField] private float fadeDuration = 0.3f;
@@ -29,6 +30,7 @@ public class UINotificationView : UIBaseElement
         base.OnAwake();
 
         if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
+        if (contentRoot == null) contentRoot = GetComponent<RectTransform>();
         canvasGroup.alpha = 0f;
         text.gameObject.SetActive(false);
     }
@@ -37,7 +39,7 @@ public class UINotificationView : UIBaseElement
     {
         base.OnShow();
 
-        RectTransform rectTransform = text.GetComponent<RectTransform>();
+        RectTransform rectTransform = contentRoot;
 
         originalPos = rectTransform.anchoredPosition;
 

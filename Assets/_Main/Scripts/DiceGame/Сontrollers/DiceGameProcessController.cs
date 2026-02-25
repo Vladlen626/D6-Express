@@ -22,8 +22,8 @@ namespace _Main.Scripts.Dice
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly DiceGameModel diceGameModel;
 		private readonly Run run;
-		private readonly Notifications notifications;
-		private readonly DiceScoringService scoringService = DiceScoringService.Instance;
+		private readonly GlobalNotificationService notificationService;
+		private readonly DiceScoringService scoringService;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
@@ -33,15 +33,17 @@ namespace _Main.Scripts.Dice
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
 			IAudioService audioService,
+			DiceScoringService scoringService,
 			Run run,
-			Notifications notifications)
+			GlobalNotificationService notificationService)
 		{
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
 			this.audioService = audioService;
+			this.scoringService = scoringService;
 			this.run = run;
-			this.notifications = notifications;
+			this.notificationService = notificationService;
 		}
 
 		public void Activate()
@@ -97,6 +99,10 @@ namespace _Main.Scripts.Dice
 
 				if (tableModel.isFirstRoll)
 				{
+					if (notificationService != null)
+					{
+						await notificationService.ShowBannerAsync("dice_banner_round_start", 0.8f);
+					}
 					var roundStartContext = new DiceModifierContext(
 						new DiceCombinationResult { Combinations = new List<DiceCombinationEntry>() },
 						diceGameModel.GetUnbanked(),
@@ -111,12 +117,16 @@ namespace _Main.Scripts.Dice
 				}
 				
 	
-				bool isHotDice = await TrySaveSelected(diceGameModel.GetSelected(), DiceGameUtils.GetCombinations(GetValues(diceGameModel.GetSelected())));
+				bool isHotDice = await TrySaveSelected(diceGameModel.GetSelected(), scoringService.Evaluate(GetValues(diceGameModel.GetSelected())));
 				tableModel.SetPreviewPoints(0);
 
 				// Если все кубы забанкированы после сохранения, сбросить пул
 				if (isHotDice)
 				{
+					if (notificationService != null)
+					{
+						await notificationService.ShowBannerAsync("dice_banner_hot_dice", 1.1f);
+					}
 					await ResetAllDiceToActiveAsync();
 					diceGameModel.ResetAllDices();
 				}
@@ -136,7 +146,7 @@ namespace _Main.Scripts.Dice
 
 				await UniTask.Delay(GlobalParameters.Delay / 2);
 				
-				var diceCombinationResult = DiceGameUtils.GetCombinations(GetValues(diceToRoll));
+				var diceCombinationResult = scoringService.Evaluate(GetValues(diceToRoll));
 				var rollModifierContext = new DiceModifierContext(
 					diceCombinationResult,
 					diceToRoll,
@@ -144,12 +154,16 @@ namespace _Main.Scripts.Dice
 					diceGameModel,
 					ModifierStage.Roll,
 					run);
-				
+
 				await diceGameModel.ModifiersModel.PlayRollActions(rollModifierContext);
 
 				if (diceCombinationResult.Combinations.Count == 0)
 				{
 					audioService.PlaySound(SoundNames.Fail);
+					if (notificationService != null)
+					{
+						await notificationService.ShowBannerAsync("dice_banner_failed", 1.1f);
+					}
 					await UniTask.Delay(GlobalParameters.Delay);
 					var roundEndContext = new DiceModifierContext(
 						diceCombinationResult,
@@ -195,7 +209,7 @@ namespace _Main.Scripts.Dice
 				diceGameModel.tableModel.DisableButtons();
 				
 				var selected = diceGameModel.GetSelected();
-				var combo = DiceGameUtils.GetCombinations(GetValues(selected));
+				var combo = scoringService.Evaluate(GetValues(selected));
 				var passModifierContext = new DiceModifierContext(
 					combo,
 					selected,
@@ -232,7 +246,7 @@ namespace _Main.Scripts.Dice
 
 		public async UniTask<bool> TrySaveSelected(DiceModel[] selected, DiceCombinationResult combinationResult)
 		{
-			int points = DiceGameUtils.CalculateTotalScore(combinationResult);
+			int points = scoringService.CalculateTotalScore(combinationResult);
 			if (points <= 0)
 			{
 				return false;
@@ -498,7 +512,6 @@ namespace _Main.Scripts.Dice
 			var announcePos = die.CurrentPosition != null
 				? die.CurrentPosition.position
 				: diceGameModel.tableModel?.GetFreeActivePosition()?.position ?? Vector3.zero;
-			NotifyAndLog($"Upgrade opportunity: {comboId}", announcePos, 1.2f);
 			logger?.Log($"[Upgrade:{comboId}] Triggered upgrade opportunity.");
 
 			if (upgradeConfig.Debug)
@@ -511,11 +524,7 @@ namespace _Main.Scripts.Dice
 				logger?.Log($"[Upgrade:{comboId}] Die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]; outcomes={outcomeTable}");
 			}
 
-			// Show outcome table before rolling (5s)
-			var configuredOutcomes = scoringService.GetComboUpgradeOutcomes(comboId);
 			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
-			ShowOutcomeRingScreen(configuredOutcomes, infoPos, 180f, 5f);
-			await UniTask.Delay(5000);
 
 			int rolledFace;
 			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
@@ -539,8 +548,6 @@ namespace _Main.Scripts.Dice
 				if (outcome != null)
 				{
 					var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-					NotifyAndLog(summary, infoPos, 5f);
-					await UniTask.Delay(5000);
 					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
 				}
 			}
@@ -552,8 +559,6 @@ namespace _Main.Scripts.Dice
 				if (outcome != null && before != null && after != null)
 				{
 					var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-					NotifyAndLog(summary, infoPos, 5f);
-					await UniTask.Delay(5000);
 					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
 				}
 			}
@@ -595,7 +600,6 @@ namespace _Main.Scripts.Dice
 			var announcePos = die.CurrentPosition != null
 				? die.CurrentPosition.position
 				: diceGameModel.tableModel?.GetFreeActivePosition()?.position ?? Vector3.zero;
-			NotifyAndLog("Upgrade opportunity: straight", announcePos, 1.2f);
 			logger?.Log("[Upgrade:straight] Triggered upgrade opportunity.");
 
 			if (upgradeConfig.Debug)
@@ -608,10 +612,7 @@ namespace _Main.Scripts.Dice
 				logger?.Log($"[Upgrade:straight] Die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]; outcomes={outcomeTable}");
 			}
 
-			// Show outcome table before rolling (5s)
 			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
-			ShowOutcomeRingScreen(ConvertStraightOutcomes(upgradeConfig.Outcomes), infoPos, 180f, 5f);
-			await UniTask.Delay(5000);
 
 			int rolledFace;
 			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
@@ -633,8 +634,6 @@ namespace _Main.Scripts.Dice
 			if (outcome != null)
 			{
 				var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-				NotifyAndLog(summary, infoPos, 5f);
-				await UniTask.Delay(5000);
 				logger?.Log($"[Upgrade:straight] {summary} via die {die.ConfigId}");
 			}
 
@@ -660,14 +659,14 @@ namespace _Main.Scripts.Dice
 			}
 
 
-			if (DiceGameUtils.HasTrashInSelected(selectedValues))
+			if (scoringService.HasTrash(selectedValues))
 			{
 				tableModel.SetPreviewPoints(0);
 			}
 			else
 			{
-				var combo = DiceGameUtils.GetCombinations(selectedValues);
-				tableModel.SetPreviewPoints(DiceGameUtils.CalculateTotalScore(combo));
+				var combo = scoringService.Evaluate(selectedValues);
+				tableModel.SetPreviewPoints(scoringService.CalculateTotalScore(combo));
 			}
 
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ public class DebugWindowPlayer : DebugWindowModel
 	private readonly PlayerModel playerModel;
 	private readonly PlayerView playerView;
 	private readonly ConfigService configService;
-	private readonly Notifications notifications;
+	private readonly GlobalNotificationService notificationService;
 	private int cashInputBuffer;
 	private int questIdBuffer;
 	private string diceIdBuffer;
@@ -21,41 +22,10 @@ public class DebugWindowPlayer : DebugWindowModel
 	private string notificationMessageBuffer = string.Empty;
 	private int diceIdxBuffer;
 
-	private readonly List<(string name, IModifier mod)> modifiers = new()
-	{
-		("Single One", new MultiplyKindOfModifiers(DiceCombination.SingleOnes, 0)),
-		("Single Fives", new MultiplyKindOfModifiers(DiceCombination.SingleFives, 0)),
-		("Straight 1 to 5", new MultiplyKindOfModifiers(DiceCombination.Straight_1_5, 0)),
-		("Straight 2 to 6", new MultiplyKindOfModifiers(DiceCombination.Straight_2_6, 0)),
-		("Straight 1 to 6", new MultiplyKindOfModifiers(DiceCombination.Straight_1_6, 0)),
-		("Three of a Kind 1", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 1)),
-		("Three of a Kind 2", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 2)),
-		("Three of a Kind 3", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 3)),
-		("Three of a Kind 4", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 4)),
-		("Three of a Kind 5", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 5)),
-		("Three of a Kind 6", new MultiplyKindOfModifiers(DiceCombination.ThreeOfAKind, 6)),
-		("Four of a Kind 1", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 1)),
-		("Four of a Kind 2", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 2)),
-		("Four of a Kind 3", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 3)),
-		("Four of a Kind 4", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 4)),
-		("Four of a Kind 5", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 5)),
-		("Four of a Kind 6", new MultiplyKindOfModifiers(DiceCombination.FourOfAKind, 6)),
-		("Five of a Kind 1", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 1)),
-		("Five of a Kind 2", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 2)),
-		("Five of a Kind 3", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 3)),
-		("Five of a Kind 4", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 4)),
-		("Five of a Kind 5", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 5)),
-		("Five of a Kind 6", new MultiplyKindOfModifiers(DiceCombination.FiveOfAKind, 6)),
-		("Six of a Kind 1", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 1)),
-		("Six of a Kind 2", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 2)),
-		("Six of a Kind 3", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 3)),
-		("Six of a Kind 4", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 4)),
-		("Six of a Kind 5", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 5)),
-		("Six of a Kind 6", new MultiplyKindOfModifiers(DiceCombination.SixOfAKind, 6))
-	};
+	private string[] modifierIds = Array.Empty<string>();
+    private string[] diceIds = Array.Empty<string>();
 
-	private Dictionary<string, DiceConfig> diceConfig;
-	private Dictionary<string, ModifierUIConfig> modifiersConfig;
+	private Dictionary<string, ItemCatalogEntry> catalog;
 
 	public override string Id => "Player";
 
@@ -63,17 +33,18 @@ public class DebugWindowPlayer : DebugWindowModel
 	{
 		await base.Preload();
 
-		diceConfig = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
-		modifiersConfig = await configService.GetConfigsAsync<ModifierUIConfig>(ResourcePaths.Json.modifiers_ui);
+		catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+		diceIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.Dice).Select(x => x.Key).ToArray();
+		modifierIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.Modifier).Select(x => x.Key).ToArray();
 	}
 
-	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
+	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService)
 	{
 		this.run = run;
 		this.playerModel = playerModel;
 		this.playerView = playerView;
 		this.configService = configService;
-		this.notifications = notifications;
+		this.notificationService = notificationService;
 	}
 
 	protected override void OnLayout(UImGui.UImGui uImGui)
@@ -185,7 +156,7 @@ public class DebugWindowPlayer : DebugWindowModel
 
 		if (ImGui.CollapsingHeader("Inventory"))
 		{
-			var configsArray = diceConfig.Keys.ToArray();
+			var configsArray = diceIds;
 
 			if (ImGui.TreeNode("Dices"))
 			{
@@ -198,7 +169,7 @@ public class DebugWindowPlayer : DebugWindowModel
 				ImGui.TreePop();
 			}
 
-			if (ImGui.Combo("DiceId", ref diceIdxBuffer, configsArray, diceConfig.Count))
+			if (configsArray.Length > 0 && ImGui.Combo("DiceId", ref diceIdxBuffer, configsArray, configsArray.Length))
 			{
 				diceIdBuffer = configsArray[diceIdxBuffer];
 			}
@@ -225,10 +196,7 @@ public class DebugWindowPlayer : DebugWindowModel
 
 			if (ImGui.Button("Send"))
 			{
-				notifications.Add(new Notifications.Notification()
-				{
-					message = notificationMessageBuffer
-				});
+				notificationService?.EnqueueToastRaw(notificationMessageBuffer);
 			}
 		}
 
@@ -243,7 +211,10 @@ public class DebugWindowPlayer : DebugWindowModel
 				for (int i = 0; i < list.Count; i++)
 				{
 					var item = list[i];
-					if (!modifiersConfig.TryGetValue(item.GetType().Name, out var config))
+					if (item is not IModifierItem modifierItem)
+						continue;
+
+					if (!catalog.TryGetValue(modifierItem.Id, out var config))
 						continue;
 
 					ImGui.TextUnformatted(config.id);
@@ -265,18 +236,20 @@ public class DebugWindowPlayer : DebugWindowModel
 			}
 
 
-			if (ImGui.Combo("Avaliable", ref modifierIdxBuffer, modifiers.Select(x => x.name).ToArray(), diceConfig.Count))
+			if (modifierIds.Length > 0 && ImGui.Combo("Avaliable", ref modifierIdxBuffer, modifierIds, modifierIds.Length))
 			{
 			}
 
 			if (ImGui.Button("Add Modifier"))
 			{
-				var modifier = modifiers[modifierIdxBuffer].mod;
-				playerModel.InventoryModel.ModifiersModel.AddModifier(modifier);
+				var id = modifierIds.Length > 0 ? modifierIds[modifierIdxBuffer] : null;
+				playerModel.InventoryModel.AddModifierItem(id);
 			}
 
 			if (ImGui.Button("Clear Modifiers"))
 			{
+				playerModel.InventoryModel.RemoveAllModifierItems();
+				playerModel.InventoryModel.ModifierItemsModel.Reset();
 				playerModel.InventoryModel.ModifiersModel.ClearModifiers();
 			}
 		}

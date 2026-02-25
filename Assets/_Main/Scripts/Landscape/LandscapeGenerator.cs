@@ -137,12 +137,12 @@ public class LandscapeGenerator : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.green;
+        /*Gizmos.color = Color.green;
         Matrix4x4 oldMatrix = Gizmos.matrix;
         Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 
         Gizmos.DrawWireCube(Vector3.zero, Vector3.one * 2);
 
-        Gizmos.matrix = oldMatrix;
+        Gizmos.matrix = oldMatrix;*/
     }
 }

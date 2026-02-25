@@ -2,16 +2,17 @@
 
 namespace _Main.Scripts.Dice
 {
-	public class MultiplyComboModifier : IOnPassModifier
+	public class MultiplyComboModifier : ModifierItemBase, IOnPassModifier
 	{
 		public readonly DiceCombination combination;
 
-		public MultiplyComboModifier(DiceCombination combination)
+		public MultiplyComboModifier(string id, DiceCombination combination)
+			: base(id, id, DiceItemActivationType.Passive)
 		{
 			this.combination = combination;
 		}
 		
-		public UniTask ModifyValues(DiceModifierContext modifierContext)
+		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			foreach (var diceCombinationEntry in modifierContext.CombinationResult.Combinations)
 			{

@@ -24,5 +24,12 @@ namespace _Main.Scripts.Core
 		
 			set => delay = value;
 		}
+
+		private static float enemyTurnDelayMultiplier = 1.5f;
+		public static float EnemyTurnDelayMultiplier
+		{
+			get => enemyTurnDelayMultiplier;
+			set => enemyTurnDelayMultiplier = Mathf.Max(0.1f, value);
+		}
 	}
 }

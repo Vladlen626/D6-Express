@@ -32,6 +32,8 @@ namespace _Main.Scripts.Core
 			var cursorService = new CursorService(uiService);
 			var configService = new ConfigService(resourceService, logger);
 			var localizationService = new LocalizationServiceBase(configService);
+			var diceScoringService = new DiceScoringService();
+			var notificationService = new GlobalNotificationService(uiService, objectFactory, localizationService);
 
 			_serviceLocator.Register<ILoggerService, LoggerService>(logger);
 			_serviceLocator.Register<IResourceService, ResourceService>(resourceService);
@@ -45,6 +47,8 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<ICursorService, CursorService>(cursorService);
 			_serviceLocator.Register<ConfigService, ConfigService>(configService);
 			_serviceLocator.Register<ILocalizationService, LocalizationServiceBase>(localizationService);
+			_serviceLocator.Register<DiceScoringService, DiceScoringService>(diceScoringService);
+			_serviceLocator.Register<GlobalNotificationService, GlobalNotificationService>(notificationService);
 
 			Debug.Log("[GameRoot] Services registered!");
 		}
@@ -59,6 +63,8 @@ namespace _Main.Scripts.Core
 			var cursorService = _serviceLocator.Get<ICursorService>();
 			var inputService = _serviceLocator.Get<IInputService>();
 			var configService = _serviceLocator.Get<ConfigService>();
+			var scoringService = _serviceLocator.Get<DiceScoringService>();
+			var notificationService = _serviceLocator.Get<GlobalNotificationService>();
 
 			var run = new Run();
 			var game = new D6Game();
@@ -75,15 +81,18 @@ namespace _Main.Scripts.Core
 			var playerModel = new PlayerModel();
 			var diceGameModel = new DiceGameModel(playerModel.InventoryModel);
 
-			var activeSceneName = sceneService.GetActiveSceneName();
-			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(activeSceneName));
+			// persistent scene load
+			var persistentSceneName = sceneService.GetActiveSceneName();
+			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(persistentSceneName));
+			// --------------
 
 			var mainMenuController = new MainMenuController(uiService, game, run, cursorService);
 			await _lifecycle.RegisterAsync(mainMenuController);
 
 			await sceneService.LoadSceneAsync(SceneNames.Train);
+			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(SceneNames.Train));
+			sceneService.SetActiveScene(SceneNames.Train);
 
-			//TODO: Контекст сейчас будет обязательным на игровой сцене
 			if (!sceneService.TryGetSceneContext(SceneNames.Train, out var context))
 			{
 				Debug.LogError($"[GameRoot] Scene {SceneNames.Train} could not have SceneContext!");
@@ -107,25 +116,24 @@ namespace _Main.Scripts.Core
 
 			// Level
 			controllersList.AddRange(await RunFactory.GetBaseControllers(game, run, playerModel, playerView,
-				configService, cameraService));
+				configService, cameraService, scoringService));
 
 			var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
 			var loseViewController = new LoseViewController(uiService, game, inputService, cursorService, configService);
-			var notifications = NotificationsFactory.CreateNotifications();
-
 			var baseControllers = new IBaseController[]
 			{
 				winViewController,
 				loseViewController,
 				new SettingsController(uiService, audioService, cursorService, inputService),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
-					run, configService, notifications),
+					run, configService, notificationService),
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
 				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
 				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService, sceneContext.InventoryView),
-				new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main, sceneContext.DiceGameTableView),
+				new ModifierItemsSyncController(playerModel.InventoryModel, playerModel.InventoryModel.ModifierItemsModel, configService, scoringService),
+				new TooltipsController(uiService, diceGameModel, configService, Camera.main, sceneContext.DiceGameTableView),
 			};
 
 			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService);
@@ -140,11 +148,11 @@ namespace _Main.Scripts.Core
 			controllersList.Add(ShopFactory.GetShopViewController(trainShop, sceneContext.TrainShop, factory, playerView.Interactor, sceneContext.TrainShopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, stationShop, playerView.Interactor, Camera.main));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, trainShop, playerView.Interactor, Camera.main));
-			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notifications));
+			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notificationService));
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService, inputService));
 			controllersList.Add(new QuestsViewController(uiService, playerModel.Quests, factory, game));
-			controllersList.Add(NotificationsFactory.GetNotificationsViewControler(uiService, notifications, factory));
-			controllersList.Add(NotificationsFactory.GetNotificationsControler(notifications, playerModel.InventoryModel, configService));
+			controllersList.Add(new NotificationsController(notificationService, playerModel.InventoryModel, configService, _serviceLocator.Get<ILocalizationService>()));
+			controllersList.Add(new ModifierAppliedNotificationController(playerModel.InventoryModel.ModifiersModel, notificationService, configService, _serviceLocator.Get<ILocalizationService>()));
 			controllersList.Add(new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory, inputService, configService));
 			controllersList.Add(new CombinationsController(playerModel.InventoryModel.ModifiersModel, sceneContext.DiceGameTableView.CombinationsView));
 			controllersList.Add(sleepController);

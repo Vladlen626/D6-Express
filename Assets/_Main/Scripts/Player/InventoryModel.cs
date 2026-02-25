@@ -5,17 +5,21 @@ using _Main.Scripts.Dice;
 public class InventoryModel
 {
 	private readonly List<string> diceIdList = new();
+	private readonly List<string> modifierItemIds = new();
 	private int cashCount;
 
 	public int CashCount => cashCount;
 	public IReadOnlyList<string> DiceIdList => diceIdList;
+	public IReadOnlyList<string> ModifierItemIds => modifierItemIds;
 	public ModifiersModel ModifiersModel { get; }
-	public ItemsModel ItemsModel { get; }
+	public ModifierItemsModel ModifierItemsModel { get; }
 	public event Action ItemsChanged;
 
 	public event Action OnCashCountChanged;
 	public event Action<string> DiceAdded;
 	public event Action<string> DiceRemoved;
+	public event Action<string> ModifierItemAdded;
+	public event Action<string> ModifierItemRemoved;
 
 	public void GiveCash(int amount)
 	{
@@ -56,10 +60,48 @@ public class InventoryModel
 		diceIdList.Clear();
 	}
 
+	public void AddModifierItem(string itemId)
+	{
+		if (string.IsNullOrEmpty(itemId))
+		{
+			return;
+		}
+
+		if (modifierItemIds.Contains(itemId))
+		{
+			return;
+		}
+
+		modifierItemIds.Add(itemId);
+		ModifierItemAdded?.Invoke(itemId);
+	}
+
+	public void RemoveModifierItem(string itemId)
+	{
+		if (string.IsNullOrEmpty(itemId))
+		{
+			return;
+		}
+
+		if (modifierItemIds.Remove(itemId))
+		{
+			ModifierItemRemoved?.Invoke(itemId);
+		}
+	}
+
+	public void RemoveAllModifierItems()
+	{
+		foreach (var item in modifierItemIds)
+		{
+			ModifierItemRemoved?.Invoke(item);
+		}
+		modifierItemIds.Clear();
+	}
+
 	public InventoryModel()
 	{
 		ModifiersModel = new ModifiersModel();
-		ItemsModel = new ItemsModel(ModifiersModel);
-		ItemsModel.ItemsChanged += () => ItemsChanged?.Invoke();
+		ModifierItemsModel = new ModifierItemsModel(ModifiersModel);
+		ModifierItemsModel.ItemsChanged += () => ItemsChanged?.Invoke();
 	}
 }

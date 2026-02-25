@@ -9,16 +9,19 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly DiceTableView diceTableView;
 		private readonly ICameraShakeService cameraShakeService;
+		private readonly GlobalNotificationService notificationService;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public DiceGameViewController(
 			DiceTableView diceTableView,
 			DiceGameModel diceGameModel,
-			ICameraShakeService cameraShakeService)
+			ICameraShakeService cameraShakeService,
+			GlobalNotificationService notificationService)
 		{
 			this.diceTableView = diceTableView;
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
+			this.notificationService = notificationService;
 		}
 		public void Activate()
 		{
@@ -79,6 +82,11 @@ namespace _Main.Scripts.Dice
 		{
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
 			diceTableView.SetTurnText(oldValue, newValue);
+			if (diceGameModel.DiceGameState == DiceGameState.GAME && notificationService != null)
+			{
+				var id = diceGameModel.IsPlayerTurn ? "dice_banner_turn_player" : "dice_banner_turn_enemy";
+				notificationService.ShowBanner(id, 0.9f);
+			}
 		}
 
 		private void OnTurnPointsChangedHandler(int oldValue, int newValue)
@@ -111,15 +119,6 @@ namespace _Main.Scripts.Dice
 			bool hasValidComboSelected = tableModel.PreviewPoints > 0;
 			bool canPass = hasValidComboSelected || (tableModel.TurnPoints > 0 && diceGameModel.GetSelected().Length == 0);
 			bool canRoll = tableModel.isFirstRoll || hasValidComboSelected;
-
-			/*if (scorePreview == 0)
-			{
-				diceTableView.SetComboNameText(string.Empty);
-			}
-			else
-			{
-				diceTableView.SetComboNameText(DiceGameUtils.GetCombinationName());
-			}*/
 
 			diceTableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);
 			diceTableView.SetButtonInteractable("Pass", canPass && diceGameModel.IsPlayerTurn);

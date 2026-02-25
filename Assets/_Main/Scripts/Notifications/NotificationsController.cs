@@ -7,19 +7,20 @@ using PlatformCore.Services.Factory;
 
 public class NotificationsController : IBaseController, IActivatable, IPreloadable
 {
-    private readonly Notifications notifications;
+    private readonly GlobalNotificationService notificationService;
     private readonly InventoryModel inventory;
     private readonly ConfigService configService;
+    private readonly ILocalizationService localizationService;
 
-    private IReadOnlyDictionary<string, DiceConfig> diceConfigsDict;
-    private TextsConfig textsConfig;
+    private IReadOnlyDictionary<string, ItemCatalogEntry> diceConfigsDict;
     private string buyText;
 
-    public NotificationsController(Notifications notifications, InventoryModel inventory, ConfigService configService)
+    public NotificationsController(GlobalNotificationService notificationService, InventoryModel inventory, ConfigService configService, ILocalizationService localizationService)
     {
-        this.notifications = notifications;
+        this.notificationService = notificationService;
         this.inventory = inventory;
         this.configService = configService;
+        this.localizationService = localizationService;
     }
 
     public void Activate()
@@ -34,19 +35,18 @@ public class NotificationsController : IBaseController, IActivatable, IPreloadab
 
     public async UniTask PreloadAsync()
     {
-        diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
-        textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
+        diceConfigsDict = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+        var textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
         buyText = textsConfig.texts["dice_added_to_inventory_notification"];
     }
 
     private void OnDiceAdded(string diceId)
     {
-        var dice = diceConfigsDict[diceId];
-        var header = textsConfig.texts[dice.name];
-
-        notifications.Add(new Notifications.Notification()
+        if (!diceConfigsDict.TryGetValue(diceId, out var dice) || dice.typeEnum != ItemCatalogType.Dice)
         {
-            message = string.Format(buyText, header)
-        });
+            return;
+        }
+        var header = localizationService != null ? localizationService.GetLocalized(dice.nameKey) : dice.nameKey;
+        notificationService?.EnqueueToastRaw(string.Format(buyText, header));
     }
 }

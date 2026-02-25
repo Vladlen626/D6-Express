@@ -16,7 +16,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
     private readonly ConfigService configService;
     private readonly Dictionary<IModifier, UIModifierView> modifierViews = new();
 
-    private Dictionary<string, ModifierUIConfig> configs;
+    private Dictionary<string, ItemCatalogEntry> configs;
 
     public ModifiersViewController(IUIService uiService, ModifiersModel modifiers, IObjectFactory objectFactory, IInputService inputService, ConfigService configService) : base(uiService)
     {
@@ -28,7 +28,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
     protected override async UniTask OnPreloadAsync()
     {
-        configs = await configService.GetConfigsAsync<ModifierUIConfig>(ResourcePaths.Json.modifiers_ui);
+        configs = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
 
         await base.OnPreloadAsync();
     }
@@ -73,8 +73,12 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
     private async void OnModifierAdded(IModifier modifier)
     {
-        // todo максимально осуждаю. у модификаторов должны быть айдишники
-        if (!configs.TryGetValue(modifier.GetType().Name, out var config))
+        if (modifier is not IModifierItem modifierItem)
+        {
+            return;
+        }
+
+        if (!configs.TryGetValue(modifierItem.Id, out var config) || config.typeEnum != ItemCatalogType.Modifier)
         {
             return;
         }
@@ -83,36 +87,19 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
         modifierViews[modifier] = view;
 
-        view.SetTitle(config.title);
-        view.SetDescription(config.description);
-
-        if (modifier is ShakeRerollModifier shakeRerollModifier)
-        {
-            view.SetValue(config.value, shakeRerollModifier.shakeChance.ToString());
-        }
-        else if (modifier is MultiplyComboModifier multiplyComboModifier)
-        {
-            view.SetValue(config.value, multiplyComboModifier.combination.ToString());
-        }
-        else if (modifier is MultiplyKindOfModifiers multiplyKindOfModifiers)
-        {
-            view.SetValue(config.value, multiplyKindOfModifiers.combination.ToString());
-        }
-        else if (modifier is PassActivationMultiplierModifier passActivationMultiplierModifier)
-        {
-            view.SetValue(config.value, PassActivationMultiplierModifier.ScoreMultiplier.ToString());
-        }
-        else if (modifier is AdjustTicksPerDayModifier adjustTicksPerDayModifier)
-        {
-            view.SetValue(config.value, adjustTicksPerDayModifier.delta.ToString());
-        }
+        view.SetTitle(config.nameKey);
+        view.SetDescription(config.descriptionKey);
 
         view.Show();
     }
 
     private void OnModifierRemoved(IModifier modifier)
     {
-        var view = modifierViews[modifier];
+        if (!modifierViews.TryGetValue(modifier, out var view))
+        {
+            return;
+        }
+
         modifierViews.Remove(modifier);
 
         view.Hide();
@@ -132,3 +119,4 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
         }
     }
 }
+

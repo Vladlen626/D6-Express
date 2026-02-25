@@ -1,60 +1,9 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
 	public static class DiceGameUtils
 	{
-		public static DiceCombinationResult GetCombinations(int[] values)
-		{
-			return DiceScoringService.Instance.Evaluate(values);
-		}
-
-		public static int CalculateTotalScore(DiceCombinationResult result)
-		{
-			return DiceScoringService.Instance.CalculateTotalScore(result);
-		}
-
-		public static bool HasTrashInSelected(int[] values)
-		{
-			return DiceScoringService.Instance.HasTrash(values);
-		}
-
-		public static string GetCombinationName(DiceCombination combination)
-		{
-			return DiceScoringService.Instance.GetDisplayName(null, combination);
-		}
-
-		public static string GetCombinationName(string combinationId, DiceCombination combination = DiceCombination.None)
-		{
-			return DiceScoringService.Instance.GetDisplayName(combinationId, combination);
-		}
-
-		public static void UpdateBaseScore(string combinationId, int newBaseScore)
-		{
-			DiceScoringService.Instance.UpdateBaseScore(combinationId, newBaseScore);
-		}
-
-		public static void AddOrReplaceRule(ComboRuleDefinition definition)
-		{
-			DiceScoringService.Instance.AddOrReplaceRule(definition);
-		}
-
-		public static void RemoveRule(string ruleId)
-		{
-			DiceScoringService.Instance.RemoveRule(ruleId);
-		}
-
-		public static void ReorderRules(List<string> orderedIds)
-		{
-			DiceScoringService.Instance.ReorderRules(orderedIds);
-		}
-
-		public static void ReloadScoringDefaults()
-		{
-			DiceScoringService.Instance.ReloadDefaults();
-		}
-
 		public static int GetWeightedRandomValue(int[] weights)
 		{
 			float totalWeight = 0f;
@@ -76,6 +25,52 @@ namespace _Main.Scripts.Dice
 			}
 
 			return 1;
+		}
+
+		public static int BaseScoreSetup(DiceCombination diceCombination, int face)
+		{
+			switch (diceCombination)
+			{
+				case DiceCombination.Straight_1_6:
+					return 1500;
+
+				case DiceCombination.Straight_1_5:
+					return 500;
+
+				case DiceCombination.Straight_2_6:
+					return 750;
+
+				case DiceCombination.ThreeOfAKind:
+					return ScoreNOfKind(face, 3);
+				case DiceCombination.FourOfAKind:
+					return ScoreNOfKind(face, 4);
+				case DiceCombination.FiveOfAKind:
+					return ScoreNOfKind(face, 5);
+				case DiceCombination.SixOfAKind:
+					return ScoreNOfKind(face, 6);
+
+				case DiceCombination.SingleOnes:
+					return 100;
+
+				case DiceCombination.SingleFives:
+					return 50;
+
+				default:
+					return 0;
+			}
+		}
+
+		private static int ScoreNOfKind(int face, int count)
+		{
+			if (count < 3)
+				return 0;
+
+			int baseScore = (face == 1) ? 1000 : face * 100;
+
+			for (int i = 3; i < count; i++)
+				baseScore *= 2;
+
+			return baseScore;
 		}
 
 		public static int[] GetDiceValues(DiceModel[] dice)

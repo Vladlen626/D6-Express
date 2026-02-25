@@ -17,7 +17,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly PlayerModel playerModel;
 		private readonly Run run;
-		private readonly Notifications notifications;
+		private readonly GlobalNotificationService notificationService;
 
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly IObjectFactory objectFactory;
@@ -27,6 +27,7 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService configService;
 		private readonly IUIService uiService;
 		private readonly IInputService inputService;
+		private readonly DiceScoringService scoringService;
 
 		private readonly SceneContext sceneContext;
 
@@ -47,12 +48,12 @@ namespace _Main.Scripts.Dice
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
-			ServiceLocator serviceLocator, Run run, ConfigService configService, Notifications notifications)
+			ServiceLocator serviceLocator, Run run, ConfigService configService, GlobalNotificationService notificationService)
 		{
 			this.diceGameModel = diceGameModel;
 			this.playerModel = playerModel;
 			this.run = run;
-			this.notifications = notifications;
+			this.notificationService = notificationService;
 			this.sceneContext = sceneContext;
 			this.configService = configService;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
@@ -62,6 +63,7 @@ namespace _Main.Scripts.Dice
 			audioService = serviceLocator.Get<IAudioService>();
 			uiService = serviceLocator.Get<IUIService>();
 			inputService = serviceLocator.Get<IInputService>();
+			scoringService = serviceLocator.Get<DiceScoringService>();
 		}
 
 		public void Activate()
@@ -132,13 +134,13 @@ namespace _Main.Scripts.Dice
 			await SetupEnemyDiceList();
 
 			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService, run, notifications);
+				loggerService, diceGameModel, cameraShakeService, audioService, scoringService, run, notificationService);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
 				processController,
-				new EnemyTurnController(processController, diceGameModel),
-				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService),
+				new EnemyTurnController(processController, diceGameModel, scoringService),
+				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService, notificationService),
 				new DiceGameResultController(diceGameModel)
 			});
 			
@@ -228,10 +230,16 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask SetupEnemyDiceList()
 		{
-			var config = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_game_rules);
+			var catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+			if (!catalog.TryGetValue("default", out var config) || config.typeEnum != ItemCatalogType.Dice)
+			{
+				Debug.LogWarning("[DiceGame] Default dice entry not found in catalog.");
+				return;
+			}
 			var bankSlots = diceTableView.GameStatePosHandler.SecondPosArray;
 			var activeSlots = CouplePositionsHandler.FirstPosArray;
-			var enemyLimit = Mathf.Min(diceGameModel.MaxDiceCount, bankSlots.Length, activeSlots.Length);
+			// Enemy should not benefit from player dice cap bonuses.
+			var enemyLimit = Mathf.Min(diceGameModel.BaseMaxDiceCount, bankSlots.Length, activeSlots.Length);
 
 			for (int i = 0; i < enemyLimit; i++)
 			{
@@ -311,7 +319,7 @@ namespace _Main.Scripts.Dice
 			{
 				foreach (var dice in playerDiceViewsArray)
 				{
-					if (dice != null)
+					if (dice)
 					{
 						objectFactory.Destroy(dice.gameObject);
 					}
@@ -324,7 +332,7 @@ namespace _Main.Scripts.Dice
 			{
 				foreach (var dice in enemyDiceViewsArray)
 				{
-					if (dice != null)
+					if (dice)
 					{
 						objectFactory.Destroy(dice.gameObject);
 					}
@@ -339,13 +347,13 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask SetupItemsDisplay()
 		{
-			var items = diceGameModel.ItemsModel.Items;
-			if (items == null || items.Count == 0)
+			var items = diceGameModel.ModifierItemsModel.Items;
+			if (items.Count == 0)
 			{
 				return;
 			}
 
-			if (diceTableView.ItemViewPrefab == null)
+			if (!diceTableView.ItemViewPrefab)
 			{
 				Debug.LogWarning("[DiceGame] ItemViewPrefab is not assigned on DiceTableView. Items will not be spawned.");
 				return;
@@ -356,18 +364,18 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < items.Count; i++)
 			{
 				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				var prefab = (items[i] as IDiceItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
+				var prefab = (items[i] as IModifierItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
 				var view = UnityEngine.Object.Instantiate(
 					prefab,
 					slot ? slot.position : Vector3.zero,
 					slot ? slot.rotation : Quaternion.identity);
 
-				if (slot != null)
+				if (slot)
 				{
 					view.transform.SetParent(slot);
 				}
 
-				var controller = new DiceItemController(items[i], view);
+				var controller = new ModifierItemController(items[i], view);
 				itemControllers.Add(controller);
 				itemViews.Add(view);
 				await lifecycleService.RegisterAsync(controller);
@@ -385,7 +393,7 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < itemViews.Count; i++)
 			{
 				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				if (slot == null)
+				if (!slot)
 				{
 					continue;
 				}
@@ -404,7 +412,7 @@ namespace _Main.Scripts.Dice
 
 			foreach (var view in itemViews)
 			{
-				if (view != null)
+				if (view)
 				{
 					objectFactory.Destroy(view.gameObject);
 				}

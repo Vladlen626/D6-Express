@@ -1,30 +1,56 @@
 {
-    "train": {
-        "restock_price": 100,
-        "items": [
-            {
-                "itemId": "default"
-            },
-            {
-                "itemId": "gen_1_focus"
-            },
-            {
-                "itemId": "strat_straight_1_6_hunter"
-            }
-        ]
-    },
-    "station": {
-        "restock_price": 50,
-        "items": [
-            {
-                "itemId": "default"
-            },
-            {
-                "itemId": "gen_1_focus"
-            },
-            {
-                "itemId": "strat_straight_1_6_hunter"
-            }
-        ]
-    }
+  "train": {
+    "restock_price": 100,
+    "items": [
+      { "itemId": "default" },
+      { "itemId": "gen_1_focus" },
+      { "itemId": "gen_2_focus" },
+      { "itemId": "gen_3_focus" },
+      { "itemId": "gen_4_focus" },
+      { "itemId": "gen_5_focus" },
+      { "itemId": "gen_6_focus" },
+      { "itemId": "strat_safe_ones_fives" },
+      { "itemId": "strat_straight_1_6_hunter" },
+      { "itemId": "strat_straight_2_6_hunter" },
+      { "itemId": "strat_polar_ends" },
+      { "itemId": "multiply_combo_three_kind" },
+      { "itemId": "multiply_kind_single_ones" },
+      { "itemId": "shake_reroll" },
+      { "itemId": "scramble_combinations" },
+      { "itemId": "pass_activation_multiplier" },
+      { "itemId": "adjust_ticks_plus1" },
+      { "itemId": "extra_dice_cap" },
+      { "itemId": "modifier_silencer_item" },
+      { "itemId": "pass_multiplier_item" },
+      { "itemId": "reroll_selected_item" },
+      { "itemId": "step_up_item" }
+    ]
+  },
+  "station": {
+    "restock_price": 50,
+    "items": [
+      { "itemId": "default" },
+      { "itemId": "gen_1_focus" },
+      { "itemId": "gen_2_focus" },
+      { "itemId": "gen_3_focus" },
+      { "itemId": "gen_4_focus" },
+      { "itemId": "gen_5_focus" },
+      { "itemId": "gen_6_focus" },
+      { "itemId": "strat_safe_ones_fives" },
+      { "itemId": "strat_straight_1_6_hunter" },
+      { "itemId": "strat_straight_2_6_hunter" },
+      { "itemId": "strat_polar_ends" },
+      { "itemId": "multiply_combo_three_kind" },
+      { "itemId": "multiply_kind_single_ones" },
+      { "itemId": "shake_reroll" },
+      { "itemId": "scramble_combinations" },
+      { "itemId": "pass_activation_multiplier" },
+      { "itemId": "adjust_ticks_plus1" },
+      { "itemId": "extra_dice_cap" },
+      { "itemId": "modifier_silencer_item" },
+      { "itemId": "pass_multiplier_item" },
+      { "itemId": "reroll_selected_item" },
+      { "itemId": "step_up_item" }
+    ]
+  }
 }
