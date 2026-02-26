@@ -49,7 +49,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5768471611218068198}
   - component: {fileID: 301108043510531555}
-  - component: {fileID: 3614214591091878872}
   m_Layer: 5
   m_Name: Tooltip
   m_TagString: Untagged
@@ -77,8 +76,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 150}
-  m_SizeDelta: {x: 300, y: 200}
+  m_AnchoredPosition: {x: 0, y: 130.55493}
+  m_SizeDelta: {x: 256, y: 217.1099}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &301108043510531555
 CanvasRenderer:
@@ -88,33 +87,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1008494153374481215}
   m_CullTransparentMesh: 1
---- !u!114 &3614214591091878872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1008494153374481215}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.35408506, g: 0.6886792, b: 0.59613186, a: 1}
-  m_RaycastTarget: 0
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Texture: {fileID: 2800000, guid: ed5290d8df18488780e2996b9b882f01, type: 3}
-  m_UVRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
 --- !u!1 &1560705927410119431
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,15 +154,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: Increases the chance of extreme faces (1 and 6) while weakening the middle
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 00fade5822328c341964077b498c9a99, type: 2}
-  m_sharedMaterial: {fileID: 634152626267492156, guid: 00fade5822328c341964077b498c9a99, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
+  m_sharedMaterial: {fileID: -5374591420838769158, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4284906378
+  m_fontColor: {r: 0.5411765, g: 0.48235294, b: 0.4, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -207,10 +179,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26.2
-  m_fontSizeBase: 32
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 24
   m_fontSizeMax: 28
   m_fontStyle: 0
@@ -263,7 +235,7 @@ GameObject:
   - component: {fileID: 1260692433672600865}
   - component: {fileID: 3920684322163295626}
   m_Layer: 5
-  m_Name: panel
+  m_Name: BackGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -276,13 +248,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1643547678298159794}
-  m_LocalRotation: {x: -0, y: -0, z: -1, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5768471611218068198}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -180}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -309,14 +281,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3529412, g: 0.4190448, b: 0.6901961, a: 1}
+  m_Color: {r: 1, g: 0.9843137, b: 0.90588236, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: ed5290d8df18488780e2996b9b882f01, type: 3}
+  m_Texture: {fileID: 2800000, guid: b1473af62d96bef448470e56dc72bb33, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -381,7 +353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.63154, b: 0.8962264, a: 1}
+  m_Color: {r: 0.53333336, g: 0.6156863, b: 0.9411765, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -540,10 +512,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5768471611218068198}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 69}
-  m_SizeDelta: {x: 272, y: 50}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -42}
+  m_SizeDelta: {x: 272, y: 84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3565793568151537595
 CanvasRenderer:
@@ -575,15 +547,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: Straight Dice
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 00fade5822328c341964077b498c9a99, type: 2}
-  m_sharedMaterial: {fileID: 634152626267492156, guid: 00fade5822328c341964077b498c9a99, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
+  m_sharedMaterial: {fileID: -5374591420838769158, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4284906378
+  m_fontColor: {r: 0.5411765, g: 0.48235294, b: 0.4, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -702,7 +674,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.67876756, b: 0, a: 1}
+  m_Color: {r: 0.9882353, g: 0.4509804, b: 0.42745098, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -774,7 +746,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9622642, g: 0.9622642, b: 0.9622642, a: 1}
+  m_Color: {r: 0.6039216, g: 0.5137255, b: 0.3529412, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -846,7 +818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.7830189, b: 0.09854663, a: 1}
+  m_Color: {r: 0.5411765, g: 0.7764706, b: 0.5411765, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
