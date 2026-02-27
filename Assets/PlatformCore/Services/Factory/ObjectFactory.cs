@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-namespace PlatformCore.Services.Factory.PlatformCore.Services.Factory
+namespace PlatformCore.Services.Factory
 {
 	public class ObjectFactory : BaseAsyncService, IObjectFactory
 	{

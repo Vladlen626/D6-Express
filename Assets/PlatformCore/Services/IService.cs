@@ -2,17 +2,20 @@ using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 
-public interface IService : IDisposable
+namespace PlatformCore.Services
 {
-}
+	public interface IService : IDisposable
+	{
+	}
 
-public interface IAsyncInitializable : IService
-{
-	UniTask PreInitializeAsync(CancellationToken ct);
-	UniTask PostInitializeAsync(CancellationToken ct);
-}
+	public interface IAsyncInitializable : IService
+	{
+		UniTask PreInitializeAsync(CancellationToken ct);
+		UniTask PostInitializeAsync(CancellationToken ct);
+	}
 
-public interface ISyncInitializable : IService
-{
-	void Initialize();
+	public interface ISyncInitializable : IService
+	{
+		void Initialize();
+	}
 }

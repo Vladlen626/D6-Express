@@ -1,12 +1,12 @@
-﻿using System;
+using System;
 
-namespace _Main.Scripts.SceneOrchestra
+namespace PlatformCore.Infrastructure.Triggers
 {
 	public interface ITrigger
 	{
 		event Action<string> OnTriggered;
 		string triggerId { get; }
-		
+
 		void Trigger();
 	}
 }
