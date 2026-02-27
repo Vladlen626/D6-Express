@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-public class ZoneTrigger : BaseTrigger
-{ 
-	private void OnTriggerEnter(Collider other)
+namespace PlatformCore.Infrastructure.Triggers
+{
+	public class ZoneTrigger : BaseTrigger
 	{
-		Trigger();
+		private void OnTriggerEnter(Collider other)
+		{
+			Trigger();
+		}
 	}
-	
 }
