@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UINotificationsView
   _group: {fileID: 4472723706761682943}
-  _canvasType: 0
+  _canvasType: 21
   list: {fileID: 875081463380747020}
 --- !u!1 &7493724538442670954
 GameObject:

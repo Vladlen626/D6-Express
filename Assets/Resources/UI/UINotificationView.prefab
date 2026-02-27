@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UINotificationView
   _group: {fileID: 1506111907810260061}
-  _canvasType: 5
+  _canvasType: 21
   canvasGroup: {fileID: 1506111907810260061}
   contentRoot: {fileID: 29008654239193646}
   initialShift: 50

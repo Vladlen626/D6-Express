@@ -257,7 +257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Main.Scripts.UI.UITooltip
   _group: {fileID: 1956147816108254239}
-  _canvasType: 1
+  _canvasType: 5
   tooltipTransform: {fileID: 5591294014086662923}
   header: {fileID: 5350697935564230249}
   description: {fileID: 1708726500669937498}

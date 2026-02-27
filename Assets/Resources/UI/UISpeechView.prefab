@@ -1145,7 +1145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeechView
   _group: {fileID: 1258980316925833932}
-  _canvasType: 0
+  _canvasType: 5
   speechPanel: {fileID: 3216246186187998144}
   choiceOptions: {fileID: 1584055375087331178}
   speechText: {fileID: 3236615817706182457}

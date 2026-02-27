@@ -87,7 +87,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIModifierView
   _group: {fileID: 2659387624346682828}
-  _canvasType: 0
+  _canvasType: 11
   title: {fileID: 1869300738110641026}
   description: {fileID: 7352920221941092097}
   value: {fileID: 7716672997641163058}

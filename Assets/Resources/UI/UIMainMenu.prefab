@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Main.Scripts.UI.UIMainMenu
   _group: {fileID: 5089125921639085364}
-  _canvasType: 0
+  _canvasType: 10
 --- !u!1 &897988385397227435
 GameObject:
   m_ObjectHideFlags: 0

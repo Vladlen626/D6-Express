@@ -587,7 +587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UITransitionView
   _group: {fileID: 9134667508759356545}
-  _canvasType: 0
+  _canvasType: 10
   upper: {fileID: 5155688247572585084}
   bottom: {fileID: 1402042049208463213}
   curve:
