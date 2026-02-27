@@ -1,6 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Services.Factory;
+using PlatformCore.Services;
 
 public class LocalizationServiceBase : BaseAsyncService, ILocalizationService
 {
