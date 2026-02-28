@@ -9,7 +9,7 @@ public class Shop
     private const int SLOTS = 3;
 
     private readonly InventoryModel inventoryModel;
-    private readonly IReadOnlyDictionary<string, DiceConfig> dicesConfigs;
+    private readonly IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
     private readonly ShopConfig config;
     private readonly TradeItem[] tradeItems = new TradeItem[SLOTS];
 
@@ -24,10 +24,10 @@ public class Shop
 
     public event Action RestockFailed;
 
-    public Shop(InventoryModel inventoryModel, IReadOnlyDictionary<string, DiceConfig> dicesConfigs, ShopConfig config)
+    public Shop(InventoryModel inventoryModel, IReadOnlyDictionary<string, ItemCatalogEntry> catalog, ShopConfig config)
     {
         this.inventoryModel = inventoryModel;
-        this.dicesConfigs = dicesConfigs;
+        this.catalog = catalog;
         this.config = config;
     }
 
@@ -73,7 +73,13 @@ public class Shop
             var itemConfig = unused[itemConfigIndex];
             unused.RemoveAt(itemConfigIndex);
 
-            var tradeItem = new TradeItem(itemConfig.itemId, dicesConfigs[itemConfig.itemId].price);
+            if (!catalog.TryGetValue(itemConfig.itemId, out var entry))
+            {
+                continue;
+            }
+
+            var visualId = string.IsNullOrEmpty(entry.visualId) ? entry.id : entry.visualId;
+            var tradeItem = new TradeItem(entry.id, entry.typeEnum, entry.price, visualId);
             tradeItem.Buyed += OnBuyed;
             tradeItems[i] = tradeItem;
 
@@ -87,8 +93,15 @@ public class Shop
         {
             inventoryModel.TakeCash(tradeItem.Price);
 
-            // todo: добавлять не только дайсы
-            inventoryModel.AddDice(tradeItem.ItemId);
+            switch (tradeItem.ItemType)
+            {
+                case ItemCatalogType.Dice:
+                    inventoryModel.AddDice(tradeItem.ItemId);
+                    break;
+                case ItemCatalogType.Modifier:
+                    inventoryModel.AddModifierItem(tradeItem.ItemId);
+                    break;
+            }
 
             tradeItem.Buyed -= OnBuyed;
             var index = Array.IndexOf(tradeItems, tradeItem);

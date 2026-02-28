@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIWinView
   _group: {fileID: 4790672062146196776}
-  _canvasType: 0
+  _canvasType: 10
   winText: {fileID: 1440355757739659071}
   exitButton: {fileID: 4372632056057455663}
   exitButtonText: {fileID: 8383208392613189508}

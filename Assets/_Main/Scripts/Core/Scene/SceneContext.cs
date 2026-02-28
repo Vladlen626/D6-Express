@@ -9,6 +9,9 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	private DiceTableView diceGameTableView;
 
 	[SerializeField]
+	private InventoryView inventoryView;
+
+	[SerializeField]
 	private Transform playerTrainSpawnPosition;
 
 	[SerializeField]
@@ -56,6 +59,8 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public Light Sun => sun;
 	public ShopView StationShop => stationShop;
 	public ShopView TrainShop => trainShop;
+
+	public InventoryView InventoryView => inventoryView;
 
 	public CharacterView StationShopkeeper => stationShopkeeper;
 	public CharacterView TrainShopkeeper => trainShopkeeper;

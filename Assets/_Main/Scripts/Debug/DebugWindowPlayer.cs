@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using _Main.Scripts.Dice;
 using ImGuiNET;
 using PlatformCore.Services.Factory;
 using UnityEngine;
@@ -12,14 +14,18 @@ public class DebugWindowPlayer : DebugWindowModel
 	private readonly PlayerModel playerModel;
 	private readonly PlayerView playerView;
 	private readonly ConfigService configService;
-	private readonly Notifications notifications;
+	private readonly GlobalNotificationService notificationService;
 	private int cashInputBuffer;
 	private int questIdBuffer;
 	private string diceIdBuffer;
+	private int modifierIdxBuffer;
 	private string notificationMessageBuffer = string.Empty;
 	private int diceIdxBuffer;
 
-	private Dictionary<string, DiceConfig> diceConfig;
+	private string[] modifierIds = Array.Empty<string>();
+    private string[] diceIds = Array.Empty<string>();
+
+	private Dictionary<string, ItemCatalogEntry> catalog;
 
 	public override string Id => "Player";
 
@@ -27,16 +33,18 @@ public class DebugWindowPlayer : DebugWindowModel
 	{
 		await base.Preload();
 
-		diceConfig = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+		catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+		diceIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.Dice).Select(x => x.Key).ToArray();
+		modifierIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.Modifier).Select(x => x.Key).ToArray();
 	}
 
-	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
+	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService)
 	{
 		this.run = run;
 		this.playerModel = playerModel;
 		this.playerView = playerView;
 		this.configService = configService;
-		this.notifications = notifications;
+		this.notificationService = notificationService;
 	}
 
 	protected override void OnLayout(UImGui.UImGui uImGui)
@@ -133,12 +141,12 @@ public class DebugWindowPlayer : DebugWindowModel
 
 		if (ImGui.CollapsingHeader("Quests"))
 		{
-			if (ImGui.Button("Add random"))
-			{
-				var quest = QuestFactory.GenerateRandomQuest(playerView);
-				quest.RequestStart();
-				playerModel.Quests.Add(quest);
-			}
+			// if (ImGui.Button("Add random"))
+			// {
+			// 	var quest = QuestFactory.GenerateRandomQuest(playerView);
+			// 	quest.RequestInProgress();
+			// 	playerModel.Quests.Add(quest);
+			// }
 
 			if (ImGui.Button("Clear"))
 			{
@@ -146,10 +154,9 @@ public class DebugWindowPlayer : DebugWindowModel
 			}
 		}
 
-
 		if (ImGui.CollapsingHeader("Inventory"))
 		{
-			var configsArray = diceConfig.Keys.ToArray();
+			var configsArray = diceIds;
 
 			if (ImGui.TreeNode("Dices"))
 			{
@@ -162,7 +169,7 @@ public class DebugWindowPlayer : DebugWindowModel
 				ImGui.TreePop();
 			}
 
-			if (ImGui.Combo("DiceId", ref diceIdxBuffer, configsArray, diceConfig.Count))
+			if (configsArray.Length > 0 && ImGui.Combo("DiceId", ref diceIdxBuffer, configsArray, configsArray.Length))
 			{
 				diceIdBuffer = configsArray[diceIdxBuffer];
 			}
@@ -189,10 +196,61 @@ public class DebugWindowPlayer : DebugWindowModel
 
 			if (ImGui.Button("Send"))
 			{
-				notifications.Add(new Notifications.Notification()
+				notificationService?.EnqueueToastRaw(notificationMessageBuffer);
+			}
+		}
+
+		if (ImGui.CollapsingHeader("Modifiers"))
+		{
+			IModifier toRemove = null;
+
+			if (ImGui.TreeNode("Active"))
+			{
+				var list = playerModel.InventoryModel.ModifiersModel.AllModifiers;
+
+				for (int i = 0; i < list.Count; i++)
 				{
-					message = notificationMessageBuffer
-				});
+					var item = list[i];
+					if (item is not IModifierItem modifierItem)
+						continue;
+
+					if (!catalog.TryGetValue(modifierItem.Id, out var config))
+						continue;
+
+					ImGui.TextUnformatted(config.id);
+					ImGui.SameLine();
+
+					ImGui.PushID(i);
+					if (ImGui.Button("X"))
+					{
+						toRemove = item;
+					}
+					ImGui.PopID();
+				}
+
+				if (toRemove != null)
+					playerModel.InventoryModel.ModifiersModel.RemoveModifier(toRemove);
+
+				ImGui.Separator();
+				ImGui.TreePop();
+			}
+
+
+			if (modifierIds.Length > 0 && ImGui.Combo("Avaliable", ref modifierIdxBuffer, modifierIds, modifierIds.Length))
+			{
+			}
+
+			if (ImGui.Button("Add Modifier"))
+			{
+				var id = modifierIds.Length > 0 ? modifierIds[modifierIdxBuffer] : null;
+				playerModel.InventoryModel.AddModifierItem(id);
+			}
+
+			if (ImGui.Button("Clear Modifiers"))
+			{
+				playerModel.InventoryModel.RemoveAllModifierItems();
+				playerModel.InventoryModel.ModifierItemsModel.Reset();
+				playerModel.InventoryModel.ModifiersModel.ClearModifiers();
 			}
 		}
 

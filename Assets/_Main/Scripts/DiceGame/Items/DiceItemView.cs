@@ -19,16 +19,19 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private Color consumedColor = Color.black;
 		[SerializeField] private Color disabledColor = Color.red;
 
-		private IDiceItem boundItem;
+		private IModifierItem boundItem;
 		public UnityEvent OnClicked = new();
+		public event Action<IModifierItem> OnHoverEnter;
+		public event Action<IModifierItem> OnHoverExit;
 		private Camera _cam;
+		private bool _isHovered;
 
 		private void Awake()
 		{
 			_cam = Camera.main;
 		}
 
-		public void Bind(IDiceItem item)
+		public void Bind(IModifierItem item)
 		{
 			Debug.Log($"[DiceItemView] Bind -> {(item != null ? item.Id : "null")}");
 			if (boundItem == item)
@@ -44,11 +47,17 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		public void Unbind(IDiceItem item)
+		public void Unbind(IModifierItem item)
 		{
 			if (item == null || boundItem != item)
 			{
 				return;
+			}
+
+			if (_isHovered)
+			{
+				_isHovered = false;
+				OnHoverExit?.Invoke(boundItem);
 			}
 
 			Debug.Log($"[DiceItemView] Unbind -> {item.Id}");
@@ -60,6 +69,12 @@ namespace _Main.Scripts.Dice
 		{
 			if (boundItem != null)
 			{
+				if (_isHovered)
+				{
+					_isHovered = false;
+					OnHoverExit?.Invoke(boundItem);
+				}
+
 				boundItem.OnChanged -= OnItemChanged;
 				boundItem = null;
 			}
@@ -74,7 +89,24 @@ namespace _Main.Scripts.Dice
 			}
 
 			var mouse = Mouse.current;
-			if (mouse == null || !mouse.leftButton.wasPressedThisFrame)
+			if (mouse == null)
+			{
+				return;
+			}
+
+			var isMouseOver = IsMouseOver(mouse);
+			if (isMouseOver && !_isHovered)
+			{
+				_isHovered = true;
+				OnHoverEnter?.Invoke(boundItem);
+			}
+			else if (!isMouseOver && _isHovered)
+			{
+				_isHovered = false;
+				OnHoverExit?.Invoke(boundItem);
+			}
+
+			if (!mouse.leftButton.wasPressedThisFrame)
 			{
 				return;
 			}
@@ -84,15 +116,25 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			Ray ray = _cam.ScreenPointToRay(mouse.position.ReadValue());
-			if (clickCollider.Raycast(ray, out _, 200f))
+			if (isMouseOver)
 			{
 				Debug.Log($"[DiceItemView] Click detected on {boundItem.Id}");
 				OnClicked.Invoke();
 			}
 		}
 
-		private void OnItemChanged(IDiceItem item)
+		private bool IsMouseOver(Mouse mouse)
+		{
+			if (!_cam || !clickCollider)
+			{
+				return false;
+			}
+
+			Ray ray = _cam.ScreenPointToRay(mouse.position.ReadValue());
+			return clickCollider.Raycast(ray, out _, 200f);
+		}
+
+		private void OnItemChanged(IModifierItem item)
 		{
 			Debug.Log($"[DiceItemView] OnItemChanged -> {item.Id} state={item.State} visible={item.IsVisible}");
 			UpdateState(item.State, item.IsVisible);
@@ -100,6 +142,15 @@ namespace _Main.Scripts.Dice
 
 		public void UpdateState(DiceItemState state, bool isVisible)
 		{
+			if (!isVisible && _isHovered)
+			{
+				_isHovered = false;
+				if (boundItem != null)
+				{
+					OnHoverExit?.Invoke(boundItem);
+				}
+			}
+
 			gameObject.SetActive(isVisible);
 			var color = readyColor;
 			switch (state)

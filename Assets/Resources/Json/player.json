@@ -1,4 +1,4 @@
-﻿{
+{
   "cash": 300,
   "dices": [
     "default",
@@ -7,5 +7,13 @@
     "default",
     "default",
     "default"
+  ],
+  "modifiers": [
+    "multiply_combo_three_kind",
+    "shake_reroll",
+    "adjust_ticks_plus1",
+    "pass_activation_multiplier",
+    "extra_dice_cap",
+    "modifier_silencer_item"
   ]
 }

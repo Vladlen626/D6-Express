@@ -1,27 +1,27 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
-public class Quests
+public class Quests : IEnumerable<Quest>
 {
     private readonly List<Quest> quests = new();
 
     public event Action<Quest> QuestAdded;
     public event Action<Quest> QuestRemoved;
 
-    public IReadOnlyList<Quest> All => quests;
-
     public void Add(Quest quest)
     {
         quests.Add(quest);
-
-        quest.Finished += OnQuestFinished;
 
         QuestAdded?.Invoke(quest);
     }
 
     public void Remove(Quest quest)
     {
-        quest.Finished -= OnQuestFinished;
+        if (quest.CurrentState != Quest.State.FINISHED)
+        {
+            quest.RequestFinish();
+        }
 
         quests.Remove(quest);
 
@@ -35,9 +35,14 @@ public class Quests
             Remove(quests[i]);
         }
     }
-
-    private void OnQuestFinished(Quest quest)
+    
+    public IEnumerator<Quest> GetEnumerator()
     {
-        // Remove(quest);
+        return quests.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return quests.GetEnumerator();
     }
 }

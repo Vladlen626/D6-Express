@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using _Main.Scripts.Core.Services;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
@@ -10,7 +11,8 @@ public static class SpeechFactory
         PlayerView playerView,
         D6Game game,
         Run run,
-        ConfigService configService)
+        ConfigService configService,
+        IInputService inputService)
     {
         var textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 
@@ -36,7 +38,7 @@ public static class SpeechFactory
         var speechModel = new SpeechModel(speeches);
         var interactor = playerView.GetComponent<Interactor>();
 
-        return new SpeechController(uiService, interactor, speechModel);
+        return new SpeechController(uiService, interactor, speechModel, inputService);
     }
 
     private static SpeechNodeParallel Say(Speech speech, string text)
@@ -69,6 +71,7 @@ public static class SpeechFactory
 
         var speechNodeConductorSaysHi = Say(speechBuyTicket, textsConfig.texts["conductor_enter_hi"]);
         var speechNodeHasMoney = Say(speechBuyTicket, textsConfig.texts["conductor_enter_positive"]);
+
         var speechNodeHasNoMoney = Say(speechBuyTicket, textsConfig.texts["conductor_enter_negative"]);
 
         var speechNodeConditional = new SpeechNodeConditional(
@@ -79,12 +82,16 @@ public static class SpeechFactory
             .Init(speechBuyTicket);
 
         var speechNodeMoveToTrain = new SpeechNodeDo(() =>
-            {
-                game.RequestSetLocation(Location.TRAIN);
-                playerModel.InventoryModel.TakeCash(run.TicketPrice);
-            })
-            .After(speechNodeHasMoney)
-            .Init(speechBuyTicket);
+        {
+            game.RequestSetLocation(Location.TRAIN);
+            playerModel.InventoryModel.TakeCash(run.TicketPrice);
+        })
+        .Init(speechBuyTicket);
+
+        var speechNodeChoiceEnter = new SpeechNodeChoice(textsConfig.texts["choice_enter_train"])
+        .OnAccepted(speechNodeMoveToTrain)
+        .After(speechNodeHasMoney)
+        .Init(speechBuyTicket);
 
         speechBuyTicket.SetRootNode(speechNodeConductorSaysHi);
         return speechBuyTicket;

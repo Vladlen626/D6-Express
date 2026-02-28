@@ -17,6 +17,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly PlayerModel playerModel;
 		private readonly Run run;
+		private readonly GlobalNotificationService notificationService;
 
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly IObjectFactory objectFactory;
@@ -26,6 +27,7 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService configService;
 		private readonly IUIService uiService;
 		private readonly IInputService inputService;
+		private readonly DiceScoringService scoringService;
 
 		private readonly SceneContext sceneContext;
 
@@ -41,16 +43,17 @@ namespace _Main.Scripts.Dice
 
 		private bool gamePreviousStoped = false;
 
-		private DicePositionsHandler dicePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
+		private CouplePositionsHandler CouplePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
 		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
-			ServiceLocator serviceLocator, Run run, ConfigService configService)
+			ServiceLocator serviceLocator, Run run, ConfigService configService, GlobalNotificationService notificationService)
 		{
 			this.diceGameModel = diceGameModel;
 			this.playerModel = playerModel;
 			this.run = run;
+			this.notificationService = notificationService;
 			this.sceneContext = sceneContext;
 			this.configService = configService;
 			lifecycleService = serviceLocator.Get<LifecycleService>();
@@ -60,6 +63,7 @@ namespace _Main.Scripts.Dice
 			audioService = serviceLocator.Get<IAudioService>();
 			uiService = serviceLocator.Get<IUIService>();
 			inputService = serviceLocator.Get<IInputService>();
+			scoringService = serviceLocator.Get<DiceScoringService>();
 		}
 
 		public void Activate()
@@ -130,13 +134,13 @@ namespace _Main.Scripts.Dice
 			await SetupEnemyDiceList();
 
 			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService, run);
+				loggerService, diceGameModel, cameraShakeService, audioService, scoringService, run, notificationService);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
 				processController,
-				new EnemyTurnController(processController, diceGameModel),
-				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService),
+				new EnemyTurnController(processController, diceGameModel, scoringService),
+				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService, notificationService),
 				new DiceGameResultController(diceGameModel)
 			});
 			
@@ -150,6 +154,7 @@ namespace _Main.Scripts.Dice
 			{
 				return;
 			}
+			gamePreviousStoped = true;
 
 			inputService.DisableDiceGameInputs();
 			
@@ -165,16 +170,15 @@ namespace _Main.Scripts.Dice
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
 			ClenUpPersistentControllers();
-			gamePreviousStoped = true;
 		}
 
 		private async UniTask SetupBaseModels()
 		{
 			var diceGameConfig = await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
-			var newTableModel = new TableModel(dicePositionsHandler.DicePositions, dicePositionsHandler.BankedPositions);
+			var newTableModel = new TableModel(CouplePositionsHandler.FirstPosArray, CouplePositionsHandler.SecondPosArray);
 			diceGameModel.Setup(diceGameConfig, playerModel.InventoryModel.CashCount, newTableModel);
 			// Keep the base cap aligned with available board slots; items can extend beyond this value.
-			var baseCap = Mathf.Min(6, dicePositionsHandler.DicePositions.Length, dicePositionsHandler.BankedPositions.Length);
+			var baseCap = Mathf.Min(6, CouplePositionsHandler.FirstPosArray.Length, CouplePositionsHandler.SecondPosArray.Length);
 			diceGameModel.SetBaseMaxDiceCount(baseCap);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
 		}
@@ -184,7 +188,6 @@ namespace _Main.Scripts.Dice
 			persistentControllers.AddRange(
 				new IBaseController[]
 				{
-					new DiceTooltipsController(uiService, diceGameModel, configService, Camera.main, diceTableView),
 				});
 
 			await lifecycleService.RegisterControllersGroupAsync(persistentControllers);
@@ -205,7 +208,7 @@ namespace _Main.Scripts.Dice
 			await selectionController.WaitSelection();
 
 			var selectedModels = diceGameModel.PlayerDiceModelList;
-			var activeSlots = dicePositionsHandler.DicePositions;
+			var activeSlots = CouplePositionsHandler.FirstPosArray;
 			var playerLimit = Mathf.Min(selectedModels.Count, activeSlots.Length);
 			playerDiceViewsArray = new DiceView[playerLimit];
 
@@ -227,25 +230,32 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask SetupEnemyDiceList()
 		{
-			var config = await configService.GetFirstOrDefaultAsync<DiceConfig>(ResourcePaths.Json.dice_game_rules);
-			var bankSlots = diceTableView.GameStatePosHandler.BankedPositions;
-			var activeSlots = dicePositionsHandler.DicePositions;
-			var enemyLimit = Mathf.Min(diceGameModel.MaxDiceCount, bankSlots.Length, activeSlots.Length);
+			var catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+			if (!catalog.TryGetValue("default", out var config) || config.typeEnum != ItemCatalogType.Dice)
+			{
+				Debug.LogWarning("[DiceGame] Default dice entry not found in catalog.");
+				return;
+			}
+			var bankSlots = diceTableView.GameStatePosHandler.SecondPosArray;
+			var activeSlots = CouplePositionsHandler.FirstPosArray;
+			// Enemy should not benefit from player dice cap bonuses.
+			var enemyLimit = Mathf.Min(diceGameModel.BaseMaxDiceCount, bankSlots.Length, activeSlots.Length);
 
 			for (int i = 0; i < enemyLimit; i++)
 			{
 				var startPos = bankSlots[i];
-				DiceView view = await objectFactory.CreateAsync<DiceView>(
-					ResourcePaths.Items.DicePrefab, Vector3.zero, Quaternion.identity);
-
-				view.Initialize(config.id, false, audioService);
-				view.transform.SetParent(startPos);
-				view.Hide();
-
-				DiceModel model = new DiceModel(config);
-				model.SetCurrentPosition(startPos);
+				var model = await DiceFactory.SpawnDiceViewAsync(
+					objectFactory,
+					config,
+					Vector3.zero,
+					Quaternion.identity,
+					startPos,
+					false,
+					audioService,
+					diceGameModel,
+					hideOnSpawn: true);
+				
 				diceGameModel.EnemyDiceModelList.Add(model);
-				diceGameModel.AddDiceOnScreen(model, view);
 			}
 
 			var enemyModels = diceGameModel.EnemyDiceModelList;
@@ -309,7 +319,7 @@ namespace _Main.Scripts.Dice
 			{
 				foreach (var dice in playerDiceViewsArray)
 				{
-					if (dice != null)
+					if (dice)
 					{
 						objectFactory.Destroy(dice.gameObject);
 					}
@@ -322,7 +332,7 @@ namespace _Main.Scripts.Dice
 			{
 				foreach (var dice in enemyDiceViewsArray)
 				{
-					if (dice != null)
+					if (dice)
 					{
 						objectFactory.Destroy(dice.gameObject);
 					}
@@ -337,13 +347,13 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask SetupItemsDisplay()
 		{
-			var items = diceGameModel.ItemsModel.Items;
-			if (items == null || items.Count == 0)
+			var items = diceGameModel.ModifierItemsModel.Items;
+			if (items.Count == 0)
 			{
 				return;
 			}
 
-			if (diceTableView.ItemViewPrefab == null)
+			if (!diceTableView.ItemViewPrefab)
 			{
 				Debug.LogWarning("[DiceGame] ItemViewPrefab is not assigned on DiceTableView. Items will not be spawned.");
 				return;
@@ -354,18 +364,18 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < items.Count; i++)
 			{
 				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				var prefab = (items[i] as IDiceItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
+				var prefab = (items[i] as IModifierItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
 				var view = UnityEngine.Object.Instantiate(
 					prefab,
 					slot ? slot.position : Vector3.zero,
 					slot ? slot.rotation : Quaternion.identity);
 
-				if (slot != null)
+				if (slot)
 				{
 					view.transform.SetParent(slot);
 				}
 
-				var controller = new DiceItemController(items[i], view);
+				var controller = new ModifierItemController(items[i], view);
 				itemControllers.Add(controller);
 				itemViews.Add(view);
 				await lifecycleService.RegisterAsync(controller);
@@ -383,7 +393,7 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < itemViews.Count; i++)
 			{
 				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				if (slot == null)
+				if (!slot)
 				{
 					continue;
 				}
@@ -402,7 +412,7 @@ namespace _Main.Scripts.Dice
 
 			foreach (var view in itemViews)
 			{
-				if (view != null)
+				if (view)
 				{
 					objectFactory.Destroy(view.gameObject);
 				}

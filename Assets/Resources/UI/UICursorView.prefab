@@ -103,7 +103,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: PlatformCore::PlatformCore.Services.UI.UICursorView
   _group: {fileID: 650571673752888971}
-  _canvasType: 0
+  _canvasType: 5
 --- !u!1 &6833911551254776929
 GameObject:
   m_ObjectHideFlags: 0

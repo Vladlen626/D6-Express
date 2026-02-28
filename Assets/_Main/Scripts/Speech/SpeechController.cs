@@ -6,15 +6,17 @@ public class SpeechController : BaseContextController<UISpeechView>
 {
 	private readonly Interactor interactor;
 	private readonly SpeechModel speechModel;
+    private readonly IInputService inputService;
 
-	private Speech currentSpeech;
+    private Speech currentSpeech;
 	private InteractionAction speechAction;
 
-	public SpeechController(IUIService uiService, Interactor interactor, SpeechModel speechModel) : base(uiService)
+	public SpeechController(IUIService uiService, Interactor interactor, SpeechModel speechModel, IInputService inputService) : base(uiService)
 	{
 		this.interactor = interactor;
 		this.speechModel = speechModel;
-	}
+        this.inputService = inputService;
+    }
 
 	protected override void OnActivate()
 	{
@@ -37,6 +39,8 @@ public class SpeechController : BaseContextController<UISpeechView>
 		// TODO: запуск спича не должен быть тут
 		if (action is InteractableActionSpeak speechAction)
 		{
+			inputService.DisableSpeechInputs();
+
 			this.speechAction = speechAction;
 
 			_context.Show();
@@ -49,6 +53,8 @@ public class SpeechController : BaseContextController<UISpeechView>
 
 			currentSpeech.Finished += OnSpeechFinished;
 			currentSpeech.RequestStart();
+
+			inputService.EnableSpeechInputs();
 		}
 	}
 

@@ -1,8 +1,10 @@
+using System;
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
 using PlatformCore.Services.UI;
 using UnityEngine;
 
+// todo: ноды не должны дергать UI напрямую, контроллер должен следить за изменениями в диалоге
 public abstract class SpeechNodeShowText : SpeechNode
 {
     protected abstract string Text { get; }
@@ -46,7 +48,7 @@ public class SpeechNodeShowTextLineRandom : SpeechNodeShowText
 {
     private readonly string[] texts;
 
-    protected override string Text => texts[Random.Range(0, texts.Length)];
+    protected override string Text => texts[UnityEngine.Random.Range(0, texts.Length)];
 
     public SpeechNodeShowTextLineRandom(params string[] texts)
     {

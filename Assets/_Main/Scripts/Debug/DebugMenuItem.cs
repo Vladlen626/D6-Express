@@ -84,9 +84,9 @@ public class DbgMenuItemOpenPlayerWindow : DebugMenuItem
 
     public override string Path => "Open Player Window";
 
-    public DbgMenuItemOpenPlayerWindow(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, Notifications notifications)
+    public DbgMenuItemOpenPlayerWindow(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService)
     {
-        debugWindowPlayer = new DebugWindowPlayer(run, playerModel, playerView, configService, notifications);
+        debugWindowPlayer = new DebugWindowPlayer(run, playerModel, playerView, configService, notificationService);
     }
 
     public override async Task Preload()

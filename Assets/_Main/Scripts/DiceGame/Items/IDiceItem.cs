@@ -19,9 +19,9 @@ namespace _Main.Scripts.Dice
 	}
 
 	/// <summary>
-	/// An item is a modifier with a physical (3D) representation. It can be passive or require a click to arm/activate.
+	/// A modifier item is a modifier with a physical (3D) representation. It can be passive or require a click to arm/activate.
 	/// </summary>
-	public interface IDiceItem : IModifier
+	public interface IModifierItem : IModifier
 	{
 		string Id { get; }
 		string DisplayName { get; }
@@ -29,7 +29,7 @@ namespace _Main.Scripts.Dice
 		DiceItemState State { get; }
 		bool IsVisible { get; }
 
-		event Action<IDiceItem> OnChanged;
+		event Action<IModifierItem> OnChanged;
 
 		/// <summary>
 		/// Attach a view so the item can update its 3D representation (color/highlight, visibility, etc.).
@@ -52,7 +52,7 @@ namespace _Main.Scripts.Dice
 	/// <summary>
 	/// Optional: implement to supply a custom view prefab per item.
 	/// </summary>
-	public interface IDiceItemViewProvider
+	public interface IModifierItemViewProvider
 	{
 		DiceItemView GetViewPrefab();
 	}

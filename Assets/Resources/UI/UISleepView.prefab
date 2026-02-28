@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UISleepView
   _group: {fileID: 8720041924235756248}
-  _canvasType: 0
+  _canvasType: 10
   wakeUpCanvasGroup: {fileID: 7420213447230331861}
 --- !u!225 &8720041924235756248
 CanvasGroup:

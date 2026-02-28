@@ -7,9 +7,9 @@ namespace _Main.Scripts.Dice
 	/// Active modifier: when armed via the on-screen button, the next Pass gains a 1.5x score multiplier.
 	/// Only one activation is available per in-game day.
 	/// </summary>
-	public class PassActivationMultiplierModifier : IOnPassModifier, IOnRoundStartModifier
+	public class PassActivationMultiplierModifier : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier
 	{
-		private const float ScoreMultiplier = 1.5f;
+		public const float ScoreMultiplier = 1.5f;
 		private const int ActivationsPerDay = 1;
 
 		private Run run;
@@ -17,13 +17,14 @@ namespace _Main.Scripts.Dice
 		private int remainingActivations = ActivationsPerDay;
 		private bool isArmed;
 
-		public PassActivationMultiplierModifier()
+		public PassActivationMultiplierModifier(string id)
+			: base(id, id, DiceItemActivationType.Passive)
 		{
 			PassActivationMultiplierOverlay.RegisterActivateCallback(OnActivationRequested);
 			PassActivationMultiplierOverlay.UpdateState(remainingActivations, isArmed, false);
 		}
 
-		public UniTask ModifyValues(DiceModifierContext modifierContext)
+		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			switch (modifierContext.Stage)
 			{

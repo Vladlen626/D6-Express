@@ -1194,7 +1194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9bae687e0713a4d98aeeddb4a8bf07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DicePositionsHandler
-  dicePositions:
+  firstPosArray:
   - {fileID: 7490508307619992142}
   - {fileID: 1773169012488855981}
   - {fileID: 3385553578619655921}
@@ -1205,7 +1205,7 @@ MonoBehaviour:
   - {fileID: 4361165289439412144}
   - {fileID: 4205959786205912032}
   - {fileID: 9153119530724119340}
-  bankedPositions:
+  secondPosArray:
   - {fileID: 8047860421549343021}
   - {fileID: 6298366473515379259}
   - {fileID: 3994217927451776385}
@@ -2764,7 +2764,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9bae687e0713a4d98aeeddb4a8bf07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DicePositionsHandler
-  dicePositions:
+  firstPosArray:
   - {fileID: 319891112465115575}
   - {fileID: 3339908025177816266}
   - {fileID: 7276597625120371506}
@@ -2793,7 +2793,7 @@ MonoBehaviour:
   - {fileID: 472757026421819186}
   - {fileID: 3178152515872561849}
   - {fileID: 4477436621758760269}
-  bankedPositions:
+  secondPosArray:
   - {fileID: 7892640477999261993}
   - {fileID: 6147341149553099327}
   - {fileID: 3839781377316666757}
@@ -3143,6 +3143,7 @@ MonoBehaviour:
   itemSlotsGame:
   - {fileID: 6108877682336522591}
   - {fileID: 3195363608766237320}
+  combinationsView: {fileID: 7635726863499773152}
   animDuration: 0.15
 --- !u!65 &6565419455448806131
 BoxCollider:
@@ -5888,6 +5889,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6449558137352624993, guid: bcb38569e95da3b4b99477c224a2e260, type: 3}
   m_PrefabInstance: {fileID: 4690431463694996771}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7635726863499773152 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2945441777124168131, guid: bcb38569e95da3b4b99477c224a2e260, type: 3}
+  m_PrefabInstance: {fileID: 4690431463694996771}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74186b1190ceeea4c9eab8f8f9830a7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombinationsView
 --- !u!1001 &5235965795540611312
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -37,6 +37,7 @@ public class LoseViewController : BaseContextController<UILoseView>, IGameStateC
 	{
 		base.OnActivate();
 
+
 		_context.SetLoseText(textsConfig.texts["lose_header"]);
 		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
 

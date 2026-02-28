@@ -8,8 +8,9 @@ using Random=UnityEngine.Random;
 
 namespace _Main.Scripts.Dice
 {
-	public class ScrambleCombinationsModifier : IOnRoundStartModifier, IOnRollModifier
+	public class ScrambleCombinationsModifier : ModifierItemBase, IOnRoundStartModifier, IOnRollModifier
 	{
+		private readonly DiceScoringService scoringService;
 		private static readonly DiceCombination[] AvailableCombinations = Enum
 			.GetValues(typeof(DiceCombination))
 			.Cast<DiceCombination>()
@@ -21,6 +22,9 @@ namespace _Main.Scripts.Dice
 			{ DiceCombination.Straight_1_6, new[] { 1, 2, 3, 4, 5, 6 } },
 			{ DiceCombination.Straight_1_5, new[] { 1, 2, 3, 4, 5 } },
 			{ DiceCombination.Straight_2_6, new[] { 2, 3, 4, 5, 6 } },
+			{ DiceCombination.StraightLength4, new[] { 1, 2, 3, 4 } },
+			{ DiceCombination.StraightLength5, new[] { 1, 2, 3, 4, 5 } },
+			{ DiceCombination.StraightLength6, new[] { 1, 2, 3, 4, 5, 6 } },
 			{ DiceCombination.ThreeOfAKind, new[] { 1, 1, 1 } },
 			{ DiceCombination.FourOfAKind, new[] { 1, 1, 1, 1 } },
 			{ DiceCombination.FiveOfAKind, new[] { 1, 1, 1, 1, 1 } },
@@ -31,7 +35,13 @@ namespace _Main.Scripts.Dice
 
 		private readonly Dictionary<DiceCombination, int> scrambledScores = new ();
 
-		public UniTask ModifyValues(DiceModifierContext modifierContext)
+		public ScrambleCombinationsModifier(string id, DiceScoringService scoringService)
+			: base(id, id, DiceItemActivationType.Passive)
+		{
+			this.scoringService = scoringService;
+		}
+
+		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			switch (modifierContext.Stage)
 			{
@@ -39,7 +49,7 @@ namespace _Main.Scripts.Dice
 					Debug.Log("[ScrambleCombinationsModifier] Building new scramble map for round start.");
 					BuildNewRoundMap();
 					LogScrambledScores();
-					ScrambleCombinationsOverlay.UpdateMap(scrambledScores);
+					ScrambleCombinationsOverlay.UpdateMap(scoringService, scrambledScores);
 					break;
 
 				case ModifierStage.Roll:
@@ -75,19 +85,19 @@ namespace _Main.Scripts.Dice
 			sb.AppendLine("[ScrambleCombinationsModifier] Scrambled score map:");
 			foreach (var pair in scrambledScores)
 			{
-				sb.AppendLine($" - {DiceGameUtils.GetCombinationName(pair.Key)} -> {pair.Value}");
+				sb.AppendLine($" - {scoringService.GetDisplayName(null, pair.Key)} -> {pair.Value}");
 			}
 			Debug.Log(sb.ToString());
 		}
 
-		private static int GetBaseScoreFromSample(DiceCombination combination)
+		private int GetBaseScoreFromSample(DiceCombination combination)
 		{
 			if (!CombinationSamples.TryGetValue(combination, out var sample))
 			{
 				return 0;
 			}
 
-			var result = DiceGameUtils.GetCombinations(sample);
+			var result = scoringService.Evaluate(sample);
 			foreach (var entry in result.Combinations)
 			{
 				if (entry.Combination == combination)
@@ -132,7 +142,7 @@ namespace _Main.Scripts.Dice
 				Debug.Log("[ScrambleCombinationsModifier] Scramble map missing on Roll. Rebuilding.");
 				BuildNewRoundMap();
 				LogScrambledScores();
-				ScrambleCombinationsOverlay.UpdateMap(scrambledScores);
+				ScrambleCombinationsOverlay.UpdateMap(scoringService, scrambledScores);
 			}
 
 			Debug.Log("[ScrambleCombinationsModifier] Applying scramble on Roll.");
@@ -148,7 +158,7 @@ namespace _Main.Scripts.Dice
 			LogScramble(combinations);
 		}
 
-		private static void LogScramble(List<DiceCombinationEntry> combinations)
+		private void LogScramble(List<DiceCombinationEntry> combinations)
 		{
 			var logBuilder = new StringBuilder();
 			logBuilder.AppendLine("[ScrambleCombinationsModifier] New scrambled combinations:");
@@ -156,7 +166,7 @@ namespace _Main.Scripts.Dice
 			{
 				var entry = combinations[i];
 				logBuilder.AppendLine(
-					$" #{i + 1}: {DiceGameUtils.GetCombinationName(entry.Combination)} | face {entry.Face} x{entry.Count} | base {entry.BaseScore} | mult {entry.Multiplier} | final {entry.FinalScore}");
+					$" #{i + 1}: {scoringService.GetDisplayName(null, entry.Combination)} | face {entry.Face} x{entry.Count} | base {entry.BaseScore} | mult {entry.Multiplier} | final {entry.FinalScore}");
 			}
 			Debug.Log(logBuilder.ToString());
 		}

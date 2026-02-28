@@ -13,7 +13,7 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
     private readonly Camera camera;
 
     private TextsConfig textsConfig;
-    private IReadOnlyDictionary<string, DiceConfig> diceConfigsDict;
+    private IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
 
     public ShopTooltipsController(IUIService uiService, Shop shop, Interactor interactor, Camera camera) : base(uiService)
     {
@@ -25,7 +25,7 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
     protected override async UniTask OnPreloadAsync()
     {
         var configService = Locator.Resolve<ConfigService>();
-        diceConfigsDict = await configService.GetConfigsAsync<DiceConfig>(ResourcePaths.Json.dice_types);
+        catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
         textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
     }
 
@@ -65,12 +65,17 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
 
             _context.Show();
 
-            var dice = diceConfigsDict[shopItem.ItemId];
-            var header = textsConfig.texts[dice.name];
-            var description = textsConfig.texts[dice.description];
+            if (!catalog.TryGetValue(shopItem.ItemId, out var entry))
+            {
+                return;
+            }
+
+            var header = textsConfig.texts[entry.nameKey];
+            var description = textsConfig.texts[entry.descriptionKey];
 
             _context.SetHeaderText(header);
             _context.SetDescriptionText(description);
+            _context.SetRarity(entry.rarityEnum);
 
             _context.SetPositionFromWorld(
                 shopItemView.transform,

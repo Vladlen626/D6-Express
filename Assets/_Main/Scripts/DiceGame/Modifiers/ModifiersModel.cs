@@ -8,13 +8,22 @@ namespace _Main.Scripts.Dice
 	public class ModifiersModel
 	{
 		public IReadOnlyList<IModifier> AllModifiers => allModifiers;
+		public int LevelStartCount => onLevelStartActionsHandler.Count;
+		public int RoundStartCount => onRoundStartActionsHandler.Count;
+		public int RollCount => onRollActionsHandler.Count;
+		public int PassCount => onPassActionsHandler.Count;
+		public int RoundEndCount => onRoundEndActionsHandler.Count;
 
-		private readonly List<IModifier> allModifiers = new (); 
-		private readonly List<IOnLevelStartModifier> onLevelStartActionsHandler = new ();
-		private readonly List<IOnRoundStartModifier> onRoundStartActionsHandler = new ();
-		private readonly List<IOnRollModifier> onRollActionsHandler = new ();
-		private readonly List<IOnPassModifier> onPassActionsHandler = new ();
-		private readonly List<IOnRoundEndModifier> onRoundEndActionsHandler = new ();
+		private readonly List<IModifier> allModifiers = new();
+		private readonly List<IOnLevelStartModifier> onLevelStartActionsHandler = new();
+		private readonly List<IOnRoundStartModifier> onRoundStartActionsHandler = new();
+		private readonly List<IOnRollModifier> onRollActionsHandler = new();
+		private readonly List<IOnPassModifier> onPassActionsHandler = new();
+		private readonly List<IOnRoundEndModifier> onRoundEndActionsHandler = new();
+
+		public event Action<IModifier> ModifierAdded;
+		public event Action<IModifier> ModifierRemoved;
+		public event Action<IModifier, ModifierStage> ModifierApplied;
 
 		public void AddModifier(IModifier modifier)
 		{
@@ -44,6 +53,8 @@ namespace _Main.Scripts.Dice
 			{
 				onRoundEndActionsHandler.Add(onRoundEndAction);
 			}
+
+			ModifierAdded?.Invoke(modifier);
 		}
 
 		public void RemoveModifier(IModifier modifier)
@@ -74,6 +85,17 @@ namespace _Main.Scripts.Dice
 			{
 				onRoundEndActionsHandler.Remove(onRoundEndAction);
 			}
+
+			ModifierRemoved?.Invoke(modifier);
+		}
+
+		public void ClearModifiers()
+		{
+			for (int i = allModifiers.Count - 1; i >= 0; i--)
+			{
+				RemoveModifier(allModifiers[i]);
+				allModifiers.RemoveAt(i);
+			}
 		}
 
 		public async UniTask PlayLevelStartActions(DiceModifierContext modifierContext)
@@ -81,6 +103,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onLevelStartAction in onLevelStartActionsHandler)
 			{
 				await onLevelStartAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onLevelStartAction, ModifierStage.LevelStart);
 			}
 		}
 
@@ -89,6 +112,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onRoundStartAction in onRoundStartActionsHandler)
 			{
 				await onRoundStartAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onRoundStartAction, ModifierStage.RoundStart);
 			}
 		}
 
@@ -97,6 +121,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onRollAction in onRollActionsHandler)
 			{
 				await onRollAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onRollAction, ModifierStage.Roll);
 			}
 		}
 
@@ -105,6 +130,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onPassAction in onPassActionsHandler)
 			{
 				await onPassAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onPassAction, ModifierStage.Pass);
 			}
 		}
 
@@ -113,6 +139,7 @@ namespace _Main.Scripts.Dice
 			foreach (var onRoundEndAction in onRoundEndActionsHandler)
 			{
 				await onRoundEndAction.ModifyValues(modifierContext);
+				ModifierApplied?.Invoke(onRoundEndAction, ModifierStage.RoundEnd);
 			}
 		}
 

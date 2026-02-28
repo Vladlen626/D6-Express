@@ -16,6 +16,7 @@ public class GameStateController : IBaseController, IActivatable
 	private static readonly GameStateTransitionTask[] RunStartRecipe =
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
+		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHANGE_LOCATION,
@@ -40,6 +41,7 @@ public class GameStateController : IBaseController, IActivatable
 	private static readonly GameStateTransitionTask[] DayRecipe =
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
+		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.NPC_RESPAWN,
@@ -52,6 +54,7 @@ public class GameStateController : IBaseController, IActivatable
 	private static readonly GameStateTransitionTask[] LocationRecipe =
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
+		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHANGE_LOCATION,
@@ -77,10 +80,9 @@ public class GameStateController : IBaseController, IActivatable
 	private static readonly GameStateTransitionTask[] RunFinishedWinRecipe =
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
-		GameStateTransitionTask.SHOW_WIN,
 		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.SHOW_WIN,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 	};
@@ -88,10 +90,9 @@ public class GameStateController : IBaseController, IActivatable
 	private static readonly GameStateTransitionTask[] RunFinishedLoseRecipe =
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
-		GameStateTransitionTask.SHOW_LOSE,
 		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.SHOW_LOSE,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 	};

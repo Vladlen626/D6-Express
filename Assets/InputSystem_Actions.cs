@@ -862,15 +862,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""SpeechLineSkip"",
-                    ""type"": ""Button"",
-                    ""id"": ""0b0535b6-4c12-4881-aee0-8175c60f148b"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1291,28 +1282,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""action"": ""TrackedDeviceOrientation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""43b02685-95e3-439e-85bc-e6953eff9d82"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""SpeechLineSkip"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""86272d4c-582d-4703-b8c1-b46e6e34a2f4"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""SpeechLineSkip"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1339,6 +1308,74 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse;Gamepad;Touch;Joystick;XR"",
                     ""action"": ""Switch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""Speech"",
+            ""id"": ""e27ee6ba-51dd-4ae9-958b-ebb3c9096c80"",
+            ""actions"": [
+                {
+                    ""name"": ""Accept"",
+                    ""type"": ""Button"",
+                    ""id"": ""75f60dd0-2f3f-43e2-8be4-f7714dbf28d9"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Decline"",
+                    ""type"": ""Button"",
+                    ""id"": ""75d0921d-03a6-4afc-a927-21b388141111"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SkipLine"",
+                    ""type"": ""Button"",
+                    ""id"": ""7e4fcc33-e57a-4e8e-836a-d2a143953317"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""2158bf90-1827-4342-93a3-eaa825e8ca75"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Accept"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2a76e2b9-330d-459f-b7eb-a5d476184355"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Decline"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2ddcd34-7f1a-4234-b089-60259093a322"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""SkipLine"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1438,10 +1475,14 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
-        m_UI_SpeechLineSkip = m_UI.FindAction("SpeechLineSkip", throwIfNotFound: true);
         // Debug
         m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
         m_Debug_Switch = m_Debug.FindAction("Switch", throwIfNotFound: true);
+        // Speech
+        m_Speech = asset.FindActionMap("Speech", throwIfNotFound: true);
+        m_Speech_Accept = m_Speech.FindAction("Accept", throwIfNotFound: true);
+        m_Speech_Decline = m_Speech.FindAction("Decline", throwIfNotFound: true);
+        m_Speech_SkipLine = m_Speech.FindAction("SkipLine", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1450,6 +1491,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_DiceGame.enabled, "This will cause a leak and performance issues, InputSystem_Actions.DiceGame.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Debug.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Debug.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Speech.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Speech.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1859,7 +1901,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_ScrollWheel;
     private readonly InputAction m_UI_TrackedDevicePosition;
     private readonly InputAction m_UI_TrackedDeviceOrientation;
-    private readonly InputAction m_UI_SpeechLineSkip;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -1911,10 +1952,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/TrackedDeviceOrientation".
         /// </summary>
         public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
-        /// <summary>
-        /// Provides access to the underlying input action "UI/SpeechLineSkip".
-        /// </summary>
-        public InputAction @SpeechLineSkip => m_Wrapper.m_UI_SpeechLineSkip;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1971,9 +2008,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @TrackedDeviceOrientation.started += instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.performed += instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.canceled += instance.OnTrackedDeviceOrientation;
-            @SpeechLineSkip.started += instance.OnSpeechLineSkip;
-            @SpeechLineSkip.performed += instance.OnSpeechLineSkip;
-            @SpeechLineSkip.canceled += instance.OnSpeechLineSkip;
         }
 
         /// <summary>
@@ -2015,9 +2049,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @TrackedDeviceOrientation.started -= instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.performed -= instance.OnTrackedDeviceOrientation;
             @TrackedDeviceOrientation.canceled -= instance.OnTrackedDeviceOrientation;
-            @SpeechLineSkip.started -= instance.OnSpeechLineSkip;
-            @SpeechLineSkip.performed -= instance.OnSpeechLineSkip;
-            @SpeechLineSkip.canceled -= instance.OnSpeechLineSkip;
         }
 
         /// <summary>
@@ -2147,6 +2178,124 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="DebugActions" /> instance referencing this action map.
     /// </summary>
     public DebugActions @Debug => new DebugActions(this);
+
+    // Speech
+    private readonly InputActionMap m_Speech;
+    private List<ISpeechActions> m_SpeechActionsCallbackInterfaces = new List<ISpeechActions>();
+    private readonly InputAction m_Speech_Accept;
+    private readonly InputAction m_Speech_Decline;
+    private readonly InputAction m_Speech_SkipLine;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Speech".
+    /// </summary>
+    public struct SpeechActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public SpeechActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Speech/Accept".
+        /// </summary>
+        public InputAction @Accept => m_Wrapper.m_Speech_Accept;
+        /// <summary>
+        /// Provides access to the underlying input action "Speech/Decline".
+        /// </summary>
+        public InputAction @Decline => m_Wrapper.m_Speech_Decline;
+        /// <summary>
+        /// Provides access to the underlying input action "Speech/SkipLine".
+        /// </summary>
+        public InputAction @SkipLine => m_Wrapper.m_Speech_SkipLine;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Speech; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="SpeechActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(SpeechActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="SpeechActions" />
+        public void AddCallbacks(ISpeechActions instance)
+        {
+            if (instance == null || m_Wrapper.m_SpeechActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_SpeechActionsCallbackInterfaces.Add(instance);
+            @Accept.started += instance.OnAccept;
+            @Accept.performed += instance.OnAccept;
+            @Accept.canceled += instance.OnAccept;
+            @Decline.started += instance.OnDecline;
+            @Decline.performed += instance.OnDecline;
+            @Decline.canceled += instance.OnDecline;
+            @SkipLine.started += instance.OnSkipLine;
+            @SkipLine.performed += instance.OnSkipLine;
+            @SkipLine.canceled += instance.OnSkipLine;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="SpeechActions" />
+        private void UnregisterCallbacks(ISpeechActions instance)
+        {
+            @Accept.started -= instance.OnAccept;
+            @Accept.performed -= instance.OnAccept;
+            @Accept.canceled -= instance.OnAccept;
+            @Decline.started -= instance.OnDecline;
+            @Decline.performed -= instance.OnDecline;
+            @Decline.canceled -= instance.OnDecline;
+            @SkipLine.started -= instance.OnSkipLine;
+            @SkipLine.performed -= instance.OnSkipLine;
+            @SkipLine.canceled -= instance.OnSkipLine;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="SpeechActions.UnregisterCallbacks(ISpeechActions)" />.
+        /// </summary>
+        /// <seealso cref="SpeechActions.UnregisterCallbacks(ISpeechActions)" />
+        public void RemoveCallbacks(ISpeechActions instance)
+        {
+            if (m_Wrapper.m_SpeechActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="SpeechActions.AddCallbacks(ISpeechActions)" />
+        /// <seealso cref="SpeechActions.RemoveCallbacks(ISpeechActions)" />
+        /// <seealso cref="SpeechActions.UnregisterCallbacks(ISpeechActions)" />
+        public void SetCallbacks(ISpeechActions instance)
+        {
+            foreach (var item in m_Wrapper.m_SpeechActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_SpeechActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="SpeechActions" /> instance referencing this action map.
+    /// </summary>
+    public SpeechActions @Speech => new SpeechActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -2403,13 +2552,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "SpeechLineSkip" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSpeechLineSkip(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Debug" which allows adding and removing callbacks.
@@ -2425,5 +2567,34 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSwitch(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Speech" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="SpeechActions.AddCallbacks(ISpeechActions)" />
+    /// <seealso cref="SpeechActions.RemoveCallbacks(ISpeechActions)" />
+    public interface ISpeechActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Accept" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAccept(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Decline" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDecline(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SkipLine" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSkipLine(InputAction.CallbackContext context);
     }
 }
