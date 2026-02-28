@@ -135,7 +135,14 @@ namespace _Main.Scripts.Dice
 		private void MoveToSlot(DiceModel model, Transform slot)
 		{
 			model.SetCurrentPosition(slot);
-			_diceGameModel.ScreenDiceDict[model].MoveToPosition(slot.position);
+			if (_diceGameModel.ScreenDiceDict.TryGetValue(model, out var view) && view)
+			{
+				view.MoveToPosition(slot.position);
+			}
+			else
+			{
+				Debug.LogWarning($"[DiceSelectionController] Missing dice view for model {model?.ConfigId}");
+			}
 		}
 
 		private int GetSelectionLimit()
@@ -162,9 +169,14 @@ namespace _Main.Scripts.Dice
 			{
 				if (!SelectedModel.Contains(model))
 				{
-					var dice = _diceGameModel.ScreenDiceDict[model];
-					_diceGameModel.RemoveDiceOnScreen(model);
-					_factory.Destroy(dice.gameObject);
+					if (_diceGameModel.ScreenDiceDict.TryGetValue(model, out var dice))
+					{
+						_diceGameModel.RemoveDiceOnScreen(model);
+						if (dice)
+						{
+							_factory.Destroy(dice.gameObject);
+						}
+					}
 				}
 			}
 		}

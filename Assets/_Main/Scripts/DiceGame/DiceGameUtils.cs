@@ -83,5 +83,21 @@ namespace _Main.Scripts.Dice
 
 			return values;
 		}
+
+		public static bool IsDiceBanked(DiceModel dice, TableModel table)
+		{
+			if (dice == null || table == null)
+			{
+				return false;
+			}
+
+			var position = dice.CurrentPosition;
+			if (!position)
+			{
+				return false;
+			}
+
+			return table.IsBankedPosition(position);
+		}
 	}
 }

@@ -81,6 +81,42 @@ namespace _Main.Scripts.Dice
 		{
 			_occupiedBankedPositions.Remove(position);
 		}
+
+		public bool IsActivePosition(Transform position)
+		{
+			if (!position || _activePositions == null)
+			{
+				return false;
+			}
+
+			for (int i = 0; i < _activePositions.Length; i++)
+			{
+				if (_activePositions[i] == position)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public bool IsBankedPosition(Transform position)
+		{
+			if (!position || _bankedPositions == null)
+			{
+				return false;
+			}
+
+			for (int i = 0; i < _bankedPositions.Length; i++)
+			{
+				if (_bankedPositions[i] == position)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
 		
 		public void ResetAllPositions()
 		{

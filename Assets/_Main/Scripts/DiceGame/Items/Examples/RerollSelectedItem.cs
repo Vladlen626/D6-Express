@@ -67,7 +67,7 @@ namespace _Main.Scripts.Dice
 
 			foreach (var dice in context.Dice)
 			{
-				if (dice == null || dice.IsSaved)
+				if (dice == null || dice.IsSaved || DiceGameUtils.IsDiceBanked(dice, context.Table))
 				{
 					continue;
 				}
@@ -96,7 +96,7 @@ namespace _Main.Scripts.Dice
 
 		private async void OnDiceClickedAsync(DiceModel model, DiceView view)
 		{
-			if (State != DiceItemState.Armed || cooldownRemaining > 0 || model == null || model.IsSaved)
+			if (State != DiceItemState.Armed || cooldownRemaining > 0 || model == null || model.IsSaved || DiceGameUtils.IsDiceBanked(model, boundGameModel?.tableModel))
 			{
 				return;
 			}

@@ -268,30 +268,45 @@ namespace _Main.Scripts.Dice
 				ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
 			}
 		}
-		
+
+		private bool IsEffectivelySaved(DiceModel dice)
+		{
+			if (dice == null)
+			{
+				return true;
+			}
+
+			if (dice.IsSaved)
+			{
+				return true;
+			}
+
+			return DiceGameUtils.IsDiceBanked(dice, tableModel);
+		}
+
 		public DiceModel[] GetSelected()
 		{
-			return CurrentDiceModelList.Where(d => d.IsChosen && !d.IsSaved).ToArray();
+			return CurrentDiceModelList.Where(d => d.IsChosen && !IsEffectivelySaved(d)).ToArray();
 		}
 
 		public DiceModel[] GetUnbanked()
 		{
-			return CurrentDiceModelList.Where(d => !d.IsSaved).ToArray();
+			return CurrentDiceModelList.Where(d => !IsEffectivelySaved(d)).ToArray();
 		}
 
 		public DiceModel[] GetBanked()
 		{
-			return CurrentDiceModelList.Where(d => d.IsSaved).ToArray();
+			return CurrentDiceModelList.Where(d => IsEffectivelySaved(d)).ToArray();
 		}
 
 		public bool HasUnbanked()
 		{
-			return CurrentDiceModelList.Any(d => !d.IsSaved);
+			return CurrentDiceModelList.Any(d => !IsEffectivelySaved(d));
 		}
 
 		public bool AllBanked()
 		{
-			return CurrentDiceModelList.All(d => d.IsSaved);
+			return CurrentDiceModelList.All(d => IsEffectivelySaved(d));
 		}
 
 		public void ResetAllDices()
