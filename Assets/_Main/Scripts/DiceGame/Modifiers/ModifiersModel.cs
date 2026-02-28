@@ -94,7 +94,6 @@ namespace _Main.Scripts.Dice
 			for (int i = allModifiers.Count - 1; i >= 0; i--)
 			{
 				RemoveModifier(allModifiers[i]);
-				allModifiers.RemoveAt(i);
 			}
 		}
 
@@ -145,6 +144,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
+			allModifiers.Clear();
 			onLevelStartActionsHandler.Clear();
 			onRoundStartActionsHandler.Clear();
 			onRollActionsHandler.Clear();

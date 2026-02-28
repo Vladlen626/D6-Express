@@ -200,6 +200,16 @@ namespace _Main.Scripts.Dice
 			_ = HandlePassAsync();
 		}
 
+		public async UniTask HandlePassForCurrentTurnAsync()
+		{
+			if (IsProcessing)
+			{
+				return;
+			}
+
+			await HandlePassAsync();
+		}
+
 		private async UniTask HandlePassAsync()
 		{
 			IsProcessing = true;

@@ -1,3 +1,4 @@
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceItemView customPrefab;
 		private DiceGameModel boundGameModel;
 		private readonly string bonusKey;
+		private bool boundIsPlayerSide = true;
 
 		public ExtraDiceCapItem(string id, int bonus = 4, DiceItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.Passive)
@@ -40,14 +42,14 @@ namespace _Main.Scripts.Dice
 
 		public void OnRemovedFromGameModel(DiceGameModel gameModel)
 		{
-			gameModel?.RemoveDiceCapModifier(bonusKey);
+			gameModel?.RemoveDiceCapModifier(bonusKey, boundIsPlayerSide);
 			boundGameModel = null;
 		}
 
 		public override void ResetItem()
 		{
 			base.ResetItem();
-			boundGameModel?.RemoveDiceCapModifier(bonusKey);
+			boundGameModel?.RemoveDiceCapModifier(bonusKey, boundIsPlayerSide);
 			boundGameModel = null;
 		}
 
@@ -61,7 +63,23 @@ namespace _Main.Scripts.Dice
 			}
 
 			boundGameModel = gameModel;
-			boundGameModel.SetDiceCapModifier(bonusKey, bonus);
+			boundIsPlayerSide = ResolveBoundSide(gameModel);
+			boundGameModel.SetDiceCapModifier(bonusKey, bonus, boundIsPlayerSide);
+		}
+
+		private bool ResolveBoundSide(DiceGameModel gameModel)
+		{
+			if (gameModel.PlayerModifierItemsModel.Items.Contains(this))
+			{
+				return true;
+			}
+
+			if (gameModel.EnemyModifierItemsModel.Items.Contains(this))
+			{
+				return false;
+			}
+
+			return gameModel.IsPlayerTurn;
 		}
 	}
 }

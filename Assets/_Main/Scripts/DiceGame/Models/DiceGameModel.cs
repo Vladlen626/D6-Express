@@ -372,10 +372,19 @@ namespace _Main.Scripts.Dice
 			tableModel.Reset();
 			PlayerDiceModelList.Clear();
 			EnemyDiceModelList.Clear();
+			ResetEnemyRuntime();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;
 			CurrentTurn = 0;
+		}
+
+		private void ResetEnemyRuntime()
+		{
+			EnemyModifierItemsModel.Reset();
+			EnemyModifiersModel.Reset();
+			enemyDiceCapBonuses.Clear();
+			EnemyScoringService.ResetUpgradeStatesToDefaults();
 		}
 	}
 }

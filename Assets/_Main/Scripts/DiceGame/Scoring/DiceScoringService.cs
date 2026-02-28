@@ -282,6 +282,12 @@ namespace _Main.Scripts.Dice
 			straightCombination.ResetToDefaults(straightConfig?.Defaults);
 		}
 
+		public void ResetUpgradeStatesToDefaults()
+		{
+			ResetStraightToDefaults();
+			InitializeDefaultUpgradeStates();
+		}
+
 		public void Dispose()
 		{
 		}
