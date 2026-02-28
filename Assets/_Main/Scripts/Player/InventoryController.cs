@@ -65,16 +65,25 @@ public class InventoryController : IBaseController, IActivatable, IPreloadable
 
 	private void OnDiceRemovedHandler(string diceId)
 	{
-		foreach (var diceModel in spawnedDiceModelList)
+		for (int i = spawnedDiceModelList.Count - 1; i >= 0; i--)
 		{
+			var diceModel = spawnedDiceModelList[i];
 			if (diceModel.ConfigId != diceId)
 			{
 				continue;
 			}
 
 			dicePosNum--;
-			factory.Destroy(diceGameModel.ScreenDiceDict[diceModel].gameObject);
-			spawnedDiceModelList.Remove(diceModel);
+			if (diceGameModel.ScreenDiceDict.TryGetValue(diceModel, out var diceView))
+			{
+				diceGameModel.RemoveDiceOnScreen(diceModel);
+				if (diceView)
+				{
+					factory.Destroy(diceView.gameObject);
+				}
+			}
+
+			spawnedDiceModelList.RemoveAt(i);
 			return;
 		}
 	}
@@ -113,7 +122,14 @@ public class InventoryController : IBaseController, IActivatable, IPreloadable
 	{
 		foreach (var diceModel in spawnedDiceModelList)
 		{
-			factory.Destroy(diceGameModel.ScreenDiceDict[diceModel].gameObject);
+			if (diceGameModel.ScreenDiceDict.TryGetValue(diceModel, out var diceView))
+			{
+				diceGameModel.RemoveDiceOnScreen(diceModel);
+				if (diceView)
+				{
+					factory.Destroy(diceView.gameObject);
+				}
+			}
 		}
 
 		spawnedDiceModelList.Clear();
