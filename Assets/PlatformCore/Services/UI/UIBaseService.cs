@@ -12,8 +12,7 @@ namespace PlatformCore.Services.UI
 		private readonly ILoggerService _logger;
 		private readonly IResourceService _resources;
 
-		private readonly Transform _staticCanvas;
-		private readonly Transform _dynamicCanvas;
+		private readonly Dictionary<UICanvasType, Transform> _canvases = new();
 
 		private readonly Dictionary<Type, UIBaseElement> _windows = new();
 
@@ -22,12 +21,39 @@ namespace PlatformCore.Services.UI
 		private CancellationToken _token;
 
 		public UIBaseService(ILoggerService logger, IResourceService resources,
-			Transform staticCanvas, Transform dynamicCanvas)
+			IReadOnlyList<UICanvasEntry> canvasEntries)
 		{
 			_logger = logger;
 			_resources = resources;
-			_staticCanvas = staticCanvas;
-			_dynamicCanvas = dynamicCanvas;
+
+			if (canvasEntries == null || canvasEntries.Count == 0)
+			{
+				_logger?.LogError("[UIService] UI canvas list is empty");
+				return;
+			}
+
+			for (var i = 0; i < canvasEntries.Count; i++)
+			{
+				var entry = canvasEntries[i];
+				if (!entry.Canvas)
+				{
+					_logger?.LogError($"[UIService] Missing canvas reference for {entry.CanvasType}");
+					continue;
+				}
+
+				if (_canvases.ContainsKey(entry.CanvasType))
+				{
+					_logger?.LogError($"[UIService] Duplicate canvas mapping for {entry.CanvasType}");
+					continue;
+				}
+
+				if (!ValidateCanvas(entry.CanvasType, entry.Canvas))
+				{
+					continue;
+				}
+
+				_canvases.Add(entry.CanvasType, entry.Canvas);
+			}
 		}
 
 		protected override UniTask OnPreInitializeAsync(CancellationToken ct)
@@ -59,15 +85,17 @@ namespace PlatformCore.Services.UI
 
 		public bool IsShowed<T>() where T : UIBaseElement
 		{
-			return _windows.TryGetValue(typeof(T), out var window) && window.gameObject.activeSelf;
+			return _windows.TryGetValue(typeof(T), out var window) && window && window.IsShown();
 		}
 
 		// === PRELOAD / UNLOAD ===
 		public async UniTask PreloadAsync<T>() where T : UIBaseElement
 		{
 			var type = typeof(T);
-			if (_windows.TryGetValue(type, out var window))
+			if (_windows.ContainsKey(type))
+			{
 				return;
+			}
 
 			await LoadAsync<T>(_token);
 		}
@@ -76,7 +104,9 @@ namespace PlatformCore.Services.UI
 		{
 			var type = typeof(T);
 			if (!_windows.TryGetValue(type, out var window))
+			{
 				return;
+			}
 
 			window.Hide();
 			Object.Destroy(window.gameObject);
@@ -105,7 +135,12 @@ namespace PlatformCore.Services.UI
 				return null;
 			}
 
-			var target = prefabComponent.CanvasType == UICanvasType.Default ? _staticCanvas : _dynamicCanvas;
+			var target = ResolveCanvas(prefabComponent.CanvasType);
+			if (!target)
+			{
+				return null;
+			}
+
 			var instance = Object.Instantiate(prefab, target);
 			var component = instance.GetComponent<T>();
 
@@ -126,13 +161,53 @@ namespace PlatformCore.Services.UI
 		public override void Dispose()
 		{
 			foreach (var w in _windows.Values)
+			{
 				if (w)
+				{
 					Object.Destroy(w.gameObject);
+				}
+			}
 
 			_windows.Clear();
 			_cts?.Cancel();
 			_cts?.Dispose();
 			_logger?.Log("[UIService] Disposed");
+		}
+
+		private Transform ResolveCanvas(UICanvasType canvasType)
+		{
+			if (!_canvases.TryGetValue(canvasType, out var canvas) || !canvas)
+			{
+				_logger?.LogError($"[UIService] Missing canvas for type: {canvasType}");
+				return null;
+			}
+
+			return canvas;
+		}
+
+		private bool ValidateCanvas(UICanvasType canvasType, Transform canvasTransform)
+		{
+			var canvas = canvasTransform.GetComponent<Canvas>();
+			if (!canvas)
+			{
+				_logger?.LogError($"[UIService] Missing Canvas component for {canvasType}");
+				return false;
+			}
+
+			if (!canvas.isRootCanvas && !canvas.overrideSorting)
+			{
+				canvas.overrideSorting = true;
+				_logger?.Log($"[UIService] Enabled overrideSorting for {canvasType}");
+			}
+
+			var expectedOrder = (int)canvasType;
+			if (canvas.sortingOrder != expectedOrder)
+			{
+				canvas.sortingOrder = expectedOrder;
+				_logger?.Log($"[UIService] Set sortingOrder {expectedOrder} for {canvasType}");
+			}
+
+			return true;
 		}
 	}
 }

@@ -18,6 +18,11 @@ namespace PlatformCore.Services.UI
 		{
 			if (!_group)
 			{
+				_group = GetComponent<CanvasGroup>();
+			}
+
+			if (!_group)
+			{
 				Debug.LogError($"[{GetType().Name}] CanvasGroup is missing on GameObject '{gameObject.name}'!");
 			}
 
@@ -60,6 +65,16 @@ namespace PlatformCore.Services.UI
 
 		public bool IsShown()
 		{
+			if (!_group)
+			{
+				return false;
+			}
+
+			if (!gameObject.activeInHierarchy)
+			{
+				return false;
+			}
+
 			return _group.alpha > 0;
 		}
 

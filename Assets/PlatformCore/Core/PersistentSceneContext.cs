@@ -1,14 +1,15 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using PlatformCore.Services.UI;
 
 namespace PlatformCore.Core
 {
 	public class PersistentSceneContext : MonoBehaviour
 	{
 		public Scene scene {get; private set;}
-		public Transform StaticCanvas;
-		public Transform DynamicCanvas;
+		[SerializeField] private UICanvasEntry[] _uiCanvases;
+		public UICanvasEntry[] UICanvases => _uiCanvases;
 
 		private void Awake()
 		{

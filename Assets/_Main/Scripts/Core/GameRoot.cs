@@ -25,8 +25,7 @@ namespace _Main.Scripts.Core
 			var sceneService = new SceneService(logger);
 			var inputService = new InputBaseService();
 			var audioService = new AudioBaseService(logger);
-			var uiService = new UIBaseService(logger, resourceService, persistentSceneContext.StaticCanvas,
-				persistentSceneContext.DynamicCanvas);
+			var uiService = new UIBaseService(logger, resourceService, persistentSceneContext.UICanvases);
 			var cameraService = new CameraService(objectFactory);
 			var cursorService = new CursorService(uiService);
 			var configService = new ConfigService(resourceService, logger);
