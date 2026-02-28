@@ -20,8 +20,15 @@ namespace _Main.Scripts.Dice
 		public event Action OnPassClicked;
 		
 		public TableModel tableModel;
-		public ModifiersModel ModifiersModel;
-		public ModifierItemsModel ModifierItemsModel;
+		public ModifiersModel PlayerModifiersModel { get; }
+		public ModifiersModel EnemyModifiersModel { get; }
+		public ModifierItemsModel PlayerModifierItemsModel { get; }
+		public ModifierItemsModel EnemyModifierItemsModel { get; }
+		public DiceScoringService PlayerScoringService { get; }
+		public DiceScoringService EnemyScoringService { get; }
+
+		public ModifiersModel ModifiersModel => GetCurrentModifiersModel();
+		public ModifierItemsModel ModifierItemsModel => GetCurrentModifierItemsModel();
 		
 		public List<DiceModel> CurrentDiceModelList => IsPlayerTurn ? PlayerDiceModelList : EnemyDiceModelList;
 		
@@ -40,18 +47,30 @@ namespace _Main.Scripts.Dice
 		public int TargetPoints { get; private set; }
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
-		public int MaxDiceCount => Mathf.Max(1, baseMaxDiceCount + GetDiceCapBonusSum());
+		public bool EnemyComboUpgradesEnabled { get; private set; } = true;
+		public int MaxDiceCount => Mathf.Max(1, baseMaxDiceCount + GetDiceCapBonusSum(IsPlayerTurn));
 		public int BaseMaxDiceCount => baseMaxDiceCount;
 
 		private const int DefaultMaxDiceCount = 6;
 		private int baseMaxDiceCount = DefaultMaxDiceCount;
-		private readonly Dictionary<string, int> diceCapBonuses = new();
+		private readonly Dictionary<string, int> playerDiceCapBonuses = new();
+		private readonly Dictionary<string, int> enemyDiceCapBonuses = new();
 
-		public DiceGameModel(InventoryModel inventoryModel)
+		public DiceGameModel(
+			InventoryModel inventoryModel,
+			DiceScoringService playerScoringService = null,
+			DiceScoringService enemyScoringService = null)
 		{
-			ModifiersModel = inventoryModel?.ModifiersModel ?? new ModifiersModel();
-			ModifierItemsModel = inventoryModel?.ModifierItemsModel ?? new ModifierItemsModel(ModifiersModel);
-			ModifierItemsModel.BindGameModel(this);
+			PlayerModifiersModel = inventoryModel?.ModifiersModel ?? new ModifiersModel();
+			PlayerModifierItemsModel = inventoryModel?.ModifierItemsModel ?? new ModifierItemsModel(PlayerModifiersModel);
+			PlayerModifierItemsModel.BindGameModel(this);
+
+			EnemyModifiersModel = new ModifiersModel();
+			EnemyModifierItemsModel = new ModifierItemsModel(EnemyModifiersModel);
+			EnemyModifierItemsModel.BindGameModel(this);
+
+			PlayerScoringService = playerScoringService ?? new DiceScoringService();
+			EnemyScoringService = enemyScoringService ?? new DiceScoringService();
 		}
 		
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
@@ -61,6 +80,7 @@ namespace _Main.Scripts.Dice
 			SetMaxBetSize(maxBetSize);
 			SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
 			SetTargetScore(diceGameConfig.target_score);
+			EnemyComboUpgradesEnabled = diceGameConfig.enemy_combo_upgrades_enabled;
 			SetCurrentTurn(1, true);
 		}
 
@@ -81,6 +101,11 @@ namespace _Main.Scripts.Dice
 		/// </summary>
 		public void SetDiceCapModifier(string sourceId, int bonus)
 		{
+			SetDiceCapModifier(sourceId, bonus, IsPlayerTurn);
+		}
+
+		public void SetDiceCapModifier(string sourceId, int bonus, bool isPlayerSide)
+		{
 			if (string.IsNullOrWhiteSpace(sourceId))
 			{
 				return;
@@ -88,11 +113,16 @@ namespace _Main.Scripts.Dice
 
 			bonus = Mathf.Max(0, bonus);
 			var old = MaxDiceCount;
-			diceCapBonuses[sourceId] = bonus;
+			GetDiceCapBonuses(isPlayerSide)[sourceId] = bonus;
 			NotifyMaxDiceChanged(old);
 		}
 
 		public void RemoveDiceCapModifier(string sourceId)
+		{
+			RemoveDiceCapModifier(sourceId, IsPlayerTurn);
+		}
+
+		public void RemoveDiceCapModifier(string sourceId, bool isPlayerSide)
 		{
 			if (string.IsNullOrWhiteSpace(sourceId))
 			{
@@ -100,20 +130,55 @@ namespace _Main.Scripts.Dice
 			}
 
 			var old = MaxDiceCount;
-			if (diceCapBonuses.Remove(sourceId))
+			if (GetDiceCapBonuses(isPlayerSide).Remove(sourceId))
 			{
 				NotifyMaxDiceChanged(old);
 			}
 		}
 
-		private int GetDiceCapBonusSum()
+		public ModifiersModel GetCurrentModifiersModel()
+		{
+			return IsPlayerTurn ? PlayerModifiersModel : EnemyModifiersModel;
+		}
+
+		public ModifiersModel GetModifiersModel(bool isPlayerSide)
+		{
+			return isPlayerSide ? PlayerModifiersModel : EnemyModifiersModel;
+		}
+
+		public ModifierItemsModel GetCurrentModifierItemsModel()
+		{
+			return IsPlayerTurn ? PlayerModifierItemsModel : EnemyModifierItemsModel;
+		}
+
+		public ModifierItemsModel GetModifierItemsModel(bool isPlayerSide)
+		{
+			return isPlayerSide ? PlayerModifierItemsModel : EnemyModifierItemsModel;
+		}
+
+		public DiceScoringService GetCurrentScoringService()
+		{
+			return IsPlayerTurn ? PlayerScoringService : EnemyScoringService;
+		}
+
+		public DiceScoringService GetScoringService(bool isPlayerSide)
+		{
+			return isPlayerSide ? PlayerScoringService : EnemyScoringService;
+		}
+
+		private int GetDiceCapBonusSum(bool isPlayerSide)
 		{
 			var sum = 0;
-			foreach (var bonus in diceCapBonuses.Values)
+			foreach (var bonus in GetDiceCapBonuses(isPlayerSide).Values)
 			{
 				sum += bonus;
 			}
 			return sum;
+		}
+
+		private Dictionary<string, int> GetDiceCapBonuses(bool isPlayerSide)
+		{
+			return isPlayerSide ? playerDiceCapBonuses : enemyDiceCapBonuses;
 		}
 
 		private void NotifyMaxDiceChanged(int previous)

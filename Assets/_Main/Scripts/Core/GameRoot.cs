@@ -78,7 +78,7 @@ namespace _Main.Scripts.Core
 			// --------------
 
 			var playerModel = new PlayerModel();
-			var diceGameModel = new DiceGameModel(playerModel.InventoryModel);
+			var diceGameModel = new DiceGameModel(playerModel.InventoryModel, scoringService);
 
 			// persistent scene load
 			var persistentSceneName = sceneService.GetActiveSceneName();

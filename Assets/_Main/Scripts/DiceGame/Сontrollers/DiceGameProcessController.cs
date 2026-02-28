@@ -23,7 +23,6 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly Run run;
 		private readonly GlobalNotificationService notificationService;
-		private readonly DiceScoringService scoringService;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
@@ -33,7 +32,6 @@ namespace _Main.Scripts.Dice
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
 			IAudioService audioService,
-			DiceScoringService scoringService,
 			Run run,
 			GlobalNotificationService notificationService)
 		{
@@ -41,7 +39,6 @@ namespace _Main.Scripts.Dice
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
 			this.audioService = audioService;
-			this.scoringService = scoringService;
 			this.run = run;
 			this.notificationService = notificationService;
 		}
@@ -110,14 +107,17 @@ namespace _Main.Scripts.Dice
 						diceGameModel,
 						ModifierStage.RoundStart,
 						run);
-					await diceGameModel.ModifiersModel.PlayRoundStartActions(roundStartContext);
+					await diceGameModel.GetCurrentModifiersModel().PlayRoundStartActions(roundStartContext);
 
 					tableModel.isFirstRoll = false;
 					diceGameModel.ShowAllDiceGameModels();
 				}
 				
-	
-				bool isHotDice = await TrySaveSelected(diceGameModel.GetSelected(), scoringService.Evaluate(GetValues(diceGameModel.GetSelected())));
+
+				var activeScoringService = diceGameModel.GetCurrentScoringService();
+				bool isHotDice = await TrySaveSelected(
+					diceGameModel.GetSelected(),
+					activeScoringService.Evaluate(GetValues(diceGameModel.GetSelected())));
 				tableModel.SetPreviewPoints(0);
 
 				// Если все кубы забанкированы после сохранения, сбросить пул
@@ -146,7 +146,7 @@ namespace _Main.Scripts.Dice
 
 				await UniTask.Delay(GlobalParameters.Delay / 2);
 				
-				var diceCombinationResult = scoringService.Evaluate(GetValues(diceToRoll));
+				var diceCombinationResult = activeScoringService.Evaluate(GetValues(diceToRoll));
 				var rollModifierContext = new DiceModifierContext(
 					diceCombinationResult,
 					diceToRoll,
@@ -155,7 +155,7 @@ namespace _Main.Scripts.Dice
 					ModifierStage.Roll,
 					run);
 
-				await diceGameModel.ModifiersModel.PlayRollActions(rollModifierContext);
+				await diceGameModel.GetCurrentModifiersModel().PlayRollActions(rollModifierContext);
 
 				if (diceCombinationResult.Combinations.Count == 0)
 				{
@@ -172,7 +172,7 @@ namespace _Main.Scripts.Dice
 						diceGameModel,
 						ModifierStage.RoundEnd,
 						run);
-					await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
+					await diceGameModel.GetCurrentModifiersModel().PlayRoundEndActions(roundEndContext);
 					EndTurn(false);
 				}
 			}
@@ -209,7 +209,8 @@ namespace _Main.Scripts.Dice
 				diceGameModel.tableModel.DisableButtons();
 				
 				var selected = diceGameModel.GetSelected();
-				var combo = scoringService.Evaluate(GetValues(selected));
+				var activeScoringService = diceGameModel.GetCurrentScoringService();
+				var combo = activeScoringService.Evaluate(GetValues(selected));
 				var passModifierContext = new DiceModifierContext(
 					combo,
 					selected,
@@ -217,7 +218,7 @@ namespace _Main.Scripts.Dice
 					diceGameModel,
 					ModifierStage.Pass,
 					run);
-				await diceGameModel.ModifiersModel.PlayPassActions(passModifierContext);
+				await diceGameModel.GetCurrentModifiersModel().PlayPassActions(passModifierContext);
 				await TrySaveSelected(selected, passModifierContext.CombinationResult);
 				var roundEndContext = new DiceModifierContext(
 					passModifierContext.CombinationResult,
@@ -226,7 +227,7 @@ namespace _Main.Scripts.Dice
 					diceGameModel,
 					ModifierStage.RoundEnd,
 					run);
-				await diceGameModel.ModifiersModel.PlayRoundEndActions(roundEndContext);
+				await diceGameModel.GetCurrentModifiersModel().PlayRoundEndActions(roundEndContext);
 				EndTurn(true);
 			}
 			finally
@@ -246,7 +247,8 @@ namespace _Main.Scripts.Dice
 
 		public async UniTask<bool> TrySaveSelected(DiceModel[] selected, DiceCombinationResult combinationResult)
 		{
-			int points = scoringService.CalculateTotalScore(combinationResult);
+			var activeScoringService = diceGameModel.GetCurrentScoringService();
+			int points = activeScoringService.CalculateTotalScore(combinationResult);
 			if (points <= 0)
 			{
 				return false;
@@ -300,10 +302,9 @@ namespace _Main.Scripts.Dice
 			       || combination == DiceCombination.StraightLength6;
 		}
 
-		private DiceModel PickUpgradeDie(StraightUpgradeConfig upgradeConfig)
+		private DiceModel PickUpgradeDie()
 		{
-			// MVP: choose randomly from currently equipped player dice (Option A).
-			var pool = diceGameModel.PlayerDiceModelList;
+			var pool = diceGameModel.CurrentDiceModelList;
 			if (pool == null || pool.Count == 0)
 			{
 				return null;
@@ -473,24 +474,31 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			if (!diceGameModel.IsPlayerTurn && !diceGameModel.EnemyComboUpgradesEnabled)
+			{
+				return;
+			}
+
+			var activeScoringService = diceGameModel.GetCurrentScoringService();
+
 			// 1) Straight first
-			var straightConfig = scoringService.GetStraightUpgradeConfig();
+			var straightConfig = activeScoringService.GetStraightUpgradeConfig();
 			if (straightConfig != null && straightConfig.Chance > 0f && combinationResult.Combinations.Any(e => IsStraightCombination(e.Combination)))
 			{
-				await HandleStraightUpgrade(straightConfig);
+				await HandleStraightUpgrade(straightConfig, activeScoringService);
 				return;
 			}
 
 			// 2) Of-a-kind
-			var ofaConfig = scoringService.GetComboUpgradeConfig("ofakind");
+			var ofaConfig = activeScoringService.GetComboUpgradeConfig("ofakind");
 			if (ofaConfig != null && ofaConfig.Chance > 0f && combinationResult.Combinations.Any(e => e.Combination == DiceCombination.ThreeOfAKind || e.Combination == DiceCombination.FourOfAKind || e.Combination == DiceCombination.FiveOfAKind || e.Combination == DiceCombination.SixOfAKind))
 			{
-				await HandleUpgradeForCombo("ofakind", ofaConfig);
+				await HandleUpgradeForCombo("ofakind", ofaConfig, activeScoringService);
 				return;
 			}
 		}
 
-		private async UniTask HandleUpgradeForCombo(string comboId, ComboUpgradeConfig upgradeConfig)
+		private async UniTask HandleUpgradeForCombo(string comboId, ComboUpgradeConfig upgradeConfig, DiceScoringService activeScoringService)
 		{
 			if (UnityEngine.Random.value > upgradeConfig.Chance)
 			{
@@ -501,7 +509,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			var die = PickUpgradeDie(new StraightUpgradeConfig { Debug = upgradeConfig.Debug, Chance = upgradeConfig.Chance }); // reuse picker
+			var die = PickUpgradeDie();
 			if (die == null)
 			{
 				logger?.LogWarning($"[Upgrade:{comboId}] No dice available for upgrade roll.");
@@ -517,7 +525,7 @@ namespace _Main.Scripts.Dice
 			if (upgradeConfig.Debug)
 			{
 				var weights = die.Weights != null ? string.Join(",", die.Weights) : "null";
-				var outcomes = scoringService.GetComboUpgradeOutcomes(comboId);
+				var outcomes = activeScoringService.GetComboUpgradeOutcomes(comboId);
 				var outcomeTable = outcomes != null
 					? string.Join(", ", outcomes.Select(o => $"{o.Face}:Δmin{o.DeltaMin}/Δmax{o.DeltaMax}/Δb{o.DeltaScoreBonus}"))
 					: "none";
@@ -542,9 +550,9 @@ namespace _Main.Scripts.Dice
 
 			if (comboId == "straight")
 			{
-				var before = scoringService.GetStraightState();
-				var outcome = scoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
-				var after = scoringService.GetStraightState();
+				var before = activeScoringService.GetStraightState();
+				var outcome = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
+				var after = activeScoringService.GetStraightState();
 				if (outcome != null)
 				{
 					var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
@@ -553,9 +561,9 @@ namespace _Main.Scripts.Dice
 			}
 			else
 			{
-				var before = scoringService.GetComboUpgradeState(comboId);
-				var outcome = scoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
-				var after = scoringService.GetComboUpgradeState(comboId);
+				var before = activeScoringService.GetComboUpgradeState(comboId);
+				var outcome = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
+				var after = activeScoringService.GetComboUpgradeState(comboId);
 				if (outcome != null && before != null && after != null)
 				{
 					var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
@@ -578,7 +586,7 @@ namespace _Main.Scripts.Dice
 			}).ToArray();
 		}
 
-		private async UniTask HandleStraightUpgrade(StraightUpgradeConfig upgradeConfig)
+		private async UniTask HandleStraightUpgrade(StraightUpgradeConfig upgradeConfig, DiceScoringService activeScoringService)
 		{
 			if (UnityEngine.Random.value > upgradeConfig.Chance)
 			{
@@ -589,7 +597,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			var die = PickUpgradeDie(upgradeConfig);
+			var die = PickUpgradeDie();
 			if (die == null)
 			{
 				logger?.LogWarning("[Upgrade:straight] No dice available for upgrade roll.");
@@ -628,9 +636,9 @@ namespace _Main.Scripts.Dice
 				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
 			}
 
-			var before = scoringService.GetStraightState();
-			var outcome = scoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
-			var after = scoringService.GetStraightState();
+			var before = activeScoringService.GetStraightState();
+			var outcome = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
+			var after = activeScoringService.GetStraightState();
 			if (outcome != null)
 			{
 				var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
@@ -658,15 +666,16 @@ namespace _Main.Scripts.Dice
 				selectedValues[i] = selectedDice[i].CurrentValue;
 			}
 
+			var activeScoringService = diceGameModel.GetCurrentScoringService();
 
-			if (scoringService.HasTrash(selectedValues))
+			if (activeScoringService.HasTrash(selectedValues))
 			{
 				tableModel.SetPreviewPoints(0);
 			}
 			else
 			{
-				var combo = scoringService.Evaluate(selectedValues);
-				tableModel.SetPreviewPoints(scoringService.CalculateTotalScore(combo));
+				var combo = activeScoringService.Evaluate(selectedValues);
+				tableModel.SetPreviewPoints(activeScoringService.CalculateTotalScore(combo));
 			}
 
 
