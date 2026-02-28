@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 168959995}
   - component: {fileID: 168959994}
   m_Layer: 5
-  m_Name: Canvas (1)
+  m_Name: PlayerHud
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -300,7 +300,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_TargetDisplay: 0
 --- !u!1 &478914268
 GameObject:
@@ -491,7 +491,7 @@ GameObject:
   - component: {fileID: 583146588}
   - component: {fileID: 583146587}
   m_Layer: 5
-  m_Name: Canvas (4)
+  m_Name: Popup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -577,7 +577,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 20
   m_TargetDisplay: 0
 --- !u!1 &713969094
 GameObject:
@@ -592,7 +592,7 @@ GameObject:
   - component: {fileID: 713969096}
   - component: {fileID: 713969095}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -693,7 +693,7 @@ GameObject:
   - component: {fileID: 1011380112}
   - component: {fileID: 1011380111}
   m_Layer: 5
-  m_Name: Canvas (7)
+  m_Name: AbsoluteTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -779,7 +779,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 100
   m_TargetDisplay: 0
 --- !u!1 &1063095353
 GameObject:
@@ -794,7 +794,7 @@ GameObject:
   - component: {fileID: 1063095356}
   - component: {fileID: 1063095355}
   m_Layer: 5
-  m_Name: Canvas (2)
+  m_Name: Menu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -880,7 +880,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_TargetDisplay: 0
 --- !u!1 &1569274763
 GameObject:
@@ -895,7 +895,7 @@ GameObject:
   - component: {fileID: 1569274766}
   - component: {fileID: 1569274765}
   m_Layer: 5
-  m_Name: Canvas (3)
+  m_Name: MenuOverlap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -981,7 +981,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 11
   m_TargetDisplay: 0
 --- !u!1 &1693020242
 GameObject:
@@ -1072,7 +1072,7 @@ GameObject:
   - component: {fileID: 1889686172}
   - component: {fileID: 1889686171}
   m_Layer: 5
-  m_Name: Canvas (6)
+  m_Name: Tooltip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1158,7 +1158,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 22
   m_TargetDisplay: 0
 --- !u!1 &2005421636
 GameObject:
@@ -1173,7 +1173,7 @@ GameObject:
   - component: {fileID: 2005421639}
   - component: {fileID: 2005421638}
   m_Layer: 5
-  m_Name: Canvas (5)
+  m_Name: Overlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1259,7 +1259,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 21
   m_TargetDisplay: 0
 --- !u!1 &2091746251
 GameObject:
