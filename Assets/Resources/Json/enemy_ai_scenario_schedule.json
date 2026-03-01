@@ -1,0 +1,13 @@
+{
+  "id": "default",
+  "default_scenario_id": "enemy_script_demo_2_turn_win",
+  "rules": [
+    {
+      "scenario_id": "enemy_script_demo_2_turn_win",
+      "level": 1,
+      "day": 1,
+      "match_min": 1,
+      "match_max": 99
+    }
+  ]
+}

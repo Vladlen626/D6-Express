@@ -1,6 +1,5 @@
-[
-  {
-    "id": "enemy_script_demo_2_turn_win",
+{
+  "enemy_script_demo_2_turn_win": {
     "mode": "scripted",
     "strict_validation": true,
     "on_mismatch": "fail_scenario",
@@ -52,4 +51,4 @@
       "enemy_reaches_target": true
     }
   }
-]
+}

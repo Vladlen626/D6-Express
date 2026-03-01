@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using _Main.Scripts.Core;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
@@ -26,11 +27,13 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly LifecycleService lifecycleService;
 		private readonly ConfigService configService;
+		private readonly IResourceService resourceService;
 		private readonly IUIService uiService;
 		private readonly IInputService inputService;
 
 		private readonly SceneContext sceneContext;
 		private const string EnemyAiScenariosResourcePath = "Json/enemy_ai_scenarios";
+		private const string EnemyAiScenarioScheduleResourcePath = "Json/enemy_ai_scenario_schedule";
 
 		private DiceView[] playerDiceViewsArray;
 		private DiceView[] enemyDiceViewsArray;
@@ -61,6 +64,7 @@ namespace _Main.Scripts.Dice
 			lifecycleService = serviceLocator.Get<LifecycleService>();
 			objectFactory = serviceLocator.Get<IObjectFactory>();
 			loggerService = serviceLocator.Get<ILoggerService>();
+			resourceService = serviceLocator.Get<IResourceService>();
 			cameraShakeService = serviceLocator.Get<ICameraShakeService>();
 			audioService = serviceLocator.Get<IAudioService>();
 			uiService = serviceLocator.Get<IUIService>();
@@ -475,16 +479,21 @@ namespace _Main.Scripts.Dice
 				return true;
 			}
 
-			if (string.IsNullOrWhiteSpace(diceGameConfig.enemy_ai_scenario_id))
+			var scenarioMap = await LoadEnemyScenarioMapAsync();
+			if (scenarioMap == null)
 			{
-				FailDiceGameSetup("[DiceGame] enemy_ai_scenario_id is empty for scripted mode.");
 				return false;
 			}
 
-			var scenarios = await configService.GetConfigsAsync<EnemyAiScenarioConfig>(EnemyAiScenariosResourcePath);
-			if (!scenarios.TryGetValue(diceGameConfig.enemy_ai_scenario_id, out var scenario))
+			var scenarioId = await ResolveScenarioIdAsync(diceGameConfig);
+			if (string.IsNullOrWhiteSpace(scenarioId))
 			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI scenario '{diceGameConfig.enemy_ai_scenario_id}' not found.");
+				return false;
+			}
+
+			if (!scenarioMap.TryGetValue(scenarioId, out var scenario) || scenario == null)
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI scenario '{scenarioId}' not found in map '{EnemyAiScenariosResourcePath}'.");
 				return false;
 			}
 
@@ -504,6 +513,88 @@ namespace _Main.Scripts.Dice
 			diceGameModel.SetEnemyComboUpgradesEnabled(false);
 			enemyScenarioRuntime = new EnemyAiScenarioRuntime(scenario);
 			return true;
+		}
+
+		private async UniTask<Dictionary<string, EnemyAiScenarioConfig>> LoadEnemyScenarioMapAsync()
+		{
+			var textAsset = await resourceService.LoadAsync<TextAsset>(EnemyAiScenariosResourcePath);
+			if (!textAsset)
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI scenarios file '{EnemyAiScenariosResourcePath}' not found.");
+				return null;
+			}
+
+			Dictionary<string, EnemyAiScenarioConfig> scenarioMap;
+			try
+			{
+				scenarioMap = JsonConvert.DeserializeObject<Dictionary<string, EnemyAiScenarioConfig>>(textAsset.text);
+			}
+			catch (Exception exception)
+			{
+				FailDiceGameSetup($"[DiceGame] Failed to parse scenarios map '{EnemyAiScenariosResourcePath}': {exception.Message}");
+				return null;
+			}
+
+			if (scenarioMap == null || scenarioMap.Count == 0)
+			{
+				FailDiceGameSetup($"[DiceGame] Scenarios map '{EnemyAiScenariosResourcePath}' is empty.");
+				return null;
+			}
+
+			foreach (var pair in scenarioMap)
+			{
+				if (string.IsNullOrWhiteSpace(pair.Key))
+				{
+					FailDiceGameSetup("[DiceGame] Scenarios map contains an empty key.");
+					return null;
+				}
+
+				if (pair.Value == null)
+				{
+					FailDiceGameSetup($"[DiceGame] Scenario '{pair.Key}' is null.");
+					return null;
+				}
+
+				pair.Value.id = pair.Key;
+				pair.Value.ParseConfig();
+			}
+
+			return scenarioMap;
+		}
+
+		private async UniTask<string> ResolveScenarioIdAsync(DiceGameConfig diceGameConfig)
+		{
+			var scenarioId = diceGameConfig.enemy_ai_scenario_id?.Trim();
+			if (!string.IsNullOrWhiteSpace(scenarioId))
+			{
+				return scenarioId;
+			}
+
+			var schedule = await configService.GetFirstOrDefaultAsync<EnemyAiScenarioScheduleConfig>(EnemyAiScenarioScheduleResourcePath);
+			if (schedule == null)
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI schedule '{EnemyAiScenarioScheduleResourcePath}' not found and enemy_ai_scenario_id override is empty.");
+				return null;
+			}
+
+			schedule.ParseConfig();
+			if (!schedule.TryValidateStatic(out var scheduleValidationError))
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI schedule validation failed: {scheduleValidationError}");
+				return null;
+			}
+
+			// Schedule values are 1-based for easier authoring in JSON.
+			var level = run.Level + 1;
+			var day = run.Day + 1;
+			var match = run.Tick + 1;
+			if (!schedule.TryResolveScenarioId(level, day, match, out scenarioId))
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI schedule could not resolve scenario for level={level}, day={day}, match={match}.");
+				return null;
+			}
+
+			return scenarioId;
 		}
 
 		private List<ItemCatalogEntry> ResolveEnemyDiceConfigs(
