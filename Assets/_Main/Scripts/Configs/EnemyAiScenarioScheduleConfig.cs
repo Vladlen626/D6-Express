@@ -4,15 +4,25 @@ using System.Collections.Generic;
 [Serializable]
 public class EnemyAiScenarioScheduleConfig : BaseConfig
 {
+	public const string WildcardKey = "*";
+
 	public string default_scenario_id = string.Empty;
-	public List<EnemyAiScenarioScheduleRuleConfig> rules = new();
+	public Dictionary<string, EnemyAiLevelScheduleNode> by_level = new();
 
 	public override void ParseConfig()
 	{
-		rules ??= new List<EnemyAiScenarioScheduleRuleConfig>();
-		for (int i = 0; i < rules.Count; i++)
+		by_level ??= new Dictionary<string, EnemyAiLevelScheduleNode>();
+		var keys = new List<string>(by_level.Keys);
+		for (int i = 0; i < keys.Count; i++)
 		{
-			rules[i] ??= new EnemyAiScenarioScheduleRuleConfig();
+			var key = keys[i];
+			if (!by_level.TryGetValue(key, out var node) || node == null)
+			{
+				node = new EnemyAiLevelScheduleNode();
+				by_level[key] = node;
+			}
+
+			node.ParseConfig();
 		}
 	}
 
@@ -24,18 +34,23 @@ public class EnemyAiScenarioScheduleConfig : BaseConfig
 			return false;
 		}
 
-		for (int i = 0; i < rules.Count; i++)
+		foreach (var pair in by_level)
 		{
-			var rule = rules[i];
-			if (string.IsNullOrWhiteSpace(rule.scenario_id))
+			if (!IsValidAxisKey(pair.Key))
 			{
-				error = $"[EnemyAISchedule] Rule #{i + 1}: scenario_id is required.";
+				error = $"[EnemyAISchedule] Invalid level key '{pair.Key}'. Use positive integer or '*'.";
 				return false;
 			}
 
-			if (!rule.TryValidateStatic(out error))
+			var node = pair.Value;
+			if (node == null)
 			{
-				error = $"[EnemyAISchedule] Rule #{i + 1}: {error}";
+				error = $"[EnemyAISchedule] Level node '{pair.Key}' is null.";
+				return false;
+			}
+
+			if (!node.TryValidateStatic(pair.Key, out error))
+			{
 				return false;
 			}
 		}
@@ -46,12 +61,19 @@ public class EnemyAiScenarioScheduleConfig : BaseConfig
 
 	public bool TryResolveScenarioId(int level, int day, int match, out string scenarioId)
 	{
-		for (int i = 0; i < rules.Count; i++)
+		scenarioId = null;
+
+		var orderedLevelKeys = new[] { level.ToString(), WildcardKey };
+		for (int i = 0; i < orderedLevelKeys.Length; i++)
 		{
-			var rule = rules[i];
-			if (rule.Matches(level, day, match))
+			var levelKey = orderedLevelKeys[i];
+			if (!by_level.TryGetValue(levelKey, out var levelNode) || levelNode == null)
 			{
-				scenarioId = rule.scenario_id;
+				continue;
+			}
+
+			if (levelNode.TryResolve(day, match, out scenarioId))
+			{
 				return true;
 			}
 		}
@@ -59,39 +81,77 @@ public class EnemyAiScenarioScheduleConfig : BaseConfig
 		scenarioId = default_scenario_id;
 		return !string.IsNullOrWhiteSpace(scenarioId);
 	}
+
+	private static bool IsValidAxisKey(string key)
+	{
+		if (string.IsNullOrWhiteSpace(key))
+		{
+			return false;
+		}
+
+		if (string.Equals(key, WildcardKey, StringComparison.Ordinal))
+		{
+			return true;
+		}
+
+		return int.TryParse(key, out var value) && value > 0;
+	}
 }
 
 [Serializable]
-public class EnemyAiScenarioScheduleRuleConfig
+public class EnemyAiLevelScheduleNode
 {
-	public string scenario_id = string.Empty;
+	public string default_scenario_id = string.Empty;
+	public Dictionary<string, EnemyAiDayScheduleNode> by_day = new();
 
-	public int? level;
-	public int? level_min;
-	public int? level_max;
-
-	public int? day;
-	public int? day_min;
-	public int? day_max;
-
-	public int? match;
-	public int? match_min;
-	public int? match_max;
-
-	public bool TryValidateStatic(out string error)
+	public void ParseConfig()
 	{
-		if (!ValidateAxis(level, level_min, level_max, "level", out error))
+		by_day ??= new Dictionary<string, EnemyAiDayScheduleNode>();
+		var keys = new List<string>(by_day.Keys);
+		for (int i = 0; i < keys.Count; i++)
 		{
-			return false;
+			var key = keys[i];
+			if (!by_day.TryGetValue(key, out var node) || node == null)
+			{
+				node = new EnemyAiDayScheduleNode();
+				by_day[key] = node;
+			}
+
+			node.ParseConfig();
+		}
+	}
+
+	public bool TryValidateStatic(string levelKey, out string error)
+	{
+		foreach (var pair in by_day)
+		{
+			if (!IsValidAxisKey(pair.Key))
+			{
+				error = $"[EnemyAISchedule] Invalid day key '{pair.Key}' in level '{levelKey}'. Use positive integer or '*'.";
+				return false;
+			}
+
+			if (pair.Value == null)
+			{
+				error = $"[EnemyAISchedule] Day node '{pair.Key}' in level '{levelKey}' is null.";
+				return false;
+			}
+
+			if (!pair.Value.TryValidateStatic(levelKey, pair.Key, out error))
+			{
+				return false;
+			}
 		}
 
-		if (!ValidateAxis(day, day_min, day_max, "day", out error))
+		if (!string.IsNullOrWhiteSpace(default_scenario_id))
 		{
-			return false;
+			error = null;
+			return true;
 		}
 
-		if (!ValidateAxis(match, match_min, match_max, "match", out error))
+		if (by_day.Count == 0)
 		{
+			error = $"[EnemyAISchedule] Level '{levelKey}' has no default_scenario_id and no day rules.";
 			return false;
 		}
 
@@ -99,42 +159,81 @@ public class EnemyAiScenarioScheduleRuleConfig
 		return true;
 	}
 
-	public bool Matches(int levelValue, int dayValue, int matchValue)
+	public bool TryResolve(int day, int match, out string scenarioId)
 	{
-		return MatchesAxis(level, level_min, level_max, levelValue)
-		       && MatchesAxis(day, day_min, day_max, dayValue)
-		       && MatchesAxis(match, match_min, match_max, matchValue);
+		scenarioId = null;
+		var orderedDayKeys = new[] { day.ToString(), EnemyAiScenarioScheduleConfig.WildcardKey };
+		for (int i = 0; i < orderedDayKeys.Length; i++)
+		{
+			var dayKey = orderedDayKeys[i];
+			if (!by_day.TryGetValue(dayKey, out var dayNode) || dayNode == null)
+			{
+				continue;
+			}
+
+			if (dayNode.TryResolve(match, out scenarioId))
+			{
+				return true;
+			}
+		}
+
+		scenarioId = default_scenario_id;
+		return !string.IsNullOrWhiteSpace(scenarioId);
 	}
 
-	private static bool ValidateAxis(int? exact, int? min, int? max, string axisName, out string error)
+	private static bool IsValidAxisKey(string key)
 	{
-		if (exact.HasValue && (min.HasValue || max.HasValue))
+		if (string.IsNullOrWhiteSpace(key))
 		{
-			error = $"'{axisName}' exact value cannot be combined with '{axisName}_min'/'{axisName}_max'.";
 			return false;
 		}
 
-		if (exact.HasValue && exact.Value <= 0)
+		if (string.Equals(key, EnemyAiScenarioScheduleConfig.WildcardKey, StringComparison.Ordinal))
 		{
-			error = $"'{axisName}' must be > 0.";
-			return false;
+			return true;
 		}
 
-		if (min.HasValue && min.Value <= 0)
+		return int.TryParse(key, out var value) && value > 0;
+	}
+}
+
+[Serializable]
+public class EnemyAiDayScheduleNode
+{
+	public string default_scenario_id = string.Empty;
+	public Dictionary<string, string> by_match = new();
+
+	public void ParseConfig()
+	{
+		by_match ??= new Dictionary<string, string>();
+	}
+
+	public bool TryValidateStatic(string levelKey, string dayKey, out string error)
+	{
+		foreach (var pair in by_match)
 		{
-			error = $"'{axisName}_min' must be > 0.";
-			return false;
+			if (!IsValidAxisKey(pair.Key))
+			{
+				error = $"[EnemyAISchedule] Invalid match key '{pair.Key}' in level '{levelKey}', day '{dayKey}'. Use positive integer or '*'.";
+				return false;
+			}
+
+			if (string.IsNullOrWhiteSpace(pair.Value))
+			{
+				error = $"[EnemyAISchedule] Empty scenario id for match key '{pair.Key}' in level '{levelKey}', day '{dayKey}'.";
+				return false;
+			}
 		}
 
-		if (max.HasValue && max.Value <= 0)
+		if (!string.IsNullOrWhiteSpace(default_scenario_id))
 		{
-			error = $"'{axisName}_max' must be > 0.";
-			return false;
+			error = null;
+			return true;
 		}
 
-		if (min.HasValue && max.HasValue && min.Value > max.Value)
+		if (by_match.Count == 0)
 		{
-			error = $"'{axisName}_min' cannot be greater than '{axisName}_max'.";
+			error = $"[EnemyAISchedule] Day node level '{levelKey}', day '{dayKey}' has no default_scenario_id and no match rules.";
 			return false;
 		}
 
@@ -142,23 +241,38 @@ public class EnemyAiScenarioScheduleRuleConfig
 		return true;
 	}
 
-	private static bool MatchesAxis(int? exact, int? min, int? max, int value)
+	public bool TryResolve(int match, out string scenarioId)
 	{
-		if (exact.HasValue)
+		scenarioId = null;
+
+		if (by_match.TryGetValue(match.ToString(), out var exact) && !string.IsNullOrWhiteSpace(exact))
 		{
-			return value == exact.Value;
+			scenarioId = exact;
+			return true;
 		}
 
-		if (min.HasValue && value < min.Value)
+		if (by_match.TryGetValue(EnemyAiScenarioScheduleConfig.WildcardKey, out var wildcard) && !string.IsNullOrWhiteSpace(wildcard))
+		{
+			scenarioId = wildcard;
+			return true;
+		}
+
+		scenarioId = default_scenario_id;
+		return !string.IsNullOrWhiteSpace(scenarioId);
+	}
+
+	private static bool IsValidAxisKey(string key)
+	{
+		if (string.IsNullOrWhiteSpace(key))
 		{
 			return false;
 		}
 
-		if (max.HasValue && value > max.Value)
+		if (string.Equals(key, EnemyAiScenarioScheduleConfig.WildcardKey, StringComparison.Ordinal))
 		{
-			return false;
+			return true;
 		}
 
-		return true;
+		return int.TryParse(key, out var value) && value > 0;
 	}
 }
