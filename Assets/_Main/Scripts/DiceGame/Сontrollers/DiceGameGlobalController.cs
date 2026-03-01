@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using _Main.Scripts.Core;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
@@ -25,13 +27,17 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly LifecycleService lifecycleService;
 		private readonly ConfigService configService;
+		private readonly IResourceService resourceService;
 		private readonly IUIService uiService;
 		private readonly IInputService inputService;
 
 		private readonly SceneContext sceneContext;
+		private const string EnemyAiScenariosResourcePath = "Json/enemy_ai_scenarios";
+		private const string EnemyAiScenarioScheduleResourcePath = "Json/enemy_ai_scenario_schedule";
 
 		private DiceView[] playerDiceViewsArray;
 		private DiceView[] enemyDiceViewsArray;
+		private EnemyAiScenarioRuntime enemyScenarioRuntime;
 
 		private List<IBaseController> persistentControllers = new();
 		private List<IBaseController> gameControllers = new();
@@ -58,6 +64,7 @@ namespace _Main.Scripts.Dice
 			lifecycleService = serviceLocator.Get<LifecycleService>();
 			objectFactory = serviceLocator.Get<IObjectFactory>();
 			loggerService = serviceLocator.Get<ILoggerService>();
+			resourceService = serviceLocator.Get<IResourceService>();
 			cameraShakeService = serviceLocator.Get<ICameraShakeService>();
 			audioService = serviceLocator.Get<IAudioService>();
 			uiService = serviceLocator.Get<IUIService>();
@@ -121,7 +128,10 @@ namespace _Main.Scripts.Dice
 			gamePreviousStoped = false;
 			inputService.EnableDiceGameInputs();
 
-			await SetupBaseModels();
+			if (!await SetupBaseModels())
+			{
+				return;
+			}
 			await DiceGamePersistentControllers();
 			await SetupItemsDisplay();
 			await SelectionProcess();
@@ -129,7 +139,10 @@ namespace _Main.Scripts.Dice
 			MoveItemsToGameSlots();
 
 			await BetProcess();
-			await SetupEnemyDiceList();
+			if (!await SetupEnemyDiceList())
+			{
+				return;
+			}
 
 			var processController = new DiceGameProcessController(
 				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService);
@@ -137,7 +150,7 @@ namespace _Main.Scripts.Dice
 			gameControllers.AddRange(new IBaseController[]
 			{
 				processController,
-				new EnemyTurnController(processController, diceGameModel),
+				new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
 				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService, notificationService),
 				new DiceGameResultController(diceGameModel)
 			});
@@ -170,15 +183,22 @@ namespace _Main.Scripts.Dice
 			ClenUpPersistentControllers();
 		}
 
-		private async UniTask SetupBaseModels()
+		private async UniTask<bool> SetupBaseModels()
 		{
 			var diceGameConfig = await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
+			if (diceGameConfig == null)
+			{
+				FailDiceGameSetup("[DiceGame] dice_game_rules config is missing.");
+				return false;
+			}
+
 			var newTableModel = new TableModel(CouplePositionsHandler.FirstPosArray, CouplePositionsHandler.SecondPosArray);
 			diceGameModel.Setup(diceGameConfig, playerModel.InventoryModel.CashCount, newTableModel);
 			// Keep the base cap aligned with available board slots; items can extend beyond this value.
 			var baseCap = Mathf.Min(6, CouplePositionsHandler.FirstPosArray.Length, CouplePositionsHandler.SecondPosArray.Length);
 			diceGameModel.SetBaseMaxDiceCount(baseCap);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
+			return await SetupEnemyAiScenarioAsync(diceGameConfig);
 		}
 		
 		private async UniTask DiceGamePersistentControllers()
@@ -226,25 +246,24 @@ namespace _Main.Scripts.Dice
 			ClenUpSelectionControllers();
 		}
 
-		private async UniTask SetupEnemyDiceList()
+		private async UniTask<bool> SetupEnemyDiceList()
 		{
 			var catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
-			if (!catalog.TryGetValue("default", out var config) || config.typeEnum != ItemCatalogType.Dice)
-			{
-				Debug.LogWarning("[DiceGame] Default dice entry not found in catalog.");
-				return;
-			}
 			var bankSlots = diceTableView.GameStatePosHandler.SecondPosArray;
 			var activeSlots = CouplePositionsHandler.FirstPosArray;
-			// Enemy should not benefit from player dice cap bonuses.
-			var enemyLimit = Mathf.Min(diceGameModel.BaseMaxDiceCount, bankSlots.Length, activeSlots.Length);
+			var enemyDiceConfigs = ResolveEnemyDiceConfigs(catalog, bankSlots.Length, activeSlots.Length);
+			if (enemyDiceConfigs == null || enemyDiceConfigs.Count == 0)
+			{
+				FailDiceGameSetup("[DiceGame] Unable to resolve enemy dice setup.");
+				return false;
+			}
 
-			for (int i = 0; i < enemyLimit; i++)
+			for (int i = 0; i < enemyDiceConfigs.Count; i++)
 			{
 				var startPos = bankSlots[i];
 				var model = await DiceFactory.SpawnDiceViewAsync(
 					objectFactory,
-					config,
+					enemyDiceConfigs[i],
 					Vector3.zero,
 					Quaternion.identity,
 					startPos,
@@ -252,7 +271,13 @@ namespace _Main.Scripts.Dice
 					audioService,
 					diceGameModel,
 					hideOnSpawn: true);
-				
+
+				if (model == null)
+				{
+					FailDiceGameSetup($"[DiceGame] Failed to spawn enemy dice '{enemyDiceConfigs[i].id}'.");
+					return false;
+				}
+
 				diceGameModel.EnemyDiceModelList.Add(model);
 			}
 
@@ -271,6 +296,8 @@ namespace _Main.Scripts.Dice
 				enemyDiceViewsArray[i] = view;
 				gameControllers.Add(new DiceController(model, view, tableModel, audioService));
 			}
+
+			return true;
 		}
 
 		private async UniTask BetProcess()
@@ -420,6 +447,8 @@ namespace _Main.Scripts.Dice
 
 		private void ResetModels()
 		{
+			enemyScenarioRuntime = null;
+
 			foreach (var model in diceGameModel.EnemyDiceModelList)
 			{
 				var dice = diceGameModel.ScreenDiceDict[model];
@@ -435,6 +464,197 @@ namespace _Main.Scripts.Dice
 			}
 
 			diceGameModel.Reset();
+		}
+
+		private async UniTask<bool> SetupEnemyAiScenarioAsync(DiceGameConfig diceGameConfig)
+		{
+			enemyScenarioRuntime = null;
+			var scriptedModeEnabled = string.Equals(
+				diceGameConfig.enemy_ai_mode,
+				EnemyAiMode.Scripted,
+				StringComparison.OrdinalIgnoreCase);
+
+			if (!scriptedModeEnabled)
+			{
+				return true;
+			}
+
+			var scenarioMap = await LoadEnemyScenarioMapAsync();
+			if (scenarioMap == null)
+			{
+				return false;
+			}
+
+			var scenarioId = await ResolveScenarioIdAsync(diceGameConfig);
+			if (string.IsNullOrWhiteSpace(scenarioId))
+			{
+				return false;
+			}
+
+			if (!scenarioMap.TryGetValue(scenarioId, out var scenario) || scenario == null)
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI scenario '{scenarioId}' not found in map '{EnemyAiScenariosResourcePath}'.");
+				return false;
+			}
+
+			if (!scenario.TryValidateStatic(out var validationError))
+			{
+				FailDiceGameSetup($"[DiceGame] Scenario validation failed: {validationError}");
+				return false;
+			}
+
+			if (scenario.target_score > 0 && scenario.target_score != diceGameModel.TargetPoints)
+			{
+				FailDiceGameSetup(
+					$"[DiceGame] Scenario target_score ({scenario.target_score}) does not match dice_game_rules target_score ({diceGameModel.TargetPoints}).");
+				return false;
+			}
+
+			diceGameModel.SetEnemyComboUpgradesEnabled(false);
+			enemyScenarioRuntime = new EnemyAiScenarioRuntime(scenario);
+			return true;
+		}
+
+		private async UniTask<Dictionary<string, EnemyAiScenarioConfig>> LoadEnemyScenarioMapAsync()
+		{
+			var textAsset = await resourceService.LoadAsync<TextAsset>(EnemyAiScenariosResourcePath);
+			if (!textAsset)
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI scenarios file '{EnemyAiScenariosResourcePath}' not found.");
+				return null;
+			}
+
+			Dictionary<string, EnemyAiScenarioConfig> scenarioMap;
+			try
+			{
+				scenarioMap = JsonConvert.DeserializeObject<Dictionary<string, EnemyAiScenarioConfig>>(textAsset.text);
+			}
+			catch (Exception exception)
+			{
+				FailDiceGameSetup($"[DiceGame] Failed to parse scenarios map '{EnemyAiScenariosResourcePath}': {exception.Message}");
+				return null;
+			}
+
+			if (scenarioMap == null || scenarioMap.Count == 0)
+			{
+				FailDiceGameSetup($"[DiceGame] Scenarios map '{EnemyAiScenariosResourcePath}' is empty.");
+				return null;
+			}
+
+			foreach (var pair in scenarioMap)
+			{
+				if (string.IsNullOrWhiteSpace(pair.Key))
+				{
+					FailDiceGameSetup("[DiceGame] Scenarios map contains an empty key.");
+					return null;
+				}
+
+				if (pair.Value == null)
+				{
+					FailDiceGameSetup($"[DiceGame] Scenario '{pair.Key}' is null.");
+					return null;
+				}
+
+				pair.Value.id = pair.Key;
+				pair.Value.ParseConfig();
+			}
+
+			return scenarioMap;
+		}
+
+		private async UniTask<string> ResolveScenarioIdAsync(DiceGameConfig diceGameConfig)
+		{
+			var scenarioId = diceGameConfig.enemy_ai_scenario_id?.Trim();
+			if (!string.IsNullOrWhiteSpace(scenarioId))
+			{
+				return scenarioId;
+			}
+
+			var schedule = await configService.GetFirstOrDefaultAsync<EnemyAiScenarioScheduleConfig>(EnemyAiScenarioScheduleResourcePath);
+			if (schedule == null)
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI schedule '{EnemyAiScenarioScheduleResourcePath}' not found and enemy_ai_scenario_id override is empty.");
+				return null;
+			}
+
+			schedule.ParseConfig();
+			if (!schedule.TryValidateStatic(out var scheduleValidationError))
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI schedule validation failed: {scheduleValidationError}");
+				return null;
+			}
+
+			// Schedule values are 1-based for easier authoring in JSON.
+			var level = run.Level + 1;
+			var day = run.Day + 1;
+			var match = run.Tick + 1;
+			if (!schedule.TryResolveScenarioId(level, day, match, out scenarioId))
+			{
+				FailDiceGameSetup($"[DiceGame] Enemy AI schedule could not resolve scenario for level={level}, day={day}, match={match}.");
+				return null;
+			}
+
+			return scenarioId;
+		}
+
+		private List<ItemCatalogEntry> ResolveEnemyDiceConfigs(
+			IReadOnlyDictionary<string, ItemCatalogEntry> catalog,
+			int bankSlotsCount,
+			int activeSlotsCount)
+		{
+			var maxBySlots = Mathf.Min(bankSlotsCount, activeSlotsCount);
+			if (maxBySlots <= 0)
+			{
+				return new List<ItemCatalogEntry>();
+			}
+
+			var scriptedDiceIds = enemyScenarioRuntime?.Scenario?.enemy_setup?.dice_in_hand;
+			if (scriptedDiceIds != null && scriptedDiceIds.Length > 0)
+			{
+				if (scriptedDiceIds.Length > maxBySlots)
+				{
+					Debug.LogError(
+						$"[DiceGame] Scenario requires {scriptedDiceIds.Length} enemy dice, but only {maxBySlots} slots are available.");
+					return null;
+				}
+
+				var scriptedConfigs = new List<ItemCatalogEntry>(scriptedDiceIds.Length);
+				for (int i = 0; i < scriptedDiceIds.Length; i++)
+				{
+					var diceId = scriptedDiceIds[i];
+					if (!catalog.TryGetValue(diceId, out var diceConfig) || diceConfig.typeEnum != ItemCatalogType.Dice)
+					{
+						Debug.LogError($"[DiceGame] Scenario dice id '{diceId}' is missing or is not a Dice entry.");
+						return null;
+					}
+
+					scriptedConfigs.Add(diceConfig);
+				}
+
+				return scriptedConfigs;
+			}
+
+			if (!catalog.TryGetValue("default", out var defaultConfig) || defaultConfig.typeEnum != ItemCatalogType.Dice)
+			{
+				Debug.LogWarning("[DiceGame] Default dice entry not found in catalog.");
+				return null;
+			}
+
+			// Enemy should not benefit from player dice cap bonuses.
+			var enemyLimit = Mathf.Min(diceGameModel.BaseMaxDiceCount, maxBySlots);
+			var defaults = new List<ItemCatalogEntry>(enemyLimit);
+			for (int i = 0; i < enemyLimit; i++)
+			{
+				defaults.Add(defaultConfig);
+			}
+
+			return defaults;
+		}
+
+		private void FailDiceGameSetup(string message)
+		{
+			Debug.LogError(message);
+			diceGameModel.SetConditionFailed();
 		}
 	}
 }

@@ -1,0 +1,268 @@
+{
+  "enemy_script_demo_2_turn_win": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": {
+      "use_modifiers": false,
+      "dice_in_hand": [
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+        "default"
+      ]
+    },
+    "turns": [
+      {
+        "enemy_turn": 1,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [1, 1, 1, 5, 2, 3],
+            "save_unbanked_indexes": [0, 1, 2, 3],
+            "expected_saved_score": 1050
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      },
+      {
+        "enemy_turn": 2,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [5, 5, 5, 5, 2, 3],
+            "save_unbanked_indexes": [0, 1, 2, 3],
+            "expected_saved_score": 1000
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      }
+    ],
+    "expected_result": {
+      "completed_in_enemy_turns": 2,
+      "enemy_final_banked_score": 2050,
+      "enemy_reaches_target": true
+    }
+  },
+  "enemy_script_one_turn_all_ones": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": {
+      "use_modifiers": false,
+      "dice_in_hand": [
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+        "default"
+      ]
+    },
+    "turns": [
+      {
+        "enemy_turn": 1,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [1, 1, 1, 1, 1, 1],
+            "save_unbanked_indexes": [0, 1, 2, 3, 4, 5],
+            "expected_saved_score": 8000
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      }
+    ],
+    "expected_result": {
+      "completed_in_enemy_turns": 1,
+      "enemy_final_banked_score": 8000,
+      "enemy_reaches_target": true
+    }
+  },
+  "enemy_script_straight_then_fives": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": {
+      "use_modifiers": false,
+      "dice_in_hand": [
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+        "default"
+      ]
+    },
+    "turns": [
+      {
+        "enemy_turn": 1,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [1, 2, 3, 4, 5, 6],
+            "save_unbanked_indexes": [0, 1, 2, 3, 4, 5],
+            "expected_saved_score": 1500
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      },
+      {
+        "enemy_turn": 2,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [5, 5, 5, 2, 3, 4],
+            "save_unbanked_indexes": [0, 1, 2],
+            "expected_saved_score": 500
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      }
+    ],
+    "expected_result": {
+      "completed_in_enemy_turns": 2,
+      "enemy_final_banked_score": 2000,
+      "enemy_reaches_target": true
+    }
+  },
+  "enemy_script_steady_3_turn": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": {
+      "use_modifiers": false,
+      "dice_in_hand": [
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+        "default"
+      ]
+    },
+    "turns": [
+      {
+        "enemy_turn": 1,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [5, 5, 5, 2, 3, 4],
+            "save_unbanked_indexes": [0, 1, 2],
+            "expected_saved_score": 500
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      },
+      {
+        "enemy_turn": 2,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [5, 5, 5, 1, 2, 3],
+            "save_unbanked_indexes": [0, 1, 2],
+            "expected_saved_score": 500
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      },
+      {
+        "enemy_turn": 3,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [1, 1, 1, 2, 3, 4],
+            "save_unbanked_indexes": [0, 1, 2],
+            "expected_saved_score": 1000
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      }
+    ],
+    "expected_result": {
+      "completed_in_enemy_turns": 3,
+      "enemy_final_banked_score": 2000,
+      "enemy_reaches_target": true
+    }
+  },
+  "enemy_script_two_rolls_then_finish": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": {
+      "use_modifiers": false,
+      "dice_in_hand": [
+        "default",
+        "default",
+        "default",
+        "default",
+        "default",
+        "default"
+      ]
+    },
+    "turns": [
+      {
+        "enemy_turn": 1,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [1, 1, 1, 5, 2, 3],
+            "save_unbanked_indexes": [0, 1, 2, 3],
+            "expected_saved_score": 1050
+          },
+          {
+            "action": "roll",
+            "forced_values": [1, 5],
+            "save_unbanked_indexes": [0, 1],
+            "expected_saved_score": 150
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      },
+      {
+        "enemy_turn": 2,
+        "steps": [
+          {
+            "action": "roll",
+            "forced_values": [1, 1, 1, 2, 3, 4],
+            "save_unbanked_indexes": [0, 1, 2],
+            "expected_saved_score": 1000
+          },
+          {
+            "action": "pass"
+          }
+        ]
+      }
+    ],
+    "expected_result": {
+      "completed_in_enemy_turns": 2,
+      "enemy_final_banked_score": 2200,
+      "enemy_reaches_target": true
+    }
+  }
+}

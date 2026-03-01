@@ -252,6 +252,11 @@ namespace _Main.Scripts.Dice
 			OnTargetPointsChanged?.Invoke(oldValue, TargetPoints);
 		}
 
+		public void SetEnemyComboUpgradesEnabled(bool enabled)
+		{
+			EnemyComboUpgradesEnabled = enabled;
+		}
+
 		public void IncreaseCurrentTurn()
 		{
 			SetCurrentTurn(CurrentTurn + 1, !IsPlayerTurn);

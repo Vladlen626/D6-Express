@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -16,6 +17,7 @@ namespace _Main.Scripts.Dice
 		public Transform CurrentPosition { get; private set; }
 		public int[] Weights { get; private set; }
 		public string ConfigId { get; private set; }
+		private readonly Queue<int> forcedRollValues = new();
 
 		public DiceModel(string configId, int[] weights)
 		{
@@ -26,9 +28,25 @@ namespace _Main.Scripts.Dice
 
 		public void Roll()
 		{
-			var newValue = DiceGameUtils.GetWeightedRandomValue(Weights);
-			//var newValue = 1;
+			var newValue = forcedRollValues.Count > 0
+				? forcedRollValues.Dequeue()
+				: DiceGameUtils.GetWeightedRandomValue(Weights);
 			SetValue(newValue);
+		}
+
+		public void EnqueueForcedRollValue(int value)
+		{
+			if (value < 1 || value > 6)
+			{
+				return;
+			}
+
+			forcedRollValues.Enqueue(value);
+		}
+
+		public void ClearForcedRollValues()
+		{
+			forcedRollValues.Clear();
 		}
 
 		public void SetValue(int value)
@@ -63,6 +81,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
+			ClearForcedRollValues();
 			SetChosen(false);
 			SetSaved(false);
 			SetValue(0);
