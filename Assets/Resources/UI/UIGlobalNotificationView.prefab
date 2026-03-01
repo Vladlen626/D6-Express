@@ -66,6 +66,7 @@ MonoBehaviour:
   _canvasType: 21
   container: {fileID: 9046188762547937600}
   messageText: {fileID: 3510796014651766450}
+  backgroundSizer: {fileID: 5406243328197906621}
   fadeInDuration: 0.18
   fadeOutDuration: 0.18
   scaleIn: 0.96
@@ -137,7 +138,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hint hint
+  m_text: ' efefsefsefe fesfse'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
   m_sharedMaterial: {fileID: -5374591420838769158, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
@@ -164,8 +165,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 60
-  m_fontSizeBase: 60
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -245,7 +246,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 260.52, y: 80.32}
+  m_SizeDelta: {x: 437.03, y: 66.26}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2629726704741918772
 CanvasRenderer:
@@ -270,7 +271,7 @@ MonoBehaviour:
   _background: {fileID: 9210415624262233310}
   _text: {fileID: 3510796014651766450}
   _layoutElement: {fileID: 0}
-  _maxWidth: 600
+  _maxWidth: 750
   _wrap: 1
   _useLayoutElement: 0
   _autoAddLayoutElement: 0

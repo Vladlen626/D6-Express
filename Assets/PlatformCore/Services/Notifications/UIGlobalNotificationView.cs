@@ -8,6 +8,7 @@ public class UIGlobalNotificationView : UIBaseElement
 {
 	[SerializeField] private RectTransform container;
 	[SerializeField] private TextMeshProUGUI messageText;
+	[SerializeField] private UIBackgroundSizer backgroundSizer;
 	[SerializeField] private float fadeInDuration = 0.18f;
 	[SerializeField] private float fadeOutDuration = 0.18f;
 	[SerializeField] private float scaleIn = 0.96f;
@@ -30,6 +31,10 @@ public class UIGlobalNotificationView : UIBaseElement
 		}
 
 		messageText.text = message;
+		if (backgroundSizer)
+		{
+			backgroundSizer.Refresh();
+		}
 		Show();
 
 		_group.alpha = 0f;

@@ -510,7 +510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5720431622603958501
 RectTransform:
   m_ObjectHideFlags: 0
@@ -551,7 +551,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1561414137298522060
 RectTransform:
   m_ObjectHideFlags: 0
@@ -591,6 +591,7 @@ MonoBehaviour:
   choiceOptions: {fileID: 1584055375087331178}
   speechText: {fileID: 3236615817706182457}
   speakerNameText: {fileID: 3897434018001795286}
+  speakerNameSizer: {fileID: 6056916311325688768}
 --- !u!225 &1258980316925833932
 CanvasGroup:
   m_ObjectHideFlags: 0

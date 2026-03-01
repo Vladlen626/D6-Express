@@ -19,15 +19,6 @@ public class UISpeechView : UIBaseElement
 	[SerializeField]
 	private UIBackgroundSizer speakerNameSizer;
 
-	protected override void OnAwake()
-	{
-		base.OnAwake();
-		if (!speakerNameSizer && speakerNameText)
-		{
-			speakerNameSizer = speakerNameText.GetComponentInParent<UIBackgroundSizer>();
-		}
-	}
-
 	public void SetSpeakerName(string text)
 	{
 		// todo уебищная эвристика

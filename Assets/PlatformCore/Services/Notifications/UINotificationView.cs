@@ -37,7 +37,6 @@ public class UINotificationView : UIBaseElement
 
 		if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
 		if (contentRoot == null) contentRoot = GetComponent<RectTransform>();
-		if (!backgroundSizer) backgroundSizer = GetComponent<UIBackgroundSizer>();
 		if (contentRoot == transform)
 		{
 			var child = transform.Find("ElementBackground");
