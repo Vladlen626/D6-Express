@@ -10,7 +10,6 @@ public class EnemyTurnController : IBaseController, IActivatable
 {
 	private readonly DiceGameProcessController processController;
 	private readonly DiceGameModel diceGameModel;
-	private readonly DiceScoringService scoringService;
 	private TableModel tableModel => diceGameModel.tableModel;
 
 	private int delay => Mathf.Max(1, Mathf.RoundToInt(GlobalParameters.Delay * GlobalParameters.EnemyTurnDelayMultiplier));
@@ -19,12 +18,10 @@ public class EnemyTurnController : IBaseController, IActivatable
 
 	public EnemyTurnController(
 		DiceGameProcessController processController,
-		DiceGameModel diceGameModel,
-		DiceScoringService scoringService)
+		DiceGameModel diceGameModel)
 	{
 		this.processController = processController;
 		this.diceGameModel = diceGameModel;
-		this.scoringService = scoringService;
 	}
 
 	public void Activate()
@@ -77,20 +74,21 @@ public class EnemyTurnController : IBaseController, IActivatable
 
 				if (unbanked.Length == 0)
 				{
-					processController.EndTurn(true);
+					await Pass();
 					await UniTask.Delay(delay);
 					return;
 				}
 
 				int[] values = DiceGameUtils.GetDiceValues(unbanked);
-				var combinations = scoringService.Evaluate(values);
+				var activeScoringService = diceGameModel.GetCurrentScoringService();
+				var combinations = activeScoringService.Evaluate(values);
 				if (combinations.Combinations.Count == 0)
 				{
 					await UniTask.Delay(delay);
 					return;
 				}
 
-				int bestMask = FindBestMask(values);
+				int bestMask = FindBestMask(values, activeScoringService);
 
 				for (int i = 0; i < unbanked.Length; i++)
 				{
@@ -108,7 +106,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 				// если можно уже выиграть — пасуем
 				if (tableModel.EnemyBankedPoints + tableModel.TurnPoints >= diceGameModel.TargetPoints)
 				{
-					processController.EndTurn(true);
+					await Pass();
 					await UniTask.Delay(delay);
 					return;
 				}
@@ -116,7 +114,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 				// если уже набрали нормально — пас
 				if (tableModel.TurnPoints >= 400)
 				{
-					processController.EndTurn(true);
+					await Pass();
 					await UniTask.Delay(delay);
 					return;
 				}
@@ -129,7 +127,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 				}
 				else
 				{
-					processController.EndTurn(true);
+					await Pass();
 					await UniTask.Delay(delay);
 					return;
 				}
@@ -153,7 +151,17 @@ public class EnemyTurnController : IBaseController, IActivatable
 		await processController.HandleRollAsync();
 	}
 
-	private int FindBestMask(int[] values)
+	private async UniTask Pass()
+	{
+		if (processController.IsProcessing)
+		{
+			return;
+		}
+
+		await processController.HandlePassForCurrentTurnAsync();
+	}
+
+	private int FindBestMask(int[] values, DiceScoringService scoringService)
 	{
 		int bestScore = -1;
 		int bestMask = 0;

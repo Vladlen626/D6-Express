@@ -40,7 +40,7 @@ namespace _Main.Scripts.Dice
 				run);
 
 			// Fire and forget; LevelStart modifiers are expected to be quick.
-			diceGameModel.ModifiersModel.PlayLevelStartActions(context).Forget();
+			diceGameModel.PlayerModifiersModel.PlayLevelStartActions(context).Forget();
 		}
 	}
 }
