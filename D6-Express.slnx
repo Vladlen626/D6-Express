@@ -6,10 +6,10 @@
   <Project Path="PlatformCore.csproj" />
   <Project Path="LineworkLite.csproj" />
   <Project Path="UniTask.Addressables.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="FMODUnityResonanceEditor.csproj" />
   <Project Path="FMODUnityEditor.csproj" />
   <Project Path="DOTween.Modules.csproj" />
-  <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="FMODUnity.csproj" />
   <Project Path="MackySoft.SerializeReferenceExtensions.Editor.csproj" />
   <Project Path="LineworkLite.Editor.csproj" />
