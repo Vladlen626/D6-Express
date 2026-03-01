@@ -36,6 +36,10 @@ public class NotificationsViewControler : BaseContextController<UINotificationsV
     private async void OnNotificationAdded(Notifications.Notification notification)
     {
         var notificationView = await objectFactory.CreateAsync<UINotificationView>(ResourcePaths.UI.UINotificationView, Vector3.zero, Quaternion.identity, _context.List);
+        if (_context.List && notificationView && notificationView.transform is RectTransform rect)
+        {
+            rect.SetParent(_context.List, false);
+        }
         notificationView.Showed += OnShowed;
 
         notificationList.Add((notification, notificationView));

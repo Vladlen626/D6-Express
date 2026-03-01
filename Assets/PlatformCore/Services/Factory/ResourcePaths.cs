@@ -44,12 +44,12 @@ namespace PlatformCore.Services.Factory
 			public const string NpcShopKeeper = "Player/NpcShopKeeper";
 			public const string PlayerBase = "Player/PlayerBase";
 			public const string PlayerInventory = "Player/PlayerInventory";
-			public const string Sit = "Player/Sit";
-			public const string StandUp = "Player/StandUp";
 		}
 
 		public static class Root
 		{
+			public const string ComboUpgradesConfig = "ComboUpgradesConfig";
+			public const string DiceScoringConfig = "DiceScoringConfig";
 			public const string DOTweenSettings = "DOTweenSettings";
 		}
 
@@ -61,7 +61,13 @@ namespace PlatformCore.Services.Factory
 
 		public static class UI
 		{
+			public const string ElementBackground = "UI/ElementBackground";
+			public const string DefaultTMP = "UI/TMP/DefaultTMP";
+			public const string DescriptionTMP = "UI/TMP/DescriptionTMP";
+			public const string HeaderTMP = "UI/TMP/HeaderTMP";
+			public const string TextsVerticalSizebable = "UI/TMP/TextsVerticalSizebable";
 			public const string UICursorView = "UI/UICursorView";
+			public const string UIGlobalNotificationView = "UI/UIGlobalNotificationView";
 			public const string UIHintView = "UI/UIHintView";
 			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";

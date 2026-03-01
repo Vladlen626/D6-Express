@@ -29,11 +29,19 @@ public class GlobalNotificationService : BaseAsyncService
 		this.localizationService = localizationService;
 	}
 
+	/// <summary>
+	/// Shows a localized banner immediately. Duration is controlled by <paramref name="holdSeconds"/>
+	/// plus the animation timings inside <c>UIGlobalNotificationView</c>.
+	/// </summary>
 	public void ShowBanner(string id, float holdSeconds = 0.9f)
 	{
 		ShowBannerAsync(id, holdSeconds).Forget();
 	}
 
+	/// <summary>
+	/// Shows a localized banner and awaits its completion. Duration is controlled by <paramref name="holdSeconds"/>
+	/// plus the animation timings inside <c>UIGlobalNotificationView</c>.
+	/// </summary>
 	public UniTask ShowBannerAsync(string id, float holdSeconds = 0.9f)
 	{
 		if (string.IsNullOrWhiteSpace(id))
@@ -45,6 +53,10 @@ public class GlobalNotificationService : BaseAsyncService
 		return ShowBannerRawAsync(message, holdSeconds);
 	}
 
+	/// <summary>
+	/// Shows a formatted localized banner (string.Format) and awaits its completion.
+	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
+	/// </summary>
 	public UniTask ShowBannerAsync(string id, string[] args, float holdSeconds = 0.9f)
 	{
 		if (string.IsNullOrWhiteSpace(id))
@@ -57,11 +69,19 @@ public class GlobalNotificationService : BaseAsyncService
 		return ShowBannerRawAsync(message, holdSeconds);
 	}
 
+	/// <summary>
+	/// Shows a raw banner message immediately (no localization).
+	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
+	/// </summary>
 	public void ShowBannerRaw(string message, float holdSeconds = 0.9f)
 	{
 		ShowBannerRawAsync(message, holdSeconds).Forget();
 	}
 
+	/// <summary>
+	/// Shows a raw banner message (no localization) and awaits its completion.
+	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
+	/// </summary>
 	public async UniTask ShowBannerRawAsync(string message, float holdSeconds = 0.9f)
 	{
 		if (string.IsNullOrWhiteSpace(message))
@@ -79,11 +99,19 @@ public class GlobalNotificationService : BaseAsyncService
 		await bannerView.PlayAsync(message, holdSeconds);
 	}
 
+	/// <summary>
+	/// Enqueues a localized toast for sequential display (queue).
+	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
+	/// </summary>
 	public void EnqueueToast(string id)
 	{
 		EnqueueToastAsync(id).Forget();
 	}
 
+	/// <summary>
+	/// Enqueues a localized toast and returns a task that completes when the toast finishes.
+	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
+	/// </summary>
 	public UniTask EnqueueToastAsync(string id)
 	{
 		if (string.IsNullOrWhiteSpace(id))
@@ -95,6 +123,10 @@ public class GlobalNotificationService : BaseAsyncService
 		return EnqueueToastRawAsync(message);
 	}
 
+	/// <summary>
+	/// Enqueues a formatted localized toast (string.Format) and returns a task that completes when it finishes.
+	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
+	/// </summary>
 	public UniTask EnqueueToastAsync(string id, string[] args)
 	{
 		if (string.IsNullOrWhiteSpace(id))
@@ -107,11 +139,19 @@ public class GlobalNotificationService : BaseAsyncService
 		return EnqueueToastRawAsync(message);
 	}
 
+	/// <summary>
+	/// Enqueues a raw toast message immediately (no localization).
+	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
+	/// </summary>
 	public void EnqueueToastRaw(string message)
 	{
 		EnqueueToastRawAsync(message).Forget();
 	}
 
+	/// <summary>
+	/// Enqueues a raw toast message (no localization) and returns a task that completes when it finishes.
+	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
+	/// </summary>
 	public UniTask EnqueueToastRawAsync(string message)
 	{
 		if (string.IsNullOrWhiteSpace(message))
@@ -132,6 +172,64 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		return request.Completion.Task;
+	}
+
+	/// <summary>
+	/// Shows a localized toast immediately (no queue). Multiple calls will display in parallel.
+	/// </summary>
+	public void ShowToastImmediate(string id)
+	{
+		ShowToastImmediateAsync(id).Forget();
+	}
+
+	/// <summary>
+	/// Shows a localized toast immediately and returns a task that completes when it finishes.
+	/// </summary>
+	public UniTask ShowToastImmediateAsync(string id)
+	{
+		if (string.IsNullOrWhiteSpace(id))
+		{
+			return UniTask.CompletedTask;
+		}
+
+		var message = localizationService != null ? localizationService.GetLocalized(id) : id;
+		return ShowToastRawImmediateAsync(message);
+	}
+
+	/// <summary>
+	/// Shows a formatted localized toast immediately (no queue).
+	/// </summary>
+	public UniTask ShowToastImmediateAsync(string id, string[] args)
+	{
+		if (string.IsNullOrWhiteSpace(id))
+		{
+			return UniTask.CompletedTask;
+		}
+
+		var template = localizationService != null ? localizationService.GetLocalized(id) : id;
+		var message = args != null && args.Length > 0 ? string.Format(template, args) : template;
+		return ShowToastRawImmediateAsync(message);
+	}
+
+	/// <summary>
+	/// Shows a raw toast immediately (no queue). Multiple calls will display in parallel.
+	/// </summary>
+	public void ShowToastRawImmediate(string message)
+	{
+		ShowToastRawImmediateAsync(message).Forget();
+	}
+
+	/// <summary>
+	/// Shows a raw toast immediately (no queue) and returns a task that completes when it finishes.
+	/// </summary>
+	public UniTask ShowToastRawImmediateAsync(string message)
+	{
+		if (string.IsNullOrWhiteSpace(message))
+		{
+			return UniTask.CompletedTask;
+		}
+
+		return ShowToastInternal(message);
 	}
 
 	private async UniTask EnsureBannerViewAsync()
@@ -196,15 +294,21 @@ public class GlobalNotificationService : BaseAsyncService
 			return;
 		}
 
+		var parent = notificationsView.List ? notificationsView.List : notificationsView.transform;
 		var view = await objectFactory.CreateAsync<UINotificationView>(
 			ResourcePaths.UI.UINotificationView,
 			UnityEngine.Vector3.zero,
 			UnityEngine.Quaternion.identity,
-			notificationsView.List);
+			parent);
 
 		if (!view)
 		{
 			return;
+		}
+
+		if (parent && view.transform is UnityEngine.RectTransform rect)
+		{
+			rect.SetParent(parent, false);
 		}
 
 		var tcs = new UniTaskCompletionSource();

@@ -146,6 +146,8 @@ namespace _Main.Scripts.Core
 			controllersList.Add(ShopFactory.GetShopViewController(trainShop, sceneContext.TrainShop, factory, playerView.Interactor, sceneContext.TrainShopkeeper));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, stationShop, playerView.Interactor, Camera.main));
 			controllersList.Add(ShopFactory.GetShopTooltipsController(uiService, trainShop, playerView.Interactor, Camera.main));
+			controllersList.Add(new ShopPurchaseNotificationController(stationShop, notificationService, configService, _serviceLocator.Get<ILocalizationService>()));
+			controllersList.Add(new ShopPurchaseNotificationController(trainShop, notificationService, configService, _serviceLocator.Get<ILocalizationService>()));
 			controllersList.Add(await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notificationService));
 			controllersList.Add(await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService, inputService));
 			controllersList.Add(new QuestsViewController(uiService, playerModel.Quests, factory, game));

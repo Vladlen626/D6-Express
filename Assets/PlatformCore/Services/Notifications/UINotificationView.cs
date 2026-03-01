@@ -8,6 +8,7 @@ public class UINotificationView : UIBaseElement
 {
 	[SerializeField] private CanvasGroup canvasGroup;
 	[SerializeField] private RectTransform contentRoot;
+	[SerializeField] private UIBackgroundSizer backgroundSizer;
 	[SerializeField] private float initialShift = 50f;
 	[SerializeField] private float smoothDuration = 0.5f;
 	[SerializeField] private float fadeDuration = 0.3f;
@@ -17,12 +18,17 @@ public class UINotificationView : UIBaseElement
 
 	private Vector2 originalPos;
 	private Sequence fullSequence;
+	private RectTransform resolvedContentRoot;
 
 	public event Action<UINotificationView> Showed;
 
 	public void SetText(string text)
 	{
 		this.text.text = text;
+		if (backgroundSizer)
+		{
+			backgroundSizer.Refresh();
+		}
 	}
 
 	protected override void OnAwake()
@@ -31,6 +37,34 @@ public class UINotificationView : UIBaseElement
 
 		if (canvasGroup == null) canvasGroup = GetComponent<CanvasGroup>();
 		if (contentRoot == null) contentRoot = GetComponent<RectTransform>();
+		if (!backgroundSizer) backgroundSizer = GetComponent<UIBackgroundSizer>();
+		if (contentRoot == transform)
+		{
+			var child = transform.Find("ElementBackground");
+			if (!child && transform.childCount > 0)
+			{
+				child = transform.GetChild(0);
+			}
+
+			if (child)
+			{
+				contentRoot = child as RectTransform;
+			}
+		}
+
+		resolvedContentRoot = contentRoot != null && contentRoot != transform
+			? contentRoot
+			: null;
+
+		if (resolvedContentRoot)
+		{
+			resolvedContentRoot.anchorMin = Vector2.zero;
+			resolvedContentRoot.anchorMax = Vector2.one;
+			resolvedContentRoot.pivot = new Vector2(0.5f, 0.5f);
+			resolvedContentRoot.anchoredPosition = Vector2.zero;
+			resolvedContentRoot.sizeDelta = Vector2.zero;
+		}
+
 		canvasGroup.alpha = 0f;
 		text.gameObject.SetActive(false);
 	}
@@ -39,22 +73,29 @@ public class UINotificationView : UIBaseElement
 	{
 		base.OnShow();
 
-		RectTransform rectTransform = contentRoot;
+		RectTransform rectTransform = resolvedContentRoot ? resolvedContentRoot : contentRoot;
+		var canMove = rectTransform != null && rectTransform != transform;
 
-		originalPos = rectTransform.anchoredPosition;
+		if (canMove)
+		{
+			originalPos = rectTransform.anchoredPosition;
 
-		rectTransform.anchoredPosition = originalPos + Vector2.down * initialShift;
+			rectTransform.anchoredPosition = originalPos + Vector2.down * initialShift;
+		}
 		canvasGroup.alpha = 0f;
 		text.gameObject.SetActive(true);
 
 		fullSequence?.Kill();
 		fullSequence = DOTween.Sequence();
 
-		fullSequence.Append(
-			rectTransform
-				.DOAnchorPos(originalPos, smoothDuration)
-				.SetEase(Ease.InOutQuad)
-		);
+		if (canMove)
+		{
+			fullSequence.Append(
+				rectTransform
+					.DOAnchorPos(originalPos, smoothDuration)
+					.SetEase(Ease.InOutQuad)
+			);
+		}
 
 		fullSequence.Join(
 			canvasGroup
@@ -64,11 +105,14 @@ public class UINotificationView : UIBaseElement
 
 		fullSequence.AppendInterval(showDelay);
 
-		fullSequence.Append(
-			rectTransform
-				.DOAnchorPosX(originalPos.x + 50f, fadeDuration)
-				.SetEase(Ease.InQuad)
-		);
+		if (canMove)
+		{
+			fullSequence.Append(
+				rectTransform
+					.DOAnchorPosX(originalPos.x + 50f, fadeDuration)
+					.SetEase(Ease.InQuad)
+			);
+		}
 
 		fullSequence.Join(
 			canvasGroup

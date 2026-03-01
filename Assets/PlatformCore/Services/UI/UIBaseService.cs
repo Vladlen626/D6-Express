@@ -141,6 +141,21 @@ namespace PlatformCore.Services.UI
 				return null;
 			}
 
+			var existing = target.GetComponentsInChildren<T>(true);
+			if (existing.Length > 0)
+			{
+				if (existing.Length > 1)
+				{
+					_logger?.LogError($"[UIService] Multiple instances found for {type.Name} on {prefabComponent.CanvasType} Canvas");
+				}
+
+				var existingWindow = existing[0];
+				existingWindow.gameObject.SetActive(false);
+				_windows[type] = existingWindow;
+				_logger?.Log($"[UIService] Using existing {type.Name} on {prefabComponent.CanvasType} Canvas");
+				return existingWindow;
+			}
+
 			var instance = Object.Instantiate(prefab, target);
 			var component = instance.GetComponent<T>();
 

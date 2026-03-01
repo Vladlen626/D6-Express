@@ -53,6 +53,7 @@
         "strat_straight_2_6_hunter_name": "Straight Dice (2–6)",
         "strat_polar_ends_name": "Polar Dice",
         "shopkeeper_buy_failed_random_0": "No money, no honey, pal",
+        "shop_item_bought_notification": "Bought \"{0}\"",
         "dice_added_to_inventory_notification": "{0} added",
         "fart_reaction": "What is that smell?!",
         "ticks_progress": "ticks left: {0}",

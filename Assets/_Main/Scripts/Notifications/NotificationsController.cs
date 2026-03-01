@@ -47,6 +47,6 @@ public class NotificationsController : IBaseController, IActivatable, IPreloadab
             return;
         }
         var header = localizationService != null ? localizationService.GetLocalized(dice.nameKey) : dice.nameKey;
-        notificationService?.EnqueueToastRaw(string.Format(buyText, header));
+        notificationService?.ShowToastRawImmediate(string.Format(buyText, header));
     }
 }

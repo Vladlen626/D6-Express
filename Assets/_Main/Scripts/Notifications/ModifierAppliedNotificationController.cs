@@ -64,7 +64,7 @@ public class ModifierAppliedNotificationController : IBaseController, IActivatab
 			return;
 		}
 
-		notificationService.EnqueueToastRaw(name);
+		notificationService.ShowToastRawImmediate(name);
 	}
 
 	private string ResolveModifierName(IModifier modifier)

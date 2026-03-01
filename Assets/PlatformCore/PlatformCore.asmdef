@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "PlatformCore",
   "references":[ 
     "UniTask",
@@ -7,6 +7,7 @@
     "FMODUnity",
     "Unity.Cinemachine",
     "UnitySplines",
-    "DOTween.Modules"
+    "DOTween.Modules",
+    "Newtonsoft.Json"
   ]
 }
