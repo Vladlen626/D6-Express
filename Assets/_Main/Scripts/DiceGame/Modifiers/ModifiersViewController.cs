@@ -1,6 +1,5 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using _Main.Scripts.Core.Services;
+using _Main.Scripts.UI;
 using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
@@ -12,18 +11,18 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 {
     private readonly ModifiersModel modifiers;
     private readonly IObjectFactory objectFactory;
-    private readonly IInputService inputService;
     private readonly ConfigService configService;
+    private readonly PauseState pauseState;
     private readonly Dictionary<IModifier, UIModifierView> modifierViews = new();
 
     private Dictionary<string, ItemCatalogEntry> configs;
 
-    public ModifiersViewController(IUIService uiService, ModifiersModel modifiers, IObjectFactory objectFactory, IInputService inputService, ConfigService configService) : base(uiService)
+    public ModifiersViewController(IUIService uiService, ModifiersModel modifiers, IObjectFactory objectFactory, ConfigService configService, PauseState pauseState) : base(uiService)
     {
         this.modifiers = modifiers;
         this.objectFactory = objectFactory;
-        this.inputService = inputService;
         this.configService = configService;
+        this.pauseState = pauseState;
     }
 
     protected override async UniTask OnPreloadAsync()
@@ -44,17 +43,22 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
         modifiers.ModifierAdded += OnModifierAdded;
         modifiers.ModifierRemoved += OnModifierRemoved;
 
-        inputService.OnPausePressed += OnPausePressed;
+        pauseState.Changed += OnPauseStateChanged;
 
         foreach (var item in modifiers.AllModifiers)
         {
             OnModifierAdded(item);
         }
+
+        if (pauseState.IsPaused)
+        {
+            _context.Show();
+        }
     }
 
     protected override void OnDeactivate()
     {
-        inputService.OnPausePressed -= OnPausePressed;
+        pauseState.Changed -= OnPauseStateChanged;
 
         modifiers.ModifierRemoved -= OnModifierRemoved;
         modifiers.ModifierAdded -= OnModifierAdded;
@@ -107,15 +111,15 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
         Object.Destroy(view.gameObject);
     }
 
-    private void OnPausePressed()
+    private void OnPauseStateChanged(bool isPaused)
     {
-        if (_context.IsShown())
+        if (isPaused)
         {
-            _context.Hide();
+            _context.Show();
         }
         else
         {
-            _context.Show();
+            _context.Hide();
         }
     }
 }
