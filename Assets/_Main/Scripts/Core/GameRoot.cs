@@ -140,6 +140,7 @@ namespace _Main.Scripts.Core
 			var sleepController = RunFactory.GetSleepControllers(uiService, run, playerView, inputService);
 			var locationController = new LocationController(game, sceneContext, audioService);
 			var playerController = new PlayerController(playerModel, playerView, sceneContext);
+			var shopController = new ShopController(run, trainShop, stationShop);
 
 			controllersList.Add(new LedTrainController(run, sceneContext.Leds));
 			controllersList.Add(ShopFactory.GetShopViewController(stationShop, sceneContext.StationShop, factory, playerView.Interactor, sceneContext.StationShopkeeper));
@@ -157,6 +158,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(new CombinationsController(playerModel.InventoryModel.ModifiersModel, sceneContext.DiceGameTableView.CombinationsView));
 			controllersList.Add(sleepController);
 			controllersList.Add(locationController);
+			controllersList.Add(shopController);
 			controllersList.AddRange(baseControllers);
 
 			var mainQuestController = new MainQuestContoller(run, playerModel, configService);
@@ -176,18 +178,10 @@ namespace _Main.Scripts.Core
 			gameStateController.AddTask(async (x) => cursorService.LockCursor(), GameStateTransitionTask.LOCK_CURSOR);
 			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), GameStateTransitionTask.UNLOCK_CURSOR);
 			gameStateController.AddTask((x) => npcSpawner.Respawn(), GameStateTransitionTask.NPC_RESPAWN);
-			gameStateController.AddTask(async (x) =>
-			{
-				if (x.Location == Location.TRAIN)
-				{
-					trainShop.Restock();
-				}
-				else if (x.Location == Location.STATION)
-				{
-					stationShop.Restock();
-				}
-			}, GameStateTransitionTask.SHOP_RESTOCK);
+			gameStateController.AddChanger(trainShop);
+			gameStateController.AddChanger(stationShop);
 			gameStateController.AddChanger(playerController);
+			gameStateController.AddChanger(shopController);
 			gameStateController.AddChanger(transitionViewController);
 			gameStateController.AddChanger(locationController);
 			gameStateController.AddChanger(winViewController);

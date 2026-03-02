@@ -39,11 +39,14 @@ public class ShopViewController : IBaseController, IActivatable
 
         shopView.RestockLever.RestockRequested += OnRestockRequested;
 
-        shopView.SetRestockPrice(shop.RestockPrice.ToString());
+        shop.RestockPriceChanged += UpdateRestockPrice;
+        UpdateRestockPrice();
     }
 
     public void Deactivate()
     {
+        shop.RestockPriceChanged -= UpdateRestockPrice;
+
         shopView.RestockLever.RestockRequested -= OnRestockRequested;
 
         shop.RestockFailed -= OnRestockFailed;
@@ -52,6 +55,10 @@ public class ShopViewController : IBaseController, IActivatable
         shop.ItemAdded -= OnTradeItemAdded;
     }
 
+    private void UpdateRestockPrice()
+    {
+        shopView.SetRestockPrice(shop.RestockPrice.ToString());
+    }
     private void OnTradeItemAdded(int index, TradeItem tradeItem)
     {
         operationsByIndex[index] = ExecuteForIndex(index, () => AddTradeItem(index, tradeItem));

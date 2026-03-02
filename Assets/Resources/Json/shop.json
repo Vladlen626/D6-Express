@@ -1,6 +1,7 @@
 {
   "train": {
     "restock_price": 100,
+    "restock_price_scale": 50,
     "items": [
       { "itemId": "default" },
       { "itemId": "gen_1_focus" },
@@ -28,6 +29,7 @@
   },
   "station": {
     "restock_price": 50,
+    "restock_price_scale": 50,
     "items": [
       { "itemId": "default" },
       { "itemId": "gen_1_focus" },
