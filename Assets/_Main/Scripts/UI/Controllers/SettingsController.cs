@@ -11,14 +11,16 @@ namespace _Main.Scripts.UI
 		private readonly IAudioService audioService;
 		private readonly ICursorService cursorService;
 		private readonly IInputService inputService;
+		private readonly PauseState pauseState;
 
 		public SettingsController(IUIService uiService, IAudioService audioService, ICursorService cursorService,
-			IInputService inputService) : base(uiService)
+			IInputService inputService, PauseState pauseState) : base(uiService)
 		{
 			this.uiService = uiService;
 			this.audioService = audioService;
 			this.cursorService = cursorService;
 			this.inputService = inputService;
+			this.pauseState = pauseState;
 		}
 
 		protected override void OnActivate()
@@ -61,6 +63,7 @@ namespace _Main.Scripts.UI
 			_context.Show();
 			inputService.DisablePlayerInputs();
 			cursorService.UnlockCursor();
+			pauseState.SetPaused(true);
 		}
 
 		private void HideContext()
@@ -68,6 +71,7 @@ namespace _Main.Scripts.UI
 			_context.Hide();
 			inputService.EnablePlayerInputs();
 			cursorService.LockCursor();
+			pauseState.SetPaused(false);
 		}
 
 		private void OnMasterChangedHandler(float obj)

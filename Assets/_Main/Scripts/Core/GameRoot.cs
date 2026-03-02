@@ -78,6 +78,7 @@ namespace _Main.Scripts.Core
 
 			var playerModel = new PlayerModel();
 			var diceGameModel = new DiceGameModel(playerModel.InventoryModel, scoringService);
+			var pauseState = new PauseState();
 
 			// persistent scene load
 			var persistentSceneName = sceneService.GetActiveSceneName();
@@ -122,7 +123,7 @@ namespace _Main.Scripts.Core
 			{
 				winViewController,
 				loseViewController,
-				new SettingsController(uiService, audioService, cursorService, inputService),
+				new SettingsController(uiService, audioService, cursorService, inputService, pauseState),
 				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
 					run, configService, notificationService),
 				new LightController(sceneContext.Lights, run),
@@ -153,7 +154,7 @@ namespace _Main.Scripts.Core
 			controllersList.Add(new QuestsViewController(uiService, playerModel.Quests, factory, game));
 			controllersList.Add(new NotificationsController(notificationService, playerModel.InventoryModel, configService, _serviceLocator.Get<ILocalizationService>()));
 			controllersList.Add(new ModifierAppliedNotificationController(playerModel.InventoryModel.ModifiersModel, notificationService, configService, _serviceLocator.Get<ILocalizationService>()));
-			controllersList.Add(new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory, inputService, configService));
+			controllersList.Add(new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory, configService, pauseState));
 			controllersList.Add(new CombinationsController(playerModel.InventoryModel.ModifiersModel, sceneContext.DiceGameTableView.CombinationsView));
 			controllersList.Add(sleepController);
 			controllersList.Add(locationController);
