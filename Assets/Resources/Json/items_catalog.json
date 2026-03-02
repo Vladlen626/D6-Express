@@ -132,91 +132,13 @@
     }
   },
   {
-    "id": "multiply_combo_three_kind",
-    "type": "Modifier",
-    "nameKey": "modifier_multiply_combo_title",
-    "descriptionKey": "modifier_multiply_combo_description",
-    "rarity": "Common",
-    "price": 10,
-    "visualId": "",
-    "data": {
-      "modifierType": "MultiplyComboModifier",
-      "combination": "ThreeOfAKind"
-    }
-  },
-  {
-    "id": "multiply_kind_single_ones",
-    "type": "Modifier",
-    "nameKey": "modifier_multiply_kind_title",
-    "descriptionKey": "modifier_multiply_kind_description",
-    "rarity": "Common",
-    "price": 10,
-    "visualId": "",
-    "data": {
-      "modifierType": "MultiplyKindOfModifiers",
-      "combination": "SingleOnes",
-      "face": 1
-    }
-  },
-  {
-    "id": "shake_reroll",
-    "type": "Modifier",
-    "nameKey": "modifier_shake_reroll_title",
-    "descriptionKey": "modifier_shake_reroll_description",
-    "rarity": "Common",
-    "price": 10,
-    "visualId": "",
-    "data": {
-      "modifierType": "ShakeRerollModifier",
-      "shakeChance": 0.95,
-      "rerollAnimationDuration": 0.5
-    }
-  },
-  {
-    "id": "scramble_combinations",
-    "type": "Modifier",
-    "nameKey": "modifier_scramble_combinations_title",
-    "descriptionKey": "modifier_scramble_combinations_description",
-    "rarity": "Rare",
-    "price": 15,
-    "visualId": "",
-    "data": {
-      "modifierType": "ScrambleCombinationsModifier"
-    }
-  },
-  {
-    "id": "pass_activation_multiplier",
-    "type": "Modifier",
-    "nameKey": "modifier_pass_activation_multiplier_title",
-    "descriptionKey": "modifier_pass_activation_multiplier_description",
-    "rarity": "Uncommon",
-    "price": 12,
-    "visualId": "",
-    "data": {
-      "modifierType": "PassActivationMultiplierModifier"
-    }
-  },
-  {
-    "id": "adjust_ticks_plus1",
-    "type": "Modifier",
-    "nameKey": "modifier_adjust_tick_title",
-    "descriptionKey": "modifier_adjust_tick_description",
-    "rarity": "Common",
-    "price": 8,
-    "visualId": "",
-    "data": {
-      "modifierType": "AdjustTicksPerDayModifier",
-      "delta": 1
-    }
-  },
-  {
     "id": "extra_dice_cap",
     "type": "Modifier",
     "nameKey": "modifier_extra_dice_cap_title",
     "descriptionKey": "modifier_extra_dice_cap_description",
     "rarity": "Uncommon",
     "price": 20,
-    "visualId": "",
+    "visualId": "ExtraDiceCapItem",
     "data": {
       "modifierType": "ExtraDiceCapItem",
       "bonus": 4
@@ -229,7 +151,7 @@
     "descriptionKey": "modifier_silencer_item_description",
     "rarity": "Rare",
     "price": 25,
-    "visualId": "",
+    "visualId": "ModifierSilencerItem",
     "data": {
       "modifierType": "ModifierSilencerItem",
       "cooldownPasses": 2
@@ -242,7 +164,7 @@
     "descriptionKey": "modifier_pass_multiplier_item_description",
     "rarity": "Rare",
     "price": 20,
-    "visualId": "",
+    "visualId": "PassMultiplierItem",
     "data": {
       "modifierType": "PassMultiplierItem",
       "scoreMultiplier": 1.5,
@@ -256,7 +178,7 @@
     "descriptionKey": "modifier_reroll_selected_item_description",
     "rarity": "Uncommon",
     "price": 15,
-    "visualId": "",
+    "visualId": "RerollSelectedItem",
     "data": {
       "modifierType": "RerollSelectedItem",
       "cooldownPasses": 2
@@ -269,7 +191,7 @@
     "descriptionKey": "modifier_step_up_item_description",
     "rarity": "Rare",
     "price": 18,
-    "visualId": "",
+    "visualId": "StepUpItem",
     "data": {
       "modifierType": "StepUpItem",
       "selectionCount": 3,

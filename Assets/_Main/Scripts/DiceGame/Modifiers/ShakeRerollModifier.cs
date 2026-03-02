@@ -4,22 +4,26 @@ using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
-	public class ShakeRerollModifier : ModifierItemBase, IOnRollModifier
+	public class ShakeRerollModifier : IOnRollModifier
 	{
 		private readonly DiceScoringService scoringService;
 		public readonly float shakeChance;
 		private readonly float rerollAnimationDuration;
 
-		public ShakeRerollModifier(string id, DiceScoringService scoringService, float shakeChance = 0.95f, float rerollAnimationDuration = 0.5f)
-			: base(id, id, DiceItemActivationType.Passive)
+		public ShakeRerollModifier(DiceScoringService scoringService, float shakeChance = 0.95f, float rerollAnimationDuration = 0.5f)
 		{
 			this.scoringService = scoringService;
 			this.shakeChance = Mathf.Clamp01(shakeChance);
 			this.rerollAnimationDuration = Mathf.Max(0.05f, rerollAnimationDuration);
 		}
 
-		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
+		public async UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			if (scoringService == null)
+			{
+				return;
+			}
+
 			if (modifierContext.Dice == null || modifierContext.Dice.Length == 0)
 			{
 				return;

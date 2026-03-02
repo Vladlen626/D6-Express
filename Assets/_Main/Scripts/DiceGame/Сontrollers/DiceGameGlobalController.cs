@@ -46,6 +46,7 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> selectionControllers = new();
 		private readonly List<IBaseController> itemControllers = new();
 		private readonly List<DiceItemView> itemViews = new();
+		private readonly List<IModifier> runtimeGlobalModifiers = new();
 
 		private bool gamePreviousStoped = false;
 
@@ -683,7 +684,9 @@ namespace _Main.Scripts.Dice
 		private UniTask<bool> ApplyInventoryModifiersAsync()
 		{
 			// Keep player's inventory-driven modifiers intact in default mode.
+			ClearRuntimeGlobalModifiers();
 			diceGameModel.EnemyModifierItemsModel.Reset();
+			diceGameModel.EnemyModifiersModel.Reset();
 			return UniTask.FromResult(true);
 		}
 
@@ -726,44 +729,18 @@ namespace _Main.Scripts.Dice
 				}
 			}
 
-			var catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
-			if (!ApplyModifierSetToSide(
-				    resolvedSet.player_modifiers,
-				    diceGameModel.PlayerModifierItemsModel,
-				    diceGameModel.PlayerScoringService,
-				    catalog,
-				    "player"))
-			{
-				return false;
-			}
+			ClearRuntimeGlobalModifiers();
+			diceGameModel.EnemyModifierItemsModel.Reset();
+			diceGameModel.EnemyModifiersModel.Reset();
 
-			if (!ApplyModifierSetToSide(
-				    resolvedSet.enemy_modifiers,
-				    diceGameModel.EnemyModifierItemsModel,
-				    diceGameModel.EnemyScoringService,
-				    catalog,
-				    "enemy"))
-			{
-				return false;
-			}
-
-			return true;
+			return ApplyGlobalModifierSet(resolvedSet.player_modifiers, diceGameModel.PlayerScoringService, "player");
 		}
 
-		private bool ApplyModifierSetToSide(
+		private bool ApplyGlobalModifierSet(
 			string[] modifierIds,
-			ModifierItemsModel itemsModel,
 			DiceScoringService scoringService,
-			IReadOnlyDictionary<string, ItemCatalogEntry> catalog,
 			string sideLabel)
 		{
-			if (itemsModel == null)
-			{
-				FailDiceGameSetup($"[DiceGame] {sideLabel} modifier model is missing.");
-				return false;
-			}
-
-			itemsModel.Reset();
 			if (modifierIds == null || modifierIds.Length == 0)
 			{
 				return true;
@@ -785,29 +762,34 @@ namespace _Main.Scripts.Dice
 					return false;
 				}
 
-				if (!catalog.TryGetValue(modifierId, out var entry))
-				{
-					FailDiceGameSetup($"[DiceGame] Modifier '{modifierId}' for {sideLabel} not found in items_catalog.");
-					return false;
-				}
-
-				if (entry.typeEnum != ItemCatalogType.Modifier)
-				{
-					FailDiceGameSetup($"[DiceGame] Item '{modifierId}' for {sideLabel} is not a Modifier.");
-					return false;
-				}
-
-				var item = ModifierItemFactory.Create(entry, scoringService);
-				if (item == null)
+				var modifier = GlobalModifierFactory.Create(modifierId, scoringService);
+				if (modifier == null)
 				{
 					FailDiceGameSetup($"[DiceGame] Failed to create modifier '{modifierId}' for {sideLabel}.");
 					return false;
 				}
 
-				itemsModel.AddItem(item);
+				diceGameModel.PlayerModifiersModel.AddModifier(modifier);
+				runtimeGlobalModifiers.Add(modifier);
 			}
 
 			return true;
+		}
+
+		private void ClearRuntimeGlobalModifiers()
+		{
+			if (runtimeGlobalModifiers.Count == 0)
+			{
+				return;
+			}
+
+			var model = diceGameModel.PlayerModifiersModel;
+			for (int i = 0; i < runtimeGlobalModifiers.Count; i++)
+			{
+				model.RemoveModifier(runtimeGlobalModifiers[i]);
+			}
+
+			runtimeGlobalModifiers.Clear();
 		}
 
 		private void FailDiceGameSetup(string message)

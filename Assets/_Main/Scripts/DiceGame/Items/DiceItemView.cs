@@ -6,18 +6,11 @@ using UnityEngine.InputSystem;
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
-	/// Minimal 3D view for an item. Handles click detection and simple state visualization.
-	/// Swap the visuals/colors in the inspector to match your art style.
+	/// Minimal 3D view for an item. Handles click detection and visibility.
 	/// </summary>
 	public class DiceItemView : MonoBehaviour
 	{
 		[SerializeField] private Collider clickCollider;
-		[SerializeField] private Renderer[] renderers;
-		[SerializeField] private Color readyColor = Color.white;
-		[SerializeField] private Color armedColor = Color.green;
-		[SerializeField] private Color cooldownColor = Color.gray;
-		[SerializeField] private Color consumedColor = Color.black;
-		[SerializeField] private Color disabledColor = Color.red;
 
 		private IModifierItem boundItem;
 		public UnityEvent OnClicked = new();
@@ -152,35 +145,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			gameObject.SetActive(isVisible);
-			var color = readyColor;
-			switch (state)
-			{
-				case DiceItemState.Armed:
-					color = armedColor;
-					break;
-				case DiceItemState.Cooldown:
-					color = cooldownColor;
-					break;
-				case DiceItemState.Consumed:
-					color = consumedColor;
-					break;
-				case DiceItemState.Disabled:
-					color = disabledColor;
-					break;
-				case DiceItemState.Ready:
-				case DiceItemState.Hidden:
-					color = readyColor;
-					break;
-			}
-
-			foreach (var r in renderers)
-			{
-				if (!r)
-				{
-					continue;
-				}
-				r.material.color = color;
-			}
 		}
 	}
 }

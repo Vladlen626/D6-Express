@@ -6,20 +6,19 @@ namespace _Main.Scripts.Dice
 	/// Adjusts the number of ticks (games per day) for the current level by a fixed delta (can increase or decrease).
 	/// Applied on LevelStart; reverted at the end of the level by subtracting the same delta from the current value.
 	/// </summary>
-	public class AdjustTicksPerDayModifier : ModifierItemBase, IOnLevelStartModifier
+	public class AdjustTicksPerDayModifier : IOnLevelStartModifier
 	{
 		public readonly int delta;
 		private bool isApplied;
 		private Run run;
 
 		/// <param name="delta">Positive to increase ticks per day, negative to reduce. Defaults to -1 (reduce by one).</param>
-		public AdjustTicksPerDayModifier(string id, int delta = -1)
-			: base(id, id, DiceItemActivationType.Passive)
+		public AdjustTicksPerDayModifier(int delta = -1)
 		{
 			this.delta = delta;
 		}
 
-		public override UniTask ModifyValues(DiceModifierContext modifierContext)
+		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			if (modifierContext.Run == null)
 			{

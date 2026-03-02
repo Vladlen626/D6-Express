@@ -15,15 +15,21 @@ namespace PlatformCore.Services.Factory
 		public static class Items
 		{
 			public const string DicePrefab = "Items/DicePrefab";
+			public const string ExtraDiceCapItem = "Items/ExtraDiceCapItem";
 			public const string ItemBase = "Items/ItemBase";
+			public const string ModifierSilencerItem = "Items/ModifierSilencerItem";
 			public const string PassMultiplierItem = "Items/PassMultiplierItem";
 			public const string RerollSelectedItem = "Items/RerollSelectedItem";
+			public const string StepUpItem = "Items/StepUpItem";
 		}
 
 		public static class Json
 		{
+			public const string dice_game_modifiers_schedule = "Json/dice_game_modifiers_schedule";
 			public const string dice_game_rules = "Json/dice_game_rules";
 			public const string dice_types = "Json/dice_types";
+			public const string enemy_ai_scenario_schedule = "Json/enemy_ai_scenario_schedule";
+			public const string enemy_ai_scenarios = "Json/enemy_ai_scenarios";
 			public const string items_catalog = "Json/items_catalog";
 			public const string modifiers_ui = "Json/modifiers_ui";
 			public const string player = "Json/player";

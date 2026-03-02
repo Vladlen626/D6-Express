@@ -8,31 +8,111 @@ public class ShopItemDiceView : MonoBehaviour
     private List<DiceVisualEntry> diceVisuals;
 
     private Dictionary<string, Transform> _diceVisualMap;
+    private GameObject runtimeInstance;
+    private string runtimeVisualId;
 
     public void Initialize(string diceConfigId)
     {
-        _diceVisualMap = new Dictionary<string, Transform>();
-        foreach (var entry in diceVisuals)
-        {
-            if (!_diceVisualMap.ContainsKey(entry.id))
-            {
-                _diceVisualMap.Add(entry.id, entry.visual);
-            }
-        }
-
+        BuildMap();
         SetupVisual(diceConfigId);
     }
 
     private void SetupVisual(string diceViewId)
     {
-        foreach (var visual in _diceVisualMap.Values)
+        if (_diceVisualMap != null)
         {
-            visual.gameObject.SetActive(false);
+            foreach (var visual in _diceVisualMap.Values)
+            {
+                if (visual)
+                {
+                    visual.gameObject.SetActive(false);
+                }
+            }
         }
 
-        if (_diceVisualMap.TryGetValue(diceViewId, out var target))
+        if (!string.IsNullOrWhiteSpace(diceViewId) &&
+            _diceVisualMap != null &&
+            _diceVisualMap.TryGetValue(diceViewId, out var target))
         {
             target.gameObject.SetActive(true);
+            ClearRuntimeInstance();
+            return;
         }
+
+        SetupRuntimeVisual(diceViewId);
+    }
+
+    private void BuildMap()
+    {
+        _diceVisualMap = new Dictionary<string, Transform>();
+        if (diceVisuals == null)
+        {
+            return;
+        }
+
+        foreach (var entry in diceVisuals)
+        {
+            if (entry.visual && !_diceVisualMap.ContainsKey(entry.id))
+            {
+                _diceVisualMap.Add(entry.id, entry.visual);
+            }
+        }
+    }
+
+    private void SetupRuntimeVisual(string visualId)
+    {
+        if (string.IsNullOrWhiteSpace(visualId))
+        {
+            ClearRuntimeInstance();
+            return;
+        }
+
+        if (runtimeInstance && runtimeVisualId == visualId)
+        {
+            runtimeInstance.SetActive(true);
+            return;
+        }
+
+        ClearRuntimeInstance();
+
+        var prefab = Resources.Load<GameObject>($"Items/{visualId}");
+        if (!prefab)
+        {
+            return;
+        }
+
+        runtimeInstance = Instantiate(prefab, transform);
+        runtimeInstance.transform.localPosition = Vector3.zero;
+        runtimeInstance.transform.localRotation = Quaternion.identity;
+        runtimeInstance.transform.localScale = Vector3.one;
+        runtimeVisualId = visualId;
+
+        DisableRuntimeBehaviours(runtimeInstance);
+    }
+
+    private void DisableRuntimeBehaviours(GameObject instance)
+    {
+        var itemViews = instance.GetComponentsInChildren<DiceItemView>(true);
+        for (int i = 0; i < itemViews.Length; i++)
+        {
+            itemViews[i].enabled = false;
+        }
+
+        var colliders = instance.GetComponentsInChildren<Collider>(true);
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            colliders[i].enabled = false;
+        }
+    }
+
+    private void ClearRuntimeInstance()
+    {
+        if (runtimeInstance)
+        {
+            Destroy(runtimeInstance);
+        }
+
+        runtimeInstance = null;
+        runtimeVisualId = null;
     }
 }

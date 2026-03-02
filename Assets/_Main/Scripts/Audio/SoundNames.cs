@@ -18,4 +18,5 @@
     public const string DiceClick = "event:/DiceClick";
     public const string GibberishLow0 = "event:/NpcTalk/GibberishLow0";
     public const string DiceMove = "event:/DiceMove";
+    public const string Fart = "event:/Fart";
 }

@@ -17,6 +17,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 	private int delay => Mathf.Max(1, Mathf.RoundToInt(GlobalParameters.Delay * GlobalParameters.EnemyTurnDelayMultiplier));
 
 	private bool isRunning;
+	private int maxEnemyBankedPoints;
 
 	public EnemyTurnController(
 		DiceGameProcessController processController,
@@ -31,11 +32,22 @@ public class EnemyTurnController : IBaseController, IActivatable
 	public void Activate()
 	{
 		diceGameModel.OnCurrentTurnChanged += OnCurrentTurnChangedHandler;
+		maxEnemyBankedPoints = tableModel.EnemyBankedPoints;
+		tableModel.OnEnemyBankedPointsChanged += OnEnemyBankedPointsChangedHandler;
 	}
 	
 	public void Deactivate()
 	{
 		diceGameModel.OnCurrentTurnChanged -= OnCurrentTurnChangedHandler;
+		tableModel.OnEnemyBankedPointsChanged -= OnEnemyBankedPointsChangedHandler;
+	}
+
+	private void OnEnemyBankedPointsChangedHandler(int oldValue, int newValue)
+	{
+		if (newValue > maxEnemyBankedPoints)
+		{
+			maxEnemyBankedPoints = newValue;
+		}
 	}
 
 	private void OnCurrentTurnChangedHandler(int oldValue, int newValue)
@@ -292,7 +304,7 @@ public class EnemyTurnController : IBaseController, IActivatable
 	private void ValidateScriptedProgress()
 	{
 		var expected = scenarioRuntime.Scenario.expected_result;
-		var actualBanked = tableModel.EnemyBankedPoints;
+		var actualBanked = Mathf.Max(tableModel.EnemyBankedPoints, maxEnemyBankedPoints);
 		var reachedTarget = actualBanked >= diceGameModel.TargetPoints;
 
 		if (scenarioRuntime.ExecutedEnemyTurns < expected.completed_in_enemy_turns && reachedTarget)
