@@ -1,21 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using PlatformCore.Core;
 
-public class Shop
+public class Shop : IGameStateChanger
 {
     private const int SLOTS = 3;
-
     private readonly InventoryModel inventoryModel;
     private readonly IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
     private readonly ShopConfig config;
     private readonly TradeItem[] tradeItems = new TradeItem[SLOTS];
 
     public IReadOnlyList<TradeItem> TradeItems => tradeItems;
-    public int RestockPrice => config.restock_price;
+    public int RestockPrice { get; private set; }
+    public int RestockPriceScale => config.restock_price_scale;
 
+    public event Action RestockPriceChanged;
     public event Action<int, TradeItem> ItemAdded;
     public event Action<int, TradeItem> ItemRemoved;
 
@@ -29,19 +28,27 @@ public class Shop
         this.inventoryModel = inventoryModel;
         this.catalog = catalog;
         this.config = config;
+
+        ResetRestockPrice();
+    }
+
+    public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+    {
+        yield return (GameStateTransitionTask.SHOP_RESTOCK, async (x) => Restock());
     }
 
     public bool CanRestock()
     {
-        return inventoryModel.CashCount >= config.restock_price;
+        return inventoryModel.CashCount >= RestockPrice;
     }
 
     public bool TryRestockForPrice()
     {
         if (CanRestock())
         {
-            inventoryModel.TakeCash(config.restock_price);
+            inventoryModel.TakeCash(RestockPrice);
             Restock();
+            IncreaseRestockPrice();
             return true;
         }
         else
@@ -49,6 +56,12 @@ public class Shop
             RestockFailed?.Invoke();
             return false;
         }
+    }
+
+    public void ResetRestockPrice()
+    {
+        RestockPrice = config.restock_price;
+        RestockPriceChanged?.Invoke();
     }
 
     public void Restock()
@@ -114,5 +127,11 @@ public class Shop
         {
             BuyFailed?.Invoke();
         }
+    }
+
+    private void IncreaseRestockPrice()
+    {
+        RestockPrice += RestockPriceScale;
+        RestockPriceChanged?.Invoke();
     }
 }
