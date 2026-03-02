@@ -34,6 +34,7 @@ namespace _Main.Scripts.Dice
 		private readonly SceneContext sceneContext;
 		private const string EnemyAiScenariosResourcePath = "Json/enemy_ai_scenarios";
 		private const string EnemyAiScenarioScheduleResourcePath = "Json/enemy_ai_scenario_schedule";
+		private const string DiceGameModifiersScheduleResourcePath = "Json/dice_game_modifiers_schedule";
 
 		private DiceView[] playerDiceViewsArray;
 		private DiceView[] enemyDiceViewsArray;
@@ -198,7 +199,12 @@ namespace _Main.Scripts.Dice
 			var baseCap = Mathf.Min(6, CouplePositionsHandler.FirstPosArray.Length, CouplePositionsHandler.SecondPosArray.Length);
 			diceGameModel.SetBaseMaxDiceCount(baseCap);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
-			return await SetupEnemyAiScenarioAsync(diceGameConfig);
+			if (!await SetupEnemyAiScenarioAsync(diceGameConfig))
+			{
+				return false;
+			}
+
+			return await SetupModifiersAsync(diceGameConfig);
 		}
 		
 		private async UniTask DiceGamePersistentControllers()
@@ -649,6 +655,159 @@ namespace _Main.Scripts.Dice
 			}
 
 			return defaults;
+		}
+
+		private async UniTask<bool> SetupModifiersAsync(DiceGameConfig diceGameConfig)
+		{
+			var modifiersMode = diceGameConfig.modifiers_mode?.Trim();
+			if (string.IsNullOrWhiteSpace(modifiersMode))
+			{
+				modifiersMode = DiceGameModifiersMode.Inventory;
+			}
+
+			if (string.Equals(modifiersMode, DiceGameModifiersMode.Inventory, StringComparison.OrdinalIgnoreCase))
+			{
+				return await ApplyInventoryModifiersAsync();
+			}
+
+			if (string.Equals(modifiersMode, DiceGameModifiersMode.Scripted, StringComparison.OrdinalIgnoreCase))
+			{
+				return await ApplyModifiersScheduleAsync(diceGameConfig.modifiers_set_id);
+			}
+
+			FailDiceGameSetup(
+				$"[DiceGame] Unsupported modifiers_mode '{diceGameConfig.modifiers_mode}'. Expected '{DiceGameModifiersMode.Inventory}' or '{DiceGameModifiersMode.Scripted}'.");
+			return false;
+		}
+
+		private UniTask<bool> ApplyInventoryModifiersAsync()
+		{
+			// Keep player's inventory-driven modifiers intact in default mode.
+			diceGameModel.EnemyModifierItemsModel.Reset();
+			return UniTask.FromResult(true);
+		}
+
+		private async UniTask<bool> ApplyModifiersScheduleAsync(string setIdOverride)
+		{
+			var schedule = await configService.GetFirstOrDefaultAsync<DiceGameModifiersScheduleConfig>(DiceGameModifiersScheduleResourcePath);
+			if (schedule == null)
+			{
+				FailDiceGameSetup($"[DiceGame] Modifiers schedule '{DiceGameModifiersScheduleResourcePath}' not found.");
+				return false;
+			}
+
+			schedule.ParseConfig();
+			if (!schedule.TryValidateStatic(out var validationError))
+			{
+				FailDiceGameSetup($"[DiceGame] Modifiers schedule validation failed: {validationError}");
+				return false;
+			}
+
+			DiceGameModifierSet resolvedSet = null;
+			var overrideSetId = setIdOverride?.Trim();
+			if (!string.IsNullOrWhiteSpace(overrideSetId))
+			{
+				if (!schedule.sets.TryGetValue(overrideSetId, out resolvedSet) || resolvedSet == null)
+				{
+					FailDiceGameSetup(
+						$"[DiceGame] modifiers_set_id override '{overrideSetId}' not found in schedule '{DiceGameModifiersScheduleResourcePath}'.");
+					return false;
+				}
+			}
+			else
+			{
+				var level = run.Level + 1;
+				var day = run.Day + 1;
+				var match = run.Tick + 1;
+				if (!schedule.TryResolveSet(level, day, match, out resolvedSet) || resolvedSet == null)
+				{
+					FailDiceGameSetup($"[DiceGame] Modifiers schedule could not resolve set for level={level}, day={day}, match={match}.");
+					return false;
+				}
+			}
+
+			var catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+			if (!ApplyModifierSetToSide(
+				    resolvedSet.player_modifiers,
+				    diceGameModel.PlayerModifierItemsModel,
+				    diceGameModel.PlayerScoringService,
+				    catalog,
+				    "player"))
+			{
+				return false;
+			}
+
+			if (!ApplyModifierSetToSide(
+				    resolvedSet.enemy_modifiers,
+				    diceGameModel.EnemyModifierItemsModel,
+				    diceGameModel.EnemyScoringService,
+				    catalog,
+				    "enemy"))
+			{
+				return false;
+			}
+
+			return true;
+		}
+
+		private bool ApplyModifierSetToSide(
+			string[] modifierIds,
+			ModifierItemsModel itemsModel,
+			DiceScoringService scoringService,
+			IReadOnlyDictionary<string, ItemCatalogEntry> catalog,
+			string sideLabel)
+		{
+			if (itemsModel == null)
+			{
+				FailDiceGameSetup($"[DiceGame] {sideLabel} modifier model is missing.");
+				return false;
+			}
+
+			itemsModel.Reset();
+			if (modifierIds == null || modifierIds.Length == 0)
+			{
+				return true;
+			}
+
+			var uniqueIds = new HashSet<string>();
+			for (int i = 0; i < modifierIds.Length; i++)
+			{
+				var modifierId = modifierIds[i]?.Trim();
+				if (string.IsNullOrWhiteSpace(modifierId))
+				{
+					FailDiceGameSetup($"[DiceGame] Empty modifier id in {sideLabel}_modifiers.");
+					return false;
+				}
+
+				if (!uniqueIds.Add(modifierId))
+				{
+					FailDiceGameSetup($"[DiceGame] Duplicate modifier id '{modifierId}' in {sideLabel}_modifiers.");
+					return false;
+				}
+
+				if (!catalog.TryGetValue(modifierId, out var entry))
+				{
+					FailDiceGameSetup($"[DiceGame] Modifier '{modifierId}' for {sideLabel} not found in items_catalog.");
+					return false;
+				}
+
+				if (entry.typeEnum != ItemCatalogType.Modifier)
+				{
+					FailDiceGameSetup($"[DiceGame] Item '{modifierId}' for {sideLabel} is not a Modifier.");
+					return false;
+				}
+
+				var item = ModifierItemFactory.Create(entry, scoringService);
+				if (item == null)
+				{
+					FailDiceGameSetup($"[DiceGame] Failed to create modifier '{modifierId}' for {sideLabel}.");
+					return false;
+				}
+
+				itemsModel.AddItem(item);
+			}
+
+			return true;
 		}
 
 		private void FailDiceGameSetup(string message)

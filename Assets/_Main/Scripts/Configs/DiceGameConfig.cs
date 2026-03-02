@@ -9,4 +9,6 @@ public class DiceGameConfig : BaseConfig
 	public bool enemy_combo_upgrades_enabled = true;
 	public string enemy_ai_mode = "heuristic";
 	public string enemy_ai_scenario_id = string.Empty;
+	public string modifiers_mode = "inventory";
+	public string modifiers_set_id = string.Empty;
 }

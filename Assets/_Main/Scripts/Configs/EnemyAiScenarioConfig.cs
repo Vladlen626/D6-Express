@@ -56,7 +56,7 @@ public class EnemyAiScenarioConfig : BaseConfig
 
 		if (enemy_setup.use_modifiers)
 		{
-			error = $"Scenario '{id}': enemy_setup.use_modifiers must be false (modifiers are disabled for scripted AI).";
+			error = $"Scenario '{id}': enemy_setup.use_modifiers is deprecated. Configure modifiers via dice_game_rules.modifiers_mode and dice_game_modifiers_schedule.json.";
 			return false;
 		}
 
