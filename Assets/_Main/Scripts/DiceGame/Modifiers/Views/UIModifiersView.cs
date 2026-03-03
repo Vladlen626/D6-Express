@@ -131,7 +131,8 @@ public class UIModifiersView : UIBaseElement, IBeginDragHandler, IEndDragHandler
 
         await modifiersGroup
             .DOFade(1f, 0.5f)
-            .SetEase(Ease.OutQuad);
+            .SetEase(Ease.OutQuad)
+            .AsyncWaitForCompletion();
         modifiersGroup.interactable = true;
     }
 
@@ -139,7 +140,8 @@ public class UIModifiersView : UIBaseElement, IBeginDragHandler, IEndDragHandler
     {
         await modifiersGroup
             .DOFade(0f, 0.5f)
-            .SetEase(Ease.OutQuad);
+            .SetEase(Ease.OutQuad)
+            .AsyncWaitForCompletion();
         modifiersGroup.interactable = false;
     }
 
