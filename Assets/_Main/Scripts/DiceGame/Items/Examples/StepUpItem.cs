@@ -144,6 +144,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			UpdatePreview();
+			boundGameModel?.NotifyDiceValuesChanged();
 			BeginCooldown();
 		}
 

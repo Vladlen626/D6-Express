@@ -49,6 +49,7 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.OnRollClicked += HandleRoll;
 			diceGameModel.OnPassClicked += HandlePass;
+			diceGameModel.DiceValuesChanged += OnDiceValuesChanged;
 
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
@@ -64,6 +65,7 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.OnRollClicked -= HandleRoll;
 			diceGameModel.OnPassClicked -= HandlePass;
+			diceGameModel.DiceValuesChanged -= OnDiceValuesChanged;
 
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
@@ -159,21 +161,7 @@ namespace _Main.Scripts.Dice
 
 				if (diceCombinationResult.Combinations.Count == 0)
 				{
-					audioService.PlaySound(SoundNames.Fail);
-					if (notificationService != null)
-					{
-						await notificationService.ShowBannerAsync("dice_banner_failed", 1.1f);
-					}
-					await UniTask.Delay(GlobalParameters.Delay);
-					var roundEndContext = new DiceModifierContext(
-						diceCombinationResult,
-						diceToRoll,
-						tableModel,
-						diceGameModel,
-						ModifierStage.RoundEnd,
-						run);
-					await diceGameModel.GetCurrentModifiersModel().PlayRoundEndActions(roundEndContext);
-					EndTurn(false);
+					await HandleFailedRollAsync(diceCombinationResult, diceToRoll);
 				}
 			}
 			finally
@@ -245,6 +233,51 @@ namespace _Main.Scripts.Dice
 				diceGameModel.PassEnded();
 				IsProcessing = false;
 			}
+		}
+
+		private void OnDiceValuesChanged()
+		{
+			if (IsProcessing || tableModel.isFirstRoll || !diceGameModel.IsPlayerTurn)
+			{
+				return;
+			}
+
+			_ = ValidateCurrentRollAsync();
+		}
+
+		private async UniTask ValidateCurrentRollAsync()
+		{
+			var diceToCheck = diceGameModel.GetUnbanked();
+			if (diceToCheck.Length == 0)
+			{
+				return;
+			}
+
+			var activeScoringService = diceGameModel.GetCurrentScoringService();
+			var diceCombinationResult = activeScoringService.Evaluate(GetValues(diceToCheck));
+			if (diceCombinationResult.Combinations.Count == 0)
+			{
+				await HandleFailedRollAsync(diceCombinationResult, diceToCheck);
+			}
+		}
+
+		private async UniTask HandleFailedRollAsync(DiceCombinationResult diceCombinationResult, DiceModel[] diceToRoll)
+		{
+			audioService.PlaySound(SoundNames.Fail);
+			if (notificationService != null)
+			{
+				await notificationService.ShowBannerAsync("dice_banner_failed", 1.1f);
+			}
+			await UniTask.Delay(GlobalParameters.Delay);
+			var roundEndContext = new DiceModifierContext(
+				diceCombinationResult,
+				diceToRoll,
+				tableModel,
+				diceGameModel,
+				ModifierStage.RoundEnd,
+				run);
+			await diceGameModel.GetCurrentModifiersModel().PlayRoundEndActions(roundEndContext);
+			EndTurn(false);
 		}
 
 		// ReSharper disable Unity.PerformanceAnalysis

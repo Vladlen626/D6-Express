@@ -18,6 +18,7 @@ namespace _Main.Scripts.Dice
 		public event Action OnDiceGameStateChanged;
 		public event Action OnRollClicked;
 		public event Action OnPassClicked;
+		public event Action DiceValuesChanged;
 		
 		public TableModel tableModel;
 		public ModifiersModel PlayerModifiersModel { get; }
@@ -312,6 +313,11 @@ namespace _Main.Scripts.Dice
 		public void PassEnded()
 		{
 			tableModel.SendUpdateUI();
+		}
+
+		public void NotifyDiceValuesChanged()
+		{
+			DiceValuesChanged?.Invoke();
 		}
 
 		public void EndTurn(bool success)
