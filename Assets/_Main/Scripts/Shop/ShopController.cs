@@ -17,12 +17,10 @@ public class ShopController : IBaseController, IActivatable, IGameStateChanger
 
     public void Activate()
     {
-        run.TickChanged += ResetShops;
     }
 
     public void Deactivate()
     {
-        run.TickChanged -= ResetShops;
     }
 
     public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()

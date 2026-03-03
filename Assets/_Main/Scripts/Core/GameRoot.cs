@@ -197,8 +197,6 @@ namespace _Main.Scripts.Core
 			gameStateController.AddTask(async (x) => cursorService.LockCursor(), GameStateTransitionTask.LOCK_CURSOR);
 			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), GameStateTransitionTask.UNLOCK_CURSOR);
 			gameStateController.AddTask((x) => npcSpawner.Respawn(), GameStateTransitionTask.NPC_RESPAWN);
-			gameStateController.AddChanger(trainShop);
-			gameStateController.AddChanger(stationShop);
 			gameStateController.AddChanger(playerController);
 			gameStateController.AddChanger(shopController);
 			gameStateController.AddChanger(transitionViewController);
