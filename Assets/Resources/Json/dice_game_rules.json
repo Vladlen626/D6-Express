@@ -4,7 +4,7 @@
     "target_score": 2000,
     "min_bet_size": 10,
     "enemy_combo_upgrades_enabled": true,
-    "enemy_ai_mode": "scripted",
+    "enemy_ai_mode": "heuristic",
     "enemy_ai_scenario_id": "",
     "modifiers_mode": "scripted",
     "modifiers_set_id": ""
