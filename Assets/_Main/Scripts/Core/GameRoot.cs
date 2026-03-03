@@ -107,7 +107,7 @@ namespace _Main.Scripts.Core
 #if UNITY_EDITOR
 			var state = DebugVariables.StartSpawnLocation;
 #else
-				var state = LevelState.MAIN_MENU;
+				var state = Location.MAIN_MENU;
 #endif
 			//NPC
 			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, game, run, sceneContext.SpawnPoints);
