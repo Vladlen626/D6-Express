@@ -50,10 +50,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
             OnModifierAdded(item);
         }
 
-        if (pauseState.IsPaused)
-        {
-            _context.Show();
-        }
+        UpdateContextVisibility();
     }
 
     protected override void OnDeactivate()
@@ -96,6 +93,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
         view.Show();
         _context.RefreshVisibleWindow();
+        UpdateContextVisibility();
     }
 
     private void OnModifierRemoved(IModifier modifier)
@@ -111,11 +109,17 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
         Object.Destroy(view.gameObject);
         _context.RefreshVisibleWindow();
+        UpdateContextVisibility();
     }
 
     private void OnPauseStateChanged(bool isPaused)
     {
-        if (isPaused)
+        UpdateContextVisibility();
+    }
+
+    private void UpdateContextVisibility()
+    {
+        if (pauseState.IsPaused && modifierViews.Count > 0)
         {
             _context.Show();
         }

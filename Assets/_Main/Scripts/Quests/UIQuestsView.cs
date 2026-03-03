@@ -8,7 +8,7 @@ public class UIQuestsView : UIBaseElement
 
     public void AddQuest(UIQuestView uIQuestView)
     {
-        uIQuestView.transform.SetParent(questsContainer);
+        uIQuestView.transform.SetParent(questsContainer, false);
     }
 
     public void RemoveQuest(UIQuestView uIQuestView)
