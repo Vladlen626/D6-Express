@@ -36,11 +36,11 @@ public static class RunFactory
 		};
 	}
 
-	public static SleepController GetSleepControllers(IUIService uIService, Run run, PlayerView playerView, IInputService inputService)
+	public static SleepController GetSleepControllers(Run run, PlayerView playerView)
 	{
 		var sleepView = playerView.GetComponent<SleepView>();
 		var interactor = playerView.GetComponent<Interactor>();
 
-		return new SleepController(uIService, run, sleepView, interactor, inputService); ;
+		return new SleepController(run, sleepView, interactor);
 	}
 }

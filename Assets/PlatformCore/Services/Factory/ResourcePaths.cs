@@ -77,6 +77,7 @@ namespace PlatformCore.Services.Factory
 			public const string UIHintView = "UI/UIHintView";
 			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";
+			public const string UIModifierDarkViewVariant = "UI/UIModifierDarkView Variant";
 			public const string UIModifiersView = "UI/UIModifiersView";
 			public const string UIModifierView = "UI/UIModifierView";
 			public const string UINotificationsView = "UI/UINotificationsView";

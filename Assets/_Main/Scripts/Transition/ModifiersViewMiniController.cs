@@ -1,78 +1,91 @@
 using System.Collections.Generic;
-using _Main.Scripts.UI;
+using System.Threading.Tasks;
 using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
-using PlatformCore.Core;
+using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Factory;
-using PlatformCore.Services.UI;
 using UnityEngine;
 
-public class ModifiersViewController : BaseContextController<UIModifiersView>
+public class ModifiersViewMiniController : IActivatable, IPreloadable
 {
     private readonly ModifiersModel modifiers;
     private readonly IObjectFactory objectFactory;
     private readonly ConfigService configService;
-    private readonly PauseState pauseState;
     private readonly Dictionary<IModifier, UIModifierView> modifierViews = new();
 
+    private UIModifiersView uIModifiersView;
     private Dictionary<string, ItemCatalogEntry> configs;
 
-    public ModifiersViewController(IUIService uiService, ModifiersModel modifiers, IObjectFactory objectFactory, ConfigService configService, PauseState pauseState) : base(uiService)
+    public ModifiersViewMiniController(ModifiersModel modifiers, IObjectFactory objectFactory, ConfigService configService)
     {
         this.modifiers = modifiers;
         this.objectFactory = objectFactory;
         this.configService = configService;
-        this.pauseState = pauseState;
     }
 
-    protected override async UniTask OnPreloadAsync()
+    public void SetView(UIModifiersView uIModifiersView)
+    {
+        this.uIModifiersView = uIModifiersView;
+    }
+
+    public async UniTask PreloadAsync()
     {
         configs = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
-
-        await base.OnPreloadAsync();
     }
 
-    protected override void OnActivate()
+    public UniTask Show()
     {
-        base.OnActivate();
+        if (!uIModifiersView.gameObject.activeSelf)
+        {
+            uIModifiersView.gameObject.SetActive(true);
+        }
 
-        _context.Hide();
-
-        _context.Header.SetText("modifiers_header");
+        uIModifiersView?.Header.SetText("modifiers_header");
 
         modifiers.ModifierAdded += OnModifierAdded;
         modifiers.ModifierRemoved += OnModifierRemoved;
-
-        pauseState.Changed += OnPauseStateChanged;
 
         foreach (var item in modifiers.AllModifiers)
         {
             OnModifierAdded(item);
         }
 
-        if (pauseState.IsPaused)
-        {
-            _context.Show();
-        }
+        return uIModifiersView.ShowModifiers();
     }
 
-    protected override void OnDeactivate()
+    public async UniTask Hide(bool disable = false)
     {
-        pauseState.Changed -= OnPauseStateChanged;
-
         modifiers.ModifierRemoved -= OnModifierRemoved;
         modifiers.ModifierAdded -= OnModifierAdded;
+
+        if (uIModifiersView != null)
+        {
+            await uIModifiersView.HideModifiers();
+        }
+        if (disable)
+        {
+            uIModifiersView.gameObject.SetActive(false);
+        }
 
         var toDelete = new List<IModifier>(modifierViews.Keys);
         foreach (var item in toDelete)
         {
             OnModifierRemoved(item);
         }
+
         modifierViews.Clear();
+    }
 
-        _context.Hide();
+    public void Activate()
+    {
+        uIModifiersView?.Hide();
+    }
 
-        base.OnDeactivate();
+    public void Deactivate()
+    {
+        Hide().Forget();
+
+        uIModifiersView.Hide();
     }
 
     private async void OnModifierAdded(IModifier modifier)
@@ -87,7 +100,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
             return;
         }
 
-        var view = await objectFactory.CreateAsync<UIModifierView>(ResourcePaths.UI.UIModifierView, Vector3.zero, Quaternion.identity, _context.List);
+        var view = await objectFactory.CreateAsync<UIModifierView>(ResourcePaths.UI.UIModifierDarkViewVariant, Vector3.zero, Quaternion.identity, uIModifiersView.List);
 
         modifierViews[modifier] = view;
 
@@ -95,7 +108,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
         view.SetDescription(config.descriptionKey);
 
         view.Show();
-        _context.RefreshVisibleWindow();
+        uIModifiersView.RefreshVisibleWindow();
     }
 
     private void OnModifierRemoved(IModifier modifier)
@@ -109,20 +122,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
         view.Hide();
 
-        Object.Destroy(view.gameObject);
-        _context.RefreshVisibleWindow();
-    }
-
-    private void OnPauseStateChanged(bool isPaused)
-    {
-        if (isPaused)
-        {
-            _context.Show();
-        }
-        else
-        {
-            _context.Hide();
-        }
+        UnityEngine.Object.Destroy(view.gameObject);
+        uIModifiersView.RefreshVisibleWindow();
     }
 }
-

@@ -17,12 +17,12 @@ public class GameStateController : IBaseController, IActivatable
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.UNLOCK_CURSOR,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHANGE_LOCATION,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 	};
 
@@ -42,12 +42,11 @@ public class GameStateController : IBaseController, IActivatable
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.UNLOCK_CURSOR,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
-		GameStateTransitionTask.SHOW_WAKE_UP,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 	};
 
@@ -55,12 +54,12 @@ public class GameStateController : IBaseController, IActivatable
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.UNLOCK_CURSOR,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHANGE_LOCATION,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 	};
 
@@ -156,7 +155,11 @@ public class GameStateController : IBaseController, IActivatable
 	{
 		if (location == Location.MAIN_MENU)
 		{
-			RequestChange(new GameStateTransition(LocationMainMenuRecipe, location));
+			RequestChange(new GameStateTransition(LocationMainMenuRecipe, location, false));
+		}
+		else if (location == Location.TRAIN && game.Location == Location.STATION)
+		{
+			RequestChange(new GameStateTransition(LocationRecipe, location, false));
 		}
 		else
 		{
