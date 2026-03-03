@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Factory;
@@ -12,6 +13,8 @@ public class ShopPurchaseNotificationController : IBaseController, IActivatable,
 	private readonly GlobalNotificationService notificationService;
 	private readonly ConfigService configService;
 	private readonly ILocalizationService localizationService;
+	private readonly IAnalyticsService analyticsService;
+	private readonly string shopId;
 
 	private IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
 	private string buyText;
@@ -20,12 +23,16 @@ public class ShopPurchaseNotificationController : IBaseController, IActivatable,
 		Shop shop,
 		GlobalNotificationService notificationService,
 		ConfigService configService,
-		ILocalizationService localizationService)
+		ILocalizationService localizationService,
+		IAnalyticsService analyticsService,
+		string shopId)
 	{
 		this.shop = shop;
 		this.notificationService = notificationService;
 		this.configService = configService;
 		this.localizationService = localizationService;
+		this.analyticsService = analyticsService;
+		this.shopId = shopId;
 	}
 
 	public async UniTask PreloadAsync()
@@ -51,6 +58,8 @@ public class ShopPurchaseNotificationController : IBaseController, IActivatable,
 		{
 			return;
 		}
+
+		analyticsService.TrackShopPurchase(shopId, tradeItem);
 
 		if (string.IsNullOrWhiteSpace(buyText))
 		{

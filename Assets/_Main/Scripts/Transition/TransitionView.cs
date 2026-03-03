@@ -62,28 +62,32 @@ public class UITransitionView : UIBaseElement
     {
         await stationNameCanvasGroup
             .DOFade(1f, 0.5f)
-            .SetEase(Ease.OutQuad);
+            .SetEase(Ease.OutQuad)
+            .AsyncWaitForCompletion();
     }
 
     public async UniTask HideLocationName()
     {
         await stationNameCanvasGroup
             .DOFade(0f, 0.5f)
-            .SetEase(Ease.OutQuad);
+            .SetEase(Ease.OutQuad)
+            .AsyncWaitForCompletion();
     }
 
     public async UniTask ShowWakeUp()
     {
         await wakeUpCanvasGroup
             .DOFade(1f, 0.5f)
-            .SetEase(Ease.OutQuad);
+            .SetEase(Ease.OutQuad)
+            .AsyncWaitForCompletion();
     }
 
     public async UniTask HideWakeUp()
     {
         await wakeUpCanvasGroup
             .DOFade(0f, 0.5f)
-            .SetEase(Ease.OutQuad);
+            .SetEase(Ease.OutQuad)
+            .AsyncWaitForCompletion();
     }
 
     protected override void OnHide()

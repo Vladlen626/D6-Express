@@ -1,5 +1,21 @@
 {
   "dependencies": {
+    "com.gameanalytics.sdk": {
+      "version": "7.10.6",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.google.external-dependency-manager": "1.2.168"
+      },
+      "url": "https://package.openupm.com"
+    },
+    "com.google.external-dependency-manager": {
+      "version": "1.2.186",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://package.openupm.com"
+    },
     "com.luca3317.tmpeffects": {
       "version": "https://github.com/Luca3317/TMPEffects.git?path=/Package",
       "depth": 0,
