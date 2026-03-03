@@ -1,49 +1,29 @@
-using System;
-using System.Collections.Generic;
-using _Main.Scripts.Core.Services;
-using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
-using PlatformCore.Services.UI;
+using PlatformCore.Infrastructure.Lifecycle;
 
-public class SleepController : BaseContextController<UISleepView>, IGameStateChanger
+public class SleepController : IBaseController, IActivatable
 {
 	private readonly Run run;
 	private readonly SleepView sleepView;
 	private readonly Interactor interactor;
-	private readonly IInputService inputService;
 
-	public SleepController(IUIService uIService, Run run, SleepView sleepView, Interactor interactor, IInputService inputService) : base(uIService)
+	public SleepController(Run run, SleepView sleepView, Interactor interactor)
 	{
 		this.run = run;
 		this.sleepView = sleepView;
 		this.interactor = interactor;
-		this.inputService = inputService;
 	}
 
-	protected override void OnActivate()
+	public void Activate()
 	{
-		base.OnActivate();
-
 		interactor.InteractionStarted += OnInteractionStarted;
 		interactor.InteractionEnded += OnInteractionEnded;
 	}
 
-	protected override void OnDeactivate()
+	public void Deactivate()
 	{
 		interactor.InteractionEnded -= OnInteractionEnded;
 		interactor.InteractionStarted -= OnInteractionStarted;
-
-		base.OnDeactivate();
-	}
-
-	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
-	{
-		yield return (GameStateTransitionTask.SHOW_WAKE_UP, async (x) =>
-		{
-			await ShowWakeUp();
-			await WaitAndHideWakeUp();
-		}
-		);
 	}
 
 	private void OnInteractionStarted(InteractionAction action)
@@ -75,27 +55,4 @@ public class SleepController : BaseContextController<UISleepView>, IGameStateCha
 	{
 		sleepView.SleepObject.SetActive(false);
 	}
-
-	private UniTask ShowWakeUp()
-	{
-		return _context.ShowWakeUp();
-	}
-
-	private async UniTask WaitAndHideWakeUp()
-	{
-		var source = new UniTaskCompletionSource();
-
-		void OnInteracted()
-		{
-			inputService.OnInteractPressed -= OnInteracted;
-			source.TrySetResult();
-		}
-
-		inputService.OnInteractPressed += OnInteracted;
-
-		await source.Task;
-
-		await _context.HideWakeUp();
-	}
-
 }
