@@ -20,12 +20,17 @@ public class UITransitionView : UIBaseElement
     private CanvasGroup stationNameCanvasGroup;
 
     [SerializeField]
-    private CanvasGroup wakeUpCanvasGroup;
-
-    [SerializeField]
     private TextMeshProUGUI locationName;
 
+    [SerializeField]
+    private CanvasGroup hintGroup;
+
+    [SerializeField]
+    private UIModifiersView uIModifiersView;
+
     private float initialUpperY, initialBottomY;
+
+    public UIModifiersView UIModifiersView => uIModifiersView;
 
     private void Start()
     {
@@ -53,41 +58,37 @@ public class UITransitionView : UIBaseElement
         Hide();
     }
 
-    public void SetLocationName(string name)
+    public void SetMessage(string name)
     {
         locationName.text = name;
+    }
+
+    public async UniTask ShowHint()
+    {
+        await hintGroup
+            .DOFade(1f, 0.5f)
+            .SetEase(Ease.OutQuad);
+    }
+
+    public async UniTask HideHint()
+    {
+        await hintGroup
+            .DOFade(0f, 0.5f)
+            .SetEase(Ease.OutQuad);
     }
 
     public async UniTask ShowLocationName()
     {
         await stationNameCanvasGroup
             .DOFade(1f, 0.5f)
-            .SetEase(Ease.OutQuad)
-            .AsyncWaitForCompletion();
+            .SetEase(Ease.OutQuad);
     }
 
     public async UniTask HideLocationName()
     {
         await stationNameCanvasGroup
             .DOFade(0f, 0.5f)
-            .SetEase(Ease.OutQuad)
-            .AsyncWaitForCompletion();
-    }
-
-    public async UniTask ShowWakeUp()
-    {
-        await wakeUpCanvasGroup
-            .DOFade(1f, 0.5f)
-            .SetEase(Ease.OutQuad)
-            .AsyncWaitForCompletion();
-    }
-
-    public async UniTask HideWakeUp()
-    {
-        await wakeUpCanvasGroup
-            .DOFade(0f, 0.5f)
-            .SetEase(Ease.OutQuad)
-            .AsyncWaitForCompletion();
+            .SetEase(Ease.OutQuad);
     }
 
     protected override void OnHide()

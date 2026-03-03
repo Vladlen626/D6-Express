@@ -71,7 +71,9 @@ namespace _Main.Scripts.Core
 			var run = new Run();
 			var game = new D6Game();
 
-			var transitionViewController = new TransitionViewController(uiService, run, configService);
+			var playerModel = new PlayerModel();
+
+			var transitionViewController = new TransitionViewController(uiService, run, configService, inputService, playerModel.InventoryModel.ModifiersModel, factory);
 			await _lifecycle.RegisterAsync(transitionViewController);
 			// await transitionViewController.ShowContext(0);
 
@@ -80,7 +82,6 @@ namespace _Main.Scripts.Core
 			var controllersList = new List<IBaseController>();
 			// --------------
 
-			var playerModel = new PlayerModel();
 			var diceGameModel = new DiceGameModel(playerModel.InventoryModel, scoringService);
 			var pauseState = new PauseState();
 
@@ -144,7 +145,7 @@ namespace _Main.Scripts.Core
 			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService);
 			var stationShop = await ShopFactory.GetStationShopAsync(playerModel.InventoryModel, configService);
 
-			var sleepController = RunFactory.GetSleepControllers(uiService, run, playerView, inputService);
+			var sleepController = RunFactory.GetSleepControllers(run, playerView);
 			var locationController = new LocationController(game, sceneContext, audioService);
 			var playerController = new PlayerController(playerModel, playerView, sceneContext);
 			var shopController = new ShopController(run, trainShop, stationShop);
@@ -193,7 +194,6 @@ namespace _Main.Scripts.Core
 			gameStateController.AddChanger(locationController);
 			gameStateController.AddChanger(winViewController);
 			gameStateController.AddChanger(loseViewController);
-			gameStateController.AddChanger(sleepController);
 
 			await _lifecycle.RegisterAsync(gameStateController);
 
