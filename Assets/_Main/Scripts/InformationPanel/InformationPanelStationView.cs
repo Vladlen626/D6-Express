@@ -4,7 +4,7 @@ using UnityEngine;
 public class InformationPanelStationView : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshPro stationName;
+    private TextMeshProUGUI stationName;
 
     [SerializeField]
     private Color activeColor;
