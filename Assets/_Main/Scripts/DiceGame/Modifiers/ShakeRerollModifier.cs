@@ -29,8 +29,13 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			if (modifierContext.Table == null)
+			{
+				return;
+			}
+
 			var availableDice = modifierContext.Dice
-				.Where(d => d != null && !d.IsSaved && !DiceGameUtils.IsDiceBanked(d, modifierContext.Table))
+				.Where(d => d != null && !d.IsSaved && modifierContext.Table.IsActivePosition(d.CurrentPosition))
 				.ToArray();
 			if (availableDice.Length == 0)
 			{
