@@ -1,12 +1,13 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class SceneContext : MonoBehaviour, ISceneContext
 {
 	[SerializeField]
 	private DiceTableView diceGameTableView;
+
+	[SerializeField] 
+	private CombinationsView combinationsView;
 
 	[SerializeField]
 	private InventoryView inventoryView;
@@ -51,6 +52,7 @@ public class SceneContext : MonoBehaviour, ISceneContext
 
 	public InteractionToStateTable InteractionToStateTable => interactionToStateTable;
 	public DiceTableView DiceGameTableView => diceGameTableView;
+	public CombinationsView CombinationsView => combinationsView;
 	public Transform PlayerTrainSpawnPosition => playerTrainSpawnPosition;
 	public Transform PlayerStationSpawnPosition => playerStationSpawnPosition;
 	public GameObject StationBlock => stationBlock;

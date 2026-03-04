@@ -73,7 +73,8 @@ namespace _Main.Scripts.Core
 
 			var playerModel = new PlayerModel();
 
-			var transitionViewController = new TransitionViewController(uiService, run, configService, inputService, playerModel.InventoryModel.ModifiersModel, factory);
+			var transitionViewController = new TransitionViewController(uiService, run, configService, inputService,
+				playerModel.InventoryModel.ModifiersModel, factory);
 			await _lifecycle.RegisterAsync(transitionViewController);
 			await transitionViewController.ShowContext(0);
 
@@ -114,9 +115,13 @@ namespace _Main.Scripts.Core
 			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, game, run, sceneContext.SpawnPoints);
 
 			//Player
-			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, playerModel, state == Location.STATION ? sceneContext.PlayerStationSpawnPosition : sceneContext.PlayerTrainSpawnPosition, sceneContext.InteractionToStateTable);
+			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, playerModel,
+				state == Location.STATION
+					? sceneContext.PlayerStationSpawnPosition
+					: sceneContext.PlayerTrainSpawnPosition, sceneContext.InteractionToStateTable);
 			playerModel.PlayerStateModel.FillCharacterStatesDict(playerView.CharacterStateHandlers);
-			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel, inputService, audioService, game, run));
+			controllersList.AddRange(PlayerFactory.GetPlayerBaseControllers(playerView, _serviceLocator, playerModel,
+				inputService, audioService, game, run));
 
 			// Level
 			controllersList.AddRange(await RunFactory.GetBaseControllers(game, run, playerModel, playerView,
@@ -125,7 +130,8 @@ namespace _Main.Scripts.Core
 			controllersList.Add(new AnalyticsController(game, run, analyticsService));
 
 			var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
-			var loseViewController = new LoseViewController(uiService, game, inputService, cursorService, configService);
+			var loseViewController =
+				new LoseViewController(uiService, game, inputService, cursorService, configService);
 			var baseControllers = new IBaseController[]
 			{
 				winViewController,
@@ -137,9 +143,12 @@ namespace _Main.Scripts.Core
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
 				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
-				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService, sceneContext.InventoryView),
-				new ModifierItemsSyncController(playerModel.InventoryModel, playerModel.InventoryModel.ModifierItemsModel, configService, scoringService),
-				new TooltipsController(uiService, diceGameModel, configService, Camera.main, sceneContext.DiceGameTableView),
+				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService,
+					sceneContext.InventoryView),
+				new ModifierItemsSyncController(playerModel.InventoryModel,
+					playerModel.InventoryModel.ModifierItemsModel, configService, scoringService),
+				new TooltipsController(uiService, diceGameModel, configService, Camera.main,
+					sceneContext.DiceGameTableView),
 			};
 
 			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService);
@@ -153,26 +162,34 @@ namespace _Main.Scripts.Core
 			controllersList.AddRange(new IBaseController[]
 			{
 				new LedTrainController(run, sceneContext.Leds),
-				ShopFactory.GetShopViewController(stationShop, sceneContext.StationShop, factory, playerView.Interactor, sceneContext.StationShopkeeper),
-				ShopFactory.GetShopViewController(trainShop, sceneContext.TrainShop, factory, playerView.Interactor, sceneContext.TrainShopkeeper),
-				ShopFactory.GetShopTooltipsController(uiService, stationShop, playerView.Interactor, Camera.main),
-				ShopFactory.GetShopTooltipsController(uiService, trainShop, playerView.Interactor, Camera.main),
-				new ShopPurchaseNotificationController(stationShop, notificationService, configService, localizationService, analyticsService, "station"),
-				new ShopPurchaseNotificationController(trainShop, notificationService, configService, localizationService, analyticsService, "train")
+				ShopFactory.GetShopViewController(stationShop, sceneContext.StationShop, factory, playerView.Interactor,
+					sceneContext.StationShopkeeper),
+				ShopFactory.GetShopViewController(trainShop, sceneContext.TrainShop, factory, playerView.Interactor,
+					sceneContext.TrainShopkeeper),
+				ShopFactory.GetShopTooltipsController(uiService, stationShop, sceneContext.StationShop, playerView.Interactor, Camera.main),
+				ShopFactory.GetShopTooltipsController(uiService, trainShop, sceneContext.TrainShop, playerView.Interactor, Camera.main),
+				new ShopPurchaseNotificationController(stationShop, notificationService, configService,
+					localizationService, analyticsService, "station"),
+				new ShopPurchaseNotificationController(trainShop, notificationService, configService,
+					localizationService, analyticsService, "train")
 			});
 
-			var debugController = await DebugFactory.GetBaseController(inputService, cursorService, game, run, playerModel, playerView, configService, notificationService);
-			var speechController = await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game, run, configService, inputService);
+			var debugController = await DebugFactory.GetBaseController(inputService, cursorService, game, run,
+				playerModel, playerView, configService, notificationService);
+			var speechController = await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game,
+				run, configService, inputService);
 
 			controllersList.AddRange(new IBaseController[]
 			{
 				debugController,
 				speechController,
 				new QuestsViewController(uiService, playerModel.Quests, factory, game),
-				new NotificationsController(notificationService, playerModel.InventoryModel, configService, localizationService),
-				new ModifierAppliedNotificationController(playerModel.InventoryModel.ModifiersModel, notificationService, configService, localizationService),
-				new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory, configService, pauseState),
-				new CombinationsController(playerModel.InventoryModel.ModifiersModel, sceneContext.DiceGameTableView.CombinationsView),
+				new ModifierAppliedNotificationController(playerModel.InventoryModel.ModifiersModel,
+					notificationService, configService, localizationService),
+				new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory,
+					configService, pauseState),
+				new CombinationsController(playerModel.InventoryModel.ModifiersModel,
+					sceneContext.CombinationsView),
 				sleepController,
 				locationController,
 				shopController

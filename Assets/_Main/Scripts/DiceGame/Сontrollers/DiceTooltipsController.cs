@@ -159,7 +159,7 @@ namespace _Main.Scripts.Dice
 
 
 			var pos = diceModel.CurrentPosition;
-			if (diceGameModel.DiceGameState != DiceGameState.GAME && tableView)
+			if (tableView && tableView.TooltipPos)
 			{
 				pos = tableView.TooltipPos;
 			}

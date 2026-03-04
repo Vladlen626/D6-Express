@@ -13,7 +13,7 @@ namespace PlatformCore.Services.UI
 		private int lockCount;
 		private UICursorView _uiCursorView;
 
-		public bool IsCursorLocked => lockCount == 0 && Cursor.lockState == CursorLockMode.Locked;
+		public bool IsCursorLocked => Cursor.lockState == CursorLockMode.Locked;
 
 		public CursorService(IUIService uiService)
 		{
