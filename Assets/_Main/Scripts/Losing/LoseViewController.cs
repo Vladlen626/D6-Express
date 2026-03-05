@@ -7,7 +7,7 @@ using PlatformCore.Core;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
-public class LoseViewController : BaseContextController<UILoseView>, IGameStateChanger
+public class LoseViewController : BaseContextController<UIEndView>, IGameStateChanger
 {
 	private readonly D6Game game;
 	private readonly IInputService inputService;
@@ -26,6 +26,7 @@ public class LoseViewController : BaseContextController<UILoseView>, IGameStateC
 	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
 	{
 		yield return (GameStateTransitionTask.SHOW_LOSE, async (x) => ShowContext());
+		yield return (GameStateTransitionTask.HIDE_LOSE, async (x) => HideContext());
 	}
 
 	protected override async UniTask OnPreloadAsync()
@@ -37,8 +38,8 @@ public class LoseViewController : BaseContextController<UILoseView>, IGameStateC
 	{
 		base.OnActivate();
 
-
-		_context.SetLoseText(textsConfig.texts["lose_header"]);
+		_context.SetTitle(textsConfig.texts["end_header"]);
+		_context.SetMessage(textsConfig.texts["lose_header"]);
 		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
 
 		_context.Hide();
@@ -67,6 +68,5 @@ public class LoseViewController : BaseContextController<UILoseView>, IGameStateC
 	private void OnExitButtonClickedHandler()
 	{
 		game.RequestSetLocation(Location.MAIN_MENU);
-		HideContext();
 	}
 }

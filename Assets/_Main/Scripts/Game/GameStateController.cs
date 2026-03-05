@@ -83,6 +83,8 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.HIDE_LOSE,
+		GameStateTransitionTask.HIDE_WIN,
 		GameStateTransitionTask.CHANGE_LOCATION,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,

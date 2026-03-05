@@ -6,6 +6,11 @@ namespace PlatformCore.Services.Factory
 {
 	public static class ResourcePaths
 	{
+		public static class GameAnalytics
+		{
+			public const string Settings = "GameAnalytics/Settings";
+		}
+
 		public static class Images
 		{
 			public const string TrainArriving = "Images/TrainArriving";
@@ -73,9 +78,9 @@ namespace PlatformCore.Services.Factory
 			public const string HeaderTMP = "UI/TMP/HeaderTMP";
 			public const string TextsVerticalSizebable = "UI/TMP/TextsVerticalSizebable";
 			public const string UICursorView = "UI/UICursorView";
+			public const string UIEndView = "UI/UIEndView";
 			public const string UIGlobalNotificationView = "UI/UIGlobalNotificationView";
 			public const string UIHintView = "UI/UIHintView";
-			public const string UILoseView = "UI/UILoseView";
 			public const string UIMainMenu = "UI/UIMainMenu";
 			public const string UIModifierDarkViewVariant = "UI/UIModifierDarkView Variant";
 			public const string UIModifiersView = "UI/UIModifiersView";
@@ -88,9 +93,9 @@ namespace PlatformCore.Services.Factory
 			public const string UISettings = "UI/UISettings";
 			public const string UISleepView = "UI/UISleepView";
 			public const string UISpeechView = "UI/UISpeechView";
+			public const string UIStatsView = "UI/UIStatsView";
 			public const string UITooltip = "UI/UITooltip";
 			public const string UITransitionView = "UI/UITransitionView";
-			public const string UIWinView = "UI/UIWinView";
 		}
 
 	}

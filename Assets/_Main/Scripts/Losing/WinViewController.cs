@@ -6,7 +6,7 @@ using PlatformCore.Core;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
-public class WinViewController : BaseContextController<UIWinView>, IGameStateChanger
+public class WinViewController : BaseContextController<UIEndView>, IGameStateChanger
 {
 	private readonly D6Game game;
 	private readonly IInputService inputService;
@@ -25,6 +25,7 @@ public class WinViewController : BaseContextController<UIWinView>, IGameStateCha
 	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
 	{
 		yield return (GameStateTransitionTask.SHOW_WIN, async (x) => ShowContext());
+		yield return (GameStateTransitionTask.HIDE_WIN, async (x) => HideContext());
 	}
 
 	protected override async UniTask OnPreloadAsync()
@@ -36,7 +37,8 @@ public class WinViewController : BaseContextController<UIWinView>, IGameStateCha
 	{
 		base.OnActivate();
 
-		_context.SetWinText(textsConfig.texts["win_header"]);
+		_context.SetTitle(textsConfig.texts["end_header"]);
+		_context.SetMessage(textsConfig.texts["win_header"]);
 		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
 
 		_context.Hide();
@@ -65,6 +67,5 @@ public class WinViewController : BaseContextController<UIWinView>, IGameStateCha
 	private void OnExitButtonClickedHandler()
 	{
 		game.RequestSetLocation(Location.MAIN_MENU);
-		HideContext();
 	}
 }
