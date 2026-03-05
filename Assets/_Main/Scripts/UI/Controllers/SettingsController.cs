@@ -63,10 +63,11 @@ namespace _Main.Scripts.UI
 		{
 			_context.Show();
 			inputService.DisablePlayerInputs();
-			cursorUnlockedBySettings = cursorService.IsCursorLocked;
-			if (cursorUnlockedBySettings)
+			cursorUnlockedBySettings = false;
+			if (cursorService.IsCursorLocked)
 			{
 				cursorService.UnlockCursor();
+				cursorUnlockedBySettings = !cursorService.IsCursorLocked;
 			}
 			pauseState.SetPaused(true);
 		}
@@ -75,11 +76,11 @@ namespace _Main.Scripts.UI
 		{
 			_context.Hide();
 			inputService.EnablePlayerInputs();
-			if (cursorUnlockedBySettings)
+			if (cursorUnlockedBySettings && !cursorService.IsCursorLocked)
 			{
 				cursorService.LockCursor();
-				cursorUnlockedBySettings = false;
 			}
+			cursorUnlockedBySettings = false;
 			pauseState.SetPaused(false);
 		}
 

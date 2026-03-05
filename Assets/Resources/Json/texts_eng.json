@@ -100,6 +100,18 @@
         "dice_banner_modifiers_pass": "Applying pass modifiers",
         "dice_banner_modifiers_round_end": "Applying round end modifiers",
         "dice_banner_hot_dice": "Hot Dice!",
-        "dice_banner_failed": "No scoring combinations"
+        "dice_banner_failed": "No scoring combinations",
+        "dice_banner_upgrade_triggered": "Combination upgrade!",
+        "dice_banner_upgrade_failed": "Nothing upgraded",
+        "dice_upgrade_combo_straight": "Straight",
+        "dice_upgrade_combo_ofakind": "Of a kind",
+        "dice_upgrade_hint_continue": "Click to continue",
+        "dice_upgrade_rolled": "Rolled: {0}",
+        "dice_upgrade_effect_template": "{0} {1}->{2} | {3} {4}->{5} | {6} {7}->{8}",
+        "dice_upgrade_label_min": "Min",
+        "dice_upgrade_label_max": "Max",
+        "dice_upgrade_label_bonus": "Bonus",
+        "dice_upgrade_label_min_len": "Min len",
+        "dice_upgrade_label_max_len": "Max len"
     }
 }

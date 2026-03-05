@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using _Main.Scripts.Core;
+using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using PlatformCore.Core;
@@ -9,9 +9,6 @@ using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
 using UnityEngine;
-using System.Text;
-using TMPro;
-using UnityEngine.UI;
 
 namespace _Main.Scripts.Dice
 {
@@ -23,6 +20,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly Run run;
 		private readonly GlobalNotificationService notificationService;
+		private readonly IAsyncAwaiterPool upgradeAwaiter;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
@@ -33,7 +31,8 @@ namespace _Main.Scripts.Dice
 			ICameraShakeService cameraShakeService,
 			IAudioService audioService,
 			Run run,
-			GlobalNotificationService notificationService)
+			GlobalNotificationService notificationService,
+			IAsyncAwaiterPool upgradeAwaiter)
 		{
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
@@ -41,6 +40,7 @@ namespace _Main.Scripts.Dice
 			this.audioService = audioService;
 			this.run = run;
 			this.notificationService = notificationService;
+			this.upgradeAwaiter = upgradeAwaiter;
 		}
 
 		public void Activate()
@@ -313,7 +313,13 @@ namespace _Main.Scripts.Dice
 
 			await UniTaskUtils.WaitAllTweens(tweenList.ToArray());
 
-			await TryTriggerUpgradeIfNeeded(combinationResult);
+			diceGameModel.RequestUpgrade(combinationResult);
+			if (upgradeAwaiter != null)
+			{
+				await upgradeAwaiter.WaitForEmptyAsync();
+			}
+
+			UpdateUI();
 
 			return diceGameModel.AllBanked();
 		}
@@ -346,209 +352,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			await UniTaskUtils.WaitAllTweens(tweens.ToArray());
-		}
-
-		private bool IsStraightCombination(DiceCombination combination)
-		{
-			return combination == DiceCombination.Straight_1_6
-			       || combination == DiceCombination.Straight_1_5
-			       || combination == DiceCombination.Straight_2_6
-			       || combination == DiceCombination.StraightLength4
-			       || combination == DiceCombination.StraightLength5
-			       || combination == DiceCombination.StraightLength6;
-		}
-
-		private DiceModel PickUpgradeDie()
-		{
-			var pool = diceGameModel.CurrentDiceModelList;
-			if (pool == null || pool.Count == 0)
-			{
-				return null;
-			}
-
-			int index = UnityEngine.Random.Range(0, pool.Count);
-			return pool[index];
-		}
-
-		private async UniTask TryTriggerUpgradeIfNeeded(DiceCombinationResult combinationResult)
-		{
-			if (combinationResult.Combinations == null || combinationResult.Combinations.Count == 0)
-			{
-				return;
-			}
-
-			if (!diceGameModel.IsPlayerTurn && !diceGameModel.EnemyComboUpgradesEnabled)
-			{
-				return;
-			}
-
-			var activeScoringService = diceGameModel.GetCurrentScoringService();
-
-			// 1) Straight first
-			var straightConfig = activeScoringService.GetStraightUpgradeConfig();
-			if (straightConfig != null && straightConfig.Chance > 0f && combinationResult.Combinations.Any(e => IsStraightCombination(e.Combination)))
-			{
-				await HandleStraightUpgrade(straightConfig, activeScoringService);
-				return;
-			}
-
-			// 2) Of-a-kind
-			var ofaConfig = activeScoringService.GetComboUpgradeConfig("ofakind");
-			if (ofaConfig != null && ofaConfig.Chance > 0f && combinationResult.Combinations.Any(e => e.Combination == DiceCombination.ThreeOfAKind || e.Combination == DiceCombination.FourOfAKind || e.Combination == DiceCombination.FiveOfAKind || e.Combination == DiceCombination.SixOfAKind))
-			{
-				await HandleUpgradeForCombo("ofakind", ofaConfig, activeScoringService);
-				return;
-			}
-		}
-
-		private async UniTask HandleUpgradeForCombo(string comboId, ComboUpgradeConfig upgradeConfig, DiceScoringService activeScoringService)
-		{
-			if (UnityEngine.Random.value > upgradeConfig.Chance)
-			{
-				if (upgradeConfig.Debug)
-				{
-					logger?.Log($"[Upgrade:{comboId}] Chance failed ({upgradeConfig.Chance:P0}).");
-				}
-				return;
-			}
-
-			var die = PickUpgradeDie();
-			if (die == null)
-			{
-				logger?.LogWarning($"[Upgrade:{comboId}] No dice available for upgrade roll.");
-				return;
-			}
-
-			diceGameModel.tableModel.DisableButtons();
-			var announcePos = die.CurrentPosition != null
-				? die.CurrentPosition.position
-				: diceGameModel.tableModel?.GetFreeActivePosition()?.position ?? Vector3.zero;
-			logger?.Log($"[Upgrade:{comboId}] Triggered upgrade opportunity.");
-
-			if (upgradeConfig.Debug)
-			{
-				var weights = die.Weights != null ? string.Join(",", die.Weights) : "null";
-				var outcomes = activeScoringService.GetComboUpgradeOutcomes(comboId);
-				var outcomeTable = outcomes != null
-					? string.Join(", ", outcomes.Select(o => $"{o.Face}:Δmin{o.DeltaMin}/Δmax{o.DeltaMax}/Δb{o.DeltaScoreBonus}"))
-					: "none";
-				logger?.Log($"[Upgrade:{comboId}] Die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]; outcomes={outcomeTable}");
-			}
-
-			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
-
-			int rolledFace;
-			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
-			{
-				view.Show();
-				await view.PlayRollAnimationAsync(1.2f);
-				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
-				die.SetValue(rolledFace);
-				view.SetRotation(rolledFace);
-			}
-			else
-			{
-				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
-			}
-
-			if (comboId == "straight")
-			{
-				var before = activeScoringService.GetStraightState();
-				var outcome = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
-				var after = activeScoringService.GetStraightState();
-				if (outcome != null)
-				{
-					var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
-				}
-			}
-			else
-			{
-				var before = activeScoringService.GetComboUpgradeState(comboId);
-				var outcome = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
-				var after = activeScoringService.GetComboUpgradeState(comboId);
-				if (outcome != null && before != null && after != null)
-				{
-					var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-					logger?.Log($"[Upgrade:{comboId}] {summary} via die {die.ConfigId}");
-				}
-			}
-
-			UpdateUI();
-		}
-
-		private ComboUpgradeOutcome[] ConvertStraightOutcomes(StraightUpgradeOutcome[] src)
-		{
-			if (src == null) return Array.Empty<ComboUpgradeOutcome>();
-			return src.Select(o => new ComboUpgradeOutcome
-			{
-				Face = o.Face,
-				DeltaMin = o.DeltaMinLen,
-				DeltaMax = o.DeltaMaxLen,
-				DeltaScoreBonus = o.DeltaScoreBonus
-			}).ToArray();
-		}
-
-		private async UniTask HandleStraightUpgrade(StraightUpgradeConfig upgradeConfig, DiceScoringService activeScoringService)
-		{
-			if (UnityEngine.Random.value > upgradeConfig.Chance)
-			{
-				if (upgradeConfig.Debug)
-				{
-					logger?.Log($"[Upgrade:straight] Chance failed ({upgradeConfig.Chance:P0}).");
-				}
-				return;
-			}
-
-			var die = PickUpgradeDie();
-			if (die == null)
-			{
-				logger?.LogWarning("[Upgrade:straight] No dice available for upgrade roll.");
-				return;
-			}
-
-			diceGameModel.tableModel.DisableButtons();
-			var announcePos = die.CurrentPosition != null
-				? die.CurrentPosition.position
-				: diceGameModel.tableModel?.GetFreeActivePosition()?.position ?? Vector3.zero;
-			logger?.Log("[Upgrade:straight] Triggered upgrade opportunity.");
-
-			if (upgradeConfig.Debug)
-			{
-				var weights = die.Weights != null ? string.Join(",", die.Weights) : "null";
-				var outcomes = upgradeConfig.Outcomes;
-				var outcomeTable = outcomes != null
-					? string.Join(", ", outcomes.Select(o => $"{o.Face}:Δmin{o.DeltaMinLen}/Δmax{o.DeltaMaxLen}/Δb{o.DeltaScoreBonus}"))
-					: "none";
-				logger?.Log($"[Upgrade:straight] Die {die.ConfigId}; chance={upgradeConfig.Chance:P0}; weights=[{weights}]; outcomes={outcomeTable}");
-			}
-
-			var infoPos = die.CurrentPosition != null ? die.CurrentPosition.position : announcePos;
-
-			int rolledFace;
-			if (diceGameModel.ScreenDiceDict.TryGetValue(die, out var view))
-			{
-				view.Show();
-				await view.PlayRollAnimationAsync(1.2f);
-				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
-				die.SetValue(rolledFace);
-				view.SetRotation(rolledFace);
-			}
-			else
-			{
-				rolledFace = DiceGameUtils.GetWeightedRandomValue(die.Weights);
-			}
-
-			var before = activeScoringService.GetStraightState();
-			var outcome = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
-			var after = activeScoringService.GetStraightState();
-			if (outcome != null)
-			{
-				var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-				logger?.Log($"[Upgrade:straight] {summary} via die {die.ConfigId}");
-			}
-
-			UpdateUI();
 		}
 
 		private void UpdateUI()

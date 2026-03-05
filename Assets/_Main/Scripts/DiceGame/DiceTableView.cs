@@ -57,12 +57,16 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private Transform[] itemSlotsSelection;
 	[SerializeField] private Transform[] itemSlotsGame;
 
+	[Header("Upgrade")]
+	[SerializeField] private Transform upgradeDicePos;
+
 	[SerializeField] private float animDuration = 0.15f;
 	public CouplePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public CouplePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
 	public DiceItemView ItemViewPrefab => itemViewPrefab;
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
+	public Transform UpgradeDicePos => upgradeDicePos;
 	public Transform TooltipPos => tooltipPos;
 
 	private bool isCombinationsOpen;

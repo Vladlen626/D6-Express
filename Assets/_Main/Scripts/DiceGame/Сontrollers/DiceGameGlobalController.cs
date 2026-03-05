@@ -30,6 +30,8 @@ namespace _Main.Scripts.Dice
 		private readonly IResourceService resourceService;
 		private readonly IUIService uiService;
 		private readonly IInputService inputService;
+		private readonly IAsyncAwaiterService awaiterService;
+		private readonly ILocalizationService localizationService;
 
 		private readonly SceneContext sceneContext;
 		private const string EnemyAiScenariosResourcePath = "Json/enemy_ai_scenarios";
@@ -71,6 +73,8 @@ namespace _Main.Scripts.Dice
 			audioService = serviceLocator.Get<IAudioService>();
 			uiService = serviceLocator.Get<IUIService>();
 			inputService = serviceLocator.Get<IInputService>();
+			awaiterService = serviceLocator.Get<IAsyncAwaiterService>();
+			localizationService = serviceLocator.Get<ILocalizationService>();
 		}
 
 		public void Activate()
@@ -146,12 +150,25 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			var upgradeAwaiter = awaiterService.GetPool("dice.upgrade");
+			var upgradeController = new DiceGameUpgradeController(
+				diceGameModel,
+				run,
+				loggerService,
+				upgradeAwaiter,
+				objectFactory,
+				audioService,
+				notificationService,
+				localizationService,
+				sceneContext.DiceGameTableView ? sceneContext.DiceGameTableView.UpgradeDicePos : null);
 			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService);
+				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, upgradeAwaiter);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
+				upgradeController,
 				processController,
+				new DiceGameUpgradeVisualController(uiService, upgradeController, upgradeAwaiter),
 				new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
 				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService, notificationService),
 				new DiceGameResultController(diceGameModel)
