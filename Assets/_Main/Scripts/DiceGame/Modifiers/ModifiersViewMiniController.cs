@@ -82,7 +82,7 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
 
     public void Activate()
     {
-
+        uIModifiersView.gameObject.SetActive(false);
     }
 
     public void Deactivate()

@@ -16,7 +16,6 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnPlayClicked;
 
 	[Header("Global")]
-	[SerializeField] private Transform combosTransform;
 	[SerializeField] private Transform tooltipPos;
 
 	[Header("StateHandlers")]
@@ -58,13 +57,9 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private Transform[] itemSlotsSelection;
 	[SerializeField] private Transform[] itemSlotsGame;
 
-	[Header("Items")]
-	[SerializeField] private CombinationsView combinationsView;
-
 	[SerializeField] private float animDuration = 0.15f;
 	public CouplePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public CouplePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
-	public CombinationsView CombinationsView => combinationsView;
 	public DiceItemView ItemViewPrefab => itemViewPrefab;
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
@@ -200,36 +195,4 @@ public class DiceTableView : MonoBehaviour
 		maxBetText.text = MaxBet.ToString();
 		betSlider.maxValue = MaxBet;
 	}
-
-	public void DiceCombinationsToggle()
-	{
-		return;
-		if (inAnimProcess)
-		{
-			return;
-		}
-
-		if (!isCombinationsOpen)
-		{
-			inAnimProcess = true;
-			combosTransform.DOLocalRotate(Vector3.forward * 90, animDuration)
-				.OnComplete(() =>
-				{
-					isCombinationsOpen = true;
-					inAnimProcess = false;
-				});
-		}
-		else
-		{
-			inAnimProcess = true;
-			combosTransform.DOLocalRotate(Vector3.zero, animDuration)
-				.OnComplete(() =>
-				{
-					isCombinationsOpen = false;
-					inAnimProcess = false;
-				});
-		}
-	}
-
-
 }

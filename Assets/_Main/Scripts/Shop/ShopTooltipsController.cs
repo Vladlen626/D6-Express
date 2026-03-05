@@ -9,15 +9,17 @@ using UnityEngine;
 public class ShopTooltipsController : BaseContextController<UITooltip>
 {
     private readonly Shop shop;
+    private readonly ShopView shopView;
     private readonly Interactor interactor;
     private readonly Camera camera;
 
     private TextsConfig textsConfig;
     private IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
 
-    public ShopTooltipsController(IUIService uiService, Shop shop, Interactor interactor, Camera camera) : base(uiService)
+    public ShopTooltipsController(IUIService uiService, Shop shop, ShopView shopView, Interactor interactor, Camera camera) : base(uiService)
     {
         this.shop = shop;
+        this.shopView = shopView;
         this.interactor = interactor;
         this.camera = camera;
     }
@@ -55,6 +57,15 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
         {
             // todo: не нрав гетать
             var shopItemView = interactable.GetComponent<TradeItemView>();
+            if (shopItemView == null)
+            {
+                return;
+            }
+
+            if (!shopView || !shopItemView.transform.IsChildOf(shopView.transform))
+            {
+                return;
+            }
 
             var shopItem = shop.TradeItems[shopItemView.Index];
 

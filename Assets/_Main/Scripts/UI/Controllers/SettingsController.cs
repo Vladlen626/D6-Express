@@ -12,6 +12,7 @@ namespace _Main.Scripts.UI
 		private readonly ICursorService cursorService;
 		private readonly IInputService inputService;
 		private readonly PauseState pauseState;
+		private bool cursorUnlockedBySettings;
 
 		public SettingsController(IUIService uiService, IAudioService audioService, ICursorService cursorService,
 			IInputService inputService, PauseState pauseState) : base(uiService)
@@ -62,7 +63,11 @@ namespace _Main.Scripts.UI
 		{
 			_context.Show();
 			inputService.DisablePlayerInputs();
-			cursorService.UnlockCursor();
+			cursorUnlockedBySettings = cursorService.IsCursorLocked;
+			if (cursorUnlockedBySettings)
+			{
+				cursorService.UnlockCursor();
+			}
 			pauseState.SetPaused(true);
 		}
 
@@ -70,7 +75,11 @@ namespace _Main.Scripts.UI
 		{
 			_context.Hide();
 			inputService.EnablePlayerInputs();
-			cursorService.LockCursor();
+			if (cursorUnlockedBySettings)
+			{
+				cursorService.LockCursor();
+				cursorUnlockedBySettings = false;
+			}
 			pauseState.SetPaused(false);
 		}
 

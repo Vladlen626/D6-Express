@@ -179,6 +179,8 @@ namespace _Main.Scripts.Dice
 					}
 				}
 			}
+
+			_diceGameModel.SelectionDiceModelList.Clear();
 		}
 	}
 }

@@ -26,8 +26,8 @@ public static class ShopFactory
         return new ShopViewController(shop, shopView, objectFactory, interactor, shopkeeper);
     }
 
-    public static ShopTooltipsController GetShopTooltipsController(IUIService uiService, Shop shop, Interactor interactor, Camera camera)
+    public static ShopTooltipsController GetShopTooltipsController(IUIService uiService, Shop shop, ShopView shopView, Interactor interactor, Camera camera)
     {
-        return new ShopTooltipsController(uiService, shop, interactor, camera);
+        return new ShopTooltipsController(uiService, shop, shopView, interactor, camera);
     }
 }

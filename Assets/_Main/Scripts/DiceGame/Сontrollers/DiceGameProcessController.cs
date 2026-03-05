@@ -320,16 +320,29 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask ResetAllDiceToActiveAsync()
 		{
+			tableModel.ResetAllPositions();
 			var tweens = new List<Tween>();
 			
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
 				var pos = tableModel.GetFreeActivePosition();
+				if (!pos)
+				{
+					logger?.LogWarning("[DiceGameController] No free active positions while resetting dice.");
+					continue;
+				}
+
 				diceModel.SetSaved(false);
 				diceModel.SetCurrentPosition(pos);
 
-				var view = diceGameModel.ScreenDiceDict[diceModel];
-				tweens.Add(view.MoveToPosition(pos.position));
+				if (diceGameModel.ScreenDiceDict.TryGetValue(diceModel, out var view) && view)
+				{
+					tweens.Add(view.MoveToPosition(pos.position));
+				}
+				else
+				{
+					logger?.LogWarning($"[DiceGameController] Missing dice view for model {diceModel?.ConfigId} while resetting.");
+				}
 			}
 
 			await UniTaskUtils.WaitAllTweens(tweens.ToArray());
@@ -355,159 +368,6 @@ namespace _Main.Scripts.Dice
 
 			int index = UnityEngine.Random.Range(0, pool.Count);
 			return pool[index];
-		}
-
-		private string FormatOutcomeTable(StraightUpgradeOutcome[] outcomes)
-		{
-			if (outcomes == null || outcomes.Length == 0)
-			{
-				return "No outcomes configured.";
-			}
-
-			var sb = new StringBuilder();
-			for (int i = 0; i < outcomes.Length; i++)
-			{
-				var o = outcomes[i];
-				sb.Append($"Face {o.Face}: ΔMin {o.DeltaMinLen}, ΔMax {o.DeltaMaxLen}, ΔBonus {o.DeltaScoreBonus}");
-				if (i < outcomes.Length - 1)
-				{
-					sb.Append(" | ");
-				}
-			}
-			return sb.ToString();
-		}
-
-		private void NotifyAndLog(string message, Vector3? worldPos = null, float displaySeconds = 1.2f)
-		{
-			if (string.IsNullOrWhiteSpace(message))
-			{
-				return;
-			}
-
-			logger?.Log(message);
-			ShowFloatingText(message, worldPos, displaySeconds);
-		}
-
-		private GameObject ShowFloatingText(string text, Vector3? worldPos = null, float displaySeconds = 1.2f)
-		{
-			var position = worldPos ?? Vector3.zero;
-			var go = new GameObject("UpgradeFloatingText");
-			go.transform.position = position;
-			go.AddComponent<FaceCameraBillboard>();
-			var tmp = go.AddComponent<TextMeshPro>();
-			tmp.text = text;
-			tmp.enableAutoSizing = true;
-			tmp.fontSizeMin = 0.15f;
-			tmp.fontSizeMax = 0.5f;
-			tmp.fontSize = 0.35f;
-			tmp.alignment = TextAlignmentOptions.Center;
-			tmp.color = Color.yellow;
-			tmp.enableWordWrapping = true;
-			tmp.sortingOrder = 50;
-			tmp.lineSpacing = -10f;
-			tmp.rectTransform.sizeDelta = new Vector2(3.2f, 1.6f);
-			tmp.rectTransform.localScale = Vector3.one * 0.4f;
-
-			tmp.DOFade(0f, 0.3f).SetDelay(displaySeconds);
-			DOTween.Sequence()
-				.AppendInterval(displaySeconds + 0.35f)
-				.OnComplete(() => UnityEngine.Object.Destroy(go));
-
-			return go;
-		}
-
-		private List<GameObject> ShowOutcomeRing(ComboUpgradeOutcome[] outcomes, Vector3 center, float radius = 1.2f, float displaySeconds = 5f)
-		{
-			var list = new List<GameObject>();
-			if (outcomes == null || outcomes.Length == 0)
-			{
-				return list;
-			}
-
-			float step = 360f / outcomes.Length;
-			for (int i = 0; i < outcomes.Length; i++)
-			{
-				float angle = step * i;
-				var dir = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), 0f, Mathf.Sin(angle * Mathf.Deg2Rad));
-				var pos = center + dir * radius + Vector3.up * 0.15f;
-				var text = $"Face {outcomes[i].Face}\nΔMin {outcomes[i].DeltaMin}\nΔMax {outcomes[i].DeltaMax}\nΔB {outcomes[i].DeltaScoreBonus}";
-				var go = ShowFloatingText(text, pos, displaySeconds);
-				var tmp = go.GetComponent<TextMeshPro>();
-				if (tmp != null)
-				{
-					tmp.fontSizeMin = 0.25f;
-					tmp.fontSizeMax = 0.9f;
-					tmp.fontSize = 0.6f;
-					tmp.rectTransform.sizeDelta = new Vector2(5f, 2f);
-					tmp.rectTransform.localScale = Vector3.one * 0.7f;
-				}
-				list.Add(go);
-			}
-
-			return list;
-		}
-
-		private void ShowOutcomeRingScreen(ComboUpgradeOutcome[] outcomes, Vector3 worldCenter, float radiusPx = 160f, float displaySeconds = 5f)
-		{
-			if (outcomes == null || outcomes.Length == 0)
-			{
-				return;
-			}
-
-			var canvasGo = new GameObject("UpgradeOutcomeCanvas");
-			var canvas = canvasGo.AddComponent<Canvas>();
-			canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-			canvas.sortingOrder = 500;
-			canvasGo.AddComponent<CanvasScaler>();
-			canvasGo.AddComponent<GraphicRaycaster>();
-
-			var cam = Camera.main;
-			Vector3 screenCenter = cam != null ? cam.WorldToScreenPoint(worldCenter) : new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
-			var canvasRect = canvas.GetComponent<RectTransform>();
-			RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenCenter, null, out var localCenter);
-
-			float step = 360f / outcomes.Length;
-			for (int i = 0; i < outcomes.Length; i++)
-			{
-				float angle = step * i * Mathf.Deg2Rad;
-				var dir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-				var screenPos = screenCenter + new Vector3(dir.x, dir.y, 0f) * radiusPx;
-				RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, null, out var localPos);
-
-				var go = new GameObject($"Outcome_{outcomes[i].Face}");
-				go.transform.SetParent(canvas.transform, false);
-				var rect = go.AddComponent<RectTransform>();
-				rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
-				rect.anchoredPosition = localPos;
-
-				var tmp = go.AddComponent<TextMeshProUGUI>();
-				tmp.text = $"Face {outcomes[i].Face}\nΔMin {outcomes[i].DeltaMin}\nΔMax {outcomes[i].DeltaMax}\nΔB {outcomes[i].DeltaScoreBonus}";
-				tmp.fontSizeMin = 18f;
-				tmp.fontSizeMax = 28f;
-				tmp.enableAutoSizing = true;
-				tmp.alignment = TextAlignmentOptions.Center;
-				tmp.color = Color.yellow;
-				tmp.rectTransform.sizeDelta = new Vector2(180f, 90f);
-				tmp.lineSpacing = -8f;
-			}
-
-			DOTween.Sequence()
-				.AppendInterval(displaySeconds)
-				.OnComplete(() => UnityEngine.Object.Destroy(canvasGo));
-		}
-
-		private class FaceCameraBillboard : MonoBehaviour
-		{
-			private void LateUpdate()
-			{
-				var cam = Camera.main;
-				if (cam == null)
-				{
-					return;
-				}
-
-				transform.rotation = Quaternion.LookRotation(cam.transform.forward, cam.transform.up);
-			}
 		}
 
 		private async UniTask TryTriggerUpgradeIfNeeded(DiceCombinationResult combinationResult)
