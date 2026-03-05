@@ -696,7 +696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIEndView
   _group: {fileID: 5726168195729284318}
-  _canvasType: 0
+  _canvasType: 10
   titleText: {fileID: 914622626127449097}
   messageText: {fileID: 3233463275619465070}
   exitButton: {fileID: 1355165776252956740}
