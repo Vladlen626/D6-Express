@@ -30,6 +30,7 @@ namespace _Main.Scripts.Core
 			var cursorService = new CursorService(uiService);
 			var configService = new ConfigService(resourceService, logger);
 			var localizationService = new LocalizationServiceBase(configService);
+			var awaiterService = new AsyncAwaiterService();
 			var diceScoringService = new DiceScoringService();
 			var notificationService = new GlobalNotificationService(uiService, objectFactory, localizationService);
 			var analyticsService = new GameAnalyticsService();
@@ -46,6 +47,7 @@ namespace _Main.Scripts.Core
 			_serviceLocator.Register<ICursorService, CursorService>(cursorService);
 			_serviceLocator.Register<ConfigService, ConfigService>(configService);
 			_serviceLocator.Register<ILocalizationService, LocalizationServiceBase>(localizationService);
+			_serviceLocator.Register<IAsyncAwaiterService, AsyncAwaiterService>(awaiterService);
 			_serviceLocator.Register<DiceScoringService, DiceScoringService>(diceScoringService);
 			_serviceLocator.Register<GlobalNotificationService, GlobalNotificationService>(notificationService);
 			_serviceLocator.Register<IAnalyticsService, GameAnalyticsService>(analyticsService);

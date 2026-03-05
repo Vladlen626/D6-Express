@@ -33,6 +33,18 @@
         "modifier_pass_multiplier_item_title": "Газированный рывок",
         "modifier_reroll_selected_item_title": "Хруст удачи",
         "modifier_extra_dice_cap_title": "Доппаёк",
-        "modifier_step_up_item_title": "Глоток смелости"
+        "modifier_step_up_item_title": "Глоток смелости",
+        "dice_banner_upgrade_triggered": "Апгрейд комбинации!",
+        "dice_banner_upgrade_failed": "Ничего не апгрейднулось",
+        "dice_upgrade_combo_straight": "Стрит",
+        "dice_upgrade_combo_ofakind": "Одинаковые",
+        "dice_upgrade_hint_continue": "Кликните, чтобы продолжить",
+        "dice_upgrade_rolled": "Выпало: {0}",
+        "dice_upgrade_effect_template": "{0} {1}->{2} | {3} {4}->{5} | {6} {7}->{8}",
+        "dice_upgrade_label_min": "Мин.",
+        "dice_upgrade_label_max": "Макс.",
+        "dice_upgrade_label_bonus": "Бонус",
+        "dice_upgrade_label_min_len": "Мин. длина",
+        "dice_upgrade_label_max_len": "Макс. длина"
     }
 }
