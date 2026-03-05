@@ -12,5 +12,10 @@ public enum GameStateTransitionTask
 	UNLOCK_CURSOR,
 	CHARACTER_TRANSITION_START,
 	CHARACTER_TRANSITION_FINISH,
+	// todo: подумать нужен ли этот кусок в таком виде. слишком императивно
+	SHOW_STATS,
+	AWAIT_STATS,
+	HIDE_STATS,
+	// 
 	OTHER
 }

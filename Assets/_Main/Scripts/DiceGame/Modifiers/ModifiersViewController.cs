@@ -92,7 +92,6 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
         view.SetDescription(config.descriptionKey);
 
         view.Show();
-        _context.RefreshVisibleWindow();
         UpdateContextVisibility();
     }
 
@@ -108,7 +107,6 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
         view.Hide();
 
         Object.Destroy(view.gameObject);
-        _context.RefreshVisibleWindow();
         UpdateContextVisibility();
     }
 

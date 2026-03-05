@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Infrastructure.Lifecycle;
@@ -33,12 +32,18 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
         configs = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
     }
 
+    public bool CanShow()
+    {
+        return modifiers.AllModifiers.Count > 0;
+    }
+
     public UniTask Show()
     {
         if (!uIModifiersView.gameObject.activeSelf)
         {
             uIModifiersView.gameObject.SetActive(true);
         }
+        uIModifiersView.Show();
 
         uIModifiersView?.Header.SetText("modifiers_header");
 
@@ -58,10 +63,9 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
         modifiers.ModifierRemoved -= OnModifierRemoved;
         modifiers.ModifierAdded -= OnModifierAdded;
 
-        if (uIModifiersView != null)
-        {
-            await uIModifiersView.HideModifiers();
-        }
+        await uIModifiersView.HideModifiers();
+        uIModifiersView.Hide();
+
         if (disable)
         {
             uIModifiersView.gameObject.SetActive(false);
@@ -78,14 +82,12 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
 
     public void Activate()
     {
-        uIModifiersView?.Hide();
+
     }
 
     public void Deactivate()
     {
         Hide().Forget();
-
-        uIModifiersView.Hide();
     }
 
     private async void OnModifierAdded(IModifier modifier)
@@ -108,7 +110,6 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
         view.SetDescription(config.descriptionKey);
 
         view.Show();
-        uIModifiersView.RefreshVisibleWindow();
     }
 
     private void OnModifierRemoved(IModifier modifier)
@@ -122,7 +123,6 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
 
         view.Hide();
 
-        UnityEngine.Object.Destroy(view.gameObject);
-        uIModifiersView.RefreshVisibleWindow();
+        Object.Destroy(view.gameObject);
     }
 }

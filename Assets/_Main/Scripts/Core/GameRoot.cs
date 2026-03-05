@@ -73,7 +73,7 @@ namespace _Main.Scripts.Core
 
 			var playerModel = new PlayerModel();
 
-			var transitionViewController = new TransitionViewController(uiService, run, configService, inputService, playerModel.InventoryModel.ModifiersModel, factory);
+			var transitionViewController = new TransitionViewController(uiService);
 			await _lifecycle.RegisterAsync(transitionViewController);
 			await transitionViewController.ShowContext(0);
 
@@ -149,6 +149,7 @@ namespace _Main.Scripts.Core
 			var locationController = new LocationController(game, sceneContext, audioService);
 			var playerController = new PlayerController(playerModel, playerView, sceneContext);
 			var shopController = new ShopController(run, trainShop, stationShop);
+			var statsController = new StatsViewController(uiService, run, configService, inputService, playerModel.InventoryModel.ModifiersModel, factory);
 
 			controllersList.AddRange(new IBaseController[]
 			{
@@ -175,7 +176,8 @@ namespace _Main.Scripts.Core
 				new CombinationsController(playerModel.InventoryModel.ModifiersModel, sceneContext.DiceGameTableView.CombinationsView),
 				sleepController,
 				locationController,
-				shopController
+				shopController,
+				statsController
 			});
 
 			controllersList.AddRange(baseControllers);
@@ -203,6 +205,7 @@ namespace _Main.Scripts.Core
 			gameStateController.AddChanger(locationController);
 			gameStateController.AddChanger(winViewController);
 			gameStateController.AddChanger(loseViewController);
+			gameStateController.AddChanger(statsController);
 
 			await _lifecycle.RegisterAsync(gameStateController);
 

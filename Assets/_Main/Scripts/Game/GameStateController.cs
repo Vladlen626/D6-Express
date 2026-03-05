@@ -16,13 +16,18 @@ public class GameStateController : IBaseController, IActivatable
 	private static readonly GameStateTransitionTask[] RunStartRecipe =
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
-		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.SHOW_STATS,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.AWAIT_STATS,
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.HIDE_STATS,
 		GameStateTransitionTask.CHANGE_LOCATION,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 	};
 
@@ -41,25 +46,35 @@ public class GameStateController : IBaseController, IActivatable
 	private static readonly GameStateTransitionTask[] DayRecipe =
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
-		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.SHOW_STATS,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.AWAIT_STATS,
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.HIDE_STATS,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 	};
 
 	private static readonly GameStateTransitionTask[] LocationRecipe =
 	{
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
-		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.SHOW_STATS,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.AWAIT_STATS,
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.HIDE_STATS,
 		GameStateTransitionTask.CHANGE_LOCATION,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 	};
 
@@ -159,7 +174,7 @@ public class GameStateController : IBaseController, IActivatable
 		}
 		else if (location == Location.TRAIN && game.Location == Location.STATION)
 		{
-			RequestChange(new GameStateTransition(LocationRecipe, location, false));
+			RequestChange(new GameStateTransition(LocationMainMenuRecipe, location, false));
 		}
 		else
 		{

@@ -1,101 +1,39 @@
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using PlatformCore.Services.UI;
-using TMPro;
 using UnityEngine;
 
 public class UITransitionView : UIBaseElement
 {
-	[SerializeField] private RectTransform upper;
+	[SerializeField]
+	private RectTransform toScale;
 
-	[SerializeField] private RectTransform bottom;
-
-	[SerializeField] private AnimationCurve curve;
-
-	[SerializeField] private CanvasGroup stationNameCanvasGroup;
-
-	[SerializeField] private TextMeshProUGUI locationName;
-
-	[SerializeField] private CanvasGroup hintGroup;
-
-	[SerializeField] private UIModifiersView uIModifiersView;
-
-	private float initialUpperY, initialBottomY;
-
-	public UIModifiersView UIModifiersView => uIModifiersView;
-
-	private void Start()
+	public UniTask ShowAsync(float duration)
 	{
-		initialUpperY = upper.anchoredPosition.y;
-		initialBottomY = bottom.anchoredPosition.y;
+		return toScale.DOSizeDelta(Vector2.zero, duration).SetEase(Ease.InOutBack).AsyncWaitForCompletion().AsUniTask();
 	}
 
-	public async UniTask ShowAsync(float duration)
+	public UniTask HideAsync(float duration)
 	{
-		Show();
-
-		var upperMove = upper.DOAnchorPosY(0f, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
-		var bottomMove = bottom.DOAnchorPosY(0f, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
-
-		await UniTask.WhenAll(upperMove, bottomMove);
+		toScale.sizeDelta = Vector2.zero;
+		return toScale.DOSizeDelta(GetExpandedSize(), duration).SetEase(Ease.OutBack).AsyncWaitForCompletion().AsUniTask();
 	}
 
-	public async UniTask HideAsync(float duration)
+	private Vector2 GetExpandedSize()
 	{
-		var upperMove = upper.DOAnchorPosY(initialUpperY, duration).SetEase(curve).AsyncWaitForCompletion().AsUniTask();
-		var bottomMove = bottom.DOAnchorPosY(initialBottomY, duration).SetEase(curve).AsyncWaitForCompletion()
-			.AsUniTask();
+		var parentRect = toScale.parent as RectTransform;
+		Vector2 baseSize;
 
-		await UniTask.WhenAll(upperMove, bottomMove);
+		if (parentRect)
+		{
+			baseSize = parentRect.rect.size;
+		}
+		else
+		{
+			baseSize = new Vector2(Screen.width, Screen.height);
+		}
 
-		Hide();
-	}
-
-	public void SetMessage(string name)
-	{
-		locationName.text = name;
-	}
-
-	public async UniTask ShowHint()
-	{
-		await hintGroup
-			.DOFade(1f, 0.5f)
-			.SetEase(Ease.OutQuad)
-			.AsyncWaitForCompletion();
-	}
-
-	public async UniTask HideHint()
-	{
-		await hintGroup
-			.DOFade(0f, 0.5f)
-			.SetEase(Ease.OutQuad)
-			.AsyncWaitForCompletion();
-	}
-
-	public async UniTask ShowLocationName()
-	{
-		await stationNameCanvasGroup
-			.DOFade(1f, 0.5f)
-			.SetEase(Ease.OutQuad)
-			.AsyncWaitForCompletion();
-	}
-
-	public async UniTask HideLocationName()
-	{
-		await stationNameCanvasGroup
-			.DOFade(0f, 0.5f)
-			.SetEase(Ease.OutQuad)
-			.AsyncWaitForCompletion();
-	}
-
-	protected override void OnHide()
-	{
-		base.OnHide();
-	}
-
-	protected override void OnShow()
-	{
-		base.OnShow();
+		float side = Mathf.Sqrt(baseSize.x * baseSize.x + baseSize.y * baseSize.y);
+		return new Vector2(side, side);
 	}
 }
