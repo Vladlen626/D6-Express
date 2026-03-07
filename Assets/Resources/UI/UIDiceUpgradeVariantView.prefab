@@ -348,6 +348,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 3072174729694932632}
     m_Modifications:
     - target: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+      propertyPath: m_Color.b
+      value: 0.130162
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+      propertyPath: m_Color.g
+      value: 0.31400615
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+      propertyPath: m_Color.r
+      value: 0.7075472
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
       propertyPath: m_PixelsPerUnitMultiplier
       value: 3
       objectReference: {fileID: 0}
@@ -723,12 +735,28 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4889795126570400343, guid: 81ebd2cd2781979459763aaaa6dc4049, type: 3}
+      propertyPath: m_fontColor.b
+      value: 0.87664646
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889795126570400343, guid: 81ebd2cd2781979459763aaaa6dc4049, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.9155838
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889795126570400343, guid: 81ebd2cd2781979459763aaaa6dc4049, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0.9433962
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889795126570400343, guid: 81ebd2cd2781979459763aaaa6dc4049, type: 3}
       propertyPath: m_fontSizeBase
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 4889795126570400343, guid: 81ebd2cd2781979459763aaaa6dc4049, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4292930033
+      objectReference: {fileID: 0}
     - target: {fileID: 5230441148826374404, guid: 81ebd2cd2781979459763aaaa6dc4049, type: 3}
       propertyPath: m_Name
-      value: HeaderTMP
+      value: FaceValue
       objectReference: {fileID: 0}
     - target: {fileID: 8428498313460068909, guid: 81ebd2cd2781979459763aaaa6dc4049, type: 3}
       propertyPath: m_Pivot.x

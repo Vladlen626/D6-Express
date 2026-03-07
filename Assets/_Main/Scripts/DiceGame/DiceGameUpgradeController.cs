@@ -16,12 +16,6 @@ namespace _Main.Scripts.Dice
 	public class DiceGameUpgradeController : IBaseController, IActivatable
 	{
 		private const string UpgradeDiceVisualId = "default";
-		private const string FallbackMinLabel = "Min";
-		private const string FallbackMaxLabel = "Max";
-		private const string FallbackBonusLabel = "Bonus";
-		private const string FallbackMinLenLabel = "Min len";
-		private const string FallbackMaxLenLabel = "Max len";
-		private const string FallbackStopHint = "Click to stop";
 
 		private static readonly int[] UpgradeDiceWeights = { 1, 1, 1, 1, 1, 1 };
 
@@ -211,17 +205,20 @@ namespace _Main.Scripts.Dice
 			{
 				var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
 				logger?.Log($"[Upgrade:{comboId}] {summary} via upgrade die");
-				var minLabel = BuildMinLabel(comboId);
-				var maxLabel = BuildMaxLabel(comboId);
-				var bonusLabel = BuildBonusLabel();
+				var title = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeComboOfAKind);
+				var minLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelMin);
+				var maxLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelMax);
+				var bonusLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelBonus);
+				var hintText = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeHintContinue);
+				var stopHintText = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeHintStop);
 				UpgradeApplied?.Invoke(new DiceUpgradeVisualData(
 					comboId,
-					GetComboTitle(comboId),
+					title,
 					minLabel,
 					maxLabel,
 					bonusLabel,
-					BuildHintText(),
-					BuildStopHintText(),
+					hintText,
+					stopHintText,
 					rolledFace,
 					before.Min,
 					before.Max,
@@ -278,17 +275,20 @@ namespace _Main.Scripts.Dice
 			{
 				var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
 				logger?.Log($"[Upgrade:straight] {summary} via upgrade die");
-				var minLabel = BuildMinLabel("straight");
-				var maxLabel = BuildMaxLabel("straight");
-				var bonusLabel = BuildBonusLabel();
+				var title = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeComboStraight);
+				var minLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelMinLen);
+				var maxLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelMaxLen);
+				var bonusLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelBonus);
+				var hintText = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeHintContinue);
+				var stopHintText = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeHintStop);
 				UpgradeApplied?.Invoke(new DiceUpgradeVisualData(
 					"straight",
-					GetComboTitle("straight"),
+					title,
 					minLabel,
 					maxLabel,
 					bonusLabel,
-					BuildHintText(),
-					BuildStopHintText(),
+					hintText,
+					stopHintText,
 					rolledFace,
 					before.MinLen,
 					before.MaxLen,
@@ -383,70 +383,6 @@ namespace _Main.Scripts.Dice
 			upgradeDiceView.Initialize(UpgradeDiceVisualId, false, audioService);
 			upgradeDiceView.Hide();
 			return upgradeDiceView;
-		}
-
-		private string GetComboTitle(string comboId)
-		{
-			if (string.Equals(comboId, "straight", StringComparison.OrdinalIgnoreCase))
-			{
-				return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeComboStraight, comboId);
-			}
-
-			if (string.Equals(comboId, "ofakind", StringComparison.OrdinalIgnoreCase))
-			{
-				return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeComboOfAKind, comboId);
-			}
-
-			return comboId;
-		}
-
-		private string BuildHintText()
-		{
-			return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeHintContinue, string.Empty);
-		}
-
-		private string BuildStopHintText()
-		{
-			return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeHintStop, FallbackStopHint);
-		}
-
-		private string BuildMinLabel(string comboId)
-		{
-			var isStraight = string.Equals(comboId, "straight", StringComparison.OrdinalIgnoreCase);
-			var key = isStraight ? GlobalConstants.Localization.DiceUpgradeLabelMinLen : GlobalConstants.Localization.DiceUpgradeLabelMin;
-			var fallback = isStraight ? FallbackMinLenLabel : FallbackMinLabel;
-			return GetLocalizedSafe(key, fallback);
-		}
-
-		private string BuildMaxLabel(string comboId)
-		{
-			var isStraight = string.Equals(comboId, "straight", StringComparison.OrdinalIgnoreCase);
-			var key = isStraight ? GlobalConstants.Localization.DiceUpgradeLabelMaxLen : GlobalConstants.Localization.DiceUpgradeLabelMax;
-			var fallback = isStraight ? FallbackMaxLenLabel : FallbackMaxLabel;
-			return GetLocalizedSafe(key, fallback);
-		}
-
-		private string BuildBonusLabel()
-		{
-			return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeLabelBonus, FallbackBonusLabel);
-		}
-
-		private string GetLocalizedSafe(string key, string fallback)
-		{
-			if (string.IsNullOrWhiteSpace(key) || localizationService == null)
-			{
-				return fallback;
-			}
-
-			try
-			{
-				var value = localizationService.GetLocalized(key);
-				return string.IsNullOrWhiteSpace(value) ? fallback : value;
-			}
-			catch
-			{
-				return fallback;
-			}
 		}
 
 		private DiceUpgradeRouletteSlotData[] BuildRouletteSlots(

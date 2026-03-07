@@ -54,7 +54,6 @@ namespace _Main.Scripts.Dice
 		private void Awake()
 		{
 			CacheBaseColors();
-			ApplyDeltaBackgroundColor(0);
 		}
 
 		public void SetData(DiceUpgradeRouletteSlotData slotData)

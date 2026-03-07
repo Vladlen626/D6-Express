@@ -113,7 +113,7 @@
         "dice_upgrade_label_min": "Min",
         "dice_upgrade_label_max": "Max",
         "dice_upgrade_label_bonus": "Bonus",
-        "dice_upgrade_label_min_len": "Min len",
-        "dice_upgrade_label_max_len": "Max len"
+        "dice_upgrade_label_min_len": "Min length",
+        "dice_upgrade_label_max_len": "Max length"
     }
 }
