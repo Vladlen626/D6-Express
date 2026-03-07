@@ -49,7 +49,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: _Main.Scripts.Dice::UIDiceUpgradeVariantView
   root: {fileID: 100000001}
-  valueText: {fileID: 0}
-  stateBackground: {fileID: 0}
-  highlightedBackgroundColor: {r: 1, g: 0.92, b: 0.45, a: 1}
-  selectedBackgroundColor: {r: 0.66, g: 1, b: 0.66, a: 1}
+  faceText: {fileID: 0}
+  affectedStatText: {fileID: 0}
+  deltaValueText: {fileID: 0}
+  deltaBackground: {fileID: 0}
+  positiveBackgroundColor:
+    id: GreenLight
+  negativeBackgroundColor:
+    id: Red
+  neutralBackgroundColor:
+    id: TooltipBg

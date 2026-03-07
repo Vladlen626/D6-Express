@@ -2,6 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using _Main.Scripts.UI;
 
 namespace _Main.Scripts.Dice
 {
@@ -14,72 +15,92 @@ namespace _Main.Scripts.Dice
 
 	public class UIDiceUpgradeVariantView : MonoBehaviour
 	{
-		private const string StateBackgroundName = "StateBackground";
-		private const string ValueTextName = "ValueText";
-		private const string ValueBonusSeparator = "------";
 		private const float IdleScale = 1f;
 		private const float HighlightedScale = 1.02f;
-		private const float SelectedScale = 1.04f;
-		private const float HighlightWaveScaleMultiplier = 1.14f;
+		private const float SelectedScale = 1.05f;
+		private const float HighlightWaveScaleMultiplier = 1.12f;
 		private const float HighlightWaveDuration = 0.12f;
 		private const float SettleDuration = 0.08f;
-		private const float StateBackgroundScale = 1.06f;
 
 		[SerializeField]
 		private RectTransform root;
 
 		[SerializeField]
-		private TextMeshProUGUI valueText;
+		private TextMeshProUGUI faceText;
 
 		[SerializeField]
-		private Image stateBackground;
+		private TextMeshProUGUI affectedStatText;
 
 		[SerializeField]
-		private Color highlightedBackgroundColor = new Color(1f, 0.92f, 0.45f, 1f);
+		private TextMeshProUGUI deltaValueText;
 
 		[SerializeField]
-		private Color selectedBackgroundColor = new Color(0.66f, 1f, 0.66f, 1f);
+		private Image deltaBackground;
+
+		private ColorStyleReference positiveBackgroundColor;
+		private ColorStyleReference negativeBackgroundColor;
+		private ColorStyleReference neutralBackgroundColor;
+		private bool hasBackgroundStyleOverrides;
+
+		private bool cachedBaseColors;
+		private Color baseDeltaBackgroundColor;
 
 		private Tween scaleTween;
 		private int face;
 
 		public int Face => face;
-		public bool IsValid => root && valueText;
+		public bool IsValid => root && faceText && affectedStatText && deltaValueText;
 
 		private void Awake()
 		{
-			EnsureReferences();
-			HideStateBackground();
+			CacheBaseColors();
+			ApplyDeltaBackgroundColor(0);
 		}
 
-		public void SetData(int faceValue, string bonusText)
+		public void SetData(DiceUpgradeRouletteSlotData slotData)
 		{
-			EnsureReferences();
-			face = faceValue;
-			if (!valueText)
+			face = slotData.Face;
+
+			if (faceText)
 			{
-				return;
+				faceText.text = slotData.Face.ToString();
 			}
 
-			var bonus = string.IsNullOrWhiteSpace(bonusText) ? "0" : bonusText;
-			valueText.text = $"[{faceValue}]\n{ValueBonusSeparator}\n{bonus}";
+			if (affectedStatText)
+			{
+				affectedStatText.text = GetAffectedLabel(slotData);
+			}
+
+			if (deltaValueText)
+			{
+				deltaValueText.text = FormatDelta(slotData.DeltaValue);
+			}
+
+			ApplyDeltaBackgroundColor(slotData.DeltaValue);
+		}
+
+		public void SetBackgroundColorStyles(
+			ColorStyleReference positive,
+			ColorStyleReference negative,
+			ColorStyleReference neutral)
+		{
+			positiveBackgroundColor = positive;
+			negativeBackgroundColor = negative;
+			neutralBackgroundColor = neutral;
+			hasBackgroundStyleOverrides = true;
 		}
 
 		public void SetVisualState(DiceUpgradeVariantVisualState state)
 		{
-			EnsureReferences();
 			switch (state)
 			{
 				case DiceUpgradeVariantVisualState.Selected:
-					ShowStateBackground(selectedBackgroundColor);
 					AnimateScale(SelectedScale);
 					break;
 				case DiceUpgradeVariantVisualState.Highlighted:
-					ShowStateBackground(highlightedBackgroundColor);
 					PlayHighlightWave();
 					break;
 				default:
-					HideStateBackground();
 					AnimateScale(IdleScale);
 					break;
 			}
@@ -93,70 +114,53 @@ namespace _Main.Scripts.Dice
 			}
 
 			scaleTween = null;
-			HideStateBackground();
+			if (root)
+			{
+				root.localScale = Vector3.one;
+			}
 		}
 
-		private void EnsureReferences()
+		private void ApplyDeltaBackgroundColor(int deltaValue)
 		{
-			if (!root)
+			if (!deltaBackground)
 			{
-				root = transform as RectTransform;
+				return;
 			}
+			deltaBackground.color = ResolveSignedColor(deltaValue, baseDeltaBackgroundColor);
+		}
 
-			if (!root)
+		private void CacheBaseColors()
+		{
+			if (cachedBaseColors)
 			{
 				return;
 			}
 
-			if (!valueText)
-			{
-				valueText = root.GetComponentInChildren<TextMeshProUGUI>(true);
-			}
-
-			if (!valueText)
-			{
-				valueText = CreateValueText(root);
-			}
-
-			if (!stateBackground)
-			{
-				stateBackground = FindStateBackground(root);
-			}
-
-			if (!stateBackground)
-			{
-				stateBackground = CreateStateBackground(root);
-			}
+			baseDeltaBackgroundColor = deltaBackground ? deltaBackground.color : Color.white;
+			cachedBaseColors = true;
 		}
 
-		private void ShowStateBackground(Color color)
+		private Color ResolveSignedColor(int delta, Color fallback)
 		{
-			var background = ResolveStateBackground();
-			if (!background)
+			if (!hasBackgroundStyleOverrides)
 			{
-				return;
+				return fallback;
 			}
 
-			background.gameObject.SetActive(true);
-			background.color = color;
-
-			var backgroundRect = background.rectTransform;
-			if (backgroundRect)
+			var library = ColorStyleLibraryProvider.GetDefault();
+			if (library == null)
 			{
-				backgroundRect.SetAsFirstSibling();
-				backgroundRect.localScale = Vector3.one * StateBackgroundScale;
-			}
-		}
-
-		private void HideStateBackground()
-		{
-			var background = ResolveStateBackground();
-			if (!background)
-			{
-				return;
+				return fallback;
 			}
 
-			background.gameObject.SetActive(false);
+			var reference = delta > 0 ? positiveBackgroundColor : delta < 0 ? negativeBackgroundColor : neutralBackgroundColor;
+			if (string.IsNullOrWhiteSpace(reference.Id))
+			{
+				return fallback;
+			}
+
+			var style = library.GetStyle(reference.Id);
+			return style != null ? style.Color : fallback;
 		}
 
 		private void AnimateScale(float targetScale)
@@ -196,91 +200,29 @@ namespace _Main.Scripts.Dice
 				.Append(root.DOScale(Vector3.one * baseScale, HighlightWaveDuration * 0.5f).SetEase(Ease.InSine));
 		}
 
-		private Image ResolveStateBackground()
+		private static string GetAffectedLabel(DiceUpgradeRouletteSlotData slotData)
 		{
-			EnsureReferences();
-			if (stateBackground)
+			if (!string.IsNullOrWhiteSpace(slotData.AffectedLabel))
 			{
-				return stateBackground;
+				return slotData.AffectedLabel;
 			}
 
-			if (!root)
+			return slotData.AffectedStat switch
 			{
-				return null;
+				DiceUpgradeAffectedStat.Min => "Min",
+				DiceUpgradeAffectedStat.Max => "Max",
+				_ => "Bonus"
+			};
+		}
+
+		private static string FormatDelta(int deltaValue)
+		{
+			if (deltaValue > 0)
+			{
+				return $"+{deltaValue}";
 			}
 
-			return FindStateBackground(root);
-		}
-
-		private static Image FindStateBackground(RectTransform parent)
-		{
-			Image firstImage = null;
-			for (int i = 0; i < parent.childCount; i++)
-			{
-				var child = parent.GetChild(i);
-				if (!child)
-				{
-					continue;
-				}
-
-				var image = child.GetComponent<Image>();
-				if (!image)
-				{
-					continue;
-				}
-
-				if (child.name == StateBackgroundName)
-				{
-					return image;
-				}
-
-				if (!firstImage)
-				{
-					firstImage = image;
-				}
-			}
-
-			return firstImage;
-		}
-
-		private static Image CreateStateBackground(RectTransform parent)
-		{
-			var gameObject = new GameObject(StateBackgroundName, typeof(RectTransform), typeof(Image));
-			var rectTransform = gameObject.GetComponent<RectTransform>();
-			rectTransform.SetParent(parent, false);
-			rectTransform.anchorMin = Vector2.zero;
-			rectTransform.anchorMax = Vector2.one;
-			rectTransform.offsetMin = Vector2.zero;
-			rectTransform.offsetMax = Vector2.zero;
-			rectTransform.localScale = Vector3.one;
-			rectTransform.localRotation = Quaternion.identity;
-			rectTransform.anchoredPosition = Vector2.zero;
-
-			var image = gameObject.GetComponent<Image>();
-			image.raycastTarget = false;
-			gameObject.SetActive(false);
-			return image;
-		}
-
-		private static TextMeshProUGUI CreateValueText(RectTransform parent)
-		{
-			var gameObject = new GameObject(ValueTextName, typeof(RectTransform), typeof(TextMeshProUGUI));
-			var rectTransform = gameObject.GetComponent<RectTransform>();
-			rectTransform.SetParent(parent, false);
-			rectTransform.anchorMin = Vector2.zero;
-			rectTransform.anchorMax = Vector2.one;
-			rectTransform.offsetMin = Vector2.zero;
-			rectTransform.offsetMax = Vector2.zero;
-			rectTransform.localScale = Vector3.one;
-			rectTransform.localRotation = Quaternion.identity;
-			rectTransform.anchoredPosition = Vector2.zero;
-
-			var text = gameObject.GetComponent<TextMeshProUGUI>();
-			text.alignment = TextAlignmentOptions.Center;
-			text.raycastTarget = false;
-			text.enableWordWrapping = false;
-			text.fontSize = 18;
-			return text;
+			return deltaValue.ToString();
 		}
 	}
 }

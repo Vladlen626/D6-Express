@@ -94,7 +94,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			upgradeController?.StopUpgradeRoll(data.RolledFace);
-			_context.ResolveRoll();
+			_context.ApplyRollResult();
 
 			await UniTask.Delay(120);
 			await WaitForClickAsync();

@@ -4,18 +4,16 @@ using UnityEngine;
 namespace _Main.Scripts.UI
 {
 	[ExecuteAlways]
-	public class TextStyleApplier : MonoBehaviour
+	public class TextStyleApplier : MonoBehaviour, ISerializationCallbackReceiver
 	{
 		[SerializeField]
+		private TextStyleReference style;
+
+		// Backward compatibility for old serialized field.
+		[SerializeField, HideInInspector]
 		private string styleId;
 
 		private TextMeshProUGUI target;
-
-		public string StyleId
-		{
-			get => styleId;
-			set => styleId = value;
-		}
 
 		private void OnEnable()
 		{
@@ -45,22 +43,35 @@ namespace _Main.Scripts.UI
 				return;
 			}
 
-			var style = library.GetStyle(styleId);
-			if (style == null)
+			var styleEntry = library.GetStyle(style.Id);
+			if (styleEntry == null)
 			{
 				return;
 			}
 
-			target.color = style.Color;
+			target.color = styleEntry.Color;
 
-			if (style.UseAdvanced)
+			if (styleEntry.UseAdvanced)
 			{
-				if (style.FontSize > 0f)
+				if (styleEntry.FontSize > 0f)
 				{
-					target.fontSize = style.FontSize;
+					target.fontSize = styleEntry.FontSize;
 				}
 
-				target.fontStyle = style.FontStyle;
+				target.fontStyle = styleEntry.FontStyle;
+			}
+		}
+
+		public void OnBeforeSerialize()
+		{
+		}
+
+		public void OnAfterDeserialize()
+		{
+			if (string.IsNullOrWhiteSpace(style.Id) && !string.IsNullOrWhiteSpace(styleId))
+			{
+				style = new TextStyleReference(styleId);
+				styleId = string.Empty;
 			}
 		}
 	}

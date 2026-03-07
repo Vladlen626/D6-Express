@@ -12,23 +12,39 @@ namespace _Main.Scripts.Dice
 		private const float DefaultValueAnimDuration = 1.4f;
 		private const float DefaultRouletteStepDuration = 0.09f;
 		private const float DefaultRouletteRadius = 88f;
-		private static readonly Color DefaultChangedColor = new Color(1f, 0.82f, 0.2f);
 
-		[SerializeField] private TextMeshProUGUI titleText;
+		[SerializeField]
+		private TextMeshProUGUI titleText;
 
-		[SerializeField] private TextMeshProUGUI effectText;
+		[SerializeField]
+		private TextMeshProUGUI hintText;
 
-		[SerializeField] private TextMeshProUGUI hintText;
+		[SerializeField]
+		private TextMeshProUGUI minValueText;
 
-		[SerializeField] private RectTransform rouletteRoot;
+		[SerializeField]
+		private TextMeshProUGUI maxValueText;
 
-		[SerializeField] private float rouletteRadius = DefaultRouletteRadius;
+		[SerializeField]
+		private TextMeshProUGUI bonusValueText;
 
-		[SerializeField] private string normalValueStyleId;
+		[SerializeField]
+		private RectTransform rouletteRoot;
 
-		[SerializeField] private string changedValueStyleId;
+		[SerializeField]
+		private float rouletteRadius = DefaultRouletteRadius;
 
-		[SerializeField] private float rouletteStepDuration = DefaultRouletteStepDuration;
+		[SerializeField]
+		private float rouletteStepDuration = DefaultRouletteStepDuration;
+
+		[SerializeField]
+		private ColorStyleReference positiveChangeColor;
+
+		[SerializeField]
+		private ColorStyleReference negativeChangeColor;
+
+		[SerializeField]
+		private ColorStyleReference neutralChangeColor;
 
 		private readonly List<UIDiceUpgradeVariantView> spawnedVariants = new();
 		private readonly List<DiceUpgradeRouletteSlotData> visibleSlots = new();
@@ -46,19 +62,22 @@ namespace _Main.Scripts.Dice
 		private bool minChanged;
 		private bool maxChanged;
 		private bool bonusChanged;
-		private bool showChangedValues;
 		private string minLabel;
 		private string maxLabel;
 		private string bonusLabel;
 		private string continueHintText;
 		private string stopHintText;
-		private Color normalValueColor;
-		private Color changedValueColor;
 		private int activeRouletteVariantIndex = -1;
 		private int selectedRouletteVariantIndex = -1;
 		private bool isRollResolved;
 		private bool warnedMissingPrefab;
 		private UIDiceUpgradeVariantView rouletteVariantPrefab;
+		private bool cachedBaseColors;
+		private Color minBaseColor;
+		private Color maxBaseColor;
+		private Color bonusBaseColor;
+		private DiceUpgradeAffectedStat selectedAffectedStat = DiceUpgradeAffectedStat.None;
+		private int selectedDeltaValue;
 
 		public void SetRouletteVariantPrefab(UIDiceUpgradeVariantView prefab)
 		{
@@ -72,7 +91,7 @@ namespace _Main.Scripts.Dice
 		public void SetData(DiceUpgradeVisualData data)
 		{
 			KillTweens();
-			ApplyStyle();
+			CacheBaseColors();
 
 			if (titleText)
 			{
@@ -93,8 +112,9 @@ namespace _Main.Scripts.Dice
 			minChanged = data.BeforeMin != data.AfterMin;
 			maxChanged = data.BeforeMax != data.AfterMax;
 			bonusChanged = data.BeforeBonus != data.AfterBonus;
-			showChangedValues = false;
 			isRollResolved = false;
+			selectedAffectedStat = DiceUpgradeAffectedStat.None;
+			selectedDeltaValue = 0;
 			activeRouletteVariantIndex = -1;
 			selectedRouletteVariantIndex = -1;
 
@@ -110,11 +130,11 @@ namespace _Main.Scripts.Dice
 			selectedRouletteVariantIndex = FindVariantIndexByFace(data.RolledFace);
 
 			RefreshRouletteVisuals();
-			RefreshEffectText();
+			RefreshStatTexts();
 			StartRouletteAnimation();
 		}
 
-		public void ResolveRoll()
+		public void ApplyRollResult()
 		{
 			if (isRollResolved)
 			{
@@ -122,10 +142,10 @@ namespace _Main.Scripts.Dice
 			}
 
 			isRollResolved = true;
-			showChangedValues = true;
-
+			UpdateResolvedSlotState();
 			StopRouletteAnimation();
 			RefreshRouletteVisuals();
+			RefreshStatTexts();
 
 			if (hintText)
 			{
@@ -141,40 +161,52 @@ namespace _Main.Scripts.Dice
 			ClearSpawnedVariants();
 		}
 
-		private void ApplyStyle()
-		{
-			var baseColor = effectText ? effectText.color : Color.white;
-			var library = TextStyleLibraryProvider.GetDefault();
-			var normalStyle = library ? library.GetStyle(normalValueStyleId) : null;
-			var changedStyle = library ? library.GetStyle(changedValueStyleId) : null;
-
-			normalValueColor = normalStyle != null ? normalStyle.Color : baseColor;
-			changedValueColor = changedStyle != null ? changedStyle.Color : DefaultChangedColor;
-		}
-
 		private void StartValueAnimation()
 		{
 			KillValueTweens();
 
 			float duration = DefaultValueAnimDuration;
 
-			minTween = DOTween.To(() => minValue, v =>
+			if (minChanged)
 			{
-				minValue = v;
-				RefreshEffectText();
-			}, targetMinValue, duration).SetEase(Ease.OutQuad);
+				minTween = DOTween.To(() => minValue, v =>
+				{
+					minValue = v;
+					RefreshStatTexts();
+				}, targetMinValue, duration).SetEase(Ease.OutQuad);
+			}
+			else
+			{
+				minValue = targetMinValue;
+			}
 
-			maxTween = DOTween.To(() => maxValue, v =>
+			if (maxChanged)
 			{
-				maxValue = v;
-				RefreshEffectText();
-			}, targetMaxValue, duration).SetEase(Ease.OutQuad);
+				maxTween = DOTween.To(() => maxValue, v =>
+				{
+					maxValue = v;
+					RefreshStatTexts();
+				}, targetMaxValue, duration).SetEase(Ease.OutQuad);
+			}
+			else
+			{
+				maxValue = targetMaxValue;
+			}
 
-			bonusTween = DOTween.To(() => bonusValue, v =>
+			if (bonusChanged)
 			{
-				bonusValue = v;
-				RefreshEffectText();
-			}, targetBonusValue, duration).SetEase(Ease.OutQuad);
+				bonusTween = DOTween.To(() => bonusValue, v =>
+				{
+					bonusValue = v;
+					RefreshStatTexts();
+				}, targetBonusValue, duration).SetEase(Ease.OutQuad);
+			}
+			else
+			{
+				bonusValue = targetBonusValue;
+			}
+
+			RefreshStatTexts();
 		}
 
 		private void StartRouletteAnimation()
@@ -247,44 +279,43 @@ namespace _Main.Scripts.Dice
 			visibleSlots.Clear();
 			if (slotData == null || slotData.Length == 0)
 			{
+				for (int face = 1; face <= 6; face++)
+				{
+					visibleSlots.Add(new DiceUpgradeRouletteSlotData(
+						face,
+						DiceUpgradeAffectedStat.Bonus,
+						0,
+						bonusLabel));
+				}
+
 				return;
 			}
 
 			for (int i = 0; i < slotData.Length; i++)
 			{
-				var slot = slotData[i];
-				if (IsZeroBonus(slot.BonusText))
-				{
-					continue;
-				}
-
-				visibleSlots.Add(slot);
+				visibleSlots.Add(slotData[i]);
 			}
 		}
 
 		private void RebuildRouletteVariants()
 		{
 			ClearSpawnedVariants();
-			var root = ResolveRouletteRoot();
-			DisableLegacyRouletteVariants(root);
 			if (visibleSlots.Count == 0)
 			{
 				return;
 			}
 
-			if (!root)
+			if (!rouletteRoot)
 			{
 				Debug.LogWarning("[UIDiceUpgradeView] Roulette root is not assigned.");
 				return;
 			}
 
-			var variantPrefab = ResolveRouletteVariantPrefab();
-			if (!variantPrefab)
+			if (!rouletteVariantPrefab)
 			{
 				if (!warnedMissingPrefab)
 				{
-					Debug.LogWarning(
-						"[UIDiceUpgradeView] Roulette variant prefab is not provided.");
+					Debug.LogWarning("[UIDiceUpgradeView] Roulette variant prefab is not provided.");
 					warnedMissingPrefab = true;
 				}
 
@@ -295,9 +326,10 @@ namespace _Main.Scripts.Dice
 			var safeRadius = Mathf.Max(0f, rouletteRadius);
 			for (int i = 0; i < count; i++)
 			{
-				var instance = Instantiate(variantPrefab, root);
+				var instance = Instantiate(rouletteVariantPrefab, rouletteRoot);
 				instance.gameObject.SetActive(true);
-				instance.SetData(visibleSlots[i].Face, visibleSlots[i].BonusText);
+				instance.SetBackgroundColorStyles(positiveChangeColor, negativeChangeColor, neutralChangeColor);
+				instance.SetData(visibleSlots[i]);
 
 				var rect = instance.GetComponent<RectTransform>();
 				if (rect)
@@ -310,56 +342,6 @@ namespace _Main.Scripts.Dice
 				}
 
 				spawnedVariants.Add(instance);
-			}
-		}
-
-		private RectTransform ResolveRouletteRoot()
-		{
-			if (rouletteRoot)
-			{
-				return rouletteRoot;
-			}
-
-			var fallbackRoot = transform.Find("RouletteRoot");
-			if (fallbackRoot)
-			{
-				rouletteRoot = fallbackRoot as RectTransform;
-			}
-
-			return rouletteRoot;
-		}
-
-		private UIDiceUpgradeVariantView ResolveRouletteVariantPrefab()
-		{
-			if (rouletteVariantPrefab)
-			{
-				warnedMissingPrefab = false;
-				return rouletteVariantPrefab;
-			}
-
-			return null;
-		}
-
-		private void DisableLegacyRouletteVariants(RectTransform root)
-		{
-			if (!root)
-			{
-				return;
-			}
-
-			for (int i = 0; i < root.childCount; i++)
-			{
-				var child = root.GetChild(i);
-				if (!child)
-				{
-					continue;
-				}
-
-				var variant = child.GetComponent<UIDiceUpgradeVariantView>();
-				if (variant)
-				{
-					variant.gameObject.SetActive(false);
-				}
 			}
 		}
 
@@ -390,30 +372,88 @@ namespace _Main.Scripts.Dice
 			return -1;
 		}
 
-		private void RefreshEffectText()
+		private void UpdateResolvedSlotState()
 		{
-			if (!effectText)
+			if (selectedRouletteVariantIndex < 0 || selectedRouletteVariantIndex >= visibleSlots.Count)
+			{
+				selectedAffectedStat = DiceUpgradeAffectedStat.None;
+				selectedDeltaValue = 0;
+				return;
+			}
+
+			var slot = visibleSlots[selectedRouletteVariantIndex];
+			selectedAffectedStat = slot.AffectedStat;
+			selectedDeltaValue = slot.DeltaValue;
+		}
+
+		private void RefreshStatTexts()
+		{
+			RefreshStatText(minValueText, minLabel, Mathf.RoundToInt(minValue), DiceUpgradeAffectedStat.Min, minBaseColor);
+			RefreshStatText(maxValueText, maxLabel, Mathf.RoundToInt(maxValue), DiceUpgradeAffectedStat.Max, maxBaseColor);
+			RefreshStatText(bonusValueText, bonusLabel, Mathf.RoundToInt(bonusValue), DiceUpgradeAffectedStat.Bonus, bonusBaseColor);
+		}
+
+		private void RefreshStatText(
+			TextMeshProUGUI targetText,
+			string label,
+			int value,
+			DiceUpgradeAffectedStat stat,
+			Color baseColor)
+		{
+			if (!targetText)
 			{
 				return;
 			}
 
-			var minPart = FormatLabelValue(minLabel, Mathf.RoundToInt(minValue), minChanged);
-			var maxPart = FormatLabelValue(maxLabel, Mathf.RoundToInt(maxValue), maxChanged);
-			var bonusPart = FormatLabelValue(bonusLabel, Mathf.RoundToInt(bonusValue), bonusChanged);
-
-			effectText.text = $"{minPart} | {maxPart} | {bonusPart}";
-		}
-
-		private string FormatLabelValue(string label, int value, bool changed)
-		{
-			var color = showChangedValues && changed ? changedValueColor : normalValueColor;
-			var hex = ColorUtility.ToHtmlStringRGB(color);
+			targetText.color = GetStatTextColor(stat, baseColor);
 			if (string.IsNullOrWhiteSpace(label))
 			{
-				return $"<color=#{hex}>{value}</color>";
+				targetText.text = value.ToString();
+				return;
 			}
 
-			return $"<color=#{hex}>{label} {value}</color>";
+			targetText.text = $"{label} {value}";
+		}
+
+		private Color GetStatTextColor(DiceUpgradeAffectedStat stat, Color baseColor)
+		{
+			if (!isRollResolved || selectedAffectedStat != stat)
+			{
+				return baseColor;
+			}
+
+			return ResolveSignedColor(selectedDeltaValue, baseColor);
+		}
+
+		private Color ResolveSignedColor(int delta, Color fallback)
+		{
+			var library = ColorStyleLibraryProvider.GetDefault();
+			if (library == null)
+			{
+				return fallback;
+			}
+
+			var reference = delta > 0 ? positiveChangeColor : delta < 0 ? negativeChangeColor : neutralChangeColor;
+			if (string.IsNullOrWhiteSpace(reference.Id))
+			{
+				return fallback;
+			}
+
+			var style = library.GetStyle(reference.Id);
+			return style != null ? style.Color : fallback;
+		}
+
+		private void CacheBaseColors()
+		{
+			if (cachedBaseColors)
+			{
+				return;
+			}
+
+			minBaseColor = minValueText ? minValueText.color : Color.white;
+			maxBaseColor = maxValueText ? maxValueText.color : Color.white;
+			bonusBaseColor = bonusValueText ? bonusValueText.color : Color.white;
+			cachedBaseColors = true;
 		}
 
 		private void KillTweens()
@@ -438,6 +478,10 @@ namespace _Main.Scripts.Dice
 			{
 				bonusTween.Kill();
 			}
+
+			minTween = null;
+			maxTween = null;
+			bonusTween = null;
 		}
 
 		private static Vector2 GetCirclePosition(int index, int count, float radius)
@@ -451,22 +495,6 @@ namespace _Main.Scripts.Dice
 			var startAngle = 90f - (angleStep * 0.5f);
 			var angle = (startAngle - index * angleStep) * Mathf.Deg2Rad;
 			return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
-		}
-
-		private static bool IsZeroBonus(string text)
-		{
-			if (string.IsNullOrWhiteSpace(text))
-			{
-				return true;
-			}
-
-			var normalized = text.Trim();
-			if (normalized.StartsWith("+"))
-			{
-				normalized = normalized.Substring(1);
-			}
-
-			return int.TryParse(normalized, out var value) && value == 0;
 		}
 	}
 }

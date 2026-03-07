@@ -2,15 +2,31 @@ using System;
 
 namespace _Main.Scripts.Dice
 {
+	public enum DiceUpgradeAffectedStat
+	{
+		None = 0,
+		Min = 1,
+		Max = 2,
+		Bonus = 3
+	}
+
 	public readonly struct DiceUpgradeRouletteSlotData
 	{
 		public readonly int Face;
-		public readonly string BonusText;
+		public readonly DiceUpgradeAffectedStat AffectedStat;
+		public readonly int DeltaValue;
+		public readonly string AffectedLabel;
 
-		public DiceUpgradeRouletteSlotData(int face, string bonusText)
+		public DiceUpgradeRouletteSlotData(
+			int face,
+			DiceUpgradeAffectedStat affectedStat,
+			int deltaValue,
+			string affectedLabel)
 		{
 			Face = face;
-			BonusText = bonusText ?? "0";
+			AffectedStat = affectedStat;
+			DeltaValue = deltaValue;
+			AffectedLabel = affectedLabel ?? string.Empty;
 		}
 	}
 
@@ -18,7 +34,6 @@ namespace _Main.Scripts.Dice
 	{
 		public readonly string ComboId;
 		public readonly string Title;
-		public readonly string RolledText;
 		public readonly string MinLabel;
 		public readonly string MaxLabel;
 		public readonly string BonusLabel;
@@ -36,7 +51,6 @@ namespace _Main.Scripts.Dice
 		public DiceUpgradeVisualData(
 			string comboId,
 			string title,
-			string rolledText,
 			string minLabel,
 			string maxLabel,
 			string bonusLabel,
@@ -51,7 +65,6 @@ namespace _Main.Scripts.Dice
 			: this(
 				comboId,
 				title,
-				rolledText,
 				minLabel,
 				maxLabel,
 				bonusLabel,
@@ -71,7 +84,6 @@ namespace _Main.Scripts.Dice
 		public DiceUpgradeVisualData(
 			string comboId,
 			string title,
-			string rolledText,
 			string minLabel,
 			string maxLabel,
 			string bonusLabel,
@@ -88,7 +100,6 @@ namespace _Main.Scripts.Dice
 		{
 			ComboId = comboId;
 			Title = title;
-			RolledText = rolledText;
 			MinLabel = minLabel;
 			MaxLabel = maxLabel;
 			BonusLabel = bonusLabel;

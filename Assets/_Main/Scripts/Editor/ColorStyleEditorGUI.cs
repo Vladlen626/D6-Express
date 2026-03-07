@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace _Main.Scripts.Editor
 {
-	public static class TextStyleEditorGUI
+	public static class ColorStyleEditorGUI
 	{
-		private const string MissingLibraryMessage = "TextStyleLibrary not found at Resources/UI/TextStyleLibrary.";
+		private const string MissingLibraryMessage = "ColorStyleLibrary not found at Resources/UI/ColorStyleLibrary.";
 
 		public static void DrawStyleDropdown(Rect position, GUIContent label, SerializedProperty styleIdProp, AdvancedDropdownState state)
 		{
-			var library = TextStyleLibraryProvider.GetDefault();
+			var library = ColorStyleLibraryProvider.GetDefault();
 			if (library == null || library.Styles == null || library.Styles.Count == 0)
 			{
 				EditorGUI.PropertyField(position, styleIdProp, label);
@@ -22,7 +22,7 @@ namespace _Main.Scripts.Editor
 			var display = string.IsNullOrWhiteSpace(styleIdProp.stringValue) ? "(none)" : styleIdProp.stringValue;
 			if (EditorGUI.DropdownButton(buttonRect, new GUIContent(display), FocusType.Passive))
 			{
-				var dropdown = new TextStyleDropdown(state, library, id =>
+				var dropdown = new ColorStyleDropdown(state, library, id =>
 				{
 					styleIdProp.stringValue = id;
 					styleIdProp.serializedObject.ApplyModifiedProperties();
@@ -40,7 +40,7 @@ namespace _Main.Scripts.Editor
 
 		public static void DrawStyleDropdown(string label, SerializedProperty styleIdProp, AdvancedDropdownState state)
 		{
-			var library = TextStyleLibraryProvider.GetDefault();
+			var library = ColorStyleLibraryProvider.GetDefault();
 			if (library == null || library.Styles == null || library.Styles.Count == 0)
 			{
 				EditorGUILayout.PropertyField(styleIdProp, new GUIContent(label));

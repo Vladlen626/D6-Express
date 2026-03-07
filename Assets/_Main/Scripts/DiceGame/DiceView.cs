@@ -287,15 +287,6 @@ namespace _Main.Scripts.Dice
 			isActive = true;
 		}
 
-		public void SetVisualScale(float scale)
-		{
-			visualScale = Mathf.Max(0.01f, scale);
-			if (isActive && model)
-			{
-				model.localScale = GetScaledModelScale();
-			}
-		}
-
 		public void StartUpgradeSpin()
 		{
 			if (!model)

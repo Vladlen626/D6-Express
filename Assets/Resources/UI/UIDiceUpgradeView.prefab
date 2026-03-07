@@ -69,11 +69,19 @@ MonoBehaviour:
   _group: {fileID: 1000000003}
   _canvasType: 20
   titleText: {fileID: 7325510048836769242}
-  rolledFaceText: {fileID: 7325510048836769232}
-  effectText: {fileID: 7325510048836769230}
   hintText: {fileID: 7325510048836769220}
-  normalValueStyleId: BrownFont
-  changedValueStyleId: BiruzoviyFont
+  minValueText: {fileID: 0}
+  maxValueText: {fileID: 0}
+  bonusValueText: {fileID: 0}
+  rouletteRoot: {fileID: 0}
+  rouletteRadius: 88
+  rouletteStepDuration: 0.09
+  positiveChangeColor:
+    id: GreenLight
+  negativeChangeColor:
+    id: Red
+  neutralChangeColor:
+    id: TooltipBg
 --- !u!1001 &2000000001
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -265,17 +273,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2957349546831009034, guid: 9d3ce73edb559704ca6220848dd1188e, type: 3}
   m_PrefabInstance: {fileID: 2000000011}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7325510048836769232 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7325510048582320603, guid: 9d3ce73edb559704ca6220848dd1188e, type: 3}
-  m_PrefabInstance: {fileID: 2000000011}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1001 &2000000021
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -366,17 +363,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2957349546831009034, guid: 9d3ce73edb559704ca6220848dd1188e, type: 3}
   m_PrefabInstance: {fileID: 2000000021}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7325510048836769230 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7325510048582320603, guid: 9d3ce73edb559704ca6220848dd1188e, type: 3}
-  m_PrefabInstance: {fileID: 2000000021}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1001 &2000000031
 PrefabInstance:
   m_ObjectHideFlags: 0

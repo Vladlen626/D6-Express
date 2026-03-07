@@ -22,7 +22,6 @@ namespace _Main.Scripts.Dice
 		private const string FallbackMinLenLabel = "Min len";
 		private const string FallbackMaxLenLabel = "Max len";
 		private const string FallbackStopHint = "Click to stop";
-		private const float DefaultUpgradeDiceScale = 1f;
 
 		private static readonly int[] UpgradeDiceWeights = { 1, 1, 1, 1, 1, 1 };
 
@@ -40,7 +39,6 @@ namespace _Main.Scripts.Dice
 
 		public event Action<DiceUpgradeVisualData> UpgradeApplied;
 		private Transform UpgradeDicePos => diceTableView ? diceTableView.UpgradeDicePos : null;
-		private float UpgradeDiceScale => diceTableView ? diceTableView.UpgradeDiceScreenScale : DefaultUpgradeDiceScale;
 
 		public DiceGameUpgradeController(
 			DiceGameModel diceGameModel,
@@ -219,7 +217,6 @@ namespace _Main.Scripts.Dice
 				UpgradeApplied?.Invoke(new DiceUpgradeVisualData(
 					comboId,
 					GetComboTitle(comboId),
-					BuildRolledText(rolledFace),
 					minLabel,
 					maxLabel,
 					bonusLabel,
@@ -232,7 +229,7 @@ namespace _Main.Scripts.Dice
 					after.Min,
 					after.Max,
 					after.ScoreBonus,
-					BuildRouletteSlots(activeScoringService.GetComboUpgradeOutcomes(comboId))));
+					BuildRouletteSlots(activeScoringService.GetComboUpgradeOutcomes(comboId), minLabel, maxLabel, bonusLabel)));
 				return true;
 			}
 
@@ -287,7 +284,6 @@ namespace _Main.Scripts.Dice
 				UpgradeApplied?.Invoke(new DiceUpgradeVisualData(
 					"straight",
 					GetComboTitle("straight"),
-					BuildRolledText(rolledFace),
 					minLabel,
 					maxLabel,
 					bonusLabel,
@@ -300,7 +296,7 @@ namespace _Main.Scripts.Dice
 					after.MinLen,
 					after.MaxLen,
 					after.ScoreBonus,
-					BuildRouletteSlots(activeScoringService.GetStraightUpgradeOutcomes())));
+					BuildRouletteSlots(activeScoringService.GetStraightUpgradeOutcomes(), minLabel, maxLabel, bonusLabel)));
 				return true;
 			}
 
@@ -331,7 +327,7 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask<int> RollUpgradeDieAsync()
 		{
-			var view = await EnsureUpgradeDieAsync();
+			var view = await GetOrCreateUpgradeDieAsync();
 			if (!view)
 			{
 				logger?.LogWarning("[Upgrade] Upgrade dice view is missing. Upgrade outcome will not be applied.");
@@ -347,14 +343,13 @@ namespace _Main.Scripts.Dice
 			}
 
 			view.transform.localScale = Vector3.one;
-			view.SetVisualScale(UpgradeDiceScale);
 			view.Show();
 			view.StartUpgradeSpin();
 
 			return rolledFace;
 		}
 
-		private async UniTask<DiceView> EnsureUpgradeDieAsync()
+		private async UniTask<DiceView> GetOrCreateUpgradeDieAsync()
 		{
 			if (upgradeDiceView)
 			{
@@ -415,22 +410,6 @@ namespace _Main.Scripts.Dice
 			return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeHintStop, FallbackStopHint);
 		}
 
-		private string BuildRolledText(int rolledFace)
-		{
-			var template = GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeRolled, string.Empty);
-			if (string.IsNullOrWhiteSpace(template))
-			{
-				return rolledFace.ToString();
-			}
-
-			if (template.Contains("{0}"))
-			{
-				return string.Format(template, rolledFace);
-			}
-
-			return $"{template} {rolledFace}";
-		}
-
 		private string BuildMinLabel(string comboId)
 		{
 			var isStraight = string.Equals(comboId, "straight", StringComparison.OrdinalIgnoreCase);
@@ -470,56 +449,122 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		private DiceUpgradeRouletteSlotData[] BuildRouletteSlots(StraightUpgradeOutcome[] outcomes)
+		private DiceUpgradeRouletteSlotData[] BuildRouletteSlots(
+			StraightUpgradeOutcome[] outcomes,
+			string minLabel,
+			string maxLabel,
+			string bonusLabel)
 		{
+			return BuildRouletteSlots(
+				outcomes,
+				o => o.Face,
+				o => o.DeltaMinLen,
+				o => o.DeltaMaxLen,
+				o => o.DeltaScoreBonus,
+				minLabel,
+				maxLabel,
+				bonusLabel);
+		}
+
+		private DiceUpgradeRouletteSlotData[] BuildRouletteSlots(
+			ComboUpgradeOutcome[] outcomes,
+			string minLabel,
+			string maxLabel,
+			string bonusLabel)
+		{
+			return BuildRouletteSlots(
+				outcomes,
+				o => o.Face,
+				o => o.DeltaMin,
+				o => o.DeltaMax,
+				o => o.DeltaScoreBonus,
+				minLabel,
+				maxLabel,
+				bonusLabel);
+		}
+
+		private static DiceUpgradeRouletteSlotData[] BuildRouletteSlots<TOutcome>(
+			TOutcome[] outcomes,
+			Func<TOutcome, int> getFace,
+			Func<TOutcome, int> getDeltaMin,
+			Func<TOutcome, int> getDeltaMax,
+			Func<TOutcome, int> getDeltaBonus,
+			string minLabel,
+			string maxLabel,
+			string bonusLabel)
+			where TOutcome : class
+		{
+			var byFace = new TOutcome[7];
+			if (outcomes != null)
+			{
+				for (int i = 0; i < outcomes.Length; i++)
+				{
+					var outcome = outcomes[i];
+					if (outcome == null)
+					{
+						continue;
+					}
+
+					var face = getFace(outcome);
+					if (face >= 1 && face <= 6)
+					{
+						byFace[face] = outcome;
+					}
+				}
+			}
+
 			var slots = new DiceUpgradeRouletteSlotData[6];
 			for (int face = 1; face <= 6; face++)
 			{
-				var deltaBonus = 0;
-				if (outcomes != null)
-				{
-					var outcome = outcomes.FirstOrDefault(o => o.Face == face);
-					if (outcome != null)
-					{
-						deltaBonus = outcome.DeltaScoreBonus;
-					}
-				}
+				var outcome = byFace[face];
+				var deltaMin = outcome != null ? getDeltaMin(outcome) : 0;
+				var deltaMax = outcome != null ? getDeltaMax(outcome) : 0;
+				var deltaBonus = outcome != null ? getDeltaBonus(outcome) : 0;
+				DetermineAffectedDelta(deltaMin, deltaMax, deltaBonus, out var affectedStat, out var deltaValue);
 
-				slots[face - 1] = new DiceUpgradeRouletteSlotData(face, FormatBonusDelta(deltaBonus));
+				var label = affectedStat switch
+				{
+					DiceUpgradeAffectedStat.Min => minLabel,
+					DiceUpgradeAffectedStat.Max => maxLabel,
+					_ => bonusLabel
+				};
+
+				slots[face - 1] = new DiceUpgradeRouletteSlotData(face, affectedStat, deltaValue, label);
 			}
 
 			return slots;
 		}
 
-		private DiceUpgradeRouletteSlotData[] BuildRouletteSlots(ComboUpgradeOutcome[] outcomes)
+		private static void DetermineAffectedDelta(
+			int deltaMin,
+			int deltaMax,
+			int deltaBonus,
+			out DiceUpgradeAffectedStat affectedStat,
+			out int deltaValue)
 		{
-			var slots = new DiceUpgradeRouletteSlotData[6];
-			for (int face = 1; face <= 6; face++)
+			if (deltaBonus != 0)
 			{
-				var deltaBonus = 0;
-				if (outcomes != null)
-				{
-					var outcome = outcomes.FirstOrDefault(o => o.Face == face);
-					if (outcome != null)
-					{
-						deltaBonus = outcome.DeltaScoreBonus;
-					}
-				}
-
-				slots[face - 1] = new DiceUpgradeRouletteSlotData(face, FormatBonusDelta(deltaBonus));
+				affectedStat = DiceUpgradeAffectedStat.Bonus;
+				deltaValue = deltaBonus;
+				return;
 			}
 
-			return slots;
-		}
-
-		private string FormatBonusDelta(int deltaBonus)
-		{
-			if (deltaBonus > 0)
+			if (deltaMin != 0)
 			{
-				return $"+{deltaBonus}";
+				affectedStat = DiceUpgradeAffectedStat.Min;
+				deltaValue = deltaMin;
+				return;
 			}
 
-			return deltaBonus.ToString();
+			if (deltaMax != 0)
+			{
+				affectedStat = DiceUpgradeAffectedStat.Max;
+				deltaValue = deltaMax;
+				return;
+			}
+
+			affectedStat = DiceUpgradeAffectedStat.Bonus;
+			deltaValue = 0;
 		}
 	}
 }
