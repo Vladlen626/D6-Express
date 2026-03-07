@@ -359,6 +359,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68929bd01a4045846b9d591c65f87e10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NpcView
+--- !u!114 &91070834 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2963459864705855510, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+  m_PrefabInstance: {fileID: 91070831}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68929bd01a4045846b9d591c65f87e10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NpcView
 --- !u!1 &157643399
 GameObject:
   m_ObjectHideFlags: 0
@@ -417,6 +428,7 @@ MonoBehaviour:
   stationShopkeeper: {fileID: 1944120481}
   trainShopkeeper: {fileID: 91070833}
   informationPanelView: {fileID: 7205606119079278649}
+  diceGameOpponent: {fileID: 91070834}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0

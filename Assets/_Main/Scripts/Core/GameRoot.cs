@@ -138,7 +138,7 @@ namespace _Main.Scripts.Core
 				winViewController,
 				loseViewController,
 				new SettingsController(uiService, audioService, cursorService, inputService, pauseState),
-				new DiceGameGlobalController(diceGameModel, playerModel, sceneContext, _serviceLocator,
+				new DiceGameGlobalController(diceGameModel, playerModel, playerView, sceneContext, _serviceLocator,
 					run, configService, notificationService),
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),

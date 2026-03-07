@@ -13,6 +13,8 @@ public class InteractorPlayer : Interactor
 	[SerializeField]
 	private Transform viewTransform;
 
+	public bool InteractableDetectionEnabled { get; private set; } = true;
+
 	private IInputService inputService;
 
 	public void Initialize(IInputService inputService, PlayerStateModel playerStateModel, InteractionToStateTable interactionToStateTable)
@@ -21,6 +23,16 @@ public class InteractorPlayer : Interactor
 
 		this.inputService = inputService;
 		this.inputService.OnInteractPressed += OnInteract;
+	}
+
+	public void EnableInteractableDetection()
+	{
+		InteractableDetectionEnabled = true;
+	}
+
+	public void DisableInteractableDetection()
+	{
+		InteractableDetectionEnabled = false;
 	}
 
 	private void OnDisable()
@@ -33,12 +45,12 @@ public class InteractorPlayer : Interactor
 
 	private void Update()
 	{
-		HandleInteraction();
+		TryFindInteractable();
 	}
 
-	private void HandleInteraction()
+	private void TryFindInteractable()
 	{
-		if (CanInteract())
+		if (InteractableDetectionEnabled)
 		{
 			Ray ray = new(viewTransform.transform.position, viewTransform.transform.forward);
 

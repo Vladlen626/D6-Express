@@ -17,6 +17,7 @@ public static class InteractionFactory
 		table.SetAllowance(InteractionType.SPEAK, CharacterState.DEFAULT, true);
 		table.SetAllowance(InteractionType.SPEAK, CharacterState.SITTING, true);
 		table.SetAllowance(InteractionType.SPEAK, CharacterState.LAYING, true);
+		table.SetAllowance(InteractionType.SPEAK, CharacterState.DICE_GAME, true);
 
 		table.SetAllowance(InteractionType.RESTOCK, CharacterState.DEFAULT, true);
 

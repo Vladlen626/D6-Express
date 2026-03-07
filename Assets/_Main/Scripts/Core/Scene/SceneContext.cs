@@ -6,7 +6,7 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	[SerializeField]
 	private DiceTableView diceGameTableView;
 
-	[SerializeField] 
+	[SerializeField]
 	private CombinationsView combinationsView;
 
 	[SerializeField]
@@ -45,6 +45,9 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	[SerializeField]
 	private InformationPanelView informationPanelView;
 
+	[SerializeField]
+	private CharacterView diceGameOpponent;
+
 	// todo: должно создаваться в гейм руте
 	// но сейчас npcinitializer не умеет смотреть не на сцену
 	// уйдет отсюда когда урмет npcinitializer
@@ -68,6 +71,7 @@ public class SceneContext : MonoBehaviour, ISceneContext
 	public CharacterView TrainShopkeeper => trainShopkeeper;
 	public InformationPanelView InformationPanelView => informationPanelView;
 
+	public CharacterView DiceGameOpponent => diceGameOpponent;
 
 	public IEnumerable<LedTrainView> Leds => FindObjectsByType<LedTrainView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 	public IEnumerable<LightView> Lights => FindObjectsByType<LightView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
