@@ -72,6 +72,7 @@ namespace PlatformCore.Services.Factory
 
 		public static class UI
 		{
+			public const string ColorStyleLibrary = "UI/ColorStyleLibrary";
 			public const string ElementBackground = "UI/ElementBackground";
 			public const string TextStyleLibrary = "UI/TextStyleLibrary";
 			public const string DefaultTMP = "UI/TMP/DefaultTMP";
@@ -103,4 +104,3 @@ namespace PlatformCore.Services.Factory
 
 	}
 }
-
