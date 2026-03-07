@@ -11,8 +11,8 @@ public class Interactor : MonoBehaviour
 	[SubclassSelector]
 	private List<InteractionAction> actions = new();
 
-	// todo: стэк тут ту мач
-	protected readonly Stack<InteractionAction> actionStack = new();
+	protected readonly List<InteractionAction> activeActions = new();
+
 	protected Interactable selectedInteractable;
 
 	public event Action<InteractionAction> InteractionStarted;
@@ -29,11 +29,26 @@ public class Interactor : MonoBehaviour
 		}
 	}
 
+	public void TryStopAction<T>() where T : InteractionAction
+	{
+		for (int i = 0; i < activeActions.Count; i++)
+		{
+			InteractionAction item = activeActions[i];
+			if (typeof(T).IsAssignableFrom(item))
+			{
+				item.StopInteract();
+				break;
+			}
+		}
+	}
+
 	public void StopAllActions(bool immediate = false)
 	{
-		while (actionStack.Count > 0)
+		while (activeActions.Count > 0)
 		{
-			var action = actionStack.Pop();
+			var index = activeActions.Count - 1;
+			var action = activeActions[index];
+			activeActions.RemoveAt(index);
 			action.StopInteract(immediate);
 		}
 	}
@@ -59,7 +74,7 @@ public class Interactor : MonoBehaviour
 			return;
 		}
 
-		actionStack.Push(action);
+		activeActions.Add(action);
 
 		action.Started += OnInteractionStarted;
 		action.Ended += OnInteractionEnded;

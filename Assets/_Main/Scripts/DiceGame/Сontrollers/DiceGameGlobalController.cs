@@ -18,6 +18,7 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceGameModel diceGameModel;
 		private readonly PlayerModel playerModel;
+		private readonly PlayerView playerView;
 		private readonly Run run;
 		private readonly GlobalNotificationService notificationService;
 
@@ -56,11 +57,12 @@ namespace _Main.Scripts.Dice
 		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
 		private TableModel tableModel => diceGameModel.tableModel;
 
-		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, SceneContext sceneContext,
+		public DiceGameGlobalController(DiceGameModel diceGameModel, PlayerModel playerModel, PlayerView playerView, SceneContext sceneContext,
 			ServiceLocator serviceLocator, Run run, ConfigService configService, GlobalNotificationService notificationService)
 		{
 			this.diceGameModel = diceGameModel;
 			this.playerModel = playerModel;
+			this.playerView = playerView;
 			this.run = run;
 			this.notificationService = notificationService;
 			this.sceneContext = sceneContext;
@@ -133,6 +135,8 @@ namespace _Main.Scripts.Dice
 		{
 			gamePreviousStoped = false;
 			inputService.EnableDiceGameInputs();
+			
+			inputService.OnInteractPressed += OnExitRequested;
 
 			if (!await SetupBaseModels())
 			{
@@ -173,13 +177,15 @@ namespace _Main.Scripts.Dice
 				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService, notificationService),
 				new DiceGameResultController(diceGameModel)
 			});
-			
+
 			await lifecycleService.RegisterControllersGroupAsync(gameControllers);
 		}
 
 		// ReSharper disable Unity.PerformanceAnalysis
 		private void StopDiceGame()
 		{
+			inputService.OnInteractPressed -= OnExitRequested;
+
 			if (gamePreviousStoped)
 			{
 				return;
@@ -187,7 +193,7 @@ namespace _Main.Scripts.Dice
 			gamePreviousStoped = true;
 
 			inputService.DisableDiceGameInputs();
-			
+
 			if (diceGameModel.IsDiceGameStarted)
 			{
 				run.RequestIncrementTick();
@@ -224,7 +230,7 @@ namespace _Main.Scripts.Dice
 
 			return await SetupModifiersAsync(diceGameConfig);
 		}
-		
+
 		private async UniTask DiceGamePersistentControllers()
 		{
 			persistentControllers.AddRange(
@@ -488,6 +494,20 @@ namespace _Main.Scripts.Dice
 			}
 
 			diceGameModel.Reset();
+		}
+
+		private void OnExitRequested()
+		{
+			if (playerModel.PlayerStateModel.HasState(CharacterState.SPEAKING))
+			{
+				return;
+			}
+			
+			// todo: убрать такой способ
+			var interactable = sceneContext.DiceGameOpponent.GetComponent<InteractableSpeakable>();
+			interactable.SetId(96);
+			playerView.Interactor.Interact(interactable);
+			interactable.ResetId();
 		}
 
 		private async UniTask<bool> SetupEnemyAiScenarioAsync(DiceGameConfig diceGameConfig)

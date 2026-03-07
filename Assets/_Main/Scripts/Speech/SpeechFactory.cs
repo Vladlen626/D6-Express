@@ -23,6 +23,7 @@ public static class SpeechFactory
         var speechShopkeeper = GetShopkeeperSpeech(playerModel, textsConfig);
         var speechShopkeeperFailedBuy = GetShopkeeperFailedBuySpeech(textsConfig);
         var speechEnemy = GetEnemySpeech(run, textsConfig);
+        var speechOpponentExit = GetDiceGameOpponentLeaveSpeech(playerView, textsConfig);
 
         var speeches = new Speech[]
         {
@@ -32,7 +33,8 @@ public static class SpeechFactory
             speechPassengerAnecdote,
             speechShopkeeper,
             speechShopkeeperFailedBuy,
-            speechEnemy
+            speechEnemy,
+            speechOpponentExit
         };
 
         var speechModel = new SpeechModel(speeches);
@@ -95,6 +97,24 @@ public static class SpeechFactory
 
         speechBuyTicket.SetRootNode(speechNodeConductorSaysHi);
         return speechBuyTicket;
+    }
+
+    private static Speech GetDiceGameOpponentLeaveSpeech(PlayerView playerView, TextsConfig textsConfig)
+    {
+        var speechLeaveGame = new Speech(96);
+
+        var speechNodeLeave = new SpeechNodeDo(() =>
+        {
+            playerView.Interactor.TryStopAction<InteractableActionDiceGame>();
+        })
+        .Init(speechLeaveGame);
+
+        var speechNodeTryLeave = new SpeechNodeChoice(textsConfig.texts["dice_game_opponent_on_leave"])
+        .OnAccepted(speechNodeLeave)
+        .Init(speechLeaveGame);
+
+        speechLeaveGame.SetRootNode(speechNodeTryLeave);
+        return speechLeaveGame;
     }
 
     private static Speech GetGenericPassengerSpeech(TextsConfig textsConfig)

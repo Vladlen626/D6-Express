@@ -14,6 +14,12 @@ public class CameraController : IBaseController, IActivatable
 		CameraStateEnum.TrainWatch,
 	};
 
+	private static readonly (CharacterState characterState, CameraStateEnum cameraState)[] stateToCamera = {
+		(CharacterState.SPEAKING, CameraStateEnum.FirstPerson),
+		(CharacterState.DICE_GAME, CameraStateEnum.DiceGame),
+		(CharacterState.DEFAULT, CameraStateEnum.FirstPerson),
+	};
+
 	private readonly IInputService inputService;
 	private readonly ICameraService cameraService;
 	private readonly PlayerStateModel playerStateModel;
@@ -32,8 +38,8 @@ public class CameraController : IBaseController, IActivatable
 		inputService.OnDiceGameNext += OnNextHandler;
 		inputService.OnDiceGamePrevious += OnPreviousHandler;
 
-		playerStateModel.StateAdded += OnStateAddedHandler;
-		playerStateModel.StateRemoved += OnStateRemovedHandler;
+		playerStateModel.StateAdded += OnStateChanged;
+		playerStateModel.StateRemoved += OnStateChanged;
 	}
 
 	public void Deactivate()
@@ -41,26 +47,22 @@ public class CameraController : IBaseController, IActivatable
 		inputService.OnDiceGameNext -= OnNextHandler;
 		inputService.OnDiceGamePrevious -= OnPreviousHandler;
 
-		playerStateModel.StateAdded -= OnStateAddedHandler;
-		playerStateModel.StateRemoved -= OnStateRemovedHandler;
+		playerStateModel.StateAdded -= OnStateChanged;
+		playerStateModel.StateRemoved -= OnStateChanged;
 	}
 
-	
+
 	//TODO: Возможно это абсолютно не правильно и стейт машина должна сама камеру менять,
 	// а то если еще где-то начнем это делать все сломается... но пока так...
-	private void OnStateAddedHandler(CharacterState state)
+	private void OnStateChanged(CharacterState state)
 	{
-		if (state == CharacterState.DICE_GAME)
+		foreach (var (characterState, cameraState) in stateToCamera)
 		{
-			cameraService.SetActiveCamera(CameraStateEnum.DiceGame);
-		}
-	}
-	
-	private void OnStateRemovedHandler(CharacterState state)
-	{
-		if (state == CharacterState.DICE_GAME)
-		{
-			cameraService.SetActiveCamera(CameraStateEnum.FirstPerson);
+			if (playerStateModel.HasState(characterState))
+			{
+				cameraService.SetActiveCamera(cameraState);
+				break;
+			}
 		}
 	}
 
