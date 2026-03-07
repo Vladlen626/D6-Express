@@ -15,23 +15,14 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceGameUpgradeController : IBaseController, IActivatable
 	{
-		private const string UpgradeBannerKey = "dice_banner_upgrade_triggered";
-		private const string UpgradeComboStraightKey = "dice_upgrade_combo_straight";
-		private const string UpgradeComboOfAKindKey = "dice_upgrade_combo_ofakind";
-		private const string UpgradeHintKey = "dice_upgrade_hint_continue";
-		private const string UpgradeRolledKey = "dice_upgrade_rolled";
-		private const string UpgradeBannerFailedKey = "dice_banner_upgrade_failed";
-		private const string UpgradeLabelMinKey = "dice_upgrade_label_min";
-		private const string UpgradeLabelMaxKey = "dice_upgrade_label_max";
-		private const string UpgradeLabelBonusKey = "dice_upgrade_label_bonus";
-		private const string UpgradeLabelMinLenKey = "dice_upgrade_label_min_len";
-		private const string UpgradeLabelMaxLenKey = "dice_upgrade_label_max_len";
 		private const string UpgradeDiceVisualId = "default";
 		private const string FallbackMinLabel = "Min";
 		private const string FallbackMaxLabel = "Max";
 		private const string FallbackBonusLabel = "Bonus";
 		private const string FallbackMinLenLabel = "Min len";
 		private const string FallbackMaxLenLabel = "Max len";
+		private const string FallbackStopHint = "Click to stop";
+		private const float DefaultUpgradeDiceScale = 1f;
 
 		private static readonly int[] UpgradeDiceWeights = { 1, 1, 1, 1, 1, 1 };
 
@@ -43,11 +34,13 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly GlobalNotificationService notificationService;
 		private readonly ILocalizationService localizationService;
-		private readonly Transform upgradeDicePos;
+		private readonly DiceTableView diceTableView;
 
 		private DiceView upgradeDiceView;
 
 		public event Action<DiceUpgradeVisualData> UpgradeApplied;
+		private Transform UpgradeDicePos => diceTableView ? diceTableView.UpgradeDicePos : null;
+		private float UpgradeDiceScale => diceTableView ? diceTableView.UpgradeDiceScreenScale : DefaultUpgradeDiceScale;
 
 		public DiceGameUpgradeController(
 			DiceGameModel diceGameModel,
@@ -58,7 +51,7 @@ namespace _Main.Scripts.Dice
 			IAudioService audioService,
 			GlobalNotificationService notificationService,
 			ILocalizationService localizationService,
-			Transform upgradeDicePos)
+			DiceTableView diceTableView)
 		{
 			this.diceGameModel = diceGameModel;
 			this.run = run;
@@ -68,7 +61,7 @@ namespace _Main.Scripts.Dice
 			this.audioService = audioService;
 			this.notificationService = notificationService;
 			this.localizationService = localizationService;
-			this.upgradeDicePos = upgradeDicePos;
+			this.diceTableView = diceTableView;
 		}
 
 		public void Activate()
@@ -102,6 +95,40 @@ namespace _Main.Scripts.Dice
 			if (upgradeDiceView)
 			{
 				upgradeDiceView.Hide();
+			}
+		}
+
+		public void HideGameplayDiceForUpgrade()
+		{
+			if (diceGameModel.DiceGameState != DiceGameState.GAME)
+			{
+				return;
+			}
+
+			diceGameModel.HideAllDiceGameModels();
+		}
+
+		public void RestoreGameplayDiceAfterUpgrade()
+		{
+			if (diceGameModel.DiceGameState != DiceGameState.GAME)
+			{
+				return;
+			}
+
+			if (diceGameModel.tableModel != null && diceGameModel.tableModel.isFirstRoll)
+			{
+				diceGameModel.HideAllDiceGameModels();
+				return;
+			}
+
+			diceGameModel.ShowAllDiceGameModels();
+		}
+
+		public void StopUpgradeRoll(int rolledFace)
+		{
+			if (upgradeDiceView)
+			{
+				upgradeDiceView.StopUpgradeSpin(rolledFace);
 			}
 		}
 
@@ -148,6 +175,11 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask<bool> HandleUpgradeForCombo(string comboId, ComboUpgradeConfig upgradeConfig, DiceScoringService activeScoringService)
 		{
+			if (diceGameModel.tableModel == null)
+			{
+				return false;
+			}
+
 			if (Random.value > upgradeConfig.Chance)
 			{
 				if (upgradeConfig.Debug)
@@ -174,80 +206,48 @@ namespace _Main.Scripts.Dice
 			await ShowUpgradeBannerAsync();
 			int rolledFace = await RollUpgradeDieAsync();
 
-			if (comboId == "straight")
+			var before = activeScoringService.GetComboUpgradeState(comboId);
+			var outcome = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
+			var after = activeScoringService.GetComboUpgradeState(comboId);
+			if (outcome != null && before != null && after != null)
 			{
-				var before = activeScoringService.GetStraightState();
-				var outcome = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
-				var after = activeScoringService.GetStraightState();
-				if (outcome != null)
-				{
-					var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-					logger?.Log($"[Upgrade:{comboId}] {summary} via upgrade die");
-					var minLabel = BuildMinLabel(comboId);
-					var maxLabel = BuildMaxLabel(comboId);
-					var bonusLabel = BuildBonusLabel();
-					UpgradeApplied?.Invoke(new DiceUpgradeVisualData(
-						comboId,
-						GetComboTitle(comboId),
-						BuildRolledText(rolledFace),
-						minLabel,
-						maxLabel,
-						bonusLabel,
-						BuildHintText(),
-						rolledFace,
-						before.MinLen,
-						before.MaxLen,
-						before.ScoreBonus,
-						after.MinLen,
-						after.MaxLen,
-						after.ScoreBonus));
-				}
-				else
-				{
-					HideUpgradeDie();
-					await ShowUpgradeFailedAsync();
-				}
-			}
-			else
-			{
-				var before = activeScoringService.GetComboUpgradeState(comboId);
-				var outcome = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
-				var after = activeScoringService.GetComboUpgradeState(comboId);
-				if (outcome != null && before != null && after != null)
-				{
-					var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
-					logger?.Log($"[Upgrade:{comboId}] {summary} via upgrade die");
-					var minLabel = BuildMinLabel(comboId);
-					var maxLabel = BuildMaxLabel(comboId);
-					var bonusLabel = BuildBonusLabel();
-					UpgradeApplied?.Invoke(new DiceUpgradeVisualData(
-						comboId,
-						GetComboTitle(comboId),
-						BuildRolledText(rolledFace),
-						minLabel,
-						maxLabel,
-						bonusLabel,
-						BuildHintText(),
-						rolledFace,
-						before.Min,
-						before.Max,
-						before.ScoreBonus,
-						after.Min,
-						after.Max,
-						after.ScoreBonus));
-				}
-				else
-				{
-					HideUpgradeDie();
-					await ShowUpgradeFailedAsync();
-				}
+				var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
+				logger?.Log($"[Upgrade:{comboId}] {summary} via upgrade die");
+				var minLabel = BuildMinLabel(comboId);
+				var maxLabel = BuildMaxLabel(comboId);
+				var bonusLabel = BuildBonusLabel();
+				UpgradeApplied?.Invoke(new DiceUpgradeVisualData(
+					comboId,
+					GetComboTitle(comboId),
+					BuildRolledText(rolledFace),
+					minLabel,
+					maxLabel,
+					bonusLabel,
+					BuildHintText(),
+					BuildStopHintText(),
+					rolledFace,
+					before.Min,
+					before.Max,
+					before.ScoreBonus,
+					after.Min,
+					after.Max,
+					after.ScoreBonus,
+					BuildRouletteSlots(activeScoringService.GetComboUpgradeOutcomes(comboId))));
+				return true;
 			}
 
-			return true;
+			HideUpgradeDie();
+			await ShowUpgradeFailedAsync();
+			return false;
 		}
 
 		private async UniTask<bool> HandleStraightUpgrade(StraightUpgradeConfig upgradeConfig, DiceScoringService activeScoringService)
 		{
+			if (diceGameModel.tableModel == null)
+			{
+				return false;
+			}
+
 			if (Random.value > upgradeConfig.Chance)
 			{
 				if (upgradeConfig.Debug)
@@ -292,21 +292,21 @@ namespace _Main.Scripts.Dice
 					maxLabel,
 					bonusLabel,
 					BuildHintText(),
+					BuildStopHintText(),
 					rolledFace,
 					before.MinLen,
 					before.MaxLen,
 					before.ScoreBonus,
 					after.MinLen,
 					after.MaxLen,
-					after.ScoreBonus));
-			}
-			else
-			{
-				HideUpgradeDie();
-				await ShowUpgradeFailedAsync();
+					after.ScoreBonus,
+					BuildRouletteSlots(activeScoringService.GetStraightUpgradeOutcomes())));
+				return true;
 			}
 
-			return true;
+			HideUpgradeDie();
+			await ShowUpgradeFailedAsync();
+			return false;
 		}
 
 		private async UniTask ShowUpgradeBannerAsync()
@@ -316,7 +316,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			await notificationService.ShowBannerAsync(UpgradeBannerKey, 0.8f);
+			await notificationService.ShowBannerAsync(GlobalConstants.Localization.DiceBannerUpgradeTriggered, 0.8f);
 		}
 
 		private async UniTask ShowUpgradeFailedAsync()
@@ -326,25 +326,30 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			await notificationService.ShowBannerAsync(UpgradeBannerFailedKey, 0.8f);
+			await notificationService.ShowBannerAsync(GlobalConstants.Localization.DiceBannerUpgradeFailed, 0.8f);
 		}
 
 		private async UniTask<int> RollUpgradeDieAsync()
 		{
 			var view = await EnsureUpgradeDieAsync();
-			int rolledFace = DiceGameUtils.GetWeightedRandomValue(UpgradeDiceWeights);
-			if (view)
+			if (!view)
 			{
-				if (upgradeDicePos)
-				{
-					view.transform.SetParent(upgradeDicePos);
-					view.transform.position = upgradeDicePos.position;
-					view.transform.rotation = upgradeDicePos.rotation;
-				}
-				view.Show();
-				await view.PlayRollAnimationAsync(1.2f);
-				view.SetRotation(rolledFace);
+				logger?.LogWarning("[Upgrade] Upgrade dice view is missing. Upgrade outcome will not be applied.");
+				return 0;
 			}
+
+			int rolledFace = DiceGameUtils.GetWeightedRandomValue(UpgradeDiceWeights);
+			var upgradeDicePos = UpgradeDicePos;
+			if (upgradeDicePos)
+			{
+				view.transform.position = upgradeDicePos.position;
+				view.transform.rotation = upgradeDicePos.rotation;
+			}
+
+			view.transform.localScale = Vector3.one;
+			view.SetVisualScale(UpgradeDiceScale);
+			view.Show();
+			view.StartUpgradeSpin();
 
 			return rolledFace;
 		}
@@ -356,7 +361,14 @@ namespace _Main.Scripts.Dice
 				return upgradeDiceView;
 			}
 
-			if (objectFactory == null || !upgradeDicePos)
+			if (objectFactory == null)
+			{
+				logger?.LogWarning("[Upgrade] Object factory is not set.");
+				return null;
+			}
+
+			var upgradeDicePos = UpgradeDicePos;
+			if (!upgradeDicePos)
 			{
 				logger?.LogWarning("[Upgrade] Upgrade dice position is not set.");
 				return null;
@@ -365,8 +377,7 @@ namespace _Main.Scripts.Dice
 			upgradeDiceView = await objectFactory.CreateAsync<DiceView>(
 				ResourcePaths.Items.DicePrefab,
 				upgradeDicePos.position,
-				upgradeDicePos.rotation,
-				upgradeDicePos);
+				upgradeDicePos.rotation);
 
 			if (!upgradeDiceView)
 			{
@@ -383,12 +394,12 @@ namespace _Main.Scripts.Dice
 		{
 			if (string.Equals(comboId, "straight", StringComparison.OrdinalIgnoreCase))
 			{
-				return GetLocalizedSafe(UpgradeComboStraightKey, comboId);
+				return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeComboStraight, comboId);
 			}
 
 			if (string.Equals(comboId, "ofakind", StringComparison.OrdinalIgnoreCase))
 			{
-				return GetLocalizedSafe(UpgradeComboOfAKindKey, comboId);
+				return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeComboOfAKind, comboId);
 			}
 
 			return comboId;
@@ -396,12 +407,17 @@ namespace _Main.Scripts.Dice
 
 		private string BuildHintText()
 		{
-			return GetLocalizedSafe(UpgradeHintKey, string.Empty);
+			return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeHintContinue, string.Empty);
+		}
+
+		private string BuildStopHintText()
+		{
+			return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeHintStop, FallbackStopHint);
 		}
 
 		private string BuildRolledText(int rolledFace)
 		{
-			var template = GetLocalizedSafe(UpgradeRolledKey, string.Empty);
+			var template = GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeRolled, string.Empty);
 			if (string.IsNullOrWhiteSpace(template))
 			{
 				return rolledFace.ToString();
@@ -418,7 +434,7 @@ namespace _Main.Scripts.Dice
 		private string BuildMinLabel(string comboId)
 		{
 			var isStraight = string.Equals(comboId, "straight", StringComparison.OrdinalIgnoreCase);
-			var key = isStraight ? UpgradeLabelMinLenKey : UpgradeLabelMinKey;
+			var key = isStraight ? GlobalConstants.Localization.DiceUpgradeLabelMinLen : GlobalConstants.Localization.DiceUpgradeLabelMin;
 			var fallback = isStraight ? FallbackMinLenLabel : FallbackMinLabel;
 			return GetLocalizedSafe(key, fallback);
 		}
@@ -426,14 +442,14 @@ namespace _Main.Scripts.Dice
 		private string BuildMaxLabel(string comboId)
 		{
 			var isStraight = string.Equals(comboId, "straight", StringComparison.OrdinalIgnoreCase);
-			var key = isStraight ? UpgradeLabelMaxLenKey : UpgradeLabelMaxKey;
+			var key = isStraight ? GlobalConstants.Localization.DiceUpgradeLabelMaxLen : GlobalConstants.Localization.DiceUpgradeLabelMax;
 			var fallback = isStraight ? FallbackMaxLenLabel : FallbackMaxLabel;
 			return GetLocalizedSafe(key, fallback);
 		}
 
 		private string BuildBonusLabel()
 		{
-			return GetLocalizedSafe(UpgradeLabelBonusKey, FallbackBonusLabel);
+			return GetLocalizedSafe(GlobalConstants.Localization.DiceUpgradeLabelBonus, FallbackBonusLabel);
 		}
 
 		private string GetLocalizedSafe(string key, string fallback)
@@ -452,6 +468,58 @@ namespace _Main.Scripts.Dice
 			{
 				return fallback;
 			}
+		}
+
+		private DiceUpgradeRouletteSlotData[] BuildRouletteSlots(StraightUpgradeOutcome[] outcomes)
+		{
+			var slots = new DiceUpgradeRouletteSlotData[6];
+			for (int face = 1; face <= 6; face++)
+			{
+				var deltaBonus = 0;
+				if (outcomes != null)
+				{
+					var outcome = outcomes.FirstOrDefault(o => o.Face == face);
+					if (outcome != null)
+					{
+						deltaBonus = outcome.DeltaScoreBonus;
+					}
+				}
+
+				slots[face - 1] = new DiceUpgradeRouletteSlotData(face, FormatBonusDelta(deltaBonus));
+			}
+
+			return slots;
+		}
+
+		private DiceUpgradeRouletteSlotData[] BuildRouletteSlots(ComboUpgradeOutcome[] outcomes)
+		{
+			var slots = new DiceUpgradeRouletteSlotData[6];
+			for (int face = 1; face <= 6; face++)
+			{
+				var deltaBonus = 0;
+				if (outcomes != null)
+				{
+					var outcome = outcomes.FirstOrDefault(o => o.Face == face);
+					if (outcome != null)
+					{
+						deltaBonus = outcome.DeltaScoreBonus;
+					}
+				}
+
+				slots[face - 1] = new DiceUpgradeRouletteSlotData(face, FormatBonusDelta(deltaBonus));
+			}
+
+			return slots;
+		}
+
+		private string FormatBonusDelta(int deltaBonus)
+		{
+			if (deltaBonus > 0)
+			{
+				return $"+{deltaBonus}";
+			}
+
+			return deltaBonus.ToString();
 		}
 	}
 }

@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Services;
+using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 using _Main.Scripts.Core.Services;
 using UnityEngine.InputSystem;
@@ -10,23 +12,45 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceGameUpgradeController upgradeController;
 		private readonly IAsyncAwaiterPool upgradeAwaiter;
+		private readonly IResourceService resourceService;
+		private readonly ILoggerService loggerService;
+		private UIDiceUpgradeVariantView rouletteVariantPrefab;
+		private bool warnedMissingVariantPrefab;
 		private int showVersion;
 
 		public DiceGameUpgradeVisualController(
 			IUIService uiService,
 			DiceGameUpgradeController upgradeController,
-			IAsyncAwaiterPool upgradeAwaiter)
+			IAsyncAwaiterPool upgradeAwaiter,
+			IResourceService resourceService,
+			ILoggerService loggerService)
 			: base(uiService)
 		{
 			this.upgradeController = upgradeController;
 			this.upgradeAwaiter = upgradeAwaiter;
+			this.resourceService = resourceService;
+			this.loggerService = loggerService;
+		}
+
+		protected override async UniTask OnPreloadAsync()
+		{
+			rouletteVariantPrefab = await resourceService.LoadAsync<UIDiceUpgradeVariantView>(ResourcePaths.UI.UIDiceUpgradeVariantView);
+			await base.OnPreloadAsync();
 		}
 
 		protected override void OnActivate()
 		{
 			if (_context)
 			{
+				_context.SetRouletteVariantPrefab(rouletteVariantPrefab);
 				_context.Hide();
+			}
+
+			if (!rouletteVariantPrefab && !warnedMissingVariantPrefab)
+			{
+				loggerService?.LogWarning(
+					$"[DiceGameUpgradeVisualController] Failed to load prefab at '{ResourcePaths.UI.UIDiceUpgradeVariantView}'.");
+				warnedMissingVariantPrefab = true;
 			}
 
 			if (upgradeController != null)
@@ -40,6 +64,7 @@ namespace _Main.Scripts.Dice
 			if (upgradeController != null)
 			{
 				upgradeController.UpgradeApplied -= OnUpgradeApplied;
+				upgradeController.HideUpgradeDie();
 			}
 		}
 
@@ -56,20 +81,33 @@ namespace _Main.Scripts.Dice
 		private async UniTask ShowUpgradeAsync(DiceUpgradeVisualData data)
 		{
 			_context.SetData(data);
+			upgradeController?.HideGameplayDiceForUpgrade();
 			_context.Show();
 
 			int current = ++showVersion;
-			await UniTask.Delay(500);
-			await WaitForContinueClickAsync();
+			await UniTask.Delay(300);
+			await WaitForClickAsync();
+
+			if (current != showVersion || !_context)
+			{
+				return;
+			}
+
+			upgradeController?.StopUpgradeRoll(data.RolledFace);
+			_context.ResolveRoll();
+
+			await UniTask.Delay(120);
+			await WaitForClickAsync();
 
 			if (current == showVersion && _context)
 			{
 				upgradeController?.HideUpgradeDie();
+				upgradeController?.RestoreGameplayDiceAfterUpgrade();
 				_context.Hide();
 			}
 		}
 
-		private async UniTask WaitForContinueClickAsync()
+		private async UniTask WaitForClickAsync()
 		{
 			await UniTask.WaitUntil(() =>
 				!_context || (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame));

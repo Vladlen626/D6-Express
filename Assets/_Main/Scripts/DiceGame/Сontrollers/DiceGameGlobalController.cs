@@ -34,9 +34,6 @@ namespace _Main.Scripts.Dice
 		private readonly ILocalizationService localizationService;
 
 		private readonly SceneContext sceneContext;
-		private const string EnemyAiScenariosResourcePath = "Json/enemy_ai_scenarios";
-		private const string EnemyAiScenarioScheduleResourcePath = "Json/enemy_ai_scenario_schedule";
-		private const string DiceGameModifiersScheduleResourcePath = "Json/dice_game_modifiers_schedule";
 
 		private DiceView[] playerDiceViewsArray;
 		private DiceView[] enemyDiceViewsArray;
@@ -151,6 +148,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			var upgradeAwaiter = awaiterService.GetPool("dice.upgrade");
+			var tableView = sceneContext.DiceGameTableView;
 			var upgradeController = new DiceGameUpgradeController(
 				diceGameModel,
 				run,
@@ -160,7 +158,7 @@ namespace _Main.Scripts.Dice
 				audioService,
 				notificationService,
 				localizationService,
-				sceneContext.DiceGameTableView ? sceneContext.DiceGameTableView.UpgradeDicePos : null);
+				tableView);
 			var processController = new DiceGameProcessController(
 				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, upgradeAwaiter);
 
@@ -168,9 +166,9 @@ namespace _Main.Scripts.Dice
 			{
 				upgradeController,
 				processController,
-				new DiceGameUpgradeVisualController(uiService, upgradeController, upgradeAwaiter),
+				new DiceGameUpgradeVisualController(uiService, upgradeController, upgradeAwaiter, resourceService, loggerService),
 				new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
-				new DiceGameViewController(sceneContext.DiceGameTableView, diceGameModel, cameraShakeService, notificationService),
+				new DiceGameViewController(tableView, diceGameModel, cameraShakeService, notificationService),
 				new DiceGameResultController(diceGameModel)
 			});
 			
@@ -194,12 +192,12 @@ namespace _Main.Scripts.Dice
 			}
 
 			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
-			ResetModels();
 			CleanUpItems();
 			ClenUpSelectionControllers();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
 			ClenUpPersistentControllers();
+			ResetModels();
 		}
 
 		private async UniTask<bool> SetupBaseModels()
@@ -257,7 +255,11 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < playerLimit; i++)
 			{
 				var model = selectedModels[i];
-				var view = diceGameModel.ScreenDiceDict[model];
+				if (!diceGameModel.ScreenDiceDict.TryGetValue(model, out var view) || !view)
+				{
+					continue;
+				}
+
 				var gamePos = activeSlots[i];
 
 				view.transform.SetParent(gamePos);
@@ -311,7 +313,11 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < enemyDiceViewsArray.Length; i++)
 			{
 				var model = enemyModels[i];
-				var view = diceGameModel.ScreenDiceDict[model];
+				if (!diceGameModel.ScreenDiceDict.TryGetValue(model, out var view) || !view)
+				{
+					continue;
+				}
+
 				var gamePos = activeSlots[i];
 
 				view.transform.SetParent(gamePos);
@@ -339,6 +345,8 @@ namespace _Main.Scripts.Dice
 			if (diceGameModel.DiceGameState == DiceGameState.GAME)
 			{
 				playerModel.InventoryModel.TakeCash(diceGameModel.BetSize);
+				diceGameModel.HideAllDiceGameModels();
+				HideDiceViewsImmediate(playerDiceViewsArray);
 			}
 
 			ClenUpBetControllers();
@@ -364,31 +372,8 @@ namespace _Main.Scripts.Dice
 
 		private void CleanUpMainGameControllers()
 		{
-			if (playerDiceViewsArray != null)
-			{
-				foreach (var dice in playerDiceViewsArray)
-				{
-					if (dice)
-					{
-						objectFactory.Destroy(dice.gameObject);
-					}
-				}
-
-				playerDiceViewsArray = null;
-			}
-
-			if (enemyDiceViewsArray != null)
-			{
-				foreach (var dice in enemyDiceViewsArray)
-				{
-					if (dice)
-					{
-						objectFactory.Destroy(dice.gameObject);
-					}
-				}
-
-				enemyDiceViewsArray = null;
-			}
+			playerDiceViewsArray = null;
+			enemyDiceViewsArray = null;
 
 			lifecycleService.UnregisterControllersGroup(gameControllers);
 			gameControllers.Clear();
@@ -454,6 +439,22 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
+		private static void HideDiceViewsImmediate(IEnumerable<DiceView> diceViews)
+		{
+			if (diceViews == null)
+			{
+				return;
+			}
+
+			foreach (var diceView in diceViews)
+			{
+				if (diceView)
+				{
+					diceView.Hide();
+				}
+			}
+		}
+
 		private void CleanUpItems()
 		{
 			lifecycleService.UnregisterControllersGroup(itemControllers);
@@ -475,16 +476,26 @@ namespace _Main.Scripts.Dice
 
 			foreach (var model in diceGameModel.EnemyDiceModelList)
 			{
-				var dice = diceGameModel.ScreenDiceDict[model];
-				diceGameModel.RemoveDiceOnScreen(model);
-				objectFactory.Destroy(dice.gameObject);
+				if (diceGameModel.ScreenDiceDict.TryGetValue(model, out var dice))
+				{
+					diceGameModel.RemoveDiceOnScreen(model);
+					if (dice)
+					{
+						objectFactory.Destroy(dice.gameObject);
+					}
+				}
 			}
 
 			foreach (var model in diceGameModel.PlayerDiceModelList)
 			{
-				var dice = diceGameModel.ScreenDiceDict[model];
-				diceGameModel.RemoveDiceOnScreen(model);
-				objectFactory.Destroy(dice.gameObject);
+				if (diceGameModel.ScreenDiceDict.TryGetValue(model, out var dice))
+				{
+					diceGameModel.RemoveDiceOnScreen(model);
+					if (dice)
+					{
+						objectFactory.Destroy(dice.gameObject);
+					}
+				}
 			}
 
 			diceGameModel.Reset();
@@ -517,7 +528,7 @@ namespace _Main.Scripts.Dice
 
 			if (!scenarioMap.TryGetValue(scenarioId, out var scenario) || scenario == null)
 			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI scenario '{scenarioId}' not found in map '{EnemyAiScenariosResourcePath}'.");
+				FailDiceGameSetup($"[DiceGame] Enemy AI scenario '{scenarioId}' not found in map '{ResourcePaths.Json.enemy_ai_scenarios}'.");
 				return false;
 			}
 
@@ -541,10 +552,10 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask<Dictionary<string, EnemyAiScenarioConfig>> LoadEnemyScenarioMapAsync()
 		{
-			var textAsset = await resourceService.LoadAsync<TextAsset>(EnemyAiScenariosResourcePath);
+			var textAsset = await resourceService.LoadAsync<TextAsset>(ResourcePaths.Json.enemy_ai_scenarios);
 			if (!textAsset)
 			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI scenarios file '{EnemyAiScenariosResourcePath}' not found.");
+				FailDiceGameSetup($"[DiceGame] Enemy AI scenarios file '{ResourcePaths.Json.enemy_ai_scenarios}' not found.");
 				return null;
 			}
 
@@ -555,13 +566,13 @@ namespace _Main.Scripts.Dice
 			}
 			catch (Exception exception)
 			{
-				FailDiceGameSetup($"[DiceGame] Failed to parse scenarios map '{EnemyAiScenariosResourcePath}': {exception.Message}");
+				FailDiceGameSetup($"[DiceGame] Failed to parse scenarios map '{ResourcePaths.Json.enemy_ai_scenarios}': {exception.Message}");
 				return null;
 			}
 
 			if (scenarioMap == null || scenarioMap.Count == 0)
 			{
-				FailDiceGameSetup($"[DiceGame] Scenarios map '{EnemyAiScenariosResourcePath}' is empty.");
+				FailDiceGameSetup($"[DiceGame] Scenarios map '{ResourcePaths.Json.enemy_ai_scenarios}' is empty.");
 				return null;
 			}
 
@@ -594,10 +605,10 @@ namespace _Main.Scripts.Dice
 				return scenarioId;
 			}
 
-			var schedule = await configService.GetFirstOrDefaultAsync<EnemyAiScenarioScheduleConfig>(EnemyAiScenarioScheduleResourcePath);
+			var schedule = await configService.GetFirstOrDefaultAsync<EnemyAiScenarioScheduleConfig>(ResourcePaths.Json.enemy_ai_scenario_schedule);
 			if (schedule == null)
 			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI schedule '{EnemyAiScenarioScheduleResourcePath}' not found and enemy_ai_scenario_id override is empty.");
+				FailDiceGameSetup($"[DiceGame] Enemy AI schedule '{ResourcePaths.Json.enemy_ai_scenario_schedule}' not found and enemy_ai_scenario_id override is empty.");
 				return null;
 			}
 
@@ -709,10 +720,10 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask<bool> ApplyModifiersScheduleAsync(string setIdOverride)
 		{
-			var schedule = await configService.GetFirstOrDefaultAsync<DiceGameModifiersScheduleConfig>(DiceGameModifiersScheduleResourcePath);
+			var schedule = await configService.GetFirstOrDefaultAsync<DiceGameModifiersScheduleConfig>(ResourcePaths.Json.dice_game_modifiers_schedule);
 			if (schedule == null)
 			{
-				FailDiceGameSetup($"[DiceGame] Modifiers schedule '{DiceGameModifiersScheduleResourcePath}' not found.");
+				FailDiceGameSetup($"[DiceGame] Modifiers schedule '{ResourcePaths.Json.dice_game_modifiers_schedule}' not found.");
 				return false;
 			}
 
@@ -730,7 +741,7 @@ namespace _Main.Scripts.Dice
 				if (!schedule.sets.TryGetValue(overrideSetId, out resolvedSet) || resolvedSet == null)
 				{
 					FailDiceGameSetup(
-						$"[DiceGame] modifiers_set_id override '{overrideSetId}' not found in schedule '{DiceGameModifiersScheduleResourcePath}'.");
+						$"[DiceGame] modifiers_set_id override '{overrideSetId}' not found in schedule '{ResourcePaths.Json.dice_game_modifiers_schedule}'.");
 					return false;
 				}
 			}

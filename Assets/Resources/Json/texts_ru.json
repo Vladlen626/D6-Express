@@ -39,6 +39,7 @@
         "dice_upgrade_combo_straight": "Стрит",
         "dice_upgrade_combo_ofakind": "Одинаковые",
         "dice_upgrade_hint_continue": "Кликните, чтобы продолжить",
+        "dice_upgrade_hint_stop": "Кликните, чтобы остановить",
         "dice_upgrade_rolled": "Выпало: {0}",
         "dice_upgrade_effect_template": "{0} {1}->{2} | {3} {4}->{5} | {6} {7}->{8}",
         "dice_upgrade_label_min": "Мин.",

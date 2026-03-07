@@ -1,14 +1,14 @@
 ﻿using System;
 using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
-using DG.Tweening;
 using TMPro;
-using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DiceTableView : MonoBehaviour
 {
+	private const float DefaultUpgradeDiceScale = 1f;
+
 	public event Action<int> OnBetSliderChange;
 	public event Action OnRollClicked;
 	public event Action OnPassClicked;
@@ -59,6 +59,7 @@ public class DiceTableView : MonoBehaviour
 
 	[Header("Upgrade")]
 	[SerializeField] private Transform upgradeDicePos;
+	[SerializeField] private float upgradeDiceScreenScale = 1f;
 
 	[SerializeField] private float animDuration = 0.15f;
 	public CouplePositionsHandler GameStatePosHandler => gameStatePosHandler;
@@ -67,6 +68,7 @@ public class DiceTableView : MonoBehaviour
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
 	public Transform UpgradeDicePos => upgradeDicePos;
+	public float UpgradeDiceScreenScale => upgradeDiceScreenScale > 0.05f ? upgradeDiceScreenScale : DefaultUpgradeDiceScale;
 	public Transform TooltipPos => tooltipPos;
 
 	private bool isCombinationsOpen;
