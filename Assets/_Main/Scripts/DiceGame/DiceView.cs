@@ -259,7 +259,6 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			transform.DOKill();
 			model.transform.DOKill();
 			model.transform.localScale = Vector3.zero;
 			if (diceCollider)
@@ -277,7 +276,6 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			transform.DOKill();
 			model.transform.DOKill();
 			model.transform.DOScale(GetScaledModelScale(), animSpeed / 2f);
 			if (diceCollider)
@@ -416,7 +414,6 @@ namespace _Main.Scripts.Dice
 				upgradeStopSequence.Kill();
 			}
 
-			transform.DOKill();
 			if (model)
 			{
 				model.DOKill();

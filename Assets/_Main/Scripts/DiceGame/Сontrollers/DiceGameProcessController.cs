@@ -307,6 +307,7 @@ namespace _Main.Scripts.Dice
 				var position = tableModel.GetFreeBankedPosition();
 				diceModel.SetCurrentPosition(position);
 				var view = diceGameModel.ScreenDiceDict[diceModel];
+				view.transform.SetParent(position);
 				view.ResetYRotation();
 				tweenList.Add(view.MoveToPosition(position.position));
 			}
@@ -343,6 +344,7 @@ namespace _Main.Scripts.Dice
 
 				if (diceGameModel.ScreenDiceDict.TryGetValue(diceModel, out var view) && view)
 				{
+					view.transform.SetParent(pos);
 					tweens.Add(view.MoveToPosition(pos.position));
 				}
 				else

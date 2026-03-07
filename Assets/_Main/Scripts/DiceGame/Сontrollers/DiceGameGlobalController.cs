@@ -261,11 +261,7 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < playerLimit; i++)
 			{
 				var model = selectedModels[i];
-				if (!diceGameModel.ScreenDiceDict.TryGetValue(model, out var view) || !view)
-				{
-					continue;
-				}
-
+				var view = diceGameModel.ScreenDiceDict[model];
 				var gamePos = activeSlots[i];
 
 				view.transform.SetParent(gamePos);
@@ -319,11 +315,7 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < enemyDiceViewsArray.Length; i++)
 			{
 				var model = enemyModels[i];
-				if (!diceGameModel.ScreenDiceDict.TryGetValue(model, out var view) || !view)
-				{
-					continue;
-				}
-
+				var view = diceGameModel.ScreenDiceDict[model];
 				var gamePos = activeSlots[i];
 
 				view.transform.SetParent(gamePos);
@@ -351,8 +343,6 @@ namespace _Main.Scripts.Dice
 			if (diceGameModel.DiceGameState == DiceGameState.GAME)
 			{
 				playerModel.InventoryModel.TakeCash(diceGameModel.BetSize);
-				diceGameModel.HideAllDiceGameModels();
-				HideDiceViewsImmediate(playerDiceViewsArray);
 			}
 
 			ClenUpBetControllers();
@@ -442,22 +432,6 @@ namespace _Main.Scripts.Dice
 				view.transform.SetParent(slot);
 				view.transform.position = slot.position;
 				view.transform.rotation = slot.rotation;
-			}
-		}
-
-		private static void HideDiceViewsImmediate(IEnumerable<DiceView> diceViews)
-		{
-			if (diceViews == null)
-			{
-				return;
-			}
-
-			foreach (var diceView in diceViews)
-			{
-				if (diceView)
-				{
-					diceView.Hide();
-				}
 			}
 		}
 

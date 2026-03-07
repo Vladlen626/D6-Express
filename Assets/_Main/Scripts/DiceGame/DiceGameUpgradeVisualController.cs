@@ -81,7 +81,6 @@ namespace _Main.Scripts.Dice
 		private async UniTask ShowUpgradeAsync(DiceUpgradeVisualData data)
 		{
 			_context.SetData(data);
-			upgradeController?.HideGameplayDiceForUpgrade();
 			_context.Show();
 
 			int current = ++showVersion;
@@ -102,7 +101,6 @@ namespace _Main.Scripts.Dice
 			if (current == showVersion && _context)
 			{
 				upgradeController?.HideUpgradeDie();
-				upgradeController?.RestoreGameplayDiceAfterUpgrade();
 				_context.Hide();
 			}
 		}

@@ -347,17 +347,11 @@ namespace _Main.Scripts.Dice
 			ResetAllDices();
 			foreach (var diceModel in CurrentDiceModelList)
 			{
-				var activePosition = tableModel.GetFreeActivePosition();
-				if (!activePosition)
-				{
-					continue;
-				}
-
-				diceModel.SetCurrentPosition(activePosition);
-				if (ScreenDiceDict.TryGetValue(diceModel, out var diceView) && diceView)
-				{
-					diceView.MoveToPosition(activePosition.position);
-				}
+				var position = tableModel.GetFreeActivePosition();
+				diceModel.SetCurrentPosition(position);
+				var view = ScreenDiceDict[diceModel];
+				view.transform.SetParent(position);
+				view.MoveToPosition(position.position);
 			}
 		}
 

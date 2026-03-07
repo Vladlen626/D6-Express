@@ -137,6 +137,7 @@ namespace _Main.Scripts.Dice
 			model.SetCurrentPosition(slot);
 			if (_diceGameModel.ScreenDiceDict.TryGetValue(model, out var view) && view)
 			{
+				view.transform.SetParent(slot);
 				view.MoveToPosition(slot.position);
 			}
 			else
