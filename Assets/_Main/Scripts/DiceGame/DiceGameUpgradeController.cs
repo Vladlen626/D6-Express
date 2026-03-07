@@ -74,12 +74,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnUpgradeRequested(DiceCombinationResult combinationResult)
 		{
-			RunUpgradeAsync(combinationResult).RegisterAwaiter(upgradeAwaiter).Forget();
-		}
-
-		private UniTask RunUpgradeAsync(DiceCombinationResult combinationResult)
-		{
-			return TryTriggerUpgradeAsync(combinationResult);
+			TryTriggerUpgradeAsync(combinationResult).RegisterAwaiter(upgradeAwaiter).Forget();
 		}
 
 		public void HideUpgradeDie()
@@ -199,15 +194,15 @@ namespace _Main.Scripts.Dice
 			int rolledFace = await RollUpgradeDieAsync();
 
 			var before = activeScoringService.GetComboUpgradeState(comboId);
-			var outcome = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
+			var applied = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run) != null;
 			var after = activeScoringService.GetComboUpgradeState(comboId);
-			if (outcome != null && before != null && after != null)
+			if (applied && before != null && after != null)
 			{
 				var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
 				logger?.Log($"[Upgrade:{comboId}] {summary} via upgrade die");
 				var title = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeComboOfAKind);
-				var minLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelMin);
-				var maxLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelMax);
+				var minLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelMinLen);
+				var maxLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelMaxLen);
 				var bonusLabel = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeLabelBonus);
 				var hintText = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeHintContinue);
 				var stopHintText = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeHintStop);
@@ -269,9 +264,9 @@ namespace _Main.Scripts.Dice
 			int rolledFace = await RollUpgradeDieAsync();
 
 			var before = activeScoringService.GetStraightState();
-			var outcome = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
+			var applied = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run) != null;
 			var after = activeScoringService.GetStraightState();
-			if (outcome != null)
+			if (applied)
 			{
 				var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
 				logger?.Log($"[Upgrade:straight] {summary} via upgrade die");
