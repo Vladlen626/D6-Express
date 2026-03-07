@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace _Main.Scripts.Editor
 {
-	[CustomPropertyDrawer(typeof(TextStyleReference))]
-	public class TextStyleReferenceDrawer : PropertyDrawer
+	[CustomPropertyDrawer(typeof(TextStyleRef))]
+	public class TextStyleRefDrawer : PropertyDrawer
 	{
 		private const string StyleIdFieldName = "id";
 		private static readonly Dictionary<string, AdvancedDropdownState> StatesByPath = new();

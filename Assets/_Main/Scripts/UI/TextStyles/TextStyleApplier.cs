@@ -1,17 +1,14 @@
+using System;
 using TMPro;
 using UnityEngine;
 
 namespace _Main.Scripts.UI
 {
 	[ExecuteAlways]
-	public class TextStyleApplier : MonoBehaviour, ISerializationCallbackReceiver
+	public class TextStyleApplier : MonoBehaviour
 	{
 		[SerializeField]
-		private TextStyleReference style;
-
-		// Backward compatibility for old serialized field.
-		[SerializeField, HideInInspector]
-		private string styleId;
+		private TextStyleRef style;
 
 		private TextMeshProUGUI target;
 
@@ -34,45 +31,11 @@ namespace _Main.Scripts.UI
 
 			if (!target)
 			{
-				return;
+				throw new InvalidOperationException("TextStyleApplier target is missing.");
 			}
 
-			var library = TextStyleLibraryProvider.GetDefault();
-			if (library == null)
-			{
-				return;
-			}
-
-			var styleEntry = library.GetStyle(style.Id);
-			if (styleEntry == null)
-			{
-				return;
-			}
-
-			target.color = styleEntry.Color;
-
-			if (styleEntry.UseAdvanced)
-			{
-				if (styleEntry.FontSize > 0f)
-				{
-					target.fontSize = styleEntry.FontSize;
-				}
-
-				target.fontStyle = styleEntry.FontStyle;
-			}
+			style.ApplyTo(target);
 		}
 
-		public void OnBeforeSerialize()
-		{
-		}
-
-		public void OnAfterDeserialize()
-		{
-			if (string.IsNullOrWhiteSpace(style.Id) && !string.IsNullOrWhiteSpace(styleId))
-			{
-				style = new TextStyleReference(styleId);
-				styleId = string.Empty;
-			}
-		}
 	}
 }

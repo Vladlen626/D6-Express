@@ -37,9 +37,9 @@ namespace _Main.Scripts.Dice
 		[SerializeField]
 		private Image deltaBackground;
 
-		private ColorStyleReference positiveBackgroundColor;
-		private ColorStyleReference negativeBackgroundColor;
-		private ColorStyleReference neutralBackgroundColor;
+		private ColorStyleRef positiveBackgroundColor;
+		private ColorStyleRef negativeBackgroundColor;
+		private ColorStyleRef neutralBackgroundColor;
 		private bool hasBackgroundStyleOverrides;
 
 		private bool cachedBaseColors;
@@ -80,9 +80,9 @@ namespace _Main.Scripts.Dice
 		}
 
 		public void SetBackgroundColorStyles(
-			ColorStyleReference positive,
-			ColorStyleReference negative,
-			ColorStyleReference neutral)
+			ColorStyleRef positive,
+			ColorStyleRef negative,
+			ColorStyleRef neutral)
 		{
 			positiveBackgroundColor = positive;
 			negativeBackgroundColor = negative;
@@ -126,7 +126,7 @@ namespace _Main.Scripts.Dice
 			{
 				return;
 			}
-			deltaBackground.color = ResolveSignedColor(deltaValue, baseDeltaBackgroundColor);
+			deltaBackground.color = ResolveSignedColor(deltaValue);
 		}
 
 		private void CacheBaseColors()
@@ -140,27 +140,14 @@ namespace _Main.Scripts.Dice
 			cachedBaseColors = true;
 		}
 
-		private Color ResolveSignedColor(int delta, Color fallback)
+		private Color ResolveSignedColor(int delta)
 		{
 			if (!hasBackgroundStyleOverrides)
 			{
-				return fallback;
+				throw new System.InvalidOperationException("Background color styles are not assigned.");
 			}
 
-			var library = ColorStyleLibraryProvider.GetDefault();
-			if (library == null)
-			{
-				return fallback;
-			}
-
-			var reference = delta > 0 ? positiveBackgroundColor : delta < 0 ? negativeBackgroundColor : neutralBackgroundColor;
-			if (string.IsNullOrWhiteSpace(reference.Id))
-			{
-				return fallback;
-			}
-
-			var style = library.GetStyle(reference.Id);
-			return style != null ? style.Color : fallback;
+			return delta > 0 ? positiveBackgroundColor.Value : delta < 0 ? negativeBackgroundColor.Value : neutralBackgroundColor.Value;
 		}
 
 		private void AnimateScale(float targetScale)

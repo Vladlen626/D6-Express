@@ -38,13 +38,13 @@ namespace _Main.Scripts.Dice
 		private float rouletteStepDuration = DefaultRouletteStepDuration;
 
 		[SerializeField]
-		private ColorStyleReference positiveChangeColor;
+		private ColorStyleRef positiveChangeColor;
 
 		[SerializeField]
-		private ColorStyleReference negativeChangeColor;
+		private ColorStyleRef negativeChangeColor;
 
 		[SerializeField]
-		private ColorStyleReference neutralChangeColor;
+		private ColorStyleRef neutralChangeColor;
 
 		private readonly List<UIDiceUpgradeVariantView> spawnedVariants = new();
 		private readonly List<DiceUpgradeRouletteSlotData> visibleSlots = new();
@@ -422,25 +422,12 @@ namespace _Main.Scripts.Dice
 				return baseColor;
 			}
 
-			return ResolveSignedColor(selectedDeltaValue, baseColor);
+			return ResolveSignedColor(selectedDeltaValue);
 		}
 
-		private Color ResolveSignedColor(int delta, Color fallback)
+		private Color ResolveSignedColor(int delta)
 		{
-			var library = ColorStyleLibraryProvider.GetDefault();
-			if (library == null)
-			{
-				return fallback;
-			}
-
-			var reference = delta > 0 ? positiveChangeColor : delta < 0 ? negativeChangeColor : neutralChangeColor;
-			if (string.IsNullOrWhiteSpace(reference.Id))
-			{
-				return fallback;
-			}
-
-			var style = library.GetStyle(reference.Id);
-			return style != null ? style.Color : fallback;
+			return delta > 0 ? positiveChangeColor.Value : delta < 0 ? negativeChangeColor.Value : neutralChangeColor.Value;
 		}
 
 		private void CacheBaseColors()

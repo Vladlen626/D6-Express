@@ -56,6 +56,8 @@
 - Each UI element must have prefab `Assets/Resources/UI/<TypeName>.prefab` with matching component.
 - UI controllers should preload via `OnPreloadAsync`/`IUIService.PreloadAsync<T>()`, then show/hide through context.
 - Do not create runtime canvases for regular UI flows.
+- Do not use runtime reference auto-resolution in views (`Ensure*`/`Resolve*` patterns for hierarchy lookup, `transform.Find`, `GetComponentInChildren` as fallback, runtime auto-creation of missing UI nodes). Required references must be on the same object or assigned explicitly via `[SerializeField]` in prefab/inspector.
+- For style selectors in inspector, use shared serialized types (`TextStyleReference`, `ColorStyleReference`) with common `PropertyDrawer`; do not add per-class custom editors only to render style dropdowns.
 
 ## Code Rules
 - No duplicate side-effect calls across layers.
@@ -63,6 +65,7 @@
 - Null checks in Unity style: `if (!obj)` instead of `obj == null`.
 - Always use braces for `if` blocks.
 - Follow existing naming/style conventions of surrounding code.
+- Do not add fallback chains. The project assumes correct, valid configuration; if something is missing or invalid, fail fast with errors/exceptions instead of layering silent defaults.
 
 ## Collaboration Rules
 - For non-trivial changes, ask for confirmation before implementation.
