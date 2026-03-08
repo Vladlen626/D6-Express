@@ -3,12 +3,17 @@ using DG.Tweening;
 using PlatformCore.Services.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using _Main.Scripts.UI;
 
 public class UIGlobalNotificationView : UIBaseElement
 {
 	[SerializeField] private RectTransform container;
 	[SerializeField] private TextMeshProUGUI messageText;
 	[SerializeField] private UIBackgroundSizer backgroundSizer;
+	[SerializeField] private Image backgroundImage;
+	[SerializeField] private ColorStyleRef positiveColor;
+	[SerializeField] private ColorStyleRef negativeColor;
 	[SerializeField] private float fadeInDuration = 0.18f;
 	[SerializeField] private float fadeOutDuration = 0.18f;
 	[SerializeField] private float scaleIn = 0.96f;
@@ -18,7 +23,7 @@ public class UIGlobalNotificationView : UIBaseElement
 
 	private Sequence sequence;
 
-	public async UniTask PlayAsync(string message, float holdSeconds)
+	public async UniTask PlayAsync(string message, float holdSeconds, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(message))
 		{
@@ -31,6 +36,7 @@ public class UIGlobalNotificationView : UIBaseElement
 		}
 
 		messageText.text = message;
+		ApplyToneColor(isNegative);
 		if (backgroundSizer)
 		{
 			backgroundSizer.Refresh();
@@ -71,6 +77,23 @@ public class UIGlobalNotificationView : UIBaseElement
 
 		await sequence.AsyncWaitForCompletion().AsUniTask();
 		Hide();
+	}
+
+	private void ApplyToneColor(bool isNegative)
+	{
+		if (!backgroundImage)
+		{
+			throw new System.InvalidOperationException("Global notification background image is not assigned.");
+		}
+
+		var style = isNegative ? negativeColor : positiveColor;
+		if (string.IsNullOrWhiteSpace(style.Id))
+		{
+			var tone = isNegative ? "Negative" : "Positive";
+			throw new System.InvalidOperationException($"{tone} global notification color style is not assigned.");
+		}
+
+		backgroundImage.color = style.Value;
 	}
 
 	public void Interrupt()

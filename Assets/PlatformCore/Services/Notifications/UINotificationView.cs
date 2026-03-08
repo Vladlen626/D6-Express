@@ -3,18 +3,23 @@ using DG.Tweening;
 using PlatformCore.Services.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using _Main.Scripts.UI;
 
 public class UINotificationView : UIBaseElement
 {
 	[SerializeField] private CanvasGroup canvasGroup;
 	[SerializeField] private RectTransform contentRoot;
 	[SerializeField] private UIBackgroundSizer backgroundSizer;
+	[SerializeField] private Image backgroundImage;
 	[SerializeField] private float initialShift = 50f;
 	[SerializeField] private float smoothDuration = 0.5f;
 	[SerializeField] private float fadeDuration = 0.3f;
 	[SerializeField] private float showDelay = 2f;
 
 	[SerializeField] private TextMeshProUGUI text;
+	[SerializeField] private ColorStyleRef positiveColor;
+	[SerializeField] private ColorStyleRef negativeColor;
 
 	private Vector2 originalPos;
 	private Sequence fullSequence;
@@ -22,13 +27,31 @@ public class UINotificationView : UIBaseElement
 
 	public event Action<UINotificationView> Showed;
 
-	public void SetText(string text)
+	public void SetText(string text, bool isNegative = false)
 	{
 		this.text.text = text;
+		ApplyToneColor(isNegative);
 		if (backgroundSizer)
 		{
 			backgroundSizer.Refresh();
 		}
+	}
+
+	private void ApplyToneColor(bool isNegative)
+	{
+		if (!backgroundImage)
+		{
+			throw new InvalidOperationException("Notification background image is not assigned.");
+		}
+
+		var style = isNegative ? negativeColor : positiveColor;
+		if (string.IsNullOrWhiteSpace(style.Id))
+		{
+			var tone = isNegative ? "Negative" : "Positive";
+			throw new InvalidOperationException($"{tone} notification color style is not assigned.");
+		}
+
+		backgroundImage.color = style.Value;
 	}
 
 	protected override void OnAwake()

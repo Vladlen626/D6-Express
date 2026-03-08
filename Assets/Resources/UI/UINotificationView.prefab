@@ -78,11 +78,16 @@ MonoBehaviour:
   canvasGroup: {fileID: 1506111907810260061}
   contentRoot: {fileID: 6952479268231679773}
   backgroundSizer: {fileID: 3957360456654777299}
+  backgroundImage: {fileID: 1439867890765668510}
   initialShift: 50
   smoothDuration: 0.5
   fadeDuration: 0.3
   showDelay: 2
   text: {fileID: 5572449897106820572}
+  positiveColor:
+    id: GreenLight
+  negativeColor:
+    id: Red
 --- !u!114 &3957360456654777299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +103,7 @@ MonoBehaviour:
   _background: {fileID: 161130961797486512}
   _text: {fileID: 5572449897106820572}
   _layoutElement: {fileID: 3543873495202656704}
-  _maxWidth: 250
+  _maxWidth: 300
   _wrap: 1
   _useLayoutElement: 1
   _autoAddLayoutElement: 1
@@ -197,8 +202,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291488238
-  m_fontColor: {r: 0.93333334, g: 0.9137255, b: 0.7921569, a: 1}
+    rgba: 4293654264
+  m_fontColor: {r: 0.972549, g: 0.9647059, b: 0.92156863, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -414,3 +419,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5822313901381269349, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
   m_PrefabInstance: {fileID: 5976681758432141525}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1439867890765668510 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+  m_PrefabInstance: {fileID: 5976681758432141525}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
