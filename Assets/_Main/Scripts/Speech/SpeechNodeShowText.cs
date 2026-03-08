@@ -1,8 +1,6 @@
-using System;
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
 using PlatformCore.Services.UI;
-using UnityEngine;
 
 // todo: ноды не должны дергать UI напрямую, контроллер должен следить за изменениями в диалоге
 public abstract class SpeechNodeShowText : SpeechNode
@@ -28,7 +26,16 @@ public abstract class SpeechNodeShowText : SpeechNode
 
     private void SpeechLineSkipHandler()
     {
-        Finish();
+        var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
+
+        if (uISpeechView.IsWriting())
+        {
+            uISpeechView.SkipWriter();
+        }
+        else
+        {
+            Finish();
+        }
     }
 }
 
