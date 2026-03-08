@@ -6,7 +6,7 @@ using PlatformCore.Services.UI;
 public abstract class SpeechNodeShowText : SpeechNode
 {
     protected abstract string Text { get; }
-
+    protected virtual bool FinishOnSkip => true; 
     protected override void StartInternal()
     {
         var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
@@ -14,6 +14,7 @@ public abstract class SpeechNodeShowText : SpeechNode
         uISpeechView.SetSpeech(Text);
         Locator.Resolve<IInputService>().OnSpeechLineSkip += SpeechLineSkipHandler;
     }
+
 
     protected override void FinishInternal()
     {
@@ -32,7 +33,7 @@ public abstract class SpeechNodeShowText : SpeechNode
         {
             uISpeechView.SkipWriter();
         }
-        else
+        else if (FinishOnSkip)
         {
             Finish();
         }

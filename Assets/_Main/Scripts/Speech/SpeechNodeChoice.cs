@@ -9,6 +9,8 @@ public class SpeechNodeChoice : SpeechNodeShowTextLine
     public event Action Accepted;
     public event Action Declined;
 
+    protected override bool FinishOnSkip => false;
+
     public SpeechNodeChoice(string text) : base(text)
     {
     }
@@ -18,7 +20,6 @@ public class SpeechNodeChoice : SpeechNodeShowTextLine
         base.StartInternal();
 
         var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
-        uISpeechView.SetSpeakerName(Speech.Target.GetComponent<CharacterView>().CharacterName);
         uISpeechView.ShowChoiceOptions();
 
         Locator.Resolve<IInputService>().OnSpeechAccept += AcceptSelected;
@@ -38,15 +39,32 @@ public class SpeechNodeChoice : SpeechNodeShowTextLine
 
     private void AcceptSelected()
     {
-        Accepted?.Invoke();
-        Finish();
+        var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
 
+        if (uISpeechView.IsWriting())
+        {
+            uISpeechView.SkipWriter();
+        }
+        else
+        {
+            Accepted?.Invoke();
+            Finish();
+        }
     }
 
     private void DeclineSelected()
     {
-        Declined?.Invoke();
-        Finish();
+        var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
+
+        if (uISpeechView.IsWriting())
+        {
+            uISpeechView.SkipWriter();
+        }
+        else
+        {
+            Declined?.Invoke();
+            Finish();
+        }
     }
 
     public SpeechNodeChoice OnAccepted(SpeechNode node)
