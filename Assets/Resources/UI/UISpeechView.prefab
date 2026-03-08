@@ -592,6 +592,7 @@ MonoBehaviour:
   hint: {fileID: 4423022393910331482}
   speechText: {fileID: 3236615817706182457}
   speakerNameText: {fileID: 3897434018001795286}
+  TMPWriter: {fileID: 2831020926287806661}
   speakerNameSizer: {fileID: 6056916311325688768}
 --- !u!225 &1258980316925833932
 CanvasGroup:

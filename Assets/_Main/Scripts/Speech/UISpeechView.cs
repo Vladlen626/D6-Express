@@ -1,4 +1,5 @@
 using PlatformCore.Services.UI;
+using TMPEffects.Components;
 using TMPro;
 using UnityEngine;
 
@@ -18,6 +19,9 @@ public class UISpeechView : UIBaseElement
 
 	[SerializeField]
 	private TextMeshProUGUI speakerNameText;
+
+	[SerializeField]
+	private TMPWriter TMPWriter;
 
 	[SerializeField]
 	private UIBackgroundSizer speakerNameSizer;
@@ -50,5 +54,15 @@ public class UISpeechView : UIBaseElement
 	{
 		choiceOptions.SetActive(false);
 		hint.SetActive(true);
+	}
+
+	public bool IsWriting()
+	{
+		return TMPWriter.IsWriting;
+	}
+
+	public void SkipWriter(bool showAnimation = true)
+	{
+		TMPWriter.SkipWriter(showAnimation);
 	}
 }
