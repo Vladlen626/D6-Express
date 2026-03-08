@@ -49,6 +49,6 @@ public class UISpeechView : UIBaseElement
 	public void HideChoiceOptions()
 	{
 		choiceOptions.SetActive(false);
-		choiceOptions.SetActive(true);
+		hint.SetActive(true);
 	}
 }
