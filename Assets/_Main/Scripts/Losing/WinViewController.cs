@@ -37,10 +37,6 @@ public class WinViewController : BaseContextController<UIEndView>, IGameStateCha
 	{
 		base.OnActivate();
 
-		_context.SetTitle(textsConfig.texts["end_header"]);
-		_context.SetMessage(textsConfig.texts["win_header"]);
-		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
-
 		_context.Hide();
 
 		_context.ExitButtonClicked += OnExitButtonClickedHandler;
@@ -56,6 +52,13 @@ public class WinViewController : BaseContextController<UIEndView>, IGameStateCha
 
 	private void ShowContext()
 	{
+		_context.SetTitle(textsConfig.texts["end_header"]);
+		_context.SetMessage(textsConfig.texts["win_header"]);
+		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
+		_context.SetWinImage(true);
+		_context.SetLoseImage(false);
+		_context.SetPostcardColor(_context.colorWin);
+
 		_context.Show();
 	}
 
