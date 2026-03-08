@@ -38,10 +38,6 @@ public class LoseViewController : BaseContextController<UIEndView>, IGameStateCh
 	{
 		base.OnActivate();
 
-		_context.SetTitle(textsConfig.texts["end_header"]);
-		_context.SetMessage(textsConfig.texts["lose_header"]);
-		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
-
 		_context.Hide();
 
 		_context.ExitButtonClicked += OnExitButtonClickedHandler;
@@ -57,6 +53,13 @@ public class LoseViewController : BaseContextController<UIEndView>, IGameStateCh
 
 	private void ShowContext()
 	{
+		_context.SetTitle(textsConfig.texts["end_header"]);
+		_context.SetMessage(textsConfig.texts["lose_header"]);
+		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
+		_context.SetWinImage(false);
+		_context.SetLoseImage(true);
+		_context.SetPostcardColor(_context.colorLose);
+
 		_context.Show();
 	}
 

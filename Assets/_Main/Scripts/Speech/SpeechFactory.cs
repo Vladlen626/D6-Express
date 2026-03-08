@@ -76,22 +76,29 @@ public static class SpeechFactory
 
         var speechNodeHasNoMoney = Say(speechBuyTicket, textsConfig.texts["conductor_enter_negative"]);
 
-        var speechNodeConditional = new SpeechNodeConditional(
-                () => playerModel.InventoryModel.CashCount >= run.TicketPrice)
-            .OnTrue(speechNodeHasMoney)
-            .OnFalse(speechNodeHasNoMoney)
-            .After(speechNodeConductorSaysHi)
-            .Init(speechBuyTicket);
+        var speechNodeConditional = new SpeechNodeConditional(() => playerModel.InventoryModel.CashCount >= run.TicketPrice)
+        .OnTrue(speechNodeHasMoney)
+        .OnFalse(speechNodeHasNoMoney)
+        .After(speechNodeConductorSaysHi)
+        .Init(speechBuyTicket);
+
+        var speechNodeConductorSaysHint = Say(speechBuyTicket, textsConfig.texts["conductor_enter_hint"]);
 
         var speechNodeMoveToTrain = new SpeechNodeDo(() =>
         {
             game.RequestSetLocation(Location.TRAIN);
             playerModel.InventoryModel.TakeCash(run.TicketPrice);
         })
+        .After(speechNodeConductorSaysHint)
+        .Init(speechBuyTicket);
+
+        var speechNodeShouldHint = new SpeechNodeConditional(() => run.Level == 0 && run.Day == 0)
+        .OnTrue(speechNodeConductorSaysHint)
+        .OnFalse(speechNodeMoveToTrain)
         .Init(speechBuyTicket);
 
         var speechNodeChoiceEnter = new SpeechNodeChoice(textsConfig.texts["choice_enter_train"])
-        .OnAccepted(speechNodeMoveToTrain)
+        .OnAccepted(speechNodeShouldHint)
         .After(speechNodeHasMoney)
         .Init(speechBuyTicket);
 
