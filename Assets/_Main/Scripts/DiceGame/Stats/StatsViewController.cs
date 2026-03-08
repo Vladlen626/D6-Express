@@ -40,6 +40,7 @@ public class StatsViewController : BaseContextController<UIStatsView>, IGameStat
                 {
                     var station = stationConfigs[run.StationId];
                     _context.SetMessage(station.name);
+                    _context.SetDaysRemaningText("days_progress", (run.DaysPerLevel - run.Day).ToString());
                 }
                 else
                 {

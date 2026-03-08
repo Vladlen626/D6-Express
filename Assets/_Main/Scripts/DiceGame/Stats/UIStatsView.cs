@@ -12,6 +12,8 @@ public class UIStatsView : UIBaseElement
 
 	[SerializeField] private Button startButton;
 
+	[SerializeField] private LocalizedText daysRemaining;
+
 	public UIModifiersView UIModifiersView => uIModifiersView;
 
 	public event Action StartButtonClicked;
@@ -33,4 +35,9 @@ public class UIStatsView : UIBaseElement
 	{
 		locationName.text = name;
 	}
+
+    public void SetDaysRemaningText(string id, params string[] args)
+    {
+        daysRemaining.SetText(id, args);
+    }
 }
