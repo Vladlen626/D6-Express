@@ -30,9 +30,9 @@ namespace _Main.Scripts.Editor
 				dropdown.Show(buttonRect);
 			}
 
-			var style = library.GetStyle(styleIdProp.stringValue);
-			if (style != null)
+			if (!string.IsNullOrWhiteSpace(styleIdProp.stringValue) && library.ContainsId(styleIdProp.stringValue))
 			{
+				var style = library.GetStyle(styleIdProp.stringValue);
 				var colorRect = new Rect(buttonRect.xMax - 18f, buttonRect.y + 2f, 16f, buttonRect.height - 4f);
 				EditorGUI.DrawRect(colorRect, style.Color);
 			}

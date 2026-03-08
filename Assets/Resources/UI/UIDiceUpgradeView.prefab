@@ -73,13 +73,14 @@ MonoBehaviour:
   bonusValueText: {fileID: 5848257884018234594}
   rouletteRoot: {fileID: 3300635220044063767}
   rouletteRadius: 145
-  rouletteStepDuration: 0.09
   positiveChangeColor:
     id: GreenLight
   negativeChangeColor:
     id: Red
   neutralChangeColor:
     id: TooltipBg
+  selectedVariantHighlightColor:
+    id: GreenBlue
 --- !u!1 &2731368073997505013
 GameObject:
   m_ObjectHideFlags: 0

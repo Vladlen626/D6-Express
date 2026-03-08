@@ -43,9 +43,6 @@ namespace _Main.Scripts.Dice
 		private bool isInAnimation;
 		private float visualScale = 1f;
 		private Vector3 baseModelScale = Vector3.one;
-		private Vector3 upgradeRollStartPosition = Vector3.zero;
-		private Quaternion upgradeRollStartRotation = Quaternion.identity;
-		private Tween upgradeHoverTween;
 		private Tween upgradeRotateTween;
 		private Sequence upgradeStopSequence;
 
@@ -293,29 +290,19 @@ namespace _Main.Scripts.Dice
 			}
 
 			KillUpgradeSpinSequence();
-			upgradeRollStartPosition = transform.position;
-			upgradeRollStartRotation = transform.rotation;
 			isInAnimation = true;
 
-			const float hoverHeight = 0.2f;
-			const float hoverDuration = 0.24f;
-			const float rotateDuration = 0.35f;
-
-			var hoverTarget = upgradeRollStartPosition + Vector3.up * hoverHeight;
+			const float rotateDuration = 0.45f;
 
 			_audioService?.PlaySoundAt(SoundNames.DiceMove, transform.position);
 
-			upgradeHoverTween = transform.DOMoveY(hoverTarget.y, hoverDuration)
-				.SetEase(Ease.InOutSine)
-				.SetLoops(-1, LoopType.Yoyo);
-
-			upgradeRotateTween = transform.DORotate(new Vector3(560f, 680f, 720f), rotateDuration, RotateMode.FastBeyond360)
+			upgradeRotateTween = transform.DOLocalRotate(new Vector3(560f, 680f, 720f), rotateDuration, RotateMode.FastBeyond360)
 				.SetRelative(true)
 				.SetEase(Ease.Linear)
 				.SetLoops(-1, LoopType.Restart);
 		}
 
-		public void StopUpgradeSpin(int value)
+		public async UniTask StopUpgradeSpinAsync(int value)
 		{
 			if (!model)
 			{
@@ -324,13 +311,10 @@ namespace _Main.Scripts.Dice
 
 			if (!isInAnimation)
 			{
+				transform.localPosition = Vector3.zero;
+				transform.localRotation = Quaternion.identity;
 				SetRotation(value);
 				return;
-			}
-
-			if (upgradeHoverTween != null && upgradeHoverTween.IsActive())
-			{
-				upgradeHoverTween.Kill();
 			}
 
 			if (upgradeRotateTween != null && upgradeRotateTween.IsActive())
@@ -338,26 +322,26 @@ namespace _Main.Scripts.Dice
 				upgradeRotateTween.Kill();
 			}
 
-			upgradeHoverTween = null;
 			upgradeRotateTween = null;
 
-			const float dropDuration = 0.25f;
+			const float settleDuration = 0.2f;
 			var extraRotation = new Vector3(
 				Random.Range(260f, 460f),
 				Random.Range(340f, 640f),
 				Random.Range(300f, 560f));
 
 			upgradeStopSequence = DOTween.Sequence()
-				.Append(transform.DOMove(upgradeRollStartPosition, dropDuration).SetEase(Ease.InQuad))
-				.Join(transform.DORotate(extraRotation, dropDuration, RotateMode.FastBeyond360).SetRelative(true).SetEase(Ease.Linear))
+				.Append(transform.DOLocalRotate(extraRotation, settleDuration, RotateMode.FastBeyond360).SetRelative(true).SetEase(Ease.OutQuad))
 				.OnComplete(() =>
 				{
-					transform.position = upgradeRollStartPosition;
-					transform.rotation = upgradeRollStartRotation;
+					transform.localPosition = Vector3.zero;
+					transform.localRotation = Quaternion.identity;
 					SetRotation(value);
 					isInAnimation = false;
 					_audioService?.PlaySoundAt(SoundNames.DiceMove, transform.position);
 				});
+
+			await upgradeStopSequence.AsyncWaitForCompletion().AsUniTask();
 		}
 
 		// ReSharper disable Unity.PerformanceAnalysis
@@ -394,16 +378,11 @@ namespace _Main.Scripts.Dice
 				.Join(transform.DORotate(new Vector3(0f, Random.Range(0f, 360f), 0f), moveDownTime, RotateMode.FastBeyond360)
 					.SetEase(Ease.Linear));
 
-			await seq.AsyncWaitForCompletion().AsUniTask();;
+			await seq.AsyncWaitForCompletion().AsUniTask();
 		}
 
 		private void KillUpgradeSpinSequence()
 		{
-			if (upgradeHoverTween != null && upgradeHoverTween.IsActive())
-			{
-				upgradeHoverTween.Kill();
-			}
-
 			if (upgradeRotateTween != null && upgradeRotateTween.IsActive())
 			{
 				upgradeRotateTween.Kill();
@@ -414,12 +393,6 @@ namespace _Main.Scripts.Dice
 				upgradeStopSequence.Kill();
 			}
 
-			if (model)
-			{
-				model.DOKill();
-			}
-
-			upgradeHoverTween = null;
 			upgradeRotateTween = null;
 			upgradeStopSequence = null;
 			isInAnimation = false;

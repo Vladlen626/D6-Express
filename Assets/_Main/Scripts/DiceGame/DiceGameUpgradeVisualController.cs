@@ -65,6 +65,7 @@ namespace _Main.Scripts.Dice
 			{
 				upgradeController.UpgradeApplied -= OnUpgradeApplied;
 				upgradeController.HideUpgradeDie();
+				upgradeController.RestoreGameplayDiceAfterUpgrade();
 			}
 		}
 
@@ -80,28 +81,39 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask ShowUpgradeAsync(DiceUpgradeVisualData data)
 		{
-			_context.SetData(data);
-			_context.Show();
-
-			int current = ++showVersion;
-			await UniTask.Delay(300);
-			await WaitForClickAsync();
-
-			if (current != showVersion || !_context)
+			upgradeController?.HideGameplayDiceForUpgrade();
+			try
 			{
-				return;
+				_context.SetData(data);
+				_context.Show();
+
+				int current = ++showVersion;
+				await UniTask.Delay(300);
+				await WaitForClickAsync();
+
+				if (current != showVersion || !_context)
+				{
+					return;
+				}
+
+				if (upgradeController != null)
+				{
+					await upgradeController.StopUpgradeRollAsync(data.RolledFace);
+				}
+				_context.ApplyRollResult();
+
+				await UniTask.Delay(120);
+				await WaitForClickAsync();
+
+				if (current == showVersion && _context)
+				{
+					upgradeController?.HideUpgradeDie();
+					_context.Hide();
+				}
 			}
-
-			upgradeController?.StopUpgradeRoll(data.RolledFace);
-			_context.ApplyRollResult();
-
-			await UniTask.Delay(120);
-			await WaitForClickAsync();
-
-			if (current == showVersion && _context)
+			finally
 			{
-				upgradeController?.HideUpgradeDie();
-				_context.Hide();
+				upgradeController?.RestoreGameplayDiceAfterUpgrade();
 			}
 		}
 

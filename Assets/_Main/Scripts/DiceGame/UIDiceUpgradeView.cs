@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using PlatformCore.Services.UI;
@@ -10,7 +11,6 @@ namespace _Main.Scripts.Dice
 	public class UIDiceUpgradeView : UIBaseElement
 	{
 		private const float DefaultValueAnimDuration = 1.4f;
-		private const float DefaultRouletteStepDuration = 0.09f;
 		private const float DefaultRouletteRadius = 88f;
 
 		[SerializeField]
@@ -35,9 +35,6 @@ namespace _Main.Scripts.Dice
 		private float rouletteRadius = DefaultRouletteRadius;
 
 		[SerializeField]
-		private float rouletteStepDuration = DefaultRouletteStepDuration;
-
-		[SerializeField]
 		private ColorStyleRef positiveChangeColor;
 
 		[SerializeField]
@@ -46,13 +43,15 @@ namespace _Main.Scripts.Dice
 		[SerializeField]
 		private ColorStyleRef neutralChangeColor;
 
+		[SerializeField]
+		private ColorStyleRef selectedVariantHighlightColor;
+
 		private readonly List<UIDiceUpgradeVariantView> spawnedVariants = new();
 		private readonly List<DiceUpgradeRouletteSlotData> visibleSlots = new();
 
 		private Tween minTween;
 		private Tween maxTween;
 		private Tween bonusTween;
-		private Tween rouletteTween;
 		private float minValue;
 		private float maxValue;
 		private float bonusValue;
@@ -67,10 +66,8 @@ namespace _Main.Scripts.Dice
 		private string bonusLabel;
 		private string continueHintText;
 		private string stopHintText;
-		private int activeRouletteVariantIndex = -1;
 		private int selectedRouletteVariantIndex = -1;
 		private bool isRollResolved;
-		private bool warnedMissingPrefab;
 		private UIDiceUpgradeVariantView rouletteVariantPrefab;
 		private bool cachedBaseColors;
 		private Color minBaseColor;
@@ -78,14 +75,11 @@ namespace _Main.Scripts.Dice
 		private Color bonusBaseColor;
 		private DiceUpgradeAffectedStat selectedAffectedStat = DiceUpgradeAffectedStat.None;
 		private int selectedDeltaValue;
+		private int rolledFace;
 
 		public void SetRouletteVariantPrefab(UIDiceUpgradeVariantView prefab)
 		{
 			rouletteVariantPrefab = prefab;
-			if (rouletteVariantPrefab)
-			{
-				warnedMissingPrefab = false;
-			}
 		}
 
 		public void SetData(DiceUpgradeVisualData data)
@@ -115,8 +109,8 @@ namespace _Main.Scripts.Dice
 			isRollResolved = false;
 			selectedAffectedStat = DiceUpgradeAffectedStat.None;
 			selectedDeltaValue = 0;
-			activeRouletteVariantIndex = -1;
 			selectedRouletteVariantIndex = -1;
+			rolledFace = data.RolledFace;
 
 			minValue = data.BeforeMin;
 			maxValue = data.BeforeMax;
@@ -127,11 +121,11 @@ namespace _Main.Scripts.Dice
 
 			RebuildVisibleSlots(data.RouletteSlots);
 			RebuildRouletteVariants();
-			selectedRouletteVariantIndex = FindVariantIndexByFace(data.RolledFace);
+			selectedRouletteVariantIndex = GetVariantIndexFromFace(data.RolledFace, visibleSlots.Count);
+			LogFaceDebug("SetData");
 
 			RefreshRouletteVisuals();
 			RefreshStatTexts();
-			StartRouletteAnimation();
 		}
 
 		public void ApplyRollResult()
@@ -143,7 +137,7 @@ namespace _Main.Scripts.Dice
 
 			isRollResolved = true;
 			UpdateResolvedSlotState();
-			StopRouletteAnimation();
+			LogFaceDebug("ApplyRollResult");
 			RefreshRouletteVisuals();
 			RefreshStatTexts();
 
@@ -209,45 +203,6 @@ namespace _Main.Scripts.Dice
 			RefreshStatTexts();
 		}
 
-		private void StartRouletteAnimation()
-		{
-			StopRouletteAnimation();
-
-			if (spawnedVariants.Count == 0)
-			{
-				return;
-			}
-
-			AdvanceRouletteHighlight();
-
-			var step = Mathf.Max(0.02f, rouletteStepDuration);
-			rouletteTween = DOTween.Sequence()
-				.AppendInterval(step)
-				.SetLoops(-1, LoopType.Restart)
-				.OnStepComplete(AdvanceRouletteHighlight);
-		}
-
-		private void StopRouletteAnimation()
-		{
-			if (rouletteTween != null && rouletteTween.IsActive())
-			{
-				rouletteTween.Kill();
-			}
-
-			rouletteTween = null;
-		}
-
-		private void AdvanceRouletteHighlight()
-		{
-			if (spawnedVariants.Count == 0)
-			{
-				return;
-			}
-
-			activeRouletteVariantIndex = (activeRouletteVariantIndex + 1) % spawnedVariants.Count;
-			RefreshRouletteVisuals();
-		}
-
 		private void RefreshRouletteVisuals()
 		{
 			for (int i = 0; i < spawnedVariants.Count; i++)
@@ -264,12 +219,6 @@ namespace _Main.Scripts.Dice
 					continue;
 				}
 
-				if (!isRollResolved && i == activeRouletteVariantIndex)
-				{
-					variant.SetVisualState(DiceUpgradeVariantVisualState.Highlighted);
-					continue;
-				}
-
 				variant.SetVisualState(DiceUpgradeVariantVisualState.Idle);
 			}
 		}
@@ -277,24 +226,32 @@ namespace _Main.Scripts.Dice
 		private void RebuildVisibleSlots(DiceUpgradeRouletteSlotData[] slotData)
 		{
 			visibleSlots.Clear();
+			var orderedSlots = new DiceUpgradeRouletteSlotData[6];
+			for (int i = 0; i < orderedSlots.Length; i++)
+			{
+				var face = i + 1;
+				orderedSlots[i] = new DiceUpgradeRouletteSlotData(face, DiceUpgradeAffectedStat.Bonus, 0, bonusLabel);
+			}
+
 			if (slotData == null || slotData.Length == 0)
 			{
-				for (int face = 1; face <= 6; face++)
-				{
-					visibleSlots.Add(new DiceUpgradeRouletteSlotData(
-						face,
-						DiceUpgradeAffectedStat.Bonus,
-						0,
-						bonusLabel));
-				}
-
+				visibleSlots.AddRange(orderedSlots);
 				return;
 			}
 
 			for (int i = 0; i < slotData.Length; i++)
 			{
-				visibleSlots.Add(slotData[i]);
+				var slot = slotData[i];
+				var index = GetVariantIndexFromFace(slot.Face, orderedSlots.Length);
+				if (index < 0)
+				{
+					continue;
+				}
+
+				orderedSlots[index] = slot;
 			}
+
+			visibleSlots.AddRange(orderedSlots);
 		}
 
 		private void RebuildRouletteVariants()
@@ -307,19 +264,17 @@ namespace _Main.Scripts.Dice
 
 			if (!rouletteRoot)
 			{
-				Debug.LogWarning("[UIDiceUpgradeView] Roulette root is not assigned.");
-				return;
+				throw new InvalidOperationException("Roulette root is not assigned.");
 			}
 
 			if (!rouletteVariantPrefab)
 			{
-				if (!warnedMissingPrefab)
-				{
-					Debug.LogWarning("[UIDiceUpgradeView] Roulette variant prefab is not provided.");
-					warnedMissingPrefab = true;
-				}
+				throw new InvalidOperationException("Roulette variant prefab is not assigned.");
+			}
 
-				return;
+			if (string.IsNullOrWhiteSpace(selectedVariantHighlightColor.Id))
+			{
+				throw new InvalidOperationException("Selected variant highlight color style is not assigned.");
 			}
 
 			var count = visibleSlots.Count;
@@ -329,6 +284,7 @@ namespace _Main.Scripts.Dice
 				var instance = Instantiate(rouletteVariantPrefab, rouletteRoot);
 				instance.gameObject.SetActive(true);
 				instance.SetBackgroundColorStyles(positiveChangeColor, negativeChangeColor, neutralChangeColor);
+				instance.SetSelectedHighlightStyle(selectedVariantHighlightColor);
 				instance.SetData(visibleSlots[i]);
 
 				var rect = instance.GetComponent<RectTransform>();
@@ -341,6 +297,7 @@ namespace _Main.Scripts.Dice
 					rect.localScale = Vector3.one;
 				}
 
+				instance.StartFloating(i * 0.18f);
 				spawnedVariants.Add(instance);
 			}
 		}
@@ -359,19 +316,6 @@ namespace _Main.Scripts.Dice
 			spawnedVariants.Clear();
 		}
 
-		private int FindVariantIndexByFace(int face)
-		{
-			for (int i = 0; i < visibleSlots.Count; i++)
-			{
-				if (visibleSlots[i].Face == face)
-				{
-					return i;
-				}
-			}
-
-			return -1;
-		}
-
 		private void UpdateResolvedSlotState()
 		{
 			if (selectedRouletteVariantIndex < 0 || selectedRouletteVariantIndex >= visibleSlots.Count)
@@ -384,6 +328,24 @@ namespace _Main.Scripts.Dice
 			var slot = visibleSlots[selectedRouletteVariantIndex];
 			selectedAffectedStat = slot.AffectedStat;
 			selectedDeltaValue = slot.DeltaValue;
+		}
+
+		private void LogFaceDebug(string stage)
+		{
+			if (selectedRouletteVariantIndex < 0 || selectedRouletteVariantIndex >= visibleSlots.Count)
+			{
+				Debug.LogWarning($"[UpgradeDebug:{stage}] rolledFace={rolledFace}, selectedCircleFace=invalid, selectedIndex={selectedRouletteVariantIndex}, slotsCount={visibleSlots.Count}");
+				return;
+			}
+
+			var slot = visibleSlots[selectedRouletteVariantIndex];
+			Debug.Log($"[UpgradeDebug:{stage}] rolledFace={rolledFace}, selectedCircleFace={slot.Face}, selectedIndex={selectedRouletteVariantIndex}, stat={slot.AffectedStat}, delta={slot.DeltaValue}");
+		}
+
+		private static int GetVariantIndexFromFace(int face, int count)
+		{
+			var index = face - 1;
+			return index >= 0 && index < count ? index : -1;
 		}
 
 		private void RefreshStatTexts()
@@ -446,7 +408,6 @@ namespace _Main.Scripts.Dice
 		private void KillTweens()
 		{
 			KillValueTweens();
-			StopRouletteAnimation();
 		}
 
 		private void KillValueTweens()

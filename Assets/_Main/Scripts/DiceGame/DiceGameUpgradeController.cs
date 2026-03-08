@@ -111,12 +111,14 @@ namespace _Main.Scripts.Dice
 			diceGameModel.ShowAllDiceGameModels();
 		}
 
-		public void StopUpgradeRoll(int rolledFace)
+		public async UniTask StopUpgradeRollAsync(int rolledFace)
 		{
-			if (upgradeDiceView)
+			if (!upgradeDiceView)
 			{
-				upgradeDiceView.StopUpgradeSpin(rolledFace);
+				return;
 			}
+
+			await upgradeDiceView.StopUpgradeSpinAsync(rolledFace);
 		}
 
 		public async UniTask<bool> TryTriggerUpgradeAsync(DiceCombinationResult combinationResult)
@@ -194,10 +196,12 @@ namespace _Main.Scripts.Dice
 			int rolledFace = await RollUpgradeDieAsync();
 
 			var before = activeScoringService.GetComboUpgradeState(comboId);
-			var applied = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run) != null;
+			var outcome = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
+			var applied = outcome != null;
 			var after = activeScoringService.GetComboUpgradeState(comboId);
 			if (applied && before != null && after != null)
 			{
+				Debug.Log($"[UpgradeDebug:ApplyOutcome] combo={comboId}, rolledFace={rolledFace}, outcomeFace={outcome.Face}");
 				var summary = $"Rolled {rolledFace}: Min {before.Min}->{after.Min}, Max {before.Max}->{after.Max}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
 				logger?.Log($"[Upgrade:{comboId}] {summary} via upgrade die");
 				var title = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeComboOfAKind);
@@ -214,7 +218,7 @@ namespace _Main.Scripts.Dice
 					bonusLabel,
 					hintText,
 					stopHintText,
-					rolledFace,
+					outcome.Face,
 					before.Min,
 					before.Max,
 					before.ScoreBonus,
@@ -264,10 +268,12 @@ namespace _Main.Scripts.Dice
 			int rolledFace = await RollUpgradeDieAsync();
 
 			var before = activeScoringService.GetStraightState();
-			var applied = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run) != null;
+			var outcome = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
+			var applied = outcome != null;
 			var after = activeScoringService.GetStraightState();
 			if (applied)
 			{
+				Debug.Log($"[UpgradeDebug:ApplyOutcome] combo=straight, rolledFace={rolledFace}, outcomeFace={outcome.Face}");
 				var summary = $"Rolled {rolledFace}: Min {before.MinLen}->{after.MinLen}, Max {before.MaxLen}->{after.MaxLen}, Bonus {before.ScoreBonus}->{after.ScoreBonus}";
 				logger?.Log($"[Upgrade:straight] {summary} via upgrade die");
 				var title = localizationService.GetLocalized(GlobalConstants.Localization.DiceUpgradeComboStraight);
@@ -284,7 +290,7 @@ namespace _Main.Scripts.Dice
 					bonusLabel,
 					hintText,
 					stopHintText,
-					rolledFace,
+					outcome.Face,
 					before.MinLen,
 					before.MaxLen,
 					before.ScoreBonus,
@@ -333,8 +339,9 @@ namespace _Main.Scripts.Dice
 			var upgradeDicePos = UpgradeDicePos;
 			if (upgradeDicePos)
 			{
-				view.transform.position = upgradeDicePos.position;
-				view.transform.rotation = upgradeDicePos.rotation;
+				view.transform.SetParent(upgradeDicePos, false);
+				view.transform.localPosition = Vector3.zero;
+				view.transform.localRotation = Quaternion.identity;
 			}
 
 			view.transform.localScale = Vector3.one;

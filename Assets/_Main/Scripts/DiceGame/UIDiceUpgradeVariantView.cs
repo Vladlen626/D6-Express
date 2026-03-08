@@ -16,11 +16,10 @@ namespace _Main.Scripts.Dice
 	public class UIDiceUpgradeVariantView : MonoBehaviour
 	{
 		private const float IdleScale = 1f;
-		private const float HighlightedScale = 1.02f;
 		private const float SelectedScale = 1.05f;
-		private const float HighlightWaveScaleMultiplier = 1.12f;
-		private const float HighlightWaveDuration = 0.12f;
 		private const float SettleDuration = 0.08f;
+		private const float FloatingAmplitude = 4f;
+		private const float FloatingDuration = 2.6f;
 
 		[SerializeField]
 		private RectTransform root;
@@ -37,24 +36,23 @@ namespace _Main.Scripts.Dice
 		[SerializeField]
 		private Image deltaBackground;
 
+		[SerializeField]
+		private Image selectedHighlightBackground;
+
 		private ColorStyleRef positiveBackgroundColor;
 		private ColorStyleRef negativeBackgroundColor;
 		private ColorStyleRef neutralBackgroundColor;
+		private ColorStyleRef selectedHighlightColor;
 		private bool hasBackgroundStyleOverrides;
-
-		private bool cachedBaseColors;
-		private Color baseDeltaBackgroundColor;
+		private bool hasSelectedHighlightStyle;
 
 		private Tween scaleTween;
+		private Tween floatingTween;
+		private Vector2 baseAnchoredPosition;
 		private int face;
 
 		public int Face => face;
 		public bool IsValid => root && faceText && affectedStatText && deltaValueText;
-
-		private void Awake()
-		{
-			CacheBaseColors();
-		}
 
 		public void SetData(DiceUpgradeRouletteSlotData slotData)
 		{
@@ -89,20 +87,44 @@ namespace _Main.Scripts.Dice
 			hasBackgroundStyleOverrides = true;
 		}
 
+		public void SetSelectedHighlightStyle(ColorStyleRef selected)
+		{
+			selectedHighlightColor = selected;
+			hasSelectedHighlightStyle = true;
+		}
+
 		public void SetVisualState(DiceUpgradeVariantVisualState state)
 		{
+			ApplySelectionHighlight(state == DiceUpgradeVariantVisualState.Selected);
 			switch (state)
 			{
 				case DiceUpgradeVariantVisualState.Selected:
 					AnimateScale(SelectedScale);
 					break;
-				case DiceUpgradeVariantVisualState.Highlighted:
-					PlayHighlightWave();
-					break;
 				default:
 					AnimateScale(IdleScale);
 					break;
 			}
+		}
+
+		public void StartFloating(float phaseDelay)
+		{
+			if (!root)
+			{
+				return;
+			}
+
+			if (floatingTween != null && floatingTween.IsActive())
+			{
+				floatingTween.Kill();
+			}
+
+			baseAnchoredPosition = root.anchoredPosition;
+			root.anchoredPosition = baseAnchoredPosition;
+			floatingTween = root.DOAnchorPosY(baseAnchoredPosition.y + FloatingAmplitude, FloatingDuration)
+				.SetEase(Ease.InOutSine)
+				.SetLoops(-1, LoopType.Yoyo)
+				.SetDelay(Mathf.Max(0f, phaseDelay));
 		}
 
 		private void OnDisable()
@@ -113,9 +135,20 @@ namespace _Main.Scripts.Dice
 			}
 
 			scaleTween = null;
+			if (floatingTween != null && floatingTween.IsActive())
+			{
+				floatingTween.Kill();
+			}
+			floatingTween = null;
 			if (root)
 			{
+				root.anchoredPosition = baseAnchoredPosition;
 				root.localScale = Vector3.one;
+			}
+
+			if (selectedHighlightBackground)
+			{
+				selectedHighlightBackground.gameObject.SetActive(false);
 			}
 		}
 
@@ -123,20 +156,9 @@ namespace _Main.Scripts.Dice
 		{
 			if (!deltaBackground)
 			{
-				return;
+				throw new System.InvalidOperationException("Delta background image is not assigned.");
 			}
 			deltaBackground.color = ResolveSignedColor(deltaValue);
-		}
-
-		private void CacheBaseColors()
-		{
-			if (cachedBaseColors)
-			{
-				return;
-			}
-
-			baseDeltaBackgroundColor = deltaBackground ? deltaBackground.color : Color.white;
-			cachedBaseColors = true;
 		}
 
 		private Color ResolveSignedColor(int delta)
@@ -147,6 +169,31 @@ namespace _Main.Scripts.Dice
 			}
 
 			return delta > 0 ? positiveBackgroundColor.Value : delta < 0 ? negativeBackgroundColor.Value : neutralBackgroundColor.Value;
+		}
+
+		private void ApplySelectionHighlight(bool isSelected)
+		{
+			if (!isSelected)
+			{
+				if (selectedHighlightBackground)
+				{
+					selectedHighlightBackground.gameObject.SetActive(false);
+				}
+				return;
+			}
+
+			if (!selectedHighlightBackground)
+			{
+				throw new System.InvalidOperationException("Selected highlight background is not assigned.");
+			}
+
+			if (!hasSelectedHighlightStyle)
+			{
+				throw new System.InvalidOperationException("Selected highlight color style is not assigned.");
+			}
+
+			selectedHighlightBackground.color = selectedHighlightColor.Value;
+			selectedHighlightBackground.gameObject.SetActive(true);
 		}
 
 		private void AnimateScale(float targetScale)
@@ -163,27 +210,6 @@ namespace _Main.Scripts.Dice
 
 			var safeScale = Mathf.Max(0.01f, targetScale);
 			scaleTween = root.DOScale(Vector3.one * safeScale, SettleDuration).SetEase(Ease.OutSine);
-		}
-
-		private void PlayHighlightWave()
-		{
-			if (!root)
-			{
-				return;
-			}
-
-			if (scaleTween != null && scaleTween.IsActive())
-			{
-				scaleTween.Kill();
-			}
-
-			var baseScale = HighlightedScale;
-			var peakScale = baseScale * HighlightWaveScaleMultiplier;
-			root.localScale = Vector3.one * baseScale;
-
-			scaleTween = DOTween.Sequence()
-				.Append(root.DOScale(Vector3.one * peakScale, HighlightWaveDuration * 0.5f).SetEase(Ease.OutSine))
-				.Append(root.DOScale(Vector3.one * baseScale, HighlightWaveDuration * 0.5f).SetEase(Ease.InSine));
 		}
 
 		private static string GetAffectedLabel(DiceUpgradeRouletteSlotData slotData)
