@@ -1,0 +1,11 @@
+{
+  "name": "PlatformCore.Editor",
+  "references": [
+    "PlatformCore",
+    "Unity.TextMeshPro"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "autoReferenced": true
+}

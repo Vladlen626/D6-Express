@@ -19,6 +19,7 @@ public class GlobalNotificationService : BaseAsyncService
 	private class ToastRequest
 	{
 		public string Message;
+		public bool IsNegative;
 		public UniTaskCompletionSource Completion;
 	}
 
@@ -33,16 +34,16 @@ public class GlobalNotificationService : BaseAsyncService
 	/// Shows a localized banner immediately. Duration is controlled by <paramref name="holdSeconds"/>
 	/// plus the animation timings inside <c>UIGlobalNotificationView</c>.
 	/// </summary>
-	public void ShowBanner(string id, float holdSeconds = 0.9f)
+	public void ShowBanner(string id, float holdSeconds = 0.9f, bool isNegative = false)
 	{
-		ShowBannerAsync(id, holdSeconds).Forget();
+		ShowBannerAsync(id, holdSeconds, isNegative).Forget();
 	}
 
 	/// <summary>
 	/// Shows a localized banner and awaits its completion. Duration is controlled by <paramref name="holdSeconds"/>
 	/// plus the animation timings inside <c>UIGlobalNotificationView</c>.
 	/// </summary>
-	public UniTask ShowBannerAsync(string id, float holdSeconds = 0.9f)
+	public UniTask ShowBannerAsync(string id, float holdSeconds = 0.9f, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(id))
 		{
@@ -50,14 +51,14 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		var message = localizationService != null ? localizationService.GetLocalized(id) : id;
-		return ShowBannerRawAsync(message, holdSeconds);
+		return ShowBannerRawAsync(message, holdSeconds, isNegative);
 	}
 
 	/// <summary>
 	/// Shows a formatted localized banner (string.Format) and awaits its completion.
 	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
 	/// </summary>
-	public UniTask ShowBannerAsync(string id, string[] args, float holdSeconds = 0.9f)
+	public UniTask ShowBannerAsync(string id, string[] args, float holdSeconds = 0.9f, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(id))
 		{
@@ -66,23 +67,23 @@ public class GlobalNotificationService : BaseAsyncService
 
 		var template = localizationService != null ? localizationService.GetLocalized(id) : id;
 		var message = args != null && args.Length > 0 ? string.Format(template, args) : template;
-		return ShowBannerRawAsync(message, holdSeconds);
+		return ShowBannerRawAsync(message, holdSeconds, isNegative);
 	}
 
 	/// <summary>
 	/// Shows a raw banner message immediately (no localization).
 	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
 	/// </summary>
-	public void ShowBannerRaw(string message, float holdSeconds = 0.9f)
+	public void ShowBannerRaw(string message, float holdSeconds = 0.9f, bool isNegative = false)
 	{
-		ShowBannerRawAsync(message, holdSeconds).Forget();
+		ShowBannerRawAsync(message, holdSeconds, isNegative).Forget();
 	}
 
 	/// <summary>
 	/// Shows a raw banner message (no localization) and awaits its completion.
 	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
 	/// </summary>
-	public async UniTask ShowBannerRawAsync(string message, float holdSeconds = 0.9f)
+	public async UniTask ShowBannerRawAsync(string message, float holdSeconds = 0.9f, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(message))
 		{
@@ -96,23 +97,23 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		bannerView.Interrupt();
-		await bannerView.PlayAsync(message, holdSeconds);
+		await bannerView.PlayAsync(message, holdSeconds, isNegative);
 	}
 
 	/// <summary>
 	/// Enqueues a localized toast for sequential display (queue).
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
-	public void EnqueueToast(string id)
+	public void EnqueueToast(string id, bool isNegative = false)
 	{
-		EnqueueToastAsync(id).Forget();
+		EnqueueToastAsync(id, isNegative).Forget();
 	}
 
 	/// <summary>
 	/// Enqueues a localized toast and returns a task that completes when the toast finishes.
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
-	public UniTask EnqueueToastAsync(string id)
+	public UniTask EnqueueToastAsync(string id, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(id))
 		{
@@ -120,14 +121,14 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		var message = localizationService != null ? localizationService.GetLocalized(id) : id;
-		return EnqueueToastRawAsync(message);
+		return EnqueueToastRawAsync(message, isNegative);
 	}
 
 	/// <summary>
 	/// Enqueues a formatted localized toast (string.Format) and returns a task that completes when it finishes.
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
-	public UniTask EnqueueToastAsync(string id, string[] args)
+	public UniTask EnqueueToastAsync(string id, string[] args, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(id))
 		{
@@ -136,23 +137,23 @@ public class GlobalNotificationService : BaseAsyncService
 
 		var template = localizationService != null ? localizationService.GetLocalized(id) : id;
 		var message = args != null && args.Length > 0 ? string.Format(template, args) : template;
-		return EnqueueToastRawAsync(message);
+		return EnqueueToastRawAsync(message, isNegative);
 	}
 
 	/// <summary>
 	/// Enqueues a raw toast message immediately (no localization).
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
-	public void EnqueueToastRaw(string message)
+	public void EnqueueToastRaw(string message, bool isNegative = false)
 	{
-		EnqueueToastRawAsync(message).Forget();
+		EnqueueToastRawAsync(message, isNegative).Forget();
 	}
 
 	/// <summary>
 	/// Enqueues a raw toast message (no localization) and returns a task that completes when it finishes.
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
-	public UniTask EnqueueToastRawAsync(string message)
+	public UniTask EnqueueToastRawAsync(string message, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(message))
 		{
@@ -162,6 +163,7 @@ public class GlobalNotificationService : BaseAsyncService
 		var request = new ToastRequest
 		{
 			Message = message,
+			IsNegative = isNegative,
 			Completion = new UniTaskCompletionSource()
 		};
 
@@ -177,15 +179,15 @@ public class GlobalNotificationService : BaseAsyncService
 	/// <summary>
 	/// Shows a localized toast immediately (no queue). Multiple calls will display in parallel.
 	/// </summary>
-	public void ShowToastImmediate(string id)
+	public void ShowToastImmediate(string id, bool isNegative = false)
 	{
-		ShowToastImmediateAsync(id).Forget();
+		ShowToastImmediateAsync(id, isNegative).Forget();
 	}
 
 	/// <summary>
 	/// Shows a localized toast immediately and returns a task that completes when it finishes.
 	/// </summary>
-	public UniTask ShowToastImmediateAsync(string id)
+	public UniTask ShowToastImmediateAsync(string id, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(id))
 		{
@@ -193,13 +195,13 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		var message = localizationService != null ? localizationService.GetLocalized(id) : id;
-		return ShowToastRawImmediateAsync(message);
+		return ShowToastRawImmediateAsync(message, isNegative);
 	}
 
 	/// <summary>
 	/// Shows a formatted localized toast immediately (no queue).
 	/// </summary>
-	public UniTask ShowToastImmediateAsync(string id, string[] args)
+	public UniTask ShowToastImmediateAsync(string id, string[] args, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(id))
 		{
@@ -208,28 +210,28 @@ public class GlobalNotificationService : BaseAsyncService
 
 		var template = localizationService != null ? localizationService.GetLocalized(id) : id;
 		var message = args != null && args.Length > 0 ? string.Format(template, args) : template;
-		return ShowToastRawImmediateAsync(message);
+		return ShowToastRawImmediateAsync(message, isNegative);
 	}
 
 	/// <summary>
 	/// Shows a raw toast immediately (no queue). Multiple calls will display in parallel.
 	/// </summary>
-	public void ShowToastRawImmediate(string message)
+	public void ShowToastRawImmediate(string message, bool isNegative = false)
 	{
-		ShowToastRawImmediateAsync(message).Forget();
+		ShowToastRawImmediateAsync(message, isNegative).Forget();
 	}
 
 	/// <summary>
 	/// Shows a raw toast immediately (no queue) and returns a task that completes when it finishes.
 	/// </summary>
-	public UniTask ShowToastRawImmediateAsync(string message)
+	public UniTask ShowToastRawImmediateAsync(string message, bool isNegative = false)
 	{
 		if (string.IsNullOrWhiteSpace(message))
 		{
 			return UniTask.CompletedTask;
 		}
 
-		return ShowToastInternal(message);
+		return ShowToastInternal(message, isNegative);
 	}
 
 	private async UniTask EnsureBannerViewAsync()
@@ -279,14 +281,14 @@ public class GlobalNotificationService : BaseAsyncService
 		while (toastQueue.Count > 0)
 		{
 			var request = toastQueue.Dequeue();
-			await ShowToastInternal(request.Message);
+			await ShowToastInternal(request.Message, request.IsNegative);
 			request.Completion.TrySetResult();
 		}
 
 		isToastPlaying = false;
 	}
 
-	private async UniTask ShowToastInternal(string message)
+	private async UniTask ShowToastInternal(string message, bool isNegative)
 	{
 		await EnsureNotificationsViewAsync();
 		if (!notificationsView || objectFactory == null)
@@ -319,7 +321,7 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		view.Showed += OnShowed;
-		view.SetText(message);
+		view.SetText(message, isNegative);
 		view.Show();
 
 		await tcs.Task;

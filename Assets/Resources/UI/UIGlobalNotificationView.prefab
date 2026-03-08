@@ -67,6 +67,11 @@ MonoBehaviour:
   container: {fileID: 9046188762547937600}
   messageText: {fileID: 3510796014651766450}
   backgroundSizer: {fileID: 5406243328197906621}
+  backgroundImage: {fileID: 7932804597206096880}
+  positiveColor:
+    id: GreenLight
+  negativeColor:
+    id: Red
   fadeInDuration: 0.18
   fadeOutDuration: 0.18
   scaleIn: 0.96
@@ -147,8 +152,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4291488238
-  m_fontColor: {r: 0.93333334, g: 0.9137255, b: 0.7921569, a: 1}
+    rgba: 4293654264
+  m_fontColor: {r: 0.9716981, g: 0.9646956, b: 0.9212798, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -389,6 +394,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+--- !u!114 &7932804597206096880 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+  m_PrefabInstance: {fileID: 3394864828638927803}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!224 &9210415624262233310 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5822313901381269349, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
