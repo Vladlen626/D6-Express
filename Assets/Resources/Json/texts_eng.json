@@ -2,7 +2,7 @@
     "texts": {
         "choice_enter_train": "Enter the train?",
         "conductor_enter_hi": "Well, well",
-        "conductor_enter_hint": "Don't <b><color=#FF7717>play dices</color></b> with strangers on the train - you could lose all your money!",
+        "conductor_enter_hint": "Don't <color=#FF7717>play dices</color> with strangers on the train - you could lose all your money!",
         "conductor_enter_positive": "Welcome aboard D6-Express",
         "conductor_enter_negative": "Get lost, you filthy beggar!",
         "passenger_random_0": "What a beautiful day for a trip!",
@@ -17,7 +17,7 @@
         "anecdote_0_2": "The doctor replies, \"Mine itches more\"",
         "anecdote_0_3": "And the patient goes, \"No, mine\"",
         "anecdote_0_4": "Ha-ha-ha-ha!",
-        "dice_game_opponent_on_leave": "Hey! You want to leave in the middle of the game?",
+        "dice_game_opponent_on_leave": "Hey! You want <color=#FF7717>to leave</color> in the middle of the game?",
         "shopkeeper_rich_random_0": "Oh, the lord arrived in his fancy ride? Take whatever you want, just don't jingle your coins",
         "shopkeeper_rich_random_1": "For folks like you, I've got champagne at airplane prices. Can you even afford it?",
         "shopkeeper_rich_random_2": "Your Excellency, a pack of smokes? Or do you prefer gold ones with diamonds?",
