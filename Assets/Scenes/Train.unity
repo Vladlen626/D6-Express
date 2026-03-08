@@ -141,7 +141,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1558494628716004490, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.82
+      value: -1.76
       objectReference: {fileID: 0}
     - target: {fileID: 1558494628716004490, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalRotation.w
@@ -223,6 +223,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 168.52701
       objectReference: {fileID: 0}
+    - target: {fileID: 3037892320000251633, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5764599070329767640, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.7071068
@@ -238,6 +242,18 @@ PrefabInstance:
     - target: {fileID: 5764599070329767640, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 6007166196673966488, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6007166196673966488, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -7.31
+      objectReference: {fileID: 0}
+    - target: {fileID: 6007166196673966488, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6202115968114557135, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_IsActive
@@ -279,6 +295,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: -180
       objectReference: {fileID: 0}
+    - target: {fileID: 6924658227129604885, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 634152626267492156, guid: 00fade5822328c341964077b498c9a99, type: 2}
     - target: {fileID: 8985225444192048148, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.322
@@ -501,7 +521,7 @@ Light:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingLayerMask: 1
-  m_Lightmapping: 2
+  m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1.2
