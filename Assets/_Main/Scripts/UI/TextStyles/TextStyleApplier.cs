@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -7,15 +8,9 @@ namespace _Main.Scripts.UI
 	public class TextStyleApplier : MonoBehaviour
 	{
 		[SerializeField]
-		private string styleId;
+		private TextStyleRef style;
 
 		private TextMeshProUGUI target;
-
-		public string StyleId
-		{
-			get => styleId;
-			set => styleId = value;
-		}
 
 		private void OnEnable()
 		{
@@ -36,32 +31,11 @@ namespace _Main.Scripts.UI
 
 			if (!target)
 			{
-				return;
+				throw new InvalidOperationException("TextStyleApplier target is missing.");
 			}
 
-			var library = TextStyleLibraryProvider.GetDefault();
-			if (library == null)
-			{
-				return;
-			}
-
-			var style = library.GetStyle(styleId);
-			if (style == null)
-			{
-				return;
-			}
-
-			target.color = style.Color;
-
-			if (style.UseAdvanced)
-			{
-				if (style.FontSize > 0f)
-				{
-					target.fontSize = style.FontSize;
-				}
-
-				target.fontStyle = style.FontStyle;
-			}
+			style.ApplyTo(target);
 		}
+
 	}
 }

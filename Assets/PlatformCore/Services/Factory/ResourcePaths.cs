@@ -72,12 +72,16 @@ namespace PlatformCore.Services.Factory
 
 		public static class UI
 		{
+			public const string ColorStyleLibrary = "UI/ColorStyleLibrary";
 			public const string ElementBackground = "UI/ElementBackground";
+			public const string TextStyleLibrary = "UI/TextStyleLibrary";
 			public const string DefaultTMP = "UI/TMP/DefaultTMP";
 			public const string DescriptionTMP = "UI/TMP/DescriptionTMP";
 			public const string HeaderTMP = "UI/TMP/HeaderTMP";
 			public const string TextsVerticalSizebable = "UI/TMP/TextsVerticalSizebable";
 			public const string UICursorView = "UI/UICursorView";
+			public const string UIDiceUpgradeVariantView = "UI/UIDiceUpgradeVariantView";
+			public const string UIDiceUpgradeView = "UI/UIDiceUpgradeView";
 			public const string UIEndView = "UI/UIEndView";
 			public const string UIGlobalNotificationView = "UI/UIGlobalNotificationView";
 			public const string UIHintView = "UI/UIHintView";

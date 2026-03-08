@@ -23,3 +23,8 @@ MonoBehaviour:
     UseAdvanced: 0
     FontSize: 0
     FontStyle: 0
+  - Id: GreenBgFont
+    Color: {r: 0.93333334, g: 0.9137255, b: 0.7921569, a: 1}
+    UseAdvanced: 0
+    FontSize: 0
+    FontStyle: 0

@@ -347,7 +347,11 @@ namespace _Main.Scripts.Dice
 			ResetAllDices();
 			foreach (var diceModel in CurrentDiceModelList)
 			{
-				ScreenDiceDict[diceModel].MoveToPosition(tableModel.GetFreeActivePosition().position);
+				var position = tableModel.GetFreeActivePosition();
+				diceModel.SetCurrentPosition(position);
+				var view = ScreenDiceDict[diceModel];
+				view.transform.SetParent(position);
+				view.MoveToPosition(position.position);
 			}
 		}
 

@@ -117,7 +117,7 @@ namespace _Main.Scripts.Dice
 		public void UpdateUI()
 		{
 			bool hasValidComboSelected = tableModel.PreviewPoints > 0;
-			bool canPass = hasValidComboSelected || (tableModel.TurnPoints > 0 && diceGameModel.GetSelected().Length == 0);
+			bool canPass = hasValidComboSelected;
 			bool canRoll = tableModel.isFirstRoll || hasValidComboSelected;
 
 			diceTableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);

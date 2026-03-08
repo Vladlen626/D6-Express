@@ -75,7 +75,7 @@ namespace _Main.Scripts.Core
 
 			var weights = ResolveWeights(config);
 			DiceModel model = new DiceModel(config.id, weights);
-			model.SetCurrentPosition(view.transform);
+			model.SetCurrentPosition(startPos);
 			diceGameModel.AddDiceOnScreen(model, view);
 
 			return model;

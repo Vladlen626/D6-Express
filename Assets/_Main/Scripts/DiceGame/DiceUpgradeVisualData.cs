@@ -1,14 +1,44 @@
+using System;
+
 namespace _Main.Scripts.Dice
 {
+	public enum DiceUpgradeAffectedStat
+	{
+		None = 0,
+		Min = 1,
+		Max = 2,
+		Bonus = 3
+	}
+
+	public readonly struct DiceUpgradeRouletteSlotData
+	{
+		public readonly int Face;
+		public readonly DiceUpgradeAffectedStat AffectedStat;
+		public readonly int DeltaValue;
+		public readonly string AffectedLabel;
+
+		public DiceUpgradeRouletteSlotData(
+			int face,
+			DiceUpgradeAffectedStat affectedStat,
+			int deltaValue,
+			string affectedLabel)
+		{
+			Face = face;
+			AffectedStat = affectedStat;
+			DeltaValue = deltaValue;
+			AffectedLabel = affectedLabel ?? string.Empty;
+		}
+	}
+
 	public readonly struct DiceUpgradeVisualData
 	{
 		public readonly string ComboId;
 		public readonly string Title;
-		public readonly string RolledText;
 		public readonly string MinLabel;
 		public readonly string MaxLabel;
 		public readonly string BonusLabel;
 		public readonly string HintText;
+		public readonly string StopHintText;
 		public readonly int RolledFace;
 		public readonly int BeforeMin;
 		public readonly int BeforeMax;
@@ -16,11 +46,11 @@ namespace _Main.Scripts.Dice
 		public readonly int AfterMin;
 		public readonly int AfterMax;
 		public readonly int AfterBonus;
+		public readonly DiceUpgradeRouletteSlotData[] RouletteSlots;
 
 		public DiceUpgradeVisualData(
 			string comboId,
 			string title,
-			string rolledText,
 			string minLabel,
 			string maxLabel,
 			string bonusLabel,
@@ -32,14 +62,49 @@ namespace _Main.Scripts.Dice
 			int afterMin,
 			int afterMax,
 			int afterBonus)
+			: this(
+				comboId,
+				title,
+				minLabel,
+				maxLabel,
+				bonusLabel,
+				hintText,
+				string.Empty,
+				rolledFace,
+				beforeMin,
+				beforeMax,
+				beforeBonus,
+				afterMin,
+				afterMax,
+				afterBonus,
+				null)
+		{
+		}
+
+		public DiceUpgradeVisualData(
+			string comboId,
+			string title,
+			string minLabel,
+			string maxLabel,
+			string bonusLabel,
+			string hintText,
+			string stopHintText,
+			int rolledFace,
+			int beforeMin,
+			int beforeMax,
+			int beforeBonus,
+			int afterMin,
+			int afterMax,
+			int afterBonus,
+			DiceUpgradeRouletteSlotData[] rouletteSlots)
 		{
 			ComboId = comboId;
 			Title = title;
-			RolledText = rolledText;
 			MinLabel = minLabel;
 			MaxLabel = maxLabel;
 			BonusLabel = bonusLabel;
 			HintText = hintText;
+			StopHintText = stopHintText ?? string.Empty;
 			RolledFace = rolledFace;
 			BeforeMin = beforeMin;
 			BeforeMax = beforeMax;
@@ -47,6 +112,7 @@ namespace _Main.Scripts.Dice
 			AfterMin = afterMin;
 			AfterMax = afterMax;
 			AfterBonus = afterBonus;
+			RouletteSlots = rouletteSlots ?? Array.Empty<DiceUpgradeRouletteSlotData>();
 		}
 	}
 }

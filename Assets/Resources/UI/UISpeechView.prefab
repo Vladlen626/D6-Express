@@ -589,6 +589,7 @@ MonoBehaviour:
   _canvasType: 5
   speechPanel: {fileID: 7216075891810940279}
   choiceOptions: {fileID: 1584055375087331178}
+  hint: {fileID: 4423022393910331482}
   speechText: {fileID: 3236615817706182457}
   speakerNameText: {fileID: 3897434018001795286}
   speakerNameSizer: {fileID: 6056916311325688768}
@@ -921,7 +922,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6858549831824332020, guid: 282d77f2818142f49bab47a4708970b7, type: 3}
       propertyPath: m_text
-      value: to skip
+      value: NO
       objectReference: {fileID: 0}
     - target: {fileID: 6858549831824332020, guid: 282d77f2818142f49bab47a4708970b7, type: 3}
       propertyPath: m_fontSize
@@ -1254,6 +1255,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 282d77f2818142f49bab47a4708970b7, type: 3}
+--- !u!1 &4423022393910331482 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5629662506022098444, guid: 282d77f2818142f49bab47a4708970b7, type: 3}
+  m_PrefabInstance: {fileID: 8304971234435128918}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &5804097120129419756 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2579828947105175482, guid: 282d77f2818142f49bab47a4708970b7, type: 3}

@@ -9,6 +9,35 @@ namespace _Main.Scripts.Editor
 	{
 		private const string MissingLibraryMessage = "TextStyleLibrary not found at Resources/UI/TextStyleLibrary.";
 
+		public static void DrawStyleDropdown(Rect position, GUIContent label, SerializedProperty styleIdProp, AdvancedDropdownState state)
+		{
+			var library = TextStyleLibraryProvider.GetDefault();
+			if (library == null || library.Styles == null || library.Styles.Count == 0)
+			{
+				EditorGUI.PropertyField(position, styleIdProp, label);
+				return;
+			}
+
+			var buttonRect = EditorGUI.PrefixLabel(position, label);
+			var display = string.IsNullOrWhiteSpace(styleIdProp.stringValue) ? "(none)" : styleIdProp.stringValue;
+			if (EditorGUI.DropdownButton(buttonRect, new GUIContent(display), FocusType.Passive))
+			{
+				var dropdown = new TextStyleDropdown(state, library, id =>
+				{
+					styleIdProp.stringValue = id;
+					styleIdProp.serializedObject.ApplyModifiedProperties();
+				});
+				dropdown.Show(buttonRect);
+			}
+
+			if (!string.IsNullOrWhiteSpace(styleIdProp.stringValue) && library.ContainsId(styleIdProp.stringValue))
+			{
+				var style = library.GetStyle(styleIdProp.stringValue);
+				var colorRect = new Rect(buttonRect.xMax - 18f, buttonRect.y + 2f, 16f, buttonRect.height - 4f);
+				EditorGUI.DrawRect(colorRect, style.Color);
+			}
+		}
+
 		public static void DrawStyleDropdown(string label, SerializedProperty styleIdProp, AdvancedDropdownState state)
 		{
 			var library = TextStyleLibraryProvider.GetDefault();
@@ -20,24 +49,7 @@ namespace _Main.Scripts.Editor
 			}
 
 			var rect = EditorGUILayout.GetControlRect();
-			rect = EditorGUI.PrefixLabel(rect, new GUIContent(label));
-			var display = string.IsNullOrWhiteSpace(styleIdProp.stringValue) ? "(none)" : styleIdProp.stringValue;
-			if (EditorGUI.DropdownButton(rect, new GUIContent(display), FocusType.Passive))
-			{
-				var dropdown = new TextStyleDropdown(state, library, id =>
-				{
-					styleIdProp.stringValue = id;
-					styleIdProp.serializedObject.ApplyModifiedProperties();
-				});
-				dropdown.Show(rect);
-			}
-
-			var style = library.GetStyle(styleIdProp.stringValue);
-			if (style != null)
-			{
-				var colorRect = new Rect(rect.xMax - 18f, rect.y + 2f, 16f, rect.height - 4f);
-				EditorGUI.DrawRect(colorRect, style.Color);
-			}
+			DrawStyleDropdown(rect, new GUIContent(label), styleIdProp, state);
 		}
 	}
 }

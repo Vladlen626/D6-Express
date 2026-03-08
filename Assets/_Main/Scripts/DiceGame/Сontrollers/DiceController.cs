@@ -27,6 +27,11 @@ namespace _Main.Scripts.Dice
 			diceModel.OnDiceHiddenChanged += OnDiceHiddenChangedHandler;
 
 			diceView.OnDiceClicked.AddListener(OnDiceClickedHandler);
+
+			// Sync view with current model state in case model was changed before controller activation.
+			OnDiceValueChangedHandler();
+			OnDiceChosenChangedHandler();
+			OnDiceHiddenChangedHandler();
 		}
 
 		public void Deactivate()

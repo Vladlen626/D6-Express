@@ -40,7 +40,7 @@ namespace _Main.Scripts.UI
 		{
 			if (styles == null || styles.Count == 0)
 			{
-				return null;
+				throw new InvalidOperationException("TextStyleLibrary is empty.");
 			}
 
 			if (mapDirty)
@@ -50,7 +50,7 @@ namespace _Main.Scripts.UI
 
 			if (string.IsNullOrWhiteSpace(id))
 			{
-				return styles[0];
+				throw new InvalidOperationException("Text style id is empty.");
 			}
 
 			var key = id.Trim();
@@ -59,12 +59,12 @@ namespace _Main.Scripts.UI
 				return style;
 			}
 
-			return styles[0];
+			throw new InvalidOperationException($"Text style '{id}' not found.");
 		}
 
 		public bool ContainsId(string id)
 		{
-			if (styles == null || styles.Count == 0 || string.IsNullOrWhiteSpace(id))
+			if (styles == null || styles.Count == 0)
 			{
 				return false;
 			}
@@ -74,7 +74,7 @@ namespace _Main.Scripts.UI
 				RebuildMap();
 			}
 
-			return styleMap.ContainsKey(id.Trim());
+			return !string.IsNullOrWhiteSpace(id) && styleMap.ContainsKey(id.Trim());
 		}
 
 		public void MarkDirty()

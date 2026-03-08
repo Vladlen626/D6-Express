@@ -11,6 +11,9 @@ public class UISpeechView : UIBaseElement
 	private GameObject choiceOptions;
 
 	[SerializeField]
+	private GameObject hint;
+
+	[SerializeField]
 	private TextMeshProUGUI speechText;
 
 	[SerializeField]
@@ -40,10 +43,12 @@ public class UISpeechView : UIBaseElement
 	public void ShowChoiceOptions()
 	{
 		choiceOptions.SetActive(true);
+		hint.SetActive(false);
 	}
 
 	public void HideChoiceOptions()
 	{
 		choiceOptions.SetActive(false);
+		hint.SetActive(true);
 	}
 }

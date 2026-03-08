@@ -318,7 +318,11 @@ namespace _Main.Scripts.Dice
 				return null;
 			}
 
-			var outcome = outcomes.FirstOrDefault(o => o.Face == face) ?? outcomes[0];
+			var outcome = outcomes.FirstOrDefault(o => o.Face == face);
+			if (outcome == null)
+			{
+				throw new InvalidOperationException($"Straight upgrade outcome for face '{face}' is not configured.");
+			}
 			var before = straightCombination.Snapshot();
 			straightCombination.Adjust(outcome);
 			var after = straightCombination.Snapshot();
@@ -361,7 +365,11 @@ namespace _Main.Scripts.Dice
 				return null;
 			}
 
-			var outcome = outcomes.FirstOrDefault(o => o.Face == face) ?? outcomes[0];
+			var outcome = outcomes.FirstOrDefault(o => o.Face == face);
+			if (outcome == null)
+			{
+				throw new InvalidOperationException($"Upgrade outcome for combo '{comboId}' and face '{face}' is not configured.");
+			}
 			var state = GetComboUpgradeState(comboId) ?? new ComboUpgradeState();
 			var before = state.Clone();
 
