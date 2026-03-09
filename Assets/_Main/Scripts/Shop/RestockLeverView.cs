@@ -4,39 +4,40 @@ using UnityEngine;
 
 public class RestockLeverView : MonoBehaviour
 {
-    private AnimatorSignalBridge bridge;
-    private Animator animator;
-    private UniTask? currentPullTask;
+	[SerializeField]
+	private Animator animator;
 
-    public event Action RestockRequested;
+	[SerializeField]
+	private AnimatorSignalBridge bridge;
 
-    public bool IsPulling => currentPullTask.HasValue;
+	private UniTask? currentPullTask;
 
-    private void Awake()
-    {
-        bridge = GetComponent<AnimatorSignalBridge>();
-        animator = GetComponent<Animator>();
+	public event Action RestockRequested;
 
-        bridge.Reset();
-    }
+	public bool IsPulling => currentPullTask.HasValue;
 
-    public void RequestRestock()
-    {
-        RestockRequested?.Invoke();
-    }
+	private void Awake()
+	{
+		bridge.Reset();
+	}
 
-    public async UniTask Pull()
-    {
-        if (IsPulling) return; // Already pulling
+	public void RequestRestock()
+	{
+		RestockRequested?.Invoke();
+	}
 
-        animator.SetBool("Pulled", true);
+	public async UniTask Pull()
+	{
+		if (IsPulling) return; // Already pulling
 
-        currentPullTask = bridge.EnterFinished.Task;
-        await currentPullTask.Value;
+		animator.SetBool("Pulled", true);
 
-        animator.SetBool("Pulled", false);
-        bridge.Reset();
+		currentPullTask = bridge.EnterFinished.Task;
+		await currentPullTask.Value;
 
-        currentPullTask = null;
-    }
+		animator.SetBool("Pulled", false);
+		bridge.Reset();
+
+		currentPullTask = null;
+	}
 }
