@@ -279,7 +279,7 @@ MonoBehaviour:
   - {fileID: 4550616694870159741}
   - {fileID: 6236325398104948265}
   - {fileID: 1526173755143663057}
-  restockLever: {fileID: 0}
+  restockLever: {fileID: 5778493167514623722}
   restockPrice: {fileID: 336033398477008218}
 --- !u!1 &5061425885950124061
 GameObject:
@@ -1292,6 +1292,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2cb1fba85151fbf49954c2554e4aae2d, type: 3}
+--- !u!114 &5778493167514623722 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2760144819257517124, guid: 2cb1fba85151fbf49954c2554e4aae2d, type: 3}
+  m_PrefabInstance: {fileID: 8538637965021264558}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a0b684c076da8541bd605adf6067f95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RestockLeverView
 --- !u!4 &9057945912679876721 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 849803931423732447, guid: 2cb1fba85151fbf49954c2554e4aae2d, type: 3}

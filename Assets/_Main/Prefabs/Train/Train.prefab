@@ -1011,6 +1011,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2471741369536830509, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: blockInteract
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2497387111768772395, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
       propertyPath: blockInteract
       value: 0
