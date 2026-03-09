@@ -62,7 +62,27 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
                 return;
             }
 
-            if (!shopView || !shopItemView.transform.IsChildOf(shopView.transform))
+            if (!shopView)
+            {
+                return;
+            }
+
+            var slots = shopView.Slots;
+            var index = shopItemView.Index;
+            if (slots == null || index < 0 || index >= slots.Count)
+            {
+                Debug.LogWarning($"[ShopTooltips] Invalid slot index {index} for shop view '{shopView.name}'.");
+                return;
+            }
+
+            var slot = slots[index];
+            if (!slot || !slot.ItemTfm)
+            {
+                Debug.LogWarning($"[ShopTooltips] Missing slot or ItemTfm for index {index} in shop view '{shopView.name}'.");
+                return;
+            }
+
+            if (!shopItemView.transform.IsChildOf(slot.ItemTfm))
             {
                 return;
             }
