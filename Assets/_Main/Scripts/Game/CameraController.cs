@@ -23,14 +23,20 @@ public class CameraController : IBaseController, IActivatable
 	private readonly IInputService inputService;
 	private readonly ICameraService cameraService;
 	private readonly PlayerStateModel playerStateModel;
+	private readonly D6Game game;
 
 	private int currentCameraIndex;
 
-	public CameraController(IInputService inputService, ICameraService cameraService, PlayerStateModel playerStateModel)
+	public CameraController(
+		IInputService inputService,
+		ICameraService cameraService,
+		PlayerStateModel playerStateModel,
+		D6Game game)
 	{
 		this.inputService = inputService;
 		this.cameraService = cameraService;
 		this.playerStateModel = playerStateModel;
+		this.game = game;
 	}
 
 	public void Activate()
@@ -40,6 +46,9 @@ public class CameraController : IBaseController, IActivatable
 
 		playerStateModel.StateAdded += OnStateChanged;
 		playerStateModel.StateRemoved += OnStateChanged;
+		game.LocationChanged += OnLocationChanged;
+
+		ApplyCamera();
 	}
 
 	public void Deactivate()
@@ -49,6 +58,7 @@ public class CameraController : IBaseController, IActivatable
 
 		playerStateModel.StateAdded -= OnStateChanged;
 		playerStateModel.StateRemoved -= OnStateChanged;
+		game.LocationChanged -= OnLocationChanged;
 	}
 
 
@@ -56,14 +66,32 @@ public class CameraController : IBaseController, IActivatable
 	// а то если еще где-то начнем это делать все сломается... но пока так...
 	private void OnStateChanged(CharacterState state)
 	{
+		ApplyCamera();
+	}
+
+	private void OnLocationChanged()
+	{
+		ApplyCamera();
+	}
+
+	private void ApplyCamera()
+	{
+		if (game.Location == Location.MAIN_MENU)
+		{
+			cameraService.SetActiveCamera(CameraStateEnum.MainMenu);
+			return;
+		}
+
 		foreach (var (characterState, cameraState) in stateToCamera)
 		{
 			if (playerStateModel.HasState(characterState))
 			{
 				cameraService.SetActiveCamera(cameraState);
-				break;
+				return;
 			}
 		}
+
+		cameraService.SetActiveCamera(CameraStateEnum.FirstPerson);
 	}
 
 	private async void OnNextHandler()

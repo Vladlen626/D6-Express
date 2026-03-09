@@ -14,12 +14,6 @@ namespace PlatformCore.Services
 		{
 			var cinemachineCamera = GetComponent<CinemachineCamera>();
 			Locator.Resolve<ICameraService>().AddCamera(cameraStateEnum, cinemachineCamera);
-			
-			if (cameraStateEnum == CameraStateEnum.MainMenu)
-			{
-				cinemachineCamera.Priority.Value = 100;
-				gameObject.SetActive(true);
-			}
 		}
 	}
 }

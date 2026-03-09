@@ -144,7 +144,7 @@ namespace _Main.Scripts.Core
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
-				new CameraController(inputService, cameraService, playerModel.PlayerStateModel),
+				new CameraController(inputService, cameraService, playerModel.PlayerStateModel, game),
 				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService,
 					sceneContext.InventoryView),
 				new ModifierItemsSyncController(playerModel.InventoryModel,
