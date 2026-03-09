@@ -226,7 +226,13 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
-			return await SetupModifiersAsync(diceGameConfig);
+			if (!await SetupModifiersAsync(diceGameConfig))
+			{
+				return false;
+			}
+
+			UpdateDiceBonusPositions();
+			return true;
 		}
 
 		private async UniTask DiceGamePersistentControllers()
@@ -237,6 +243,17 @@ namespace _Main.Scripts.Dice
 				});
 
 			await lifecycleService.RegisterControllersGroupAsync(persistentControllers);
+		}
+
+		private void UpdateDiceBonusPositions()
+		{
+			if (!diceTableView)
+			{
+				return;
+			}
+
+			diceTableView.SetDiceBonusPositionVisibility(diceGameModel.GetMaxDiceCount(true) > 6);
+			diceTableView.SetEnemyDiceBonusPositionVisibility(diceGameModel.GetMaxDiceCount(false) > 6);
 		}
 
 

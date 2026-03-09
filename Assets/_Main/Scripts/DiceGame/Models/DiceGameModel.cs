@@ -50,7 +50,7 @@ namespace _Main.Scripts.Dice
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
 		public bool EnemyComboUpgradesEnabled { get; private set; } = true;
-		public int MaxDiceCount => Mathf.Max(1, baseMaxDiceCount + GetDiceCapBonusSum(IsPlayerTurn));
+		public int MaxDiceCount => GetMaxDiceCount(IsPlayerTurn);
 		public int BaseMaxDiceCount => baseMaxDiceCount;
 
 		private const int DefaultMaxDiceCount = 6;
@@ -181,6 +181,11 @@ namespace _Main.Scripts.Dice
 		private Dictionary<string, int> GetDiceCapBonuses(bool isPlayerSide)
 		{
 			return isPlayerSide ? playerDiceCapBonuses : enemyDiceCapBonuses;
+		}
+
+		public int GetMaxDiceCount(bool isPlayerSide)
+		{
+			return Mathf.Max(1, baseMaxDiceCount + GetDiceCapBonusSum(isPlayerSide));
 		}
 
 		private void NotifyMaxDiceChanged(int previous)

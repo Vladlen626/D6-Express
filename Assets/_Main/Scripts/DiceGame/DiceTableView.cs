@@ -17,6 +17,8 @@ public class DiceTableView : MonoBehaviour
 
 	[Header("Global")]
 	[SerializeField] private Transform tooltipPos;
+	[SerializeField] private Transform PlayerDiceBonusPositions;
+	[SerializeField] private Transform EnemyDiceBonusPositions;
 
 	[Header("StateHandlers")]
 	[SerializeField] private Transform defaultStateHandler;
@@ -193,6 +195,16 @@ public class DiceTableView : MonoBehaviour
 	public void SetBet(int bet)
 	{
 		betSlider.value = bet;
+	}
+
+	public void SetDiceBonusPositionVisibility(bool visible)
+	{
+		PlayerDiceBonusPositions.gameObject.SetActive(visible);
+	} 
+
+	public void SetEnemyDiceBonusPositionVisibility(bool visible)
+	{
+		EnemyDiceBonusPositions.gameObject.SetActive(visible);
 	}
 
 	public void SetMinBet(int minBet)
