@@ -148,8 +148,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 545331180908628314}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.05, y: 1.1441641, z: -0.08825311}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.05, y: 1.1373014, z: 0.014362694}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1334,7 +1334,7 @@ RectTransform:
   m_GameObject: {fileID: 2349841042050477960}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1.3226181}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4643303074891464792}
@@ -1346,7 +1346,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -50.97784, y: 28.075024}
+  m_AnchoredPosition: {x: -49.7, y: 28.075024}
   m_SizeDelta: {x: 33.648003, y: 28.93736}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2646726056635122127
@@ -3026,7 +3026,7 @@ Transform:
   m_GameObject: {fileID: 5346661382756638782}
   serializedVersion: 2
   m_LocalRotation: {x: 0.6087614, y: -0, z: -0, w: 0.79335344}
-  m_LocalPosition: {x: -0.03291337, y: 1.838403, z: -0.1734969}
+  m_LocalPosition: {x: -0.05, y: 1.838403, z: -0.1734969}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3764,8 +3764,8 @@ Transform:
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 624061350578805070}
   - {fileID: 7863797572037235796}
+  - {fileID: 624061350578805070}
   - {fileID: 1494581720569769837}
   - {fileID: 740278718700182516}
   - {fileID: 3002558663366478614}
@@ -7825,15 +7825,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6142323785534143871, guid: ded17aad281cc6f4590d1a538615d8b0, type: 3}
       propertyPath: m_Color.b
-      value: 0.4
+      value: 0.14509805
       objectReference: {fileID: 0}
     - target: {fileID: 6142323785534143871, guid: ded17aad281cc6f4590d1a538615d8b0, type: 3}
       propertyPath: m_Color.g
-      value: 0.48235294
+      value: 0.3529412
       objectReference: {fileID: 0}
     - target: {fileID: 6142323785534143871, guid: ded17aad281cc6f4590d1a538615d8b0, type: 3}
       propertyPath: m_Color.r
-      value: 0.5411765
+      value: 0.52156866
       objectReference: {fileID: 0}
     - target: {fileID: 6943079268172544253, guid: ded17aad281cc6f4590d1a538615d8b0, type: 3}
       propertyPath: m_SizeDelta.x

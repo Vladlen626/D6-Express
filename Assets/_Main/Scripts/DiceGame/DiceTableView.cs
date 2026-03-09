@@ -197,13 +197,16 @@ public class DiceTableView : MonoBehaviour
 		betSlider.value = bet;
 	}
 
+	//todo: Это должно динамически включать бонусные позиции для кубов
 	public void SetDiceBonusPositionVisibility(bool visible)
 	{
+		return;
 		PlayerDiceBonusPositions.gameObject.SetActive(visible);
 	} 
 
 	public void SetEnemyDiceBonusPositionVisibility(bool visible)
 	{
+		return;
 		EnemyDiceBonusPositions.gameObject.SetActive(visible);
 	}
 

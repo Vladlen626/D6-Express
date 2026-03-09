@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using _Main.Scripts.Core;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
@@ -33,6 +32,8 @@ namespace _Main.Scripts.Dice
 		private readonly IInputService inputService;
 		private readonly IAsyncAwaiterService awaiterService;
 		private readonly ILocalizationService localizationService;
+		private readonly DiceGameScenarioSetup scenarioSetup;
+		private readonly DiceGameItemsDisplayManager itemsDisplayManager;
 
 		private readonly SceneContext sceneContext;
 
@@ -44,10 +45,6 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
 		private List<IBaseController> selectionControllers = new();
-		private readonly List<IBaseController> itemControllers = new();
-		private readonly List<DiceItemView> itemViews = new();
-		private readonly List<IModifier> runtimeGlobalModifiers = new();
-
 		private bool gamePreviousStoped = false;
 
 		private CouplePositionsHandler CouplePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
@@ -74,6 +71,8 @@ namespace _Main.Scripts.Dice
 			inputService = serviceLocator.Get<IInputService>();
 			awaiterService = serviceLocator.Get<IAsyncAwaiterService>();
 			localizationService = serviceLocator.Get<ILocalizationService>();
+			scenarioSetup = new DiceGameScenarioSetup(diceGameModel, run, configService, resourceService);
+			itemsDisplayManager = new DiceGameItemsDisplayManager(diceGameModel, sceneContext.DiceGameTableView, lifecycleService, objectFactory);
 		}
 
 		public void Activate()
@@ -140,10 +139,10 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 			await DiceGamePersistentControllers();
-			await SetupItemsDisplay();
+			await itemsDisplayManager.SetupItemsDisplayAsync();
 			await SelectionProcess();
 
-			MoveItemsToGameSlots();
+			itemsDisplayManager.MoveItemsToGameSlots();
 
 			await BetProcess();
 			if (!await SetupEnemyDiceList())
@@ -198,7 +197,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			diceGameModel.ChangeDiceGameState(DiceGameState.DEFAULT);
-			CleanUpItems();
+			itemsDisplayManager.CleanUpItems();
 			ClenUpSelectionControllers();
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
@@ -218,15 +217,18 @@ namespace _Main.Scripts.Dice
 			var newTableModel = new TableModel(CouplePositionsHandler.FirstPosArray, CouplePositionsHandler.SecondPosArray);
 			diceGameModel.Setup(diceGameConfig, playerModel.InventoryModel.CashCount, newTableModel);
 			// Keep the base cap aligned with available board slots; items can extend beyond this value.
-			var baseCap = Mathf.Min(6, CouplePositionsHandler.FirstPosArray.Length, CouplePositionsHandler.SecondPosArray.Length);
+			var baseCap = DiceGameSetupUtils.CalcBaseCap(
+				CouplePositionsHandler.FirstPosArray.Length,
+				CouplePositionsHandler.SecondPosArray.Length);
 			diceGameModel.SetBaseMaxDiceCount(baseCap);
 			diceTableView.SwitchTurn(diceGameModel.IsPlayerTurn);
-			if (!await SetupEnemyAiScenarioAsync(diceGameConfig))
+			if (!await scenarioSetup.SetupEnemyAiScenarioAsync(diceGameConfig))
 			{
 				return false;
 			}
+			enemyScenarioRuntime = scenarioSetup.EnemyScenarioRuntime;
 
-			if (!await SetupModifiersAsync(diceGameConfig))
+			if (!await scenarioSetup.SetupModifiersAsync(diceGameConfig))
 			{
 				return false;
 			}
@@ -392,81 +394,6 @@ namespace _Main.Scripts.Dice
 			gameControllers.Clear();
 		}
 
-		private async UniTask SetupItemsDisplay()
-		{
-			var items = diceGameModel.PlayerModifierItemsModel.Items;
-			if (items.Count == 0)
-			{
-				return;
-			}
-
-			if (!diceTableView.ItemViewPrefab)
-			{
-				Debug.LogWarning("[DiceGame] ItemViewPrefab is not assigned on DiceTableView. Items will not be spawned.");
-				return;
-			}
-
-			var slots = diceTableView.ItemSlotsSelection;
-
-			for (int i = 0; i < items.Count; i++)
-			{
-				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				var prefab = (items[i] as IModifierItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
-				var view = UnityEngine.Object.Instantiate(
-					prefab,
-					slot ? slot.position : Vector3.zero,
-					slot ? slot.rotation : Quaternion.identity);
-
-				if (slot)
-				{
-					view.transform.SetParent(slot);
-				}
-
-				var controller = new ModifierItemController(items[i], view);
-				itemControllers.Add(controller);
-				itemViews.Add(view);
-				await lifecycleService.RegisterAsync(controller);
-			}
-		}
-
-		private void MoveItemsToGameSlots()
-		{
-			if (itemViews.Count == 0)
-			{
-				return;
-			}
-
-			var slots = diceTableView.ItemSlotsGame;
-			for (int i = 0; i < itemViews.Count; i++)
-			{
-				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				if (!slot)
-				{
-					continue;
-				}
-
-				var view = itemViews[i];
-				view.transform.SetParent(slot);
-				view.transform.position = slot.position;
-				view.transform.rotation = slot.rotation;
-			}
-		}
-
-		private void CleanUpItems()
-		{
-			lifecycleService.UnregisterControllersGroup(itemControllers);
-			itemControllers.Clear();
-
-			foreach (var view in itemViews)
-			{
-				if (view)
-				{
-					objectFactory.Destroy(view.gameObject);
-				}
-			}
-			itemViews.Clear();
-		}
-
 		private void ResetModels()
 		{
 			enemyScenarioRuntime = null;
@@ -512,143 +439,12 @@ namespace _Main.Scripts.Dice
 			interactable.ResetId();
 		}
 
-		private async UniTask<bool> SetupEnemyAiScenarioAsync(DiceGameConfig diceGameConfig)
-		{
-			enemyScenarioRuntime = null;
-			var scriptedModeEnabled = string.Equals(
-				diceGameConfig.enemy_ai_mode,
-				EnemyAiMode.Scripted,
-				StringComparison.OrdinalIgnoreCase);
-
-			if (!scriptedModeEnabled)
-			{
-				return true;
-			}
-
-			var scenarioMap = await LoadEnemyScenarioMapAsync();
-			if (scenarioMap == null)
-			{
-				return false;
-			}
-
-			var scenarioId = await ResolveScenarioIdAsync(diceGameConfig);
-			if (string.IsNullOrWhiteSpace(scenarioId))
-			{
-				return false;
-			}
-
-			if (!scenarioMap.TryGetValue(scenarioId, out var scenario) || scenario == null)
-			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI scenario '{scenarioId}' not found in map '{ResourcePaths.Json.enemy_ai_scenarios}'.");
-				return false;
-			}
-
-			if (!scenario.TryValidateStatic(out var validationError))
-			{
-				FailDiceGameSetup($"[DiceGame] Scenario validation failed: {validationError}");
-				return false;
-			}
-
-			if (scenario.target_score > 0 && scenario.target_score != diceGameModel.TargetPoints)
-			{
-				FailDiceGameSetup(
-					$"[DiceGame] Scenario target_score ({scenario.target_score}) does not match dice_game_rules target_score ({diceGameModel.TargetPoints}).");
-				return false;
-			}
-
-			diceGameModel.SetEnemyComboUpgradesEnabled(false);
-			enemyScenarioRuntime = new EnemyAiScenarioRuntime(scenario);
-			return true;
-		}
-
-		private async UniTask<Dictionary<string, EnemyAiScenarioConfig>> LoadEnemyScenarioMapAsync()
-		{
-			var textAsset = await resourceService.LoadAsync<TextAsset>(ResourcePaths.Json.enemy_ai_scenarios);
-			if (!textAsset)
-			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI scenarios file '{ResourcePaths.Json.enemy_ai_scenarios}' not found.");
-				return null;
-			}
-
-			Dictionary<string, EnemyAiScenarioConfig> scenarioMap;
-			try
-			{
-				scenarioMap = JsonConvert.DeserializeObject<Dictionary<string, EnemyAiScenarioConfig>>(textAsset.text);
-			}
-			catch (Exception exception)
-			{
-				FailDiceGameSetup($"[DiceGame] Failed to parse scenarios map '{ResourcePaths.Json.enemy_ai_scenarios}': {exception.Message}");
-				return null;
-			}
-
-			if (scenarioMap == null || scenarioMap.Count == 0)
-			{
-				FailDiceGameSetup($"[DiceGame] Scenarios map '{ResourcePaths.Json.enemy_ai_scenarios}' is empty.");
-				return null;
-			}
-
-			foreach (var pair in scenarioMap)
-			{
-				if (string.IsNullOrWhiteSpace(pair.Key))
-				{
-					FailDiceGameSetup("[DiceGame] Scenarios map contains an empty key.");
-					return null;
-				}
-
-				if (pair.Value == null)
-				{
-					FailDiceGameSetup($"[DiceGame] Scenario '{pair.Key}' is null.");
-					return null;
-				}
-
-				pair.Value.id = pair.Key;
-				pair.Value.ParseConfig();
-			}
-
-			return scenarioMap;
-		}
-
-		private async UniTask<string> ResolveScenarioIdAsync(DiceGameConfig diceGameConfig)
-		{
-			var scenarioId = diceGameConfig.enemy_ai_scenario_id?.Trim();
-			if (!string.IsNullOrWhiteSpace(scenarioId))
-			{
-				return scenarioId;
-			}
-
-			var schedule = await configService.GetFirstOrDefaultAsync<EnemyAiScenarioScheduleConfig>(ResourcePaths.Json.enemy_ai_scenario_schedule);
-			if (schedule == null)
-			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI schedule '{ResourcePaths.Json.enemy_ai_scenario_schedule}' not found and enemy_ai_scenario_id override is empty.");
-				return null;
-			}
-
-			schedule.ParseConfig();
-			if (!schedule.TryValidateStatic(out var scheduleValidationError))
-			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI schedule validation failed: {scheduleValidationError}");
-				return null;
-			}
-
-			// Schedule values are 1-based for easier authoring in JSON.
-			var level = run.Level + 1;
-			var day = run.Day + 1;
-			var match = run.Tick + 1;
-			if (!schedule.TryResolveScenarioId(level, day, match, out scenarioId))
-			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI schedule could not resolve scenario for level={level}, day={day}, match={match}.");
-				return null;
-			}
-
-			return scenarioId;
-		}
-
 		private List<ItemCatalogEntry> ResolveEnemyDiceConfigs(
 			IReadOnlyDictionary<string, ItemCatalogEntry> catalog,
 			int bankSlotsCount,
 			int activeSlotsCount)
 		{
-			var maxBySlots = Mathf.Min(bankSlotsCount, activeSlotsCount);
+			var maxBySlots = DiceGameSetupUtils.CalcMaxBySlots(bankSlotsCount, activeSlotsCount);
 			if (maxBySlots <= 0)
 			{
 				return new List<ItemCatalogEntry>();
@@ -657,178 +453,33 @@ namespace _Main.Scripts.Dice
 			var scriptedDiceIds = enemyScenarioRuntime?.Scenario?.enemy_setup?.dice_in_hand;
 			if (scriptedDiceIds != null && scriptedDiceIds.Length > 0)
 			{
-				if (scriptedDiceIds.Length > maxBySlots)
+				if (!DiceGameSetupUtils.TryResolveScriptedEnemyDiceConfigs(
+					    catalog,
+					    scriptedDiceIds,
+					    maxBySlots,
+					    out var scriptedConfigs,
+					    out var error))
 				{
-					Debug.LogError(
-						$"[DiceGame] Scenario requires {scriptedDiceIds.Length} enemy dice, but only {maxBySlots} slots are available.");
+					Debug.LogError($"[DiceGame] {error}");
 					return null;
-				}
-
-				var scriptedConfigs = new List<ItemCatalogEntry>(scriptedDiceIds.Length);
-				for (int i = 0; i < scriptedDiceIds.Length; i++)
-				{
-					var diceId = scriptedDiceIds[i];
-					if (!catalog.TryGetValue(diceId, out var diceConfig) || diceConfig.typeEnum != ItemCatalogType.Dice)
-					{
-						Debug.LogError($"[DiceGame] Scenario dice id '{diceId}' is missing or is not a Dice entry.");
-						return null;
-					}
-
-					scriptedConfigs.Add(diceConfig);
 				}
 
 				return scriptedConfigs;
 			}
 
-			if (!catalog.TryGetValue("default", out var defaultConfig) || defaultConfig.typeEnum != ItemCatalogType.Dice)
+			// Enemy should not benefit from player dice cap bonuses.
+			var enemyLimit = Mathf.Min(diceGameModel.BaseMaxDiceCount, maxBySlots);
+			if (!DiceGameSetupUtils.TryResolveDefaultEnemyDiceConfigs(
+				    catalog,
+				    enemyLimit,
+				    out var defaults,
+				    out var defaultError))
 			{
-				Debug.LogWarning("[DiceGame] Default dice entry not found in catalog.");
+				Debug.LogWarning($"[DiceGame] {defaultError}");
 				return null;
 			}
 
-			// Enemy should not benefit from player dice cap bonuses.
-			var enemyLimit = Mathf.Min(diceGameModel.BaseMaxDiceCount, maxBySlots);
-			var defaults = new List<ItemCatalogEntry>(enemyLimit);
-			for (int i = 0; i < enemyLimit; i++)
-			{
-				defaults.Add(defaultConfig);
-			}
-
 			return defaults;
-		}
-
-		private async UniTask<bool> SetupModifiersAsync(DiceGameConfig diceGameConfig)
-		{
-			var modifiersMode = diceGameConfig.modifiers_mode?.Trim();
-			if (string.IsNullOrWhiteSpace(modifiersMode))
-			{
-				modifiersMode = DiceGameModifiersMode.Inventory;
-			}
-
-			if (string.Equals(modifiersMode, DiceGameModifiersMode.Inventory, StringComparison.OrdinalIgnoreCase))
-			{
-				return await ApplyInventoryModifiersAsync();
-			}
-
-			if (string.Equals(modifiersMode, DiceGameModifiersMode.Scripted, StringComparison.OrdinalIgnoreCase))
-			{
-				return await ApplyModifiersScheduleAsync(diceGameConfig.modifiers_set_id);
-			}
-
-			FailDiceGameSetup(
-				$"[DiceGame] Unsupported modifiers_mode '{diceGameConfig.modifiers_mode}'. Expected '{DiceGameModifiersMode.Inventory}' or '{DiceGameModifiersMode.Scripted}'.");
-			return false;
-		}
-
-		private UniTask<bool> ApplyInventoryModifiersAsync()
-		{
-			// Keep player's inventory-driven modifiers intact in default mode.
-			ClearRuntimeGlobalModifiers();
-			diceGameModel.EnemyModifierItemsModel.Reset();
-			diceGameModel.EnemyModifiersModel.Reset();
-			return UniTask.FromResult(true);
-		}
-
-		private async UniTask<bool> ApplyModifiersScheduleAsync(string setIdOverride)
-		{
-			var schedule = await configService.GetFirstOrDefaultAsync<DiceGameModifiersScheduleConfig>(ResourcePaths.Json.dice_game_modifiers_schedule);
-			if (schedule == null)
-			{
-				FailDiceGameSetup($"[DiceGame] Modifiers schedule '{ResourcePaths.Json.dice_game_modifiers_schedule}' not found.");
-				return false;
-			}
-
-			schedule.ParseConfig();
-			if (!schedule.TryValidateStatic(out var validationError))
-			{
-				FailDiceGameSetup($"[DiceGame] Modifiers schedule validation failed: {validationError}");
-				return false;
-			}
-
-			DiceGameModifierSet resolvedSet = null;
-			var overrideSetId = setIdOverride?.Trim();
-			if (!string.IsNullOrWhiteSpace(overrideSetId))
-			{
-				if (!schedule.sets.TryGetValue(overrideSetId, out resolvedSet) || resolvedSet == null)
-				{
-					FailDiceGameSetup(
-						$"[DiceGame] modifiers_set_id override '{overrideSetId}' not found in schedule '{ResourcePaths.Json.dice_game_modifiers_schedule}'.");
-					return false;
-				}
-			}
-			else
-			{
-				var level = run.Level + 1;
-				var day = run.Day + 1;
-				var match = run.Tick + 1;
-				if (!schedule.TryResolveSet(level, day, match, out resolvedSet) || resolvedSet == null)
-				{
-					FailDiceGameSetup($"[DiceGame] Modifiers schedule could not resolve set for level={level}, day={day}, match={match}.");
-					return false;
-				}
-			}
-
-			ClearRuntimeGlobalModifiers();
-			diceGameModel.EnemyModifierItemsModel.Reset();
-			diceGameModel.EnemyModifiersModel.Reset();
-
-			return ApplyGlobalModifierSet(resolvedSet.player_modifiers, diceGameModel.PlayerScoringService, "player");
-		}
-
-		private bool ApplyGlobalModifierSet(
-			string[] modifierIds,
-			DiceScoringService scoringService,
-			string sideLabel)
-		{
-			if (modifierIds == null || modifierIds.Length == 0)
-			{
-				return true;
-			}
-
-			var uniqueIds = new HashSet<string>();
-			for (int i = 0; i < modifierIds.Length; i++)
-			{
-				var modifierId = modifierIds[i]?.Trim();
-				if (string.IsNullOrWhiteSpace(modifierId))
-				{
-					FailDiceGameSetup($"[DiceGame] Empty modifier id in {sideLabel}_modifiers.");
-					return false;
-				}
-
-				if (!uniqueIds.Add(modifierId))
-				{
-					FailDiceGameSetup($"[DiceGame] Duplicate modifier id '{modifierId}' in {sideLabel}_modifiers.");
-					return false;
-				}
-
-				var modifier = GlobalModifierFactory.Create(modifierId, scoringService);
-				if (modifier == null)
-				{
-					FailDiceGameSetup($"[DiceGame] Failed to create modifier '{modifierId}' for {sideLabel}.");
-					return false;
-				}
-
-				diceGameModel.PlayerModifiersModel.AddModifier(modifier);
-				runtimeGlobalModifiers.Add(modifier);
-			}
-
-			return true;
-		}
-
-		private void ClearRuntimeGlobalModifiers()
-		{
-			if (runtimeGlobalModifiers.Count == 0)
-			{
-				return;
-			}
-
-			var model = diceGameModel.PlayerModifiersModel;
-			for (int i = 0; i < runtimeGlobalModifiers.Count; i++)
-			{
-				model.RemoveModifier(runtimeGlobalModifiers[i]);
-			}
-
-			runtimeGlobalModifiers.Clear();
 		}
 
 		private void FailDiceGameSetup(string message)
