@@ -19,6 +19,7 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private Transform tooltipPos;
 
 	[Header("StateHandlers")]
+	[SerializeField] private Transform defaultStateHandler;
 	[SerializeField] private Transform gameStateHandler;
 	[SerializeField] private Transform betStateHandler;
 	[SerializeField] private Transform selectStateHandler;
@@ -116,12 +117,16 @@ public class DiceTableView : MonoBehaviour
 
 	public void SwitchGameStateView(DiceGameState state)
 	{
+		defaultStateHandler.gameObject.SetActive(false);
 		gameStateHandler.gameObject.SetActive(false);
 		betStateHandler.gameObject.SetActive(false);
 		selectStateHandler.gameObject.SetActive(false);
 
 		switch (state)
 		{
+			case DiceGameState.DEFAULT:
+				defaultStateHandler.gameObject.SetActive(true);
+				break;
 			case DiceGameState.GAME:
 				gameStateHandler.gameObject.SetActive(true);
 				break;
