@@ -171,9 +171,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1848567673873047896, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959571861318080641, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.002
+      objectReference: {fileID: 0}
     - target: {fileID: 2227929652776181296, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_Name
       value: Train
+      objectReference: {fileID: 0}
+    - target: {fileID: 2227929652776181296, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2358085766648548592, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.002
       objectReference: {fileID: 0}
     - target: {fileID: 2925529897289357708, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalScale.x
@@ -227,6 +243,22 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3113942497215493462, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 3921906060413013159, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 5416400020089904729, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.002
+      objectReference: {fileID: 0}
+    - target: {fileID: 5571485113439720761, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.002
+      objectReference: {fileID: 0}
     - target: {fileID: 5764599070329767640, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.7071068
@@ -242,6 +274,10 @@ PrefabInstance:
     - target: {fileID: 5764599070329767640, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 5796996946801278714, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.002
       objectReference: {fileID: 0}
     - target: {fileID: 6007166196673966488, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1210,6 +1246,26 @@ PrefabInstance:
     - target: {fileID: 4120585186232800748, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4134535800831244662, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 4134535800831244662, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.013
+      objectReference: {fileID: 0}
+    - target: {fileID: 4134535800831244662, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9781159
+      objectReference: {fileID: 0}
+    - target: {fileID: 4134535800831244662, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.20806058
+      objectReference: {fileID: 0}
+    - target: {fileID: 4134535800831244662, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 24.017
       objectReference: {fileID: 0}
     - target: {fileID: 4245670476150187734, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       propertyPath: m_StaticEditorFlags
