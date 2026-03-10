@@ -1,268 +1,435 @@
 {
-  "enemy_script_demo_2_turn_win": {
+  "l1d1m1_safe_bank_v01": {
     "mode": "scripted",
     "strict_validation": true,
     "on_mismatch": "fail_scenario",
     "target_score": 2000,
-    "enemy_setup": {
-      "use_modifiers": false,
-      "dice_in_hand": [
-        "default",
-        "default",
-        "default",
-        "default",
-        "default",
-        "default"
-      ]
-    },
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
     "turns": [
-      {
-        "enemy_turn": 1,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [1, 1, 1, 5, 2, 3],
-            "save_unbanked_indexes": [0, 1, 2, 3],
-            "expected_saved_score": 1050
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      },
-      {
-        "enemy_turn": 2,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [5, 5, 5, 5, 2, 3],
-            "save_unbanked_indexes": [0, 1, 2, 3],
-            "expected_saved_score": 1000
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      }
+      { "steps": [ { "action": "roll", "forced_values": [1,1,2,3,4,6], "save_unbanked_indexes": [0,1] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [1,1,6,2,3,4], "save_unbanked_indexes": [0,1] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,3,1,1,4,6], "save_unbanked_indexes": [2,3] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [6,4,1,1,2,3], "save_unbanked_indexes": [2,3] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [3,4,6,1,1,2], "save_unbanked_indexes": [3,4] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,1,1,3,4,6], "save_unbanked_indexes": [1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [4,2,3,6,1,1], "save_unbanked_indexes": [4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [1,1,3,4,2,6], "save_unbanked_indexes": [0,1] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,6,4,1,1,3], "save_unbanked_indexes": [3,4] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [6,3,2,4,1,1], "save_unbanked_indexes": [4,5] }, { "action": "pass" } ] }
     ],
-    "expected_result": {
-      "completed_in_enemy_turns": 2,
-      "enemy_final_banked_score": 2050,
-      "enemy_reaches_target": true
-    }
+    "expected_result": { "completed_in_enemy_turns": 10, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
   },
-  "enemy_script_one_turn_all_ones": {
+
+  "l1d1m2_triple_bank_v01": {
     "mode": "scripted",
     "strict_validation": true,
     "on_mismatch": "fail_scenario",
     "target_score": 2000,
-    "enemy_setup": {
-      "use_modifiers": false,
-      "dice_in_hand": [
-        "default",
-        "default",
-        "default",
-        "default",
-        "default",
-        "default"
-      ]
-    },
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
     "turns": [
-      {
-        "enemy_turn": 1,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [1, 1, 1, 1, 1, 1],
-            "save_unbanked_indexes": [0, 1, 2, 3, 4, 5],
-            "expected_saved_score": 8000
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      }
+      { "steps": [ { "action": "roll", "forced_values": [6,6,6,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [5,5,5,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [4,4,4,2,3,6], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [3,3,3,2,4,6], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,2,2,3,4,6], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] }
     ],
-    "expected_result": {
-      "completed_in_enemy_turns": 1,
-      "enemy_final_banked_score": 8000,
-      "enemy_reaches_target": true
-    }
+    "expected_result": { "completed_in_enemy_turns": 5, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
   },
-  "enemy_script_straight_then_fives": {
+
+  "l1d1m3_greedy_press_v01": {
     "mode": "scripted",
     "strict_validation": true,
     "on_mismatch": "fail_scenario",
     "target_score": 2000,
-    "enemy_setup": {
-      "use_modifiers": false,
-      "dice_in_hand": [
-        "default",
-        "default",
-        "default",
-        "default",
-        "default",
-        "default"
-      ]
-    },
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
     "turns": [
-      {
-        "enemy_turn": 1,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [1, 2, 3, 4, 5, 6],
-            "save_unbanked_indexes": [0, 1, 2, 3, 4, 5],
-            "expected_saved_score": 1500
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      },
-      {
-        "enemy_turn": 2,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [5, 5, 5, 2, 3, 4],
-            "save_unbanked_indexes": [0, 1, 2],
-            "expected_saved_score": 500
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      }
+      { "steps": [
+        { "action": "roll", "forced_values": [1,2,3,4,6,5], "save_unbanked_indexes": [0] },
+        { "action": "roll", "forced_values": [5,5,5,2,3], "save_unbanked_indexes": [0,1,2] },
+        { "action": "pass" }
+      ]},
+      { "steps": [
+        { "action": "roll", "forced_values": [1,2,3,4,6,5], "save_unbanked_indexes": [5] },
+        { "action": "roll", "forced_values": [6,6,6,2,3], "save_unbanked_indexes": [0,1,2] },
+        { "action": "pass" }
+      ]},
+      { "steps": [
+        { "action": "roll", "forced_values": [6,6,6,1,5,2], "save_unbanked_indexes": [0,1,2,3,4] },
+        { "action": "pass" }
+      ]}
     ],
-    "expected_result": {
-      "completed_in_enemy_turns": 2,
-      "enemy_final_banked_score": 2000,
-      "enemy_reaches_target": true
-    }
+    "expected_result": { "completed_in_enemy_turns": 3, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
   },
-  "enemy_script_steady_3_turn": {
+
+  "l1d2m1_combo_stack_v01": {
     "mode": "scripted",
     "strict_validation": true,
     "on_mismatch": "fail_scenario",
     "target_score": 2000,
-    "enemy_setup": {
-      "use_modifiers": false,
-      "dice_in_hand": [
-        "default",
-        "default",
-        "default",
-        "default",
-        "default",
-        "default"
-      ]
-    },
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
     "turns": [
-      {
-        "enemy_turn": 1,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [5, 5, 5, 2, 3, 4],
-            "save_unbanked_indexes": [0, 1, 2],
-            "expected_saved_score": 500
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      },
-      {
-        "enemy_turn": 2,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [5, 5, 5, 1, 2, 3],
-            "save_unbanked_indexes": [0, 1, 2],
-            "expected_saved_score": 500
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      },
-      {
-        "enemy_turn": 3,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [1, 1, 1, 2, 3, 4],
-            "save_unbanked_indexes": [0, 1, 2],
-            "expected_saved_score": 1000
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      }
+      { "steps": [ { "action": "roll", "forced_values": [6,6,6,3,3,3], "save_unbanked_indexes": [0,1,2,3,4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [1,1,1,5,5,2], "save_unbanked_indexes": [0,1,2,3,4] }, { "action": "pass" } ] }
     ],
-    "expected_result": {
-      "completed_in_enemy_turns": 3,
-      "enemy_final_banked_score": 2000,
-      "enemy_reaches_target": true
-    }
+    "expected_result": { "completed_in_enemy_turns": 2, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
   },
-  "enemy_script_two_rolls_then_finish": {
+
+  "l1d2m2_hot_dice_opp_v01": {
     "mode": "scripted",
     "strict_validation": true,
     "on_mismatch": "fail_scenario",
     "target_score": 2000,
-    "enemy_setup": {
-      "use_modifiers": false,
-      "dice_in_hand": [
-        "default",
-        "default",
-        "default",
-        "default",
-        "default",
-        "default"
-      ]
-    },
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
     "turns": [
-      {
-        "enemy_turn": 1,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [1, 1, 1, 5, 2, 3],
-            "save_unbanked_indexes": [0, 1, 2, 3],
-            "expected_saved_score": 1050
-          },
-          {
-            "action": "roll",
-            "forced_values": [1, 5],
-            "save_unbanked_indexes": [0, 1],
-            "expected_saved_score": 150
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      },
-      {
-        "enemy_turn": 2,
-        "steps": [
-          {
-            "action": "roll",
-            "forced_values": [1, 1, 1, 2, 3, 4],
-            "save_unbanked_indexes": [0, 1, 2],
-            "expected_saved_score": 1000
-          },
-          {
-            "action": "pass"
-          }
-        ]
-      }
+      { "steps": [
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [5,5,5,2,3,4], "save_unbanked_indexes": [0,1,2] },
+        { "action": "pass" }
+      ]}
     ],
-    "expected_result": {
-      "completed_in_enemy_turns": 2,
-      "enemy_final_banked_score": 2200,
-      "enemy_reaches_target": true
-    }
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l1d2m3_pattern_spec_v01": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [6,6,6,3,3,3], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2400, "enemy_reaches_target": true }
+  },
+
+  "l1d3m1_clutch_finish_v01": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [5,5,5,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 2, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l1d3m2_all_in_burst_v01": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [6,6,6,3,3,3], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2400, "enemy_reaches_target": true }
+  },
+
+  "l1d3m3_safe_bank_v02": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [1,1,5,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,1,1,5,3,4], "save_unbanked_indexes": [1,2,3] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [4,3,5,1,1,2], "save_unbanked_indexes": [2,3,4] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [1,5,2,3,4,1], "save_unbanked_indexes": [0,1,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [3,4,1,1,5,2], "save_unbanked_indexes": [2,3,4] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,3,4,5,1,1], "save_unbanked_indexes": [3,4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [5,1,1,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,3,4,1,1,5], "save_unbanked_indexes": [3,4,5] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 8, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l2d1m1_triple_bank_v02": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [1,1,1,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [6,6,6,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [4,4,4,2,3,6], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 3, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l2d1m2_greedy_press_v02": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,2,3,4,6,5], "save_unbanked_indexes": [0] },
+        { "action": "roll", "forced_values": [1,1,1,5,5], "save_unbanked_indexes": [0,1,2,3,4] },
+        { "action": "roll", "forced_values": [6,6,6,1,1,2], "save_unbanked_indexes": [0,1,2,3,4] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l2d1m3_combo_stack_v02": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [1,1,1,4,4,4], "save_unbanked_indexes": [0,1,2,3,4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [6,6,6,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 2, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l2d2m1_hot_dice_opp_v02": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [2,2,2,3,3,3], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l2d2m2_pattern_spec_v02": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [4,4,4,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [1,1,1,6,6,6], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2500, "enemy_reaches_target": true }
+  },
+
+  "l2d2m3_clutch_finish_v02": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [1,1,1,6,6,6], "save_unbanked_indexes": [0,1,2,3,4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [4,4,4,2,3,6], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 2, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l2d3m1_all_in_burst_v02": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [1,1,1,2,2,2], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2700, "enemy_reaches_target": true }
+  },
+
+  "l2d3m2_safe_bank_v03": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [2,2,2,1,1,6], "save_unbanked_indexes": [0,1,2,3,4] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [1,1,6,2,2,2], "save_unbanked_indexes": [0,1,3,4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,2,2,1,1,3], "save_unbanked_indexes": [0,1,2,3,4] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [6,2,2,2,1,1], "save_unbanked_indexes": [1,2,3,4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,2,2,1,1,4], "save_unbanked_indexes": [0,1,2,3,4] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 5, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l2d3m3_triple_bank_v03": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [1,1,1,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [5,5,5,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [6,6,6,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 3, "enemy_final_banked_score": 2100, "enemy_reaches_target": true }
+  },
+
+  "l3d1m1_greedy_press_v03": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,2,3,4,6,5], "save_unbanked_indexes": [0] },
+        { "action": "roll", "forced_values": [6,6,6,5,5], "save_unbanked_indexes": [0,1,2,3,4] },
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2300, "enemy_reaches_target": true }
+  },
+
+  "l3d1m2_combo_stack_v03": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,1,1,4,4,4], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [5,5,5,2,3,4], "save_unbanked_indexes": [0,1,2] },
+        { "action": "roll", "forced_values": [1,5,2], "save_unbanked_indexes": [0,1] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2050, "enemy_reaches_target": true }
+  },
+
+  "l3d1m3_hot_dice_opp_v03": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [3,3,3,4,4,4], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2200, "enemy_reaches_target": true }
+  },
+
+  "l3d2m1_pattern_spec_v03": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,1,1,6,6,6], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [5,5,5,2,3,4], "save_unbanked_indexes": [0,1,2] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2100, "enemy_reaches_target": true }
+  },
+
+  "l3d2m2_clutch_finish_v03": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,1,1,4,4,4], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [6,6,6,2,3,4], "save_unbanked_indexes": [0,1,2] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l3d2m3_all_in_burst_v03": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 3000, "enemy_reaches_target": true }
+  },
+
+  "l3d3m1_safe_bank_v04": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [5,5,5,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [2,3,4,5,5,5], "save_unbanked_indexes": [3,4,5] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [5,5,5,6,2,3], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [3,2,6,5,5,5], "save_unbanked_indexes": [3,4,5] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 4, "enemy_final_banked_score": 2000, "enemy_reaches_target": true }
+  },
+
+  "l3d3m2_triple_bank_v04": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [ { "action": "roll", "forced_values": [1,1,1,2,3,4], "save_unbanked_indexes": [0,1,2] }, { "action": "pass" } ] },
+      { "steps": [ { "action": "roll", "forced_values": [1,1,1,5,5,5], "save_unbanked_indexes": [0,1,2,3,4,5] }, { "action": "pass" } ] }
+    ],
+    "expected_result": { "completed_in_enemy_turns": 2, "enemy_final_banked_score": 2500, "enemy_reaches_target": true }
+  },
+
+  "l3d3m3_greedy_press_v04": {
+    "mode": "scripted",
+    "strict_validation": true,
+    "on_mismatch": "fail_scenario",
+    "target_score": 2000,
+    "enemy_setup": { "use_modifiers": false, "dice_in_hand": ["default","default","default","default","default","default"] },
+    "turns": [
+      { "steps": [
+        { "action": "roll", "forced_values": [1,2,3,4,6,5], "save_unbanked_indexes": [5] },
+        { "action": "roll", "forced_values": [1,1,1,6,6], "save_unbanked_indexes": [0,1,2] },
+        { "action": "roll", "forced_values": [1,5], "save_unbanked_indexes": [0,1] },
+        { "action": "roll", "forced_values": [6,6,6,3,3,3], "save_unbanked_indexes": [0,1,2,3,4,5] },
+        { "action": "pass" }
+      ]}
+    ],
+    "expected_result": { "completed_in_enemy_turns": 1, "enemy_final_banked_score": 2100, "enemy_reaches_target": true }
   }
 }
