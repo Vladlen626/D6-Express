@@ -68,18 +68,19 @@ public class StatsViewController : BaseContextController<UIStatsView>, IGameStat
 
             void OnInteracted()
             {
+                _context.StartButtonClicked -= OnButtonClicked;
+                inputService.OnInteractPressed -= OnInteracted;
+                source.TrySetResult();
+            }
+
+            void OnButtonClicked()
+            {
+                _context.StartButtonClicked -= OnButtonClicked;
                 inputService.OnInteractPressed -= OnInteracted;
                 source.TrySetResult();
             }
 
             inputService.OnInteractPressed += OnInteracted;
-
-            void OnButtonClicked()
-            {
-                _context.StartButtonClicked -= OnButtonClicked;
-                source.TrySetResult();
-            }
-
             _context.StartButtonClicked += OnButtonClicked;
 
             await source.Task;
