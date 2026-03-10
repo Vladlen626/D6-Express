@@ -1003,6 +1003,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 924472853697287606, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1219617283893941618, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
       propertyPath: m_Name
       value: MainSection_DiceTable
@@ -1022,6 +1026,10 @@ PrefabInstance:
     - target: {fileID: 3813164589131285571, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
       propertyPath: m_Cookie
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889135189867195102, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5249104162259415948, guid: 79f73b434892be146bb96cead677c5fb, type: 3}
       propertyPath: isOpened
@@ -1183,6 +1191,10 @@ PrefabInstance:
     - target: {fileID: 3381595635999799404, guid: edb640ea08f79374486a8fbe8f84ac90, type: 3}
       propertyPath: m_Name
       value: TrainHead
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844625747325003448, guid: edb640ea08f79374486a8fbe8f84ac90, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
