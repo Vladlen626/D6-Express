@@ -3661,6 +3661,7 @@ GameObject:
   - component: {fileID: 3476813347554480488}
   - component: {fileID: 4614161284936148695}
   - component: {fileID: 6998869825652696497}
+  - component: {fileID: 5361876968819583801}
   m_Layer: 0
   m_Name: Station
   m_TagString: Untagged
@@ -3741,6 +3742,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5361876968819583801
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3345134476724521411}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.30148208, y: 0.12325302, z: 0.008042691}
+  m_Center: {x: -0.000000014900391, y: 0.0008266827, z: 3.4991216e-18}
 --- !u!1 &3360744631110922899
 GameObject:
   m_ObjectHideFlags: 0
