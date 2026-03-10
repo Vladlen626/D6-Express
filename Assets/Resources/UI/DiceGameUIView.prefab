@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DiceGameUIView
   _group: {fileID: 4568723466507998624}
-  _canvasType: 10
+  _canvasType: 5
   hintLeft: {fileID: 3290554231961745658}
   hintRight: {fileID: 4053243859319785513}
 --- !u!1001 &4135024855554586572
