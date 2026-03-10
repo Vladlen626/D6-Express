@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(HintableDynamic))]
+[ExecuteInEditMode]
 public class InteractableCurtains : Interactable
 {
     [SerializeField]
@@ -23,6 +24,11 @@ public class InteractableCurtains : Interactable
 
         hintableDynamic = GetComponent<HintableDynamic>();
 
+        ApplyState();
+    }
+
+    private void OnValidate()
+    {
         ApplyState();
     }
 
