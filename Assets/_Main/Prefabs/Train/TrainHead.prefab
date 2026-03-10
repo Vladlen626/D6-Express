@@ -4057,6 +4057,8 @@ GameObject:
   - component: {fileID: 4344926208290304447}
   - component: {fileID: 7499070717169212684}
   - component: {fileID: 6037015689306647122}
+  - component: {fileID: 748520604254117966}
+  - component: {fileID: 5091496407791011318}
   m_Layer: 0
   m_Name: Wall titan
   m_TagString: Untagged
@@ -4137,6 +4139,48 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &748520604254117966
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8744509812771802451}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.022960318, y: 0.013176673, z: 0.037779786}
+  m_Center: {x: 0.014397125, y: 0.0025129241, z: 0.002669537}
+--- !u!65 &5091496407791011318
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8744509812771802451}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0077095684, y: 0.010549123, z: 0.037779786}
+  m_Center: {x: 0.0018384928, y: 0.0011991501, z: 0.0026695372}
 --- !u!1 &8818175255900130626
 GameObject:
   m_ObjectHideFlags: 0

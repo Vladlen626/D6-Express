@@ -85,7 +85,7 @@ namespace _Main.Scripts.Dice
 			if (diceGameModel.DiceGameState == DiceGameState.GAME && notificationService != null)
 			{
 				var id = diceGameModel.IsPlayerTurn ? "dice_banner_turn_player" : "dice_banner_turn_enemy";
-				notificationService.ShowBanner(id, 0.9f);
+				notificationService.ShowBanner(id, 0.9f, !diceGameModel.IsPlayerTurn);
 			}
 		}
 
