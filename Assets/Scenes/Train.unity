@@ -748,6 +748,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainMenuBlock
       objectReference: {fileID: 0}
+    - target: {fileID: 7589453824473399613, guid: d622344ef64ba4249b474ac127f98116, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.1861335
+      objectReference: {fileID: 0}
+    - target: {fileID: 7589453824473399613, guid: d622344ef64ba4249b474ac127f98116, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.0056345
+      objectReference: {fileID: 0}
+    - target: {fileID: 7589453824473399613, guid: d622344ef64ba4249b474ac127f98116, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.465024
+      objectReference: {fileID: 0}
+    - target: {fileID: 7589453824473399613, guid: d622344ef64ba4249b474ac127f98116, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.004479029
+      objectReference: {fileID: 0}
+    - target: {fileID: 7589453824473399613, guid: d622344ef64ba4249b474ac127f98116, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.003992241
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
