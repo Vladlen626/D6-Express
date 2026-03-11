@@ -185,7 +185,6 @@ namespace _Main.Scripts.Core
 			controllersList.AddRange(new IBaseController[]
 			{
 				new CashBalanceNotificationController(playerModel.InventoryModel, notificationService),
-				new CursorHotkeyController(cursorService),
 				debugController,
 				speechController,
 				new QuestsViewController(uiService, playerModel.Quests, factory, game),

@@ -35,7 +35,10 @@ namespace PlatformCore.Services.UI
 		{
 			if (TryLock())
 			{
-				ApplyLockedState();
+				Cursor.lockState = CursorLockMode.Locked;
+				Cursor.visible = false;
+				_uiCursorView.Show();
+				OnCursorStateChanged?.Invoke();
 			}
 		}
 
@@ -43,56 +46,16 @@ namespace PlatformCore.Services.UI
 		{
 			if (TryUnlock())
 			{
-				ApplyUnlockedState();
-			}
-		}
-
-
-
-		public void ForceToggleCursor()
-		{
-			if (IsCursorLocked)
-			{
-				ForceUnlockCursor();
-			}
-			else
-			{
-				ForceLockCursor();
+				Cursor.lockState = CursorLockMode.None;
+				Cursor.visible = true;
+				_uiCursorView.Hide();
+				OnCursorStateChanged?.Invoke();
 			}
 		}
 
 		public void Dispose()
 		{
 			UnlockCursor();
-		}
-
-
-		private void ForceLockCursor()
-		{
-			lockCount = 1;
-			ApplyLockedState();
-		}
-
-		private void ForceUnlockCursor()
-		{
-			lockCount = 0;
-			ApplyUnlockedState();
-		}
-
-		private void ApplyLockedState()
-		{
-			Cursor.lockState = CursorLockMode.Locked;
-			Cursor.visible = false;
-			_uiCursorView.Show();
-			OnCursorStateChanged?.Invoke();
-		}
-
-		private void ApplyUnlockedState()
-		{
-			Cursor.lockState = CursorLockMode.None;
-			Cursor.visible = true;
-			_uiCursorView.Hide();
-			OnCursorStateChanged?.Invoke();
 		}
 
 		private bool TryLock()
