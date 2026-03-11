@@ -12,6 +12,7 @@ namespace _Main.Scripts.Dice
 	{
 		private const float DefaultValueAnimDuration = 1.4f;
 		private const float DefaultRouletteRadius = 88f;
+		private const float ResolvedTopPositionOffset = 0f;
 
 		[SerializeField]
 		private TextMeshProUGUI titleText;
@@ -68,6 +69,7 @@ namespace _Main.Scripts.Dice
 		private string stopHintText;
 		private int selectedRouletteVariantIndex = -1;
 		private bool isRollResolved;
+		private bool hasResolvedRouletteAnimation;
 		private UIDiceUpgradeVariantView rouletteVariantPrefab;
 		private bool cachedBaseColors;
 		private Color minBaseColor;
@@ -107,6 +109,7 @@ namespace _Main.Scripts.Dice
 			maxChanged = data.BeforeMax != data.AfterMax;
 			bonusChanged = data.BeforeBonus != data.AfterBonus;
 			isRollResolved = false;
+			hasResolvedRouletteAnimation = false;
 			selectedAffectedStat = DiceUpgradeAffectedStat.None;
 			selectedVisualSign = 0;
 			selectedRouletteVariantIndex = -1;
@@ -138,7 +141,7 @@ namespace _Main.Scripts.Dice
 			isRollResolved = true;
 			UpdateResolvedSlotState();
 			LogFaceDebug("ApplyRollResult");
-			RefreshRouletteVisuals();
+			PlayResolvedRouletteAnimation();
 			RefreshStatTexts();
 
 			if (hintText)
@@ -216,10 +219,11 @@ namespace _Main.Scripts.Dice
 				if (isRollResolved && i == selectedRouletteVariantIndex)
 				{
 					variant.SetVisualState(DiceUpgradeVariantVisualState.Selected);
-					continue;
 				}
-
-				variant.SetVisualState(DiceUpgradeVariantVisualState.Idle);
+				else if (!isRollResolved)
+				{
+					variant.SetVisualState(DiceUpgradeVariantVisualState.Idle);
+				}
 			}
 		}
 
@@ -328,6 +332,38 @@ namespace _Main.Scripts.Dice
 			var slot = visibleSlots[selectedRouletteVariantIndex];
 			selectedAffectedStat = slot.AffectedStat;
 			selectedVisualSign = slot.VisualSign;
+		}
+
+		private void PlayResolvedRouletteAnimation()
+		{
+			if (hasResolvedRouletteAnimation)
+			{
+				return;
+			}
+
+			if (selectedRouletteVariantIndex < 0 || selectedRouletteVariantIndex >= spawnedVariants.Count)
+			{
+				return;
+			}
+
+			hasResolvedRouletteAnimation = true;
+			var topPosition = new Vector2(0f, Mathf.Max(0f, rouletteRadius) + ResolvedTopPositionOffset);
+			for (int i = 0; i < spawnedVariants.Count; i++)
+			{
+				var variant = spawnedVariants[i];
+				if (!variant || !variant.IsValid)
+				{
+					continue;
+				}
+
+				if (i == selectedRouletteVariantIndex)
+				{
+					variant.AnimateResolveSelected(topPosition);
+					continue;
+				}
+
+				variant.AnimateResolveHidden();
+			}
 		}
 
 		private void LogFaceDebug(string stage)

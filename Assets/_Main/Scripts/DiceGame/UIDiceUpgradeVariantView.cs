@@ -18,8 +18,14 @@ namespace _Main.Scripts.Dice
 		private const float IdleScale = 1f;
 		private const float SelectedScale = 1.05f;
 		private const float SettleDuration = 0.08f;
-		private const float FloatingAmplitude = 4f;
-		private const float FloatingDuration = 2.6f;
+		private const float FloatingVerticalAmplitude = 5.5f;
+		private const float FloatingHorizontalAmplitude = 1.6f;
+		private const float FloatingDuration = 2.2f;
+		private const float FloatingRotationDegrees = 2.4f;
+		private const float FloatingRotationDuration = 1.9f;
+		private const float ResolveMoveDuration = 0.28f;
+		private const float ResolveHideDuration = 0.2f;
+		private const float HiddenScale = 0.01f;
 
 		[SerializeField]
 		private RectTransform root;
@@ -48,6 +54,8 @@ namespace _Main.Scripts.Dice
 
 		private Tween scaleTween;
 		private Tween floatingTween;
+		private Tween rotationTween;
+		private Tween moveTween;
 		private Vector2 baseAnchoredPosition;
 		private int face;
 
@@ -118,13 +126,56 @@ namespace _Main.Scripts.Dice
 			{
 				floatingTween.Kill();
 			}
+			if (rotationTween != null && rotationTween.IsActive())
+			{
+				rotationTween.Kill();
+			}
 
 			baseAnchoredPosition = root.anchoredPosition;
 			root.anchoredPosition = baseAnchoredPosition;
-			floatingTween = root.DOAnchorPosY(baseAnchoredPosition.y + FloatingAmplitude, FloatingDuration)
+			root.localRotation = Quaternion.identity;
+
+			var floatingTarget = baseAnchoredPosition + new Vector2(FloatingHorizontalAmplitude, FloatingVerticalAmplitude);
+			floatingTween = root.DOAnchorPos(floatingTarget, FloatingDuration)
 				.SetEase(Ease.InOutSine)
 				.SetLoops(-1, LoopType.Yoyo)
 				.SetDelay(Mathf.Max(0f, phaseDelay));
+
+			rotationTween = root.DOLocalRotate(
+					new Vector3(0f, 0f, FloatingRotationDegrees),
+					FloatingRotationDuration)
+				.SetEase(Ease.InOutSine)
+				.SetLoops(-1, LoopType.Yoyo)
+				.SetDelay(Mathf.Max(0f, phaseDelay));
+		}
+
+		public void AnimateResolveSelected(Vector2 targetAnchoredPosition)
+		{
+			if (!root)
+			{
+				return;
+			}
+
+			StopFloating();
+			if (moveTween != null && moveTween.IsActive())
+			{
+				moveTween.Kill();
+			}
+
+			moveTween = root.DOAnchorPos(targetAnchoredPosition, ResolveMoveDuration).SetEase(Ease.OutCubic);
+			SetVisualState(DiceUpgradeVariantVisualState.Selected);
+		}
+
+		public void AnimateResolveHidden()
+		{
+			if (!root)
+			{
+				return;
+			}
+
+			StopFloating();
+			ApplySelectionHighlight(false);
+			AnimateScale(HiddenScale, ResolveHideDuration, Ease.InBack);
 		}
 
 		private void OnDisable()
@@ -135,6 +186,16 @@ namespace _Main.Scripts.Dice
 			}
 
 			scaleTween = null;
+			if (rotationTween != null && rotationTween.IsActive())
+			{
+				rotationTween.Kill();
+			}
+			rotationTween = null;
+			if (moveTween != null && moveTween.IsActive())
+			{
+				moveTween.Kill();
+			}
+			moveTween = null;
 			if (floatingTween != null && floatingTween.IsActive())
 			{
 				floatingTween.Kill();
@@ -144,6 +205,7 @@ namespace _Main.Scripts.Dice
 			{
 				root.anchoredPosition = baseAnchoredPosition;
 				root.localScale = Vector3.one;
+				root.localRotation = Quaternion.identity;
 			}
 
 			if (selectedHighlightBackground)
@@ -198,6 +260,11 @@ namespace _Main.Scripts.Dice
 
 		private void AnimateScale(float targetScale)
 		{
+			AnimateScale(targetScale, SettleDuration, Ease.OutSine);
+		}
+
+		private void AnimateScale(float targetScale, float duration, Ease ease)
+		{
 			if (!root)
 			{
 				return;
@@ -209,7 +276,22 @@ namespace _Main.Scripts.Dice
 			}
 
 			var safeScale = Mathf.Max(0.01f, targetScale);
-			scaleTween = root.DOScale(Vector3.one * safeScale, SettleDuration).SetEase(Ease.OutSine);
+			scaleTween = root.DOScale(Vector3.one * safeScale, duration).SetEase(ease);
+		}
+
+		private void StopFloating()
+		{
+			if (floatingTween != null && floatingTween.IsActive())
+			{
+				floatingTween.Kill();
+			}
+			floatingTween = null;
+
+			if (rotationTween != null && rotationTween.IsActive())
+			{
+				rotationTween.Kill();
+			}
+			rotationTween = null;
 		}
 
 		private static string GetAffectedLabel(DiceUpgradeRouletteSlotData slotData)
