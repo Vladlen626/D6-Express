@@ -526,9 +526,9 @@ namespace _Main.Scripts.Dice
 					score *= face;
 				}
 
-				if (rule.DoublePerExtraAboveMin && count > rule.MinCount)
+				if (rule.DoublePerExtraAboveMin)
 				{
-					score *= (int)Mathf.Pow(2, count - rule.MinCount);
+					score = ApplyOfAKindCountScaling(score, count, rule.MinCount);
 				}
 
 				return score;
@@ -537,12 +537,35 @@ namespace _Main.Scripts.Dice
 			// Legacy behaviour: 1s are 1000, others face * BaseScorePerPip, doubling per extra.
 			int baseScore = (face == 1) ? rule.BaseScoreForOne : face * rule.BaseScorePerPip;
 
-			if (count > rule.MinCount && rule.DoublePerExtraAboveMin)
+			if (rule.DoublePerExtraAboveMin)
 			{
-				baseScore *= (int)Mathf.Pow(2, count - rule.MinCount);
+				baseScore = ApplyOfAKindCountScaling(baseScore, count, rule.MinCount);
 			}
 
 			return baseScore;
+		}
+
+		private static int ApplyOfAKindCountScaling(int score, int count, int baseMinCount)
+		{
+			if (score <= 0)
+			{
+				return 0;
+			}
+
+			var safeBaseMin = Mathf.Max(1, baseMinCount);
+			var delta = count - safeBaseMin;
+			if (delta == 0)
+			{
+				return score;
+			}
+
+			var factor = 1 << Mathf.Abs(delta);
+			if (delta > 0)
+			{
+				return score * factor;
+			}
+
+			return score / factor;
 		}
 
 		private int GetScoreWithOverrides(string id, int computedBaseScore)
