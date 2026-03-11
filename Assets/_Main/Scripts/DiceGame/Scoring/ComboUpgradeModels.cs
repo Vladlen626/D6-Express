@@ -4,6 +4,14 @@ using UnityEngine;
 namespace _Main.Scripts.Dice
 {
 	[Serializable]
+	public class UpgradeVisualPolarity
+	{
+		public int Min = 1;
+		public int Max = 1;
+		public int Bonus = 1;
+	}
+
+	[Serializable]
 	public class ComboUpgradeOutcome
 	{
 		public int Face = 1;
@@ -27,6 +35,7 @@ namespace _Main.Scripts.Dice
 		public bool Debug = false;
 		public ComboUpgradeOutcome[] Outcomes;
 		public ComboUpgradeConstraints Constraints = new ComboUpgradeConstraints();
+		public UpgradeVisualPolarity VisualPolarity = new UpgradeVisualPolarity();
 	}
 
 	[Serializable]

@@ -43,6 +43,7 @@ namespace _Main.Scripts.Dice
 		public bool Debug;
 		public bool AllowInventorySelection;
 		public StraightUpgradeOutcome[] Outcomes;
+		public UpgradeVisualPolarity VisualPolarity = new UpgradeVisualPolarity();
 	}
 
 	[Serializable]

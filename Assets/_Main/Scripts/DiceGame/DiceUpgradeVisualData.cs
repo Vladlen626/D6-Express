@@ -15,6 +15,7 @@ namespace _Main.Scripts.Dice
 		public readonly int Face;
 		public readonly DiceUpgradeAffectedStat AffectedStat;
 		public readonly int DeltaValue;
+		public readonly int VisualSign;
 		public readonly string AffectedLabel;
 
 		public DiceUpgradeRouletteSlotData(
@@ -22,10 +23,26 @@ namespace _Main.Scripts.Dice
 			DiceUpgradeAffectedStat affectedStat,
 			int deltaValue,
 			string affectedLabel)
+			: this(
+				face,
+				affectedStat,
+				deltaValue,
+				affectedLabel,
+				deltaValue > 0 ? 1 : deltaValue < 0 ? -1 : 0)
+		{
+		}
+
+		public DiceUpgradeRouletteSlotData(
+			int face,
+			DiceUpgradeAffectedStat affectedStat,
+			int deltaValue,
+			string affectedLabel,
+			int visualSign)
 		{
 			Face = face;
 			AffectedStat = affectedStat;
 			DeltaValue = deltaValue;
+			VisualSign = visualSign < 0 ? -1 : visualSign > 0 ? 1 : 0;
 			AffectedLabel = affectedLabel ?? string.Empty;
 		}
 	}

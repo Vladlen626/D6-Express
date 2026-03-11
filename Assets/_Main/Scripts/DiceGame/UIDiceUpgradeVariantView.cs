@@ -73,7 +73,7 @@ namespace _Main.Scripts.Dice
 				deltaValueText.text = FormatDelta(slotData.DeltaValue);
 			}
 
-			ApplyDeltaBackgroundColor(slotData.DeltaValue);
+			ApplyDeltaBackgroundColor(slotData.VisualSign);
 		}
 
 		public void SetBackgroundColorStyles(
@@ -152,23 +152,23 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		private void ApplyDeltaBackgroundColor(int deltaValue)
+		private void ApplyDeltaBackgroundColor(int visualSign)
 		{
 			if (!deltaBackground)
 			{
 				throw new System.InvalidOperationException("Delta background image is not assigned.");
 			}
-			deltaBackground.color = ResolveSignedColor(deltaValue);
+			deltaBackground.color = ResolveSignedColor(visualSign);
 		}
 
-		private Color ResolveSignedColor(int delta)
+		private Color ResolveSignedColor(int visualSign)
 		{
 			if (!hasBackgroundStyleOverrides)
 			{
 				throw new System.InvalidOperationException("Background color styles are not assigned.");
 			}
 
-			return delta > 0 ? positiveBackgroundColor.Value : delta < 0 ? negativeBackgroundColor.Value : neutralBackgroundColor.Value;
+			return visualSign > 0 ? positiveBackgroundColor.Value : visualSign < 0 ? negativeBackgroundColor.Value : neutralBackgroundColor.Value;
 		}
 
 		private void ApplySelectionHighlight(bool isSelected)

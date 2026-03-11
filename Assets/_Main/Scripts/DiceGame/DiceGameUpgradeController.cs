@@ -225,7 +225,12 @@ namespace _Main.Scripts.Dice
 					after.Min,
 					after.Max,
 					after.ScoreBonus,
-					BuildRouletteSlots(activeScoringService.GetComboUpgradeOutcomes(comboId), minLabel, maxLabel, bonusLabel)));
+					BuildRouletteSlots(
+						activeScoringService.GetComboUpgradeOutcomes(comboId),
+						minLabel,
+						maxLabel,
+						bonusLabel,
+						upgradeConfig.VisualPolarity)));
 				return true;
 			}
 
@@ -297,7 +302,12 @@ namespace _Main.Scripts.Dice
 					after.MinLen,
 					after.MaxLen,
 					after.ScoreBonus,
-					BuildRouletteSlots(activeScoringService.GetStraightUpgradeOutcomes(), minLabel, maxLabel, bonusLabel)));
+					BuildRouletteSlots(
+						activeScoringService.GetStraightUpgradeOutcomes(),
+						minLabel,
+						maxLabel,
+						bonusLabel,
+						upgradeConfig.VisualPolarity)));
 				return true;
 			}
 
@@ -391,7 +401,8 @@ namespace _Main.Scripts.Dice
 			StraightUpgradeOutcome[] outcomes,
 			string minLabel,
 			string maxLabel,
-			string bonusLabel)
+			string bonusLabel,
+			UpgradeVisualPolarity visualPolarity)
 		{
 			return BuildRouletteSlots(
 				outcomes,
@@ -401,14 +412,16 @@ namespace _Main.Scripts.Dice
 				o => o.DeltaScoreBonus,
 				minLabel,
 				maxLabel,
-				bonusLabel);
+				bonusLabel,
+				visualPolarity);
 		}
 
 		private DiceUpgradeRouletteSlotData[] BuildRouletteSlots(
 			ComboUpgradeOutcome[] outcomes,
 			string minLabel,
 			string maxLabel,
-			string bonusLabel)
+			string bonusLabel,
+			UpgradeVisualPolarity visualPolarity)
 		{
 			return BuildRouletteSlots(
 				outcomes,
@@ -418,7 +431,8 @@ namespace _Main.Scripts.Dice
 				o => o.DeltaScoreBonus,
 				minLabel,
 				maxLabel,
-				bonusLabel);
+				bonusLabel,
+				visualPolarity);
 		}
 
 		private static DiceUpgradeRouletteSlotData[] BuildRouletteSlots<TOutcome>(
@@ -429,7 +443,8 @@ namespace _Main.Scripts.Dice
 			Func<TOutcome, int> getDeltaBonus,
 			string minLabel,
 			string maxLabel,
-			string bonusLabel)
+			string bonusLabel,
+			UpgradeVisualPolarity visualPolarity)
 			where TOutcome : class
 		{
 			var byFace = new TOutcome[7];
@@ -459,6 +474,7 @@ namespace _Main.Scripts.Dice
 				var deltaMax = outcome != null ? getDeltaMax(outcome) : 0;
 				var deltaBonus = outcome != null ? getDeltaBonus(outcome) : 0;
 				DetermineAffectedDelta(deltaMin, deltaMax, deltaBonus, out var affectedStat, out var deltaValue);
+				var visualSign = DetermineVisualSign(deltaValue, affectedStat, visualPolarity);
 
 				var label = affectedStat switch
 				{
@@ -467,7 +483,7 @@ namespace _Main.Scripts.Dice
 					_ => bonusLabel
 				};
 
-				slots[face - 1] = new DiceUpgradeRouletteSlotData(face, affectedStat, deltaValue, label);
+				slots[face - 1] = new DiceUpgradeRouletteSlotData(face, affectedStat, deltaValue, label, visualSign);
 			}
 
 			return slots;
@@ -503,6 +519,33 @@ namespace _Main.Scripts.Dice
 
 			affectedStat = DiceUpgradeAffectedStat.Bonus;
 			deltaValue = 0;
+		}
+
+		private static int DetermineVisualSign(
+			int deltaValue,
+			DiceUpgradeAffectedStat affectedStat,
+			UpgradeVisualPolarity visualPolarity)
+		{
+			if (deltaValue == 0)
+			{
+				return 0;
+			}
+
+			var valueSign = deltaValue > 0 ? 1 : -1;
+			var polarity = ResolveVisualPolarity(affectedStat, visualPolarity);
+			return valueSign * polarity;
+		}
+
+		private static int ResolveVisualPolarity(DiceUpgradeAffectedStat affectedStat, UpgradeVisualPolarity visualPolarity)
+		{
+			var rawPolarity = affectedStat switch
+			{
+				DiceUpgradeAffectedStat.Min => visualPolarity?.Min ?? 1,
+				DiceUpgradeAffectedStat.Max => visualPolarity?.Max ?? 1,
+				_ => visualPolarity?.Bonus ?? 1
+			};
+
+			return rawPolarity < 0 ? -1 : 1;
 		}
 	}
 }

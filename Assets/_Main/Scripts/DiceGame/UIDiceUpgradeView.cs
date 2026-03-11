@@ -74,7 +74,7 @@ namespace _Main.Scripts.Dice
 		private Color maxBaseColor;
 		private Color bonusBaseColor;
 		private DiceUpgradeAffectedStat selectedAffectedStat = DiceUpgradeAffectedStat.None;
-		private int selectedDeltaValue;
+		private int selectedVisualSign;
 		private int rolledFace;
 
 		public void SetRouletteVariantPrefab(UIDiceUpgradeVariantView prefab)
@@ -108,7 +108,7 @@ namespace _Main.Scripts.Dice
 			bonusChanged = data.BeforeBonus != data.AfterBonus;
 			isRollResolved = false;
 			selectedAffectedStat = DiceUpgradeAffectedStat.None;
-			selectedDeltaValue = 0;
+			selectedVisualSign = 0;
 			selectedRouletteVariantIndex = -1;
 			rolledFace = data.RolledFace;
 
@@ -321,13 +321,13 @@ namespace _Main.Scripts.Dice
 			if (selectedRouletteVariantIndex < 0 || selectedRouletteVariantIndex >= visibleSlots.Count)
 			{
 				selectedAffectedStat = DiceUpgradeAffectedStat.None;
-				selectedDeltaValue = 0;
+				selectedVisualSign = 0;
 				return;
 			}
 
 			var slot = visibleSlots[selectedRouletteVariantIndex];
 			selectedAffectedStat = slot.AffectedStat;
-			selectedDeltaValue = slot.DeltaValue;
+			selectedVisualSign = slot.VisualSign;
 		}
 
 		private void LogFaceDebug(string stage)
@@ -384,12 +384,12 @@ namespace _Main.Scripts.Dice
 				return baseColor;
 			}
 
-			return ResolveSignedColor(selectedDeltaValue);
+			return ResolveSignedColor(selectedVisualSign);
 		}
 
-		private Color ResolveSignedColor(int delta)
+		private Color ResolveSignedColor(int visualSign)
 		{
-			return delta > 0 ? positiveChangeColor.Value : delta < 0 ? negativeChangeColor.Value : neutralChangeColor.Value;
+			return visualSign > 0 ? positiveChangeColor.Value : visualSign < 0 ? negativeChangeColor.Value : neutralChangeColor.Value;
 		}
 
 		private void CacheBaseColors()
