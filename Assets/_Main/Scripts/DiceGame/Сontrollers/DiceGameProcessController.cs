@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using _Main.Scripts.Core;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
@@ -8,7 +7,6 @@ using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
 using PlatformCore.Services.Audio;
-using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {

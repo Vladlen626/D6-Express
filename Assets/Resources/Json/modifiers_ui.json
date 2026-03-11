@@ -1,6 +1,6 @@
 [
     {
-        "id": "ScrambleCombinations",
+        "id": "ScrambleCombinationsModifier",
         "title": "modifier_scramble_combinations_title",
         "description": "modifier_scramble_combinations_description",
         "value": "modifier_scramble_combinations_value"

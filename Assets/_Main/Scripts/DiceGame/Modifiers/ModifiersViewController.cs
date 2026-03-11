@@ -15,7 +15,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
     private readonly PauseState pauseState;
     private readonly Dictionary<IModifier, UIModifierView> modifierViews = new();
 
-    private Dictionary<string, ItemCatalogEntry> configs;
+    private Dictionary<string, ModifierUIConfig> configs;
 
     public ModifiersViewController(IUIService uiService, ModifiersModel modifiers, IObjectFactory objectFactory, ConfigService configService, PauseState pauseState) : base(uiService)
     {
@@ -27,7 +27,7 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
     protected override async UniTask OnPreloadAsync()
     {
-        configs = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+        configs = await configService.GetConfigsAsync<ModifierUIConfig>(ResourcePaths.Json.modifiers_ui);
 
         await base.OnPreloadAsync();
     }
@@ -74,12 +74,17 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
     private async void OnModifierAdded(IModifier modifier)
     {
-        if (modifier is not IModifierItem modifierItem)
+        if (modifier is IModifierItem)
         {
             return;
         }
 
-        if (!configs.TryGetValue(modifierItem.Id, out var config) || config.typeEnum != ItemCatalogType.ModifierItem)
+        if (configs == null)
+        {
+            return;
+        }
+
+        if (!configs.TryGetValue(modifier.GetType().Name, out var config))
         {
             return;
         }
@@ -88,8 +93,8 @@ public class ModifiersViewController : BaseContextController<UIModifiersView>
 
         modifierViews[modifier] = view;
 
-        view.SetTitle(config.nameKey);
-        view.SetDescription(config.descriptionKey);
+        view.SetTitle(config.title);
+        view.SetDescription(config.description);
 
         view.Show();
         UpdateContextVisibility();

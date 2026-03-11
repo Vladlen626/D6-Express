@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Infrastructure.Lifecycle;
@@ -13,7 +14,7 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
     private readonly Dictionary<IModifier, UIModifierView> modifierViews = new();
 
     private UIModifiersView uIModifiersView;
-    private Dictionary<string, ItemCatalogEntry> configs;
+    private Dictionary<string, ModifierUIConfig> configs;
 
     public ModifiersViewMiniController(ModifiersModel modifiers, IObjectFactory objectFactory, ConfigService configService)
     {
@@ -29,12 +30,12 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
 
     public async UniTask PreloadAsync()
     {
-        configs = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+        configs = await configService.GetConfigsAsync<ModifierUIConfig>(ResourcePaths.Json.modifiers_ui);
     }
 
     public bool CanShow()
     {
-        return modifiers.AllModifiers.Count > 0;
+        return configs != null && modifiers.AllModifiers.Any(IsDisplayableGlobalModifier);
     }
 
     public UniTask Show()
@@ -101,12 +102,17 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
 
     private async void OnModifierAdded(IModifier modifier)
     {
-        if (modifier is not IModifierItem modifierItem)
+        if (modifier is IModifierItem)
         {
             return;
         }
 
-        if (!configs.TryGetValue(modifierItem.Id, out var config) || config.typeEnum != ItemCatalogType.ModifierItem)
+        if (configs == null)
+        {
+            return;
+        }
+
+        if (!configs.TryGetValue(modifier.GetType().Name, out var config))
         {
             return;
         }
@@ -115,10 +121,20 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
 
         modifierViews[modifier] = view;
 
-        view.SetTitle(config.nameKey);
-        view.SetDescription(config.descriptionKey);
+        view.SetTitle(config.title);
+        view.SetDescription(config.description);
 
         view.Show();
+    }
+
+    private bool IsDisplayableGlobalModifier(IModifier modifier)
+    {
+        if (modifier is IModifierItem || configs == null)
+        {
+            return false;
+        }
+
+        return configs.ContainsKey(modifier.GetType().Name);
     }
 
     private void OnModifierRemoved(IModifier modifier)
