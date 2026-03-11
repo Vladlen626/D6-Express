@@ -28,9 +28,9 @@ public class ItemCatalogEntry : BaseConfig
             {
                 typeEnum = ItemCatalogType.Dice;
             }
-            else if (string.Equals(normalized, "Modifier", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(normalized, "ModifierItem", StringComparison.OrdinalIgnoreCase))
             {
-                typeEnum = ItemCatalogType.Modifier;
+                typeEnum = ItemCatalogType.ModifierItem;
             }
             else
             {
@@ -102,5 +102,5 @@ public enum ItemCatalogType
 {
     Unknown,
     Dice,
-    Modifier
+    ModifierItem
 }

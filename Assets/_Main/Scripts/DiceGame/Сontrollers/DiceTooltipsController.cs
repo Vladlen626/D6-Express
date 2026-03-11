@@ -192,7 +192,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			if (!catalog.TryGetValue(item.Id, out var entry) || entry.typeEnum != ItemCatalogType.Modifier)
+			if (!catalog.TryGetValue(item.Id, out var entry) || entry.typeEnum != ItemCatalogType.ModifierItem)
 			{
 				return;
 			}

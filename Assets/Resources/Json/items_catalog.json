@@ -133,67 +133,67 @@
   },
   {
     "id": "extra_dice_cap",
-    "type": "Modifier",
+    "type": "ModifierItem",
     "nameKey": "modifier_extra_dice_cap_title",
     "descriptionKey": "modifier_extra_dice_cap_description",
     "rarity": "Uncommon",
     "price": 20,
     "visualId": "ExtraDiceCapItem",
     "data": {
-      "modifierType": "ExtraDiceCapItem",
+      "itemType": "ExtraDiceCapItem",
       "bonus": 4
     }
   },
   {
     "id": "modifier_silencer_item",
-    "type": "Modifier",
+    "type": "ModifierItem",
     "nameKey": "modifier_silencer_item_title",
     "descriptionKey": "modifier_silencer_item_description",
     "rarity": "Rare",
     "price": 25,
     "visualId": "ModifierSilencerItem",
     "data": {
-      "modifierType": "ModifierSilencerItem",
+      "itemType": "ModifierSilencerItem",
       "cooldownPasses": 2
     }
   },
   {
     "id": "pass_multiplier_item",
-    "type": "Modifier",
+    "type": "ModifierItem",
     "nameKey": "modifier_pass_multiplier_item_title",
     "descriptionKey": "modifier_pass_multiplier_item_description",
     "rarity": "Rare",
     "price": 20,
     "visualId": "PassMultiplierItem",
     "data": {
-      "modifierType": "PassMultiplierItem",
+      "itemType": "PassMultiplierItem",
       "scoreMultiplier": 1.5,
       "activationsPerDay": 1
     }
   },
   {
     "id": "reroll_selected_item",
-    "type": "Modifier",
+    "type": "ModifierItem",
     "nameKey": "modifier_reroll_selected_item_title",
     "descriptionKey": "modifier_reroll_selected_item_description",
     "rarity": "Uncommon",
     "price": 15,
     "visualId": "RerollSelectedItem",
     "data": {
-      "modifierType": "RerollSelectedItem",
+      "itemType": "RerollSelectedItem",
       "cooldownPasses": 2
     }
   },
   {
     "id": "step_up_item",
-    "type": "Modifier",
+    "type": "ModifierItem",
     "nameKey": "modifier_step_up_item_title",
     "descriptionKey": "modifier_step_up_item_description",
     "rarity": "Rare",
     "price": 18,
     "visualId": "StepUpItem",
     "data": {
-      "modifierType": "StepUpItem",
+      "itemType": "StepUpItem",
       "selectionCount": 3,
       "cooldownPasses": 3
     }

@@ -71,7 +71,7 @@ public class ModifierAppliedNotificationController : IBaseController, IActivatab
 	{
 		if (modifier is IModifierItem item)
 		{
-			if (catalog != null && catalog.TryGetValue(item.Id, out var entry) && entry.typeEnum == ItemCatalogType.Modifier)
+			if (catalog != null && catalog.TryGetValue(item.Id, out var entry) && entry.typeEnum == ItemCatalogType.ModifierItem)
 			{
 				return localizationService != null ? localizationService.GetLocalized(entry.nameKey) : entry.nameKey;
 			}
