@@ -27,7 +27,7 @@ namespace _Main.Scripts.Core
 			var audioService = new AudioBaseService(logger);
 			var uiService = new UIBaseService(logger, resourceService, persistentSceneContext.UICanvases);
 			var cameraService = new CameraService(objectFactory);
-			var cursorService = new CursorService(uiService);
+			var cursorService = new CursorService(uiService, logger);
 			var configService = new ConfigService(resourceService, logger);
 			var localizationService = new LocalizationServiceBase(configService);
 			var awaiterService = new AsyncAwaiterService();

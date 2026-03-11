@@ -71,13 +71,7 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
             uIModifiersView.gameObject.SetActive(false);
         }
 
-        var toDelete = new List<IModifier>(modifierViews.Keys);
-        foreach (var item in toDelete)
-        {
-            OnModifierRemoved(item);
-        }
-
-        modifierViews.Clear();
+        ClearModifierViews();
     }
 
     public void Activate()
@@ -87,7 +81,22 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
 
     public void Deactivate()
     {
-        Hide().Forget();
+        modifiers.ModifierRemoved -= OnModifierRemoved;
+        modifiers.ModifierAdded -= OnModifierAdded;
+
+        if (!uIModifiersView)
+        {
+            modifierViews.Clear();
+            return;
+        }
+
+        uIModifiersView.Hide();
+        if (uIModifiersView.gameObject.activeSelf)
+        {
+            uIModifiersView.gameObject.SetActive(false);
+        }
+
+        ClearModifierViews();
     }
 
     private async void OnModifierAdded(IModifier modifier)
@@ -124,5 +133,16 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
         view.Hide();
 
         Object.Destroy(view.gameObject);
+    }
+
+    private void ClearModifierViews()
+    {
+        var toDelete = new List<IModifier>(modifierViews.Keys);
+        foreach (var item in toDelete)
+        {
+            OnModifierRemoved(item);
+        }
+
+        modifierViews.Clear();
     }
 }

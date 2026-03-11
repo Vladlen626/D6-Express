@@ -28,8 +28,9 @@ namespace PlatformCore.Core
 		
 		public void Deactivate()
 		{
-			_uiService.Unload<T>();
 			OnDeactivate();
+			_uiService.Unload<T>();
+			_context = null;
 		}
 		
 		protected virtual void OnActivate(){}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,6 +51,11 @@ public class PlayerStateModel
 
 	public void TryRemoveState(CharacterState state)
 	{
+		if (!currentStates.Contains(state))
+		{
+			return;
+		}
+
 		if (dictStates.ContainsKey(state))
 		{
 			var stateHandler = dictStates[state];
