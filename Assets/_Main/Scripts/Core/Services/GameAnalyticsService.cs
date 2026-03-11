@@ -54,7 +54,7 @@ namespace _Main.Scripts.Core.Services
 		public void TrackShopPurchase(string shopId, TradeItem tradeItem)
 		{
 			var shopValue = NormalizeEventPart(shopId);
-			var itemTypeValue = NormalizeEventPart(tradeItem.ItemType.ToString());
+			var itemTypeValue = MapShopItemType(tradeItem.ItemType);
 			var itemIdValue = NormalizeEventPart(tradeItem.ItemId);
 
 			GameAnalytics.NewDesignEvent(
@@ -113,6 +113,20 @@ namespace _Main.Scripts.Core.Services
 				.Replace(" ", "_")
 				.Replace(":", "_")
 				.Replace("/", "_");
+		}
+
+		private static string MapShopItemType(ItemCatalogType itemType)
+		{
+			switch (itemType)
+			{
+				case ItemCatalogType.Dice:
+					return "dice";
+				case ItemCatalogType.ModifierItem:
+					// Keep legacy analytics dimension stable after enum rename.
+					return "modifier";
+				default:
+					return UnknownValue;
+			}
 		}
 
 		private static string FormatLevel(int level)

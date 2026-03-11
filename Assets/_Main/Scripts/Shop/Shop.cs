@@ -124,6 +124,13 @@ public class Shop : IGameStateChanger
                 continue;
             }
 
+            if (!IsSupportedShopItemType(entry.typeEnum))
+            {
+                UnityEngine.Debug.LogError(
+                    $"[Shop] Catalog entry '{entry.id}' has unsupported item type '{entry.typeEnum}' and will be skipped.");
+                continue;
+            }
+
             var weight = GetRarityWeight(entry.rarityEnum);
             result.Add(new ShopCandidate(entry, weight));
         }
@@ -188,30 +195,46 @@ public class Shop : IGameStateChanger
 
     private void OnBuyed(TradeItem tradeItem)
     {
-        if (inventoryModel.CashCount >= tradeItem.Price)
-        {
-            inventoryModel.TakeCash(tradeItem.Price);
-
-            switch (tradeItem.ItemType)
-            {
-                case ItemCatalogType.Dice:
-                    inventoryModel.AddDice(tradeItem.ItemId);
-                    break;
-                case ItemCatalogType.ModifierItem:
-                    inventoryModel.AddModifierItem(tradeItem.ItemId);
-                    break;
-            }
-
-            tradeItem.Buyed -= OnBuyed;
-            var index = Array.IndexOf(tradeItems, tradeItem);
-            tradeItems[index] = null;
-            ItemRemoved?.Invoke(index, tradeItem);
-
-            BuyCompleted?.Invoke(tradeItem);
-        }
-        else
+        if (inventoryModel.CashCount < tradeItem.Price)
         {
             BuyFailed?.Invoke();
+            return;
+        }
+
+        switch (tradeItem.ItemType)
+        {
+            case ItemCatalogType.Dice:
+                inventoryModel.TakeCash(tradeItem.Price);
+                inventoryModel.AddDice(tradeItem.ItemId);
+                break;
+            case ItemCatalogType.ModifierItem:
+                inventoryModel.TakeCash(tradeItem.Price);
+                inventoryModel.AddModifierItem(tradeItem.ItemId);
+                break;
+            default:
+                UnityEngine.Debug.LogError(
+                    $"[Shop] Unsupported purchase type '{tradeItem.ItemType}' for item '{tradeItem.ItemId}'. Purchase aborted.");
+                BuyFailed?.Invoke();
+                return;
+        }
+
+        tradeItem.Buyed -= OnBuyed;
+        var index = Array.IndexOf(tradeItems, tradeItem);
+        tradeItems[index] = null;
+        ItemRemoved?.Invoke(index, tradeItem);
+
+        BuyCompleted?.Invoke(tradeItem);
+    }
+
+    private static bool IsSupportedShopItemType(ItemCatalogType itemType)
+    {
+        switch (itemType)
+        {
+            case ItemCatalogType.Dice:
+            case ItemCatalogType.ModifierItem:
+                return true;
+            default:
+                return false;
         }
     }
 
