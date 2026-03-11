@@ -176,6 +176,7 @@ namespace _Main.Scripts.Dice
 			});
 
 			await lifecycleService.RegisterControllersGroupAsync(gameControllers);
+			processController.TryStartInitialRoll();
 		}
 
 		// ReSharper disable Unity.PerformanceAnalysis

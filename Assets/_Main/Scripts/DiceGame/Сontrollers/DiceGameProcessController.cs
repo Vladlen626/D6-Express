@@ -85,6 +85,31 @@ namespace _Main.Scripts.Dice
 			_ = HandleRollAsync();
 		}
 
+		public void TryStartInitialRoll()
+		{
+			if (IsProcessing)
+			{
+				return;
+			}
+
+			if (diceGameModel.DiceGameState != DiceGameState.GAME)
+			{
+				return;
+			}
+
+			if (!diceGameModel.IsPlayerTurn)
+			{
+				return;
+			}
+
+			if (!tableModel.isFirstRoll)
+			{
+				return;
+			}
+
+			HandleRoll();
+		}
+
 		// ReSharper disable Unity.PerformanceAnalysis
 		public async UniTask HandleRollAsync()
 		{
