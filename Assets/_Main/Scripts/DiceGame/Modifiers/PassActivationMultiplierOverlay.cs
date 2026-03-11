@@ -4,8 +4,10 @@ using UnityEngine;
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
-	/// Simple top-screen button for arming the pass score multiplier. Lives entirely inside the modifiers plugin.
+	/// LEGACY: overlay for the disabled PassActivationMultiplierModifier.
+	/// Kept only for backward compatibility; do not use in current gameplay.
 	/// </summary>
+	[System.Obsolete("Legacy overlay. Disabled and not used.")]
 	public class PassActivationMultiplierOverlay : MonoBehaviour
 	{
 		private static PassActivationMultiplierOverlay instance;
@@ -18,7 +20,7 @@ namespace _Main.Scripts.Dice
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 		private static void Bootstrap()
 		{
-			EnsureInstance();
+			// Legacy disabled: do not auto-create overlay at runtime.
 		}
 
 		public static void RegisterActivateCallback(Action onClicked)
