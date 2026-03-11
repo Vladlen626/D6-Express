@@ -4,9 +4,10 @@ using UnityEngine;
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
-	/// Active modifier: when armed via the on-screen button, the next Pass gains a 1.5x score multiplier.
-	/// Only one activation is available per in-game day.
+	/// LEGACY: disabled global pass multiplier implementation.
+	/// Do not use in new configuration or gameplay flows.
 	/// </summary>
+	[System.Obsolete("Legacy modifier. Disabled and not used. Use PassMultiplierItem instead.")]
 	public class PassActivationMultiplierModifier : IOnPassModifier, IOnRoundStartModifier
 	{
 		public const float ScoreMultiplier = 1.5f;

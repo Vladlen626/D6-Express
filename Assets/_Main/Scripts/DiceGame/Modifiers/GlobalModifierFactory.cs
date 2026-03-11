@@ -32,7 +32,8 @@ namespace _Main.Scripts.Dice
 					return new ScrambleCombinationsModifier(scoringService);
 
 				case "pass_activation_multiplier":
-					return new PassActivationMultiplierModifier();
+					// Legacy global modifier: intentionally disabled.
+					return null;
 
 				case "adjust_ticks_plus1":
 					return new AdjustTicksPerDayModifier(1);

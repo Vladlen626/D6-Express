@@ -6,8 +6,7 @@
       "player_modifiers": [
         "multiply_combo_three_kind",
         "shake_reroll",
-        "adjust_ticks_plus1",
-        "pass_activation_multiplier"
+        "adjust_ticks_plus1"
       ],
       "enemy_modifiers": []
     },
