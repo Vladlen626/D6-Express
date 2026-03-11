@@ -266,7 +266,7 @@ namespace _Main.Scripts.Dice
 			audioService.PlaySound(SoundNames.Fail);
 			if (notificationService != null)
 			{
-				await notificationService.ShowBannerAsync("dice_banner_failed", 1.1f);
+				await notificationService.ShowBannerAsync("dice_banner_failed", 1.1f, true);
 			}
 			await UniTask.Delay(GlobalParameters.Delay);
 			var roundEndContext = new DiceModifierContext(
