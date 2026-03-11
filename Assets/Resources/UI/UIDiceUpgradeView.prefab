@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: _Main.Scripts.Dice::UIDiceUpgradeView
   _group: {fileID: 1000000003}
-  _canvasType: 20
+  _canvasType: 5
   titleText: {fileID: 7325510048836769242}
   hintText: {fileID: 7325510048836769220}
   minValueText: {fileID: 7325510048836769230}

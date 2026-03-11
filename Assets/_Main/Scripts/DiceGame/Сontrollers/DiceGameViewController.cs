@@ -39,6 +39,7 @@ namespace _Main.Scripts.Dice
 			tableModel.OnDisableButtons += DisableButtons;
 
 			OnPlayerBankedPointsChangedHandler(0, tableModel.PlayerBankedPoints);
+			OnEnemyBankedPointsChangedHandler(0, tableModel.EnemyBankedPoints);
 			OnTargetPointsChangedHandler(0, diceGameModel.TargetPoints);
 			OnTurnPointsChangedHandler(0, tableModel.TurnPoints);
 			OnPreviewPointsChangedHandler(0, tableModel.PreviewPoints);
