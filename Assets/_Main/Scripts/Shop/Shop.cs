@@ -197,7 +197,7 @@ public class Shop : IGameStateChanger
                 case ItemCatalogType.Dice:
                     inventoryModel.AddDice(tradeItem.ItemId);
                     break;
-                case ItemCatalogType.Modifier:
+                case ItemCatalogType.ModifierItem:
                     inventoryModel.AddModifierItem(tradeItem.ItemId);
                     break;
             }

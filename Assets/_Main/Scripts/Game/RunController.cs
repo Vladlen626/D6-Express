@@ -81,9 +81,9 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		}
 
 		playerModel.InventoryModel.RemoveAllModifierItems();
-		if (playerConfig.modifiers != null)
+		if (playerConfig.modifierItems != null)
 		{
-			foreach (var modifierId in playerConfig.modifiers)
+			foreach (var modifierId in playerConfig.modifierItems)
 			{
 				playerModel.InventoryModel.AddModifierItem(modifierId);
 			}

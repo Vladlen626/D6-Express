@@ -68,7 +68,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			if (entry.typeEnum != ItemCatalogType.Modifier)
+			if (entry.typeEnum != ItemCatalogType.ModifierItem)
 			{
 				return;
 			}

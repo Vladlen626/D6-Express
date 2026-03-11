@@ -10,21 +10,21 @@ namespace _Main.Scripts.Dice
 
 		public static IModifierItem Create(ItemCatalogEntry entry, DiceScoringService scoringService)
 		{
-			if (entry == null || entry.typeEnum != ItemCatalogType.Modifier)
+			if (entry == null || entry.typeEnum != ItemCatalogType.ModifierItem)
 			{
 				return null;
 			}
 
 			var data = entry.data;
-			var modifierType = data?["modifierType"]?.ToString();
-			if (string.IsNullOrEmpty(modifierType))
+			var itemType = data?["itemType"]?.ToString();
+			if (string.IsNullOrEmpty(itemType))
 			{
 				return null;
 			}
 
 			var prefab = LoadItemPrefab(entry);
 
-			switch (modifierType)
+			switch (itemType)
 			{
 				case nameof(ExtraDiceCapItem):
 				{

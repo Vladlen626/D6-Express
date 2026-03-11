@@ -35,7 +35,7 @@ public class DebugWindowPlayer : DebugWindowModel
 
 		catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
 		diceIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.Dice).Select(x => x.Key).ToArray();
-		modifierIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.Modifier).Select(x => x.Key).ToArray();
+		modifierIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.ModifierItem).Select(x => x.Key).ToArray();
 	}
 
 	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService)

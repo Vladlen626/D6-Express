@@ -97,7 +97,7 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
             return;
         }
 
-        if (!configs.TryGetValue(modifierItem.Id, out var config) || config.typeEnum != ItemCatalogType.Modifier)
+        if (!configs.TryGetValue(modifierItem.Id, out var config) || config.typeEnum != ItemCatalogType.ModifierItem)
         {
             return;
         }
