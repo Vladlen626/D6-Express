@@ -8,7 +8,6 @@ public class EnemyAiScenarioConfig : BaseConfig
 	public string mode = "scripted";
 	public bool strict_validation = true;
 	public string on_mismatch = EnemyAiMismatchMode.FailScenario;
-	public int target_score;
 	public EnemyAiSetupConfig enemy_setup = new();
 	public List<EnemyAiTurnConfig> turns = new();
 	public EnemyAiExpectedResultConfig expected_result = new();

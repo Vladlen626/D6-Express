@@ -214,8 +214,31 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
+			var runConfig = await configService.GetFirstOrDefaultAsync<RunConfig>(ResourcePaths.Json.run_rules);
+			if (runConfig == null || runConfig.levels == null || run.Level < 0 || run.Level >= runConfig.levels.Length)
+			{
+				FailDiceGameSetup("[DiceGame] run_rules config is missing or does not contain current level.");
+				return false;
+			}
+
+			var levelConfig = runConfig.levels[run.Level];
+			if (levelConfig == null)
+			{
+				FailDiceGameSetup("[DiceGame] run_rules level config is null for current level.");
+				return false;
+			}
+
+			var day = run.Day + 1;
+			var match = run.Tick + 1;
+			if (!levelConfig.TryResolveTargetScore(day, match, out var stageTargetScore) || stageTargetScore <= 0)
+			{
+				FailDiceGameSetup($"[DiceGame] target_score_schedule is missing target for level={run.Level + 1}, day={day}, match={match} in run_rules.");
+				return false;
+			}
+
 			var newTableModel = new TableModel(CouplePositionsHandler.FirstPosArray, CouplePositionsHandler.SecondPosArray);
 			diceGameModel.Setup(diceGameConfig, playerModel.InventoryModel.CashCount, newTableModel);
+			diceGameModel.SetTargetScore(stageTargetScore);
 			// Keep the base cap aligned with available board slots; items can extend beyond this value.
 			var baseCap = DiceGameSetupUtils.CalcBaseCap(
 				CouplePositionsHandler.FirstPosArray.Length,

@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "id": "default",
     "levels": [
@@ -6,40 +6,44 @@
         "id": "default",
         "station_id": "wb",
         "days": 1,
-        "ticks_per_day": 2,
-        "cash_goal": 1000
+        "ticks_per_day": 3,
+        "cash_goal": 1000,
+        "target_score_schedule": {
+          "by_day": {
+            "1": { "by_match": { "1": 2000, "2": 2500, "3": 3000 } },
+            "*": { "by_match": { "*": 3000 } }
+          }
+        }
       },
       {
         "id": "default",
         "station_id": "sp",
         "days": 4,
-        "ticks_per_day": 2,
-        "cash_goal": 1500
+        "ticks_per_day": 3,
+        "cash_goal": 1500,
+        "target_score_schedule": {
+          "by_day": {
+            "1": { "by_match": { "1": 3500, "2": 4000, "3": 4500 } },
+            "2": { "by_match": { "1": 5000, "2": 5500, "3": 6000 } },
+            "3": { "by_match": { "1": 6500, "2": 7000, "3": 7500 } },
+            "4": { "by_match": { "1": 8000, "2": 8500, "3": 9000 } },
+            "*": { "by_match": { "*": 9000 } }
+          }
+        }
       },
       {
         "id": "default",
         "station_id": "mh",
         "days": 2,
-        "ticks_per_day": 2,
-        "cash_goal": 2000
-      },
-      {
-        "id": "default",
-        "station_id": "mp",
-        "days": 3,
-        "ticks_per_day": 2,
-        "cash_goal": 2500
-      },
-      {
-        "id": "default",
-        "station_id": "mg",
-        "days": 3,
-        "ticks_per_day": 2,
-        "cash_goal": 3000
-      },
-      {
-        "id": "default",
-        "station_id": "ah"
+        "ticks_per_day": 3,
+        "cash_goal": 2000,
+        "target_score_schedule": {
+          "by_day": {
+            "1": { "by_match": { "1": 9500, "2": 10000, "3": 10500 } },
+            "2": { "by_match": { "1": 11000, "2": 11500, "3": 12000 } },
+            "*": { "by_match": { "*": 12000 } }
+          }
+        }
       }
     ]
   }

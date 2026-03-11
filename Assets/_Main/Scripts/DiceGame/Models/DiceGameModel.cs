@@ -81,7 +81,6 @@ namespace _Main.Scripts.Dice
 			SetMinBetSize(diceGameConfig.min_bet_size);
 			SetMaxBetSize(maxBetSize);
 			SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
-			SetTargetScore(diceGameConfig.target_score);
 			EnemyComboUpgradesEnabled = diceGameConfig.enemy_combo_upgrades_enabled;
 			SetCurrentTurn(1, true);
 		}

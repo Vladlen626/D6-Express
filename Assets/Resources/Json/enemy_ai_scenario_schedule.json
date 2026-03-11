@@ -1,30 +1,18 @@
 {
-  "default_scenario_id": "l1d1m1_safe_bank_v01",
+  "default_scenario_id": "wb_d1m1_safe_finish_straight",
   "by_level": {
-    "1": {
+    "*": {
       "by_day": {
-        "1": { "by_match": { "1": "l1d1m1_safe_bank_v01", "2": "l1d1m2_triple_bank_v01", "3": "l1d1m3_greedy_press_v01", "*": "l1d1m3_greedy_press_v01" } },
-        "2": { "by_match": { "1": "l1d2m1_combo_stack_v01", "2": "l1d2m2_hot_dice_opp_v01", "3": "l1d2m3_pattern_spec_v01", "*": "l1d2m3_pattern_spec_v01" } },
-        "3": { "by_match": { "1": "l1d3m1_clutch_finish_v01", "2": "l1d3m2_all_in_burst_v01", "3": "l1d3m3_safe_bank_v02", "*": "l1d3m3_safe_bank_v02" } },
-        "*": { "by_match": { "*": "l1d3m3_safe_bank_v02" } }
+        "1": {
+          "by_match": {
+            "1": "wb_d1m1_safe_finish_straight",
+            "2": "wb_d1m2_hot_pairs_then_triple_ones",
+            "3": "wb_d1m3_greedy_hot_chain_to_straight",
+            "*": "wb_d1m3_greedy_hot_chain_to_straight"
+          }
+        },
+        "*": { "by_match": { "*": "wb_d1m3_greedy_hot_chain_to_straight" } }
       }
-    },
-    "2": {
-      "by_day": {
-        "1": { "by_match": { "1": "l2d1m1_triple_bank_v02", "2": "l2d1m2_greedy_press_v02", "3": "l2d1m3_combo_stack_v02", "*": "l2d1m3_combo_stack_v02" } },
-        "2": { "by_match": { "1": "l2d2m1_hot_dice_opp_v02", "2": "l2d2m2_pattern_spec_v02", "3": "l2d2m3_clutch_finish_v02", "*": "l2d2m3_clutch_finish_v02" } },
-        "3": { "by_match": { "1": "l2d3m1_all_in_burst_v02", "2": "l2d3m2_safe_bank_v03", "3": "l2d3m3_triple_bank_v03", "*": "l2d3m3_triple_bank_v03" } },
-        "*": { "by_match": { "*": "l2d3m3_triple_bank_v03" } }
-      }
-    },
-    "3": {
-      "by_day": {
-        "1": { "by_match": { "1": "l3d1m1_greedy_press_v03", "2": "l3d1m2_combo_stack_v03", "3": "l3d1m3_hot_dice_opp_v03", "*": "l3d1m3_hot_dice_opp_v03" } },
-        "2": { "by_match": { "1": "l3d2m1_pattern_spec_v03", "2": "l3d2m2_clutch_finish_v03", "3": "l3d2m3_all_in_burst_v03", "*": "l3d2m3_all_in_burst_v03" } },
-        "3": { "by_match": { "1": "l3d3m1_safe_bank_v04", "2": "l3d3m2_triple_bank_v04", "3": "l3d3m3_greedy_press_v04", "*": "l3d3m3_greedy_press_v04" } },
-        "*": { "by_match": { "*": "l3d3m3_greedy_press_v04" } }
-      }
-    },
-    "*": { "by_day": { "*": { "by_match": { "*": "l1d1m1_safe_bank_v01" } } } }
+    }
   }
 }

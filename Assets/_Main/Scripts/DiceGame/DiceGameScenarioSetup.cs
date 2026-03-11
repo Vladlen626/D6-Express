@@ -67,13 +67,6 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
-			if (scenario.target_score > 0 && scenario.target_score != diceGameModel.TargetPoints)
-			{
-				FailDiceGameSetup(
-					$"[DiceGame] Scenario target_score ({scenario.target_score}) does not match dice_game_rules target_score ({diceGameModel.TargetPoints}).");
-				return false;
-			}
-
 			diceGameModel.SetEnemyComboUpgradesEnabled(false);
 			EnemyScenarioRuntime = new EnemyAiScenarioRuntime(scenario);
 			return true;
