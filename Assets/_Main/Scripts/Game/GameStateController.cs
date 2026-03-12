@@ -15,8 +15,8 @@ public class GameStateController : IBaseController, IActivatable
 
 	private static readonly GameStateTransitionTask[] RunStartRecipe =
 	{
-		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.SHOW_STATS,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.UNLOCK_CURSOR,
@@ -27,8 +27,8 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.CHANGE_LOCATION,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
-		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
 	private static readonly GameStateTransitionTask[] TickRecipe =
@@ -45,8 +45,8 @@ public class GameStateController : IBaseController, IActivatable
 
 	private static readonly GameStateTransitionTask[] DayRecipe =
 	{
-		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.SHOW_STATS,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.UNLOCK_CURSOR,
@@ -56,14 +56,14 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.HIDE_STATS,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
-		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
 	private static readonly GameStateTransitionTask[] LocationRecipe =
 	{
-		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.SHOW_STATS,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.UNLOCK_CURSOR,
@@ -74,32 +74,32 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.CHANGE_LOCATION,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
-		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
 	private static readonly GameStateTransitionTask[] LocationMainMenuRecipe =
 	{
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.LOCK_CURSOR,
-		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.HIDE_LOSE,
 		GameStateTransitionTask.HIDE_WIN,
 		GameStateTransitionTask.CHANGE_LOCATION,
 		GameStateTransitionTask.NPC_RESPAWN,
-		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
 	private static readonly GameStateTransitionTask[] RunFinishedWinRecipe =
 	{
-		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.SHOW_WIN,
-		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
 	private static readonly GameStateTransitionTask[] RunFinishedLoseRecipe =
