@@ -60,6 +60,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: fd3ca50d8a6ac7f459f80d9ec8b0d869, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: dd546be18ca705e409f69325271b085b, type: 2}
+    - target: {fileID: -7511558181221131132, guid: fd3ca50d8a6ac7f459f80d9ec8b0d869, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
+    - target: {fileID: -7511558181221131132, guid: fd3ca50d8a6ac7f459f80d9ec8b0d869, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d21d8945b691ea0459e14c81580f7b07, type: 2}
     - target: {fileID: 919132149155446097, guid: fd3ca50d8a6ac7f459f80d9ec8b0d869, type: 3}
       propertyPath: m_Name
       value: Pepsi
@@ -67,13 +79,39 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fd3ca50d8a6ac7f459f80d9ec8b0d869, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 42545788042316988}
   m_SourcePrefab: {fileID: 100100000, guid: fd3ca50d8a6ac7f459f80d9ec8b0d869, type: 3}
 --- !u!4 &2480044069780667899 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: fd3ca50d8a6ac7f459f80d9ec8b0d869, type: 3}
   m_PrefabInstance: {fileID: 2729282032921893392}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2963705407285454657 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fd3ca50d8a6ac7f459f80d9ec8b0d869, type: 3}
+  m_PrefabInstance: {fileID: 2729282032921893392}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &42545788042316988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2963705407285454657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &5152845283695215094
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82,6 +120,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
+      propertyPath: visualOutline
+      value: 
+      objectReference: {fileID: 42545788042316988}
+    - target: {fileID: 5552264432598873387, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.044
+      objectReference: {fileID: 0}
     - target: {fileID: 8359954028589816404, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
       propertyPath: m_Name
       value: PassMultiplierItem

@@ -1,6 +1,7 @@
 using System;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using _Main.Scripts.UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -12,14 +13,33 @@ namespace _Main.Scripts.Dice
 	/// </summary>
 	public class ItemView : MonoBehaviour
 	{
+		[Header("References")]
+		[SerializeField] private Transform visualRoot;
 		[SerializeField] private Collider clickCollider;
+		[SerializeField] private Outline visualOutline;
+
 		[Header("State Animation")]
 		[SerializeField] private float hoverLift = 0.025f;
-		[SerializeField] private float hoverPunchDuration = 0.16f;
+		[SerializeField] private float hoverEnterDuration = 0.12f;
+		[SerializeField] private float hoverExitDuration = 0.12f;
+		[SerializeField] private Ease hoverEnterEase = Ease.OutQuad;
+		[SerializeField] private Ease hoverExitEase = Ease.OutQuad;
 		[SerializeField] private float armedScaleMultiplier = 1.08f;
 		[SerializeField] private float armedPulseDuration = 0.35f;
+		[SerializeField] private Ease armedPulseEase = Ease.InOutSine;
 		[SerializeField] private float consumedScaleMultiplier = 0.55f;
 		[SerializeField] private float consumedDuration = 0.35f;
+		[SerializeField] private Vector3 consumedRotationOffset = new(0f, 14f, 0f);
+		[SerializeField] private Ease consumedScaleEase = Ease.OutCubic;
+		[SerializeField] private Ease consumedRotationEase = Ease.OutQuad;
+		[SerializeField] private Ease consumedMoveEase = Ease.OutQuad;
+		[SerializeField] private float settleDuration = 0.12f;
+		[SerializeField] private Ease settleEase = Ease.OutQuad;
+
+		[Header("Outline Colors")]
+		[SerializeField] private ColorStyleRef hoverOutlineColor;
+		[SerializeField] private ColorStyleRef armedOutlineColor;
+		[SerializeField] private ColorStyleRef consumedOutlineColor;
 
 		private IModifierItem boundItem;
 		public UnityEvent OnClicked = new();
@@ -29,19 +49,28 @@ namespace _Main.Scripts.Dice
 		private bool _isHovered;
 		private bool _isStateInitialized;
 		private DiceItemState _currentState = DiceItemState.Ready;
-		private Vector3 _baseScale;
-		private Vector3 _baseLocalPosition;
-		private Quaternion _baseLocalRotation;
-		private Tween _hoverTween;
+		private Vector3 _baseVisualScale = Vector3.one;
+		private Vector3 _baseVisualLocalPosition;
+		private Quaternion _baseVisualLocalRotation;
+		private Color _baseOutlineColor;
+		private Tween _hoverMoveTween;
 		private Tween _armedTween;
 		private Tween _consumedTween;
 
 		private void Awake()
 		{
 			_cam = Camera.main;
-			_baseScale = transform.localScale;
-			_baseLocalPosition = transform.localPosition;
-			_baseLocalRotation = transform.localRotation;
+
+			_baseVisualScale = visualRoot.localScale;
+			_baseVisualLocalPosition = visualRoot.localPosition;
+			_baseVisualLocalRotation = visualRoot.localRotation;
+
+			if (!visualOutline.enabled)
+			{
+				visualOutline.enabled = true;
+			}
+
+			_baseOutlineColor = visualOutline.OutlineColor;
 		}
 
 		public void Bind(IModifierItem item)
@@ -57,6 +86,19 @@ namespace _Main.Scripts.Dice
 			{
 				boundItem.OnChanged += OnItemChanged;
 				UpdateState(boundItem.State, boundItem.IsVisible);
+			}
+		}
+
+		public void SetBaseLocalTransform(Vector3 localPosition, Quaternion localRotation, Vector3 localScale)
+		{
+			transform.localPosition = localPosition;
+			transform.localRotation = localRotation;
+			transform.localScale = localScale;
+
+			if (_isStateInitialized)
+			{
+				ApplyStateImmediate(_currentState);
+				ApplyOutlineColor();
 			}
 		}
 
@@ -114,14 +156,15 @@ namespace _Main.Scripts.Dice
 			{
 				_isHovered = true;
 				OnHoverEnter?.Invoke(boundItem);
-				PlayHoverAnimation();
+				StartHoverAnimation();
+				ApplyOutlineColor();
 			}
 			else if (!isMouseOver && _isHovered)
 			{
 				_isHovered = false;
 				OnHoverExit?.Invoke(boundItem);
-				StopHoverTween();
-				transform.DOLocalMove(_baseLocalPosition, 0.1f).SetEase(Ease.OutQuad);
+				StopHoverAnimation();
+				ApplyOutlineColor();
 			}
 
 			if (!mouse.leftButton.wasPressedThisFrame)
@@ -185,16 +228,19 @@ namespace _Main.Scripts.Dice
 				_currentState = state;
 				_isStateInitialized = true;
 				ApplyStateImmediate(state);
+				ApplyOutlineColor();
 				return;
 			}
 
 			if (_currentState == state)
 			{
+				ApplyOutlineColor();
 				return;
 			}
 
 			ApplyStateTransition(state);
 			_currentState = state;
+			ApplyOutlineColor();
 		}
 
 		public async UniTask WaitForConsumedAnimationAsync(int minDelayMs = 0)
@@ -220,13 +266,14 @@ namespace _Main.Scripts.Dice
 		private void ApplyStateImmediate(DiceItemState state)
 		{
 			KillTweens();
+			var targetPosition = _isHovered ? GetHoverLocalPosition() : _baseVisualLocalPosition;
 
 			switch (state)
 			{
 				case DiceItemState.Armed:
-					transform.localScale = _baseScale;
-					transform.localPosition = _baseLocalPosition;
-					transform.localRotation = _baseLocalRotation;
+					visualRoot.localScale = _baseVisualScale;
+					visualRoot.localPosition = targetPosition;
+					visualRoot.localRotation = _baseVisualLocalRotation;
 					SetClickEnabled(true);
 					StartArmedTween();
 					break;
@@ -238,16 +285,16 @@ namespace _Main.Scripts.Dice
 						OnHoverExit?.Invoke(boundItem);
 					}
 
-					transform.localScale = ScaleBy(consumedScaleMultiplier);
-					transform.localPosition = _baseLocalPosition;
-					transform.localRotation = _baseLocalRotation;
+					visualRoot.localScale = ScaleBy(consumedScaleMultiplier);
+					visualRoot.localPosition = _baseVisualLocalPosition;
+					visualRoot.localRotation = _baseVisualLocalRotation;
 					SetClickEnabled(false);
 					break;
 
 				default:
-					transform.localScale = _baseScale;
-					transform.localPosition = _baseLocalPosition;
-					transform.localRotation = _baseLocalRotation;
+					visualRoot.localScale = _baseVisualScale;
+					visualRoot.localPosition = targetPosition;
+					visualRoot.localRotation = _baseVisualLocalRotation;
 					SetClickEnabled(state is DiceItemState.Ready or DiceItemState.Armed);
 					break;
 			}
@@ -255,13 +302,15 @@ namespace _Main.Scripts.Dice
 
 		private void ApplyStateTransition(DiceItemState newState)
 		{
+			var targetPosition = _isHovered ? GetHoverLocalPosition() : _baseVisualLocalPosition;
+
 			switch (newState)
 			{
 				case DiceItemState.Armed:
 					StopConsumedTween();
-					transform.DOKill();
-					transform.localPosition = _baseLocalPosition;
-					transform.localRotation = _baseLocalRotation;
+					visualRoot.DOKill();
+					visualRoot.localPosition = targetPosition;
+					visualRoot.localRotation = _baseVisualLocalRotation;
 					SetClickEnabled(true);
 					StartArmedTween();
 					break;
@@ -273,20 +322,20 @@ namespace _Main.Scripts.Dice
 						OnHoverExit?.Invoke(boundItem);
 					}
 
-					StopHoverTween();
+					StopHoverMoveTween();
 					StopArmedTween();
 					SetClickEnabled(false);
 					StartConsumedTween();
 					break;
 
 				default:
-					StopHoverTween();
+					StopHoverMoveTween();
 					StopArmedTween();
 					StopConsumedTween();
-					transform.DOKill();
-					transform.DOScale(_baseScale, 0.12f).SetEase(Ease.OutQuad);
-					transform.DOLocalMove(_baseLocalPosition, 0.12f).SetEase(Ease.OutQuad);
-					transform.DOLocalRotateQuaternion(_baseLocalRotation, 0.12f).SetEase(Ease.OutQuad);
+					visualRoot.DOKill();
+					visualRoot.DOScale(_baseVisualScale, settleDuration).SetEase(settleEase);
+					visualRoot.DOLocalMove(targetPosition, settleDuration).SetEase(settleEase);
+					visualRoot.DOLocalRotateQuaternion(_baseVisualLocalRotation, settleDuration).SetEase(settleEase);
 					SetClickEnabled(newState is DiceItemState.Ready or DiceItemState.Armed);
 					break;
 			}
@@ -295,8 +344,8 @@ namespace _Main.Scripts.Dice
 		private void StartArmedTween()
 		{
 			StopArmedTween();
-			_armedTween = transform.DOScale(ScaleBy(armedScaleMultiplier), armedPulseDuration)
-				.SetEase(Ease.InOutSine)
+			_armedTween = visualRoot.DOScale(ScaleBy(armedScaleMultiplier), armedPulseDuration)
+				.SetEase(armedPulseEase)
 				.SetLoops(-1, LoopType.Yoyo);
 		}
 
@@ -304,8 +353,9 @@ namespace _Main.Scripts.Dice
 		{
 			StopConsumedTween();
 			_consumedTween = DOTween.Sequence()
-				.Append(transform.DOScale(ScaleBy(consumedScaleMultiplier), consumedDuration).SetEase(Ease.OutCubic))
-				.Join(transform.DOLocalRotate(new Vector3(0f, 14f, 0f), consumedDuration, RotateMode.LocalAxisAdd).SetEase(Ease.OutQuad));
+				.Append(visualRoot.DOScale(ScaleBy(consumedScaleMultiplier), consumedDuration).SetEase(consumedScaleEase))
+				.Join(visualRoot.DOLocalRotate(consumedRotationOffset, consumedDuration, RotateMode.LocalAxisAdd).SetEase(consumedRotationEase))
+				.Join(visualRoot.DOLocalMove(_baseVisualLocalPosition, consumedDuration).SetEase(consumedMoveEase));
 		}
 
 		private void SetClickEnabled(bool enabled)
@@ -318,17 +368,17 @@ namespace _Main.Scripts.Dice
 
 		private Vector3 ScaleBy(float multiplier)
 		{
-			return _baseScale * multiplier;
+			return _baseVisualScale * multiplier;
 		}
 
-		private void StopHoverTween()
+		private void StopHoverMoveTween()
 		{
-			if (_hoverTween != null && _hoverTween.IsActive())
+			if (_hoverMoveTween != null && _hoverMoveTween.IsActive())
 			{
-				_hoverTween.Kill();
+				_hoverMoveTween.Kill();
 			}
 
-			_hoverTween = null;
+			_hoverMoveTween = null;
 		}
 
 		private void StopArmedTween()
@@ -353,21 +403,60 @@ namespace _Main.Scripts.Dice
 
 		private void KillTweens()
 		{
-			StopHoverTween();
+			StopHoverMoveTween();
 			StopArmedTween();
 			StopConsumedTween();
-			transform.DOKill();
+			visualRoot.DOKill();
 		}
 
-		private void PlayHoverAnimation()
+		private void StartHoverAnimation()
 		{
 			if (_currentState == DiceItemState.Consumed)
 			{
 				return;
 			}
 
-			StopHoverTween();
-			_hoverTween = transform.DOPunchPosition(Vector3.up * hoverLift, hoverPunchDuration, 1, 0f);
+			StopHoverMoveTween();
+			_hoverMoveTween = visualRoot.DOLocalMove(GetHoverLocalPosition(), hoverEnterDuration).SetEase(hoverEnterEase);
+		}
+
+		private void StopHoverAnimation()
+		{
+			StopHoverMoveTween();
+			_hoverMoveTween = visualRoot.DOLocalMove(_baseVisualLocalPosition, hoverExitDuration).SetEase(hoverExitEase);
+		}
+
+		private Vector3 GetHoverLocalPosition()
+		{
+			return _baseVisualLocalPosition + (Vector3.up * hoverLift);
+		}
+
+		private void ApplyOutlineColor()
+		{
+			if (!visualOutline.enabled)
+			{
+				visualOutline.enabled = true;
+			}
+
+			if (_currentState == DiceItemState.Consumed)
+			{
+				visualOutline.OutlineColor = consumedOutlineColor.Value;
+				return;
+			}
+
+			if (_isHovered)
+			{
+				visualOutline.OutlineColor = hoverOutlineColor.Value;
+				return;
+			}
+
+			if (_currentState == DiceItemState.Armed)
+			{
+				visualOutline.OutlineColor = armedOutlineColor.Value;
+				return;
+			}
+
+			visualOutline.OutlineColor = _baseOutlineColor;
 		}
 	}
 }

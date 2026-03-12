@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 7351946378067567905}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.03, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -98,14 +98,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5861b880299b12a578548bfb49d17f13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Main.Scripts.Dice.ItemView
+  visualRoot: {fileID: 5552264432598873387}
   clickCollider: {fileID: 3006189164749017755}
-  renderers:
-  - {fileID: 0}
-  readyColor: {r: 1, g: 1, b: 1, a: 1}
-  armedColor: {r: 0, g: 1, b: 0, a: 1}
-  cooldownColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  consumedColor: {r: 0, g: 0, b: 0, a: 1}
-  disabledColor: {r: 1, g: 0, b: 0, a: 1}
+  visualOutline: {fileID: 0}
+  hoverLift: 0.025
+  hoverEnterDuration: 0.12
+  hoverExitDuration: 0.12
+  hoverEnterEase: 8
+  hoverExitEase: 8
+  armedScaleMultiplier: 1.01
+  armedPulseDuration: 0.5
+  armedPulseEase: 9
+  consumedScaleMultiplier: 0
+  consumedDuration: 0.35
+  consumedRotationOffset: {x: 0, y: 14, z: 0}
+  consumedScaleEase: 5
+  consumedRotationEase: 8
+  consumedMoveEase: 8
+  settleDuration: 0.12
+  settleEase: 8
+  hoverOutlineColor:
+    id: SliderBg
+  armedOutlineColor:
+    id: GreenLight
+  consumedOutlineColor:
+    id: Black
   OnClicked:
     m_PersistentCalls:
       m_Calls: []

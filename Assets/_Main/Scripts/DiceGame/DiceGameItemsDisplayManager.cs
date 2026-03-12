@@ -49,11 +49,8 @@ namespace _Main.Scripts.Dice
 			{
 				var slot = slots[i];
 				var prefab = ResolveItemPrefab(items[i]);
-				var view = Object.Instantiate(
-					prefab,
-					slot.position,
-					slot.rotation,
-					slot);
+				var view = Object.Instantiate(prefab);
+				PlaceViewInSlot(view, slot);
 
 				var controller = new ModifierItemController(items[i], view, diceGameModel, notificationService);
 				itemControllers.Add(controller);
@@ -76,9 +73,7 @@ namespace _Main.Scripts.Dice
 			{
 				var slot = slots[i];
 				var view = itemViews[i];
-				view.transform.SetParent(slot);
-				view.transform.position = slot.position;
-				view.transform.rotation = slot.rotation;
+				PlaceViewInSlot(view, slot);
 			}
 		}
 
@@ -113,6 +108,12 @@ namespace _Main.Scripts.Dice
 			}
 
 			return prefab;
+		}
+
+		private static void PlaceViewInSlot(ItemView view, Transform slot)
+		{
+			view.transform.SetParent(slot, false);
+			view.SetBaseLocalTransform(Vector3.zero, Quaternion.identity, Vector3.one);
 		}
 
 		private static void ValidateSlots(Transform[] slots, int requiredCount, string groupName)

@@ -33,3 +33,5 @@ MonoBehaviour:
     Color: {r: 0.5411765, g: 0.7764706, b: 0.5411765, a: 1}
   - Id: Blue
     Color: {r: 0.53333336, g: 0.6156863, b: 0.9411765, a: 1}
+  - Id: Black
+    Color: {r: 0, g: 0, b: 0, a: 1}

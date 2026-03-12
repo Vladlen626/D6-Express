@@ -34,8 +34,6 @@ public class InventoryModifierItemsController : IBaseController, IActivatable
 
 	public void Activate()
 	{
-		inventory.ModifierItemAdded += OnModifierItemAdded;
-		inventory.ModifierItemRemoved += OnModifierItemRemoved;
 		modifierItemsModel.ItemsChanged += OnItemsChanged;
 
 		RebuildViews();
@@ -44,20 +42,8 @@ public class InventoryModifierItemsController : IBaseController, IActivatable
 	public void Deactivate()
 	{
 		modifierItemsModel.ItemsChanged -= OnItemsChanged;
-		inventory.ModifierItemRemoved -= OnModifierItemRemoved;
-		inventory.ModifierItemAdded -= OnModifierItemAdded;
 
 		ClearViews();
-	}
-
-	private void OnModifierItemAdded(string _)
-	{
-		RebuildViews();
-	}
-
-	private void OnModifierItemRemoved(string _)
-	{
-		RebuildViews();
 	}
 
 	private void OnItemsChanged()
@@ -67,15 +53,15 @@ public class InventoryModifierItemsController : IBaseController, IActivatable
 
 	private void RebuildViews()
 	{
-		var ownedIds = inventory.ModifierItemIds;
-		inventoryView.ValidateModifierItemSlots(ownedIds.Count);
+		var runtimeById = BuildRuntimeItemsById();
+		var orderedRuntimeItems = BuildOrderedRuntimeItems(runtimeById);
+		inventoryView.ValidateModifierItemSlots(orderedRuntimeItems.Count);
 
 		var slots = inventoryView.ModifierItemSlots;
-
-		for (int i = 0; i < ownedIds.Count; i++)
+		for (int i = 0; i < orderedRuntimeItems.Count; i++)
 		{
-			var itemId = ownedIds[i];
-			var item = ResolveItemOrThrow(itemId);
+			var item = orderedRuntimeItems[i];
+			var itemId = item.Id;
 			var slot = slots[i];
 
 			if (!viewsByItemId.TryGetValue(itemId, out var view) || !view)
@@ -89,10 +75,16 @@ public class InventoryModifierItemsController : IBaseController, IActivatable
 			}
 		}
 
+		var activeIds = new HashSet<string>(StringComparer.Ordinal);
+		for (int i = 0; i < orderedRuntimeItems.Count; i++)
+		{
+			activeIds.Add(orderedRuntimeItems[i].Id);
+		}
+
 		var staleIds = new List<string>();
 		foreach (var pair in viewsByItemId)
 		{
-			if (!ContainsId(ownedIds, pair.Key))
+			if (!activeIds.Contains(pair.Key))
 			{
 				staleIds.Add(pair.Key);
 			}
@@ -109,33 +101,39 @@ public class InventoryModifierItemsController : IBaseController, IActivatable
 		}
 	}
 
-	private IModifierItem ResolveItemOrThrow(string itemId)
+	private Dictionary<string, IModifierItem> BuildRuntimeItemsById()
 	{
-		var items = modifierItemsModel.Items;
-		for (int i = 0; i < items.Count; i++)
+		var result = new Dictionary<string, IModifierItem>(StringComparer.Ordinal);
+		var runtimeItems = modifierItemsModel.Items;
+		for (int i = 0; i < runtimeItems.Count; i++)
 		{
-			var item = items[i];
-			if (item != null && string.Equals(item.Id, itemId, StringComparison.Ordinal))
+			var item = runtimeItems[i];
+			if (item == null || string.IsNullOrEmpty(item.Id))
 			{
-				return item;
+				continue;
 			}
+
+			result[item.Id] = item;
 		}
 
-		throw new InvalidOperationException(
-			$"[InventoryModifierItemsController] Item '{itemId}' exists in inventory but has no runtime modifier item instance.");
+		return result;
 	}
 
-	private static bool ContainsId(IReadOnlyList<string> ids, string id)
+	private List<IModifierItem> BuildOrderedRuntimeItems(IReadOnlyDictionary<string, IModifierItem> runtimeById)
 	{
-		for (int i = 0; i < ids.Count; i++)
+		var result = new List<IModifierItem>();
+		var ownedIds = inventory.ModifierItemIds;
+
+		for (int i = 0; i < ownedIds.Count; i++)
 		{
-			if (string.Equals(ids[i], id, StringComparison.Ordinal))
+			var id = ownedIds[i];
+			if (runtimeById.TryGetValue(id, out var item))
 			{
-				return true;
+				result.Add(item);
 			}
 		}
 
-		return false;
+		return result;
 	}
 
 	private static ItemView SpawnViewOrThrow(IModifierItem item, Transform slot)
@@ -160,6 +158,7 @@ public class InventoryModifierItemsController : IBaseController, IActivatable
 
 		var view = Object.Instantiate(prefab, slot.position, slot.rotation, slot);
 		view.Bind(item);
+		view.SetBaseLocalTransform(Vector3.zero, Quaternion.identity, Vector3.one);
 		return view;
 	}
 
@@ -176,8 +175,8 @@ public class InventoryModifierItemsController : IBaseController, IActivatable
 		}
 
 		view.Bind(item);
-		view.transform.SetParent(slot);
-		view.transform.SetPositionAndRotation(slot.position, slot.rotation);
+		view.transform.SetParent(slot, false);
+		view.SetBaseLocalTransform(Vector3.zero, Quaternion.identity, Vector3.one);
 	}
 
 	private async UniTask DestroyViewAsync(ItemView view)

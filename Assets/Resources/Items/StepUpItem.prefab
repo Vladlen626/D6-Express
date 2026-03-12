@@ -9,6 +9,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 3642342569833831462}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -48,6 +60,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 706eea4835246fd45b9ca83e6012647f, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7e947d502d2af984b98b6beec117c4cb, type: 2}
     - target: {fileID: 919132149155446097, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
       propertyPath: m_Name
       value: Beer
@@ -55,8 +75,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2587120653986671071}
   m_SourcePrefab: {fileID: 100100000, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
+--- !u!1 &4762627870324178241 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
+  m_PrefabInstance: {fileID: 5681617490988302352}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2587120653986671071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4762627870324178241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!4 &5283725650400405499 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26ebfcc4224014f4eb19745c9ef9a7ed, type: 3}
@@ -70,6 +116,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
+      propertyPath: visualOutline
+      value: 
+      objectReference: {fileID: 2587120653986671071}
+    - target: {fileID: 5552264432598873387, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.055
+      objectReference: {fileID: 0}
     - target: {fileID: 8359954028589816404, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
       propertyPath: m_Name
       value: StepUpItem
