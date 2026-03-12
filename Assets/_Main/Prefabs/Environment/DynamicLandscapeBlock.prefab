@@ -1,5 +1,57 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1614113224768524443
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6656715389232703136}
+  - component: {fileID: 1697820346912380606}
+  m_Layer: 0
+  m_Name: RailsTrackHandler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6656715389232703136
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614113224768524443}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.5, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 1, z: 500}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6975254042331190161}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1697820346912380606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1614113224768524443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88d4b0b2f9ab18f49a9614a0d1453d1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LandscapeGenerator
+  instantiatedObjectsParent: {fileID: 6784070231730022397}
+  landScapePrefabs:
+  - {fileID: 414065802718348505, guid: f9b1a17ed714d9041a44477f0f7197a9, type: 3}
+  maxSpawnedObjects: 301
+  spawnCooldownMin: 1.49
+  spawnCooldownMax: 1.49
+  speed: 20
+  movable: 1
 --- !u!1 &2455906128212016360
 GameObject:
   m_ObjectHideFlags: 0
@@ -206,6 +258,7 @@ Transform:
   m_Children:
   - {fileID: 3833500556269062109}
   - {fileID: 8933007581816132702}
+  - {fileID: 6656715389232703136}
   - {fileID: 1684478528134359233}
   - {fileID: 6784070231730022397}
   m_Father: {fileID: 5704129669163623561}
