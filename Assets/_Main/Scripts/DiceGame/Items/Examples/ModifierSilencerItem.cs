@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using _Main.Scripts.Core;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -37,6 +38,13 @@ namespace _Main.Scripts.Dice
 		{
 			_ = cooldownPasses;
 			customPrefab = prefabOverride;
+		}
+
+		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
+
+		public override bool IsActivationAllowed(DiceGameState gameState)
+		{
+			return gameState == DiceGameState.GAME;
 		}
 
 		public override async UniTask ModifyValues(DiceModifierContext modifierContext)

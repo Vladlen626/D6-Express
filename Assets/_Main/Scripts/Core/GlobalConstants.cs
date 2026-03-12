@@ -15,6 +15,8 @@ namespace _Main.Scripts.Core
 			public const string DiceUpgradeLabelMinLen = "dice_upgrade_label_min_len";
 			public const string DiceUpgradeLabelMaxLen = "dice_upgrade_label_max_len";
 			public const string ShopItemBoughtNotification = "shop_item_bought_notification";
+			public const string ItemActivationOnlySelectDice = "item_activation_only_select_dice";
+			public const string ItemActivationOnlyGame = "item_activation_only_game";
 		}
 	}
 }

@@ -1,4 +1,5 @@
 using System.Linq;
+using _Main.Scripts.Core;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -24,6 +25,13 @@ namespace _Main.Scripts.Dice
 			bonusKey = id;
 		}
 
+		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlySelectDice;
+
+		public override bool IsActivationAllowed(DiceGameState gameState)
+		{
+			return gameState == DiceGameState.SELECT_DICE;
+		}
+
 		protected override bool OnClick()
 		{
 			if (State != DiceItemState.Ready)
@@ -31,7 +39,7 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
-			if (boundGameModel == null || boundGameModel.DiceGameState != DiceGameState.SELECT_DICE)
+			if (boundGameModel == null)
 			{
 				return false;
 			}

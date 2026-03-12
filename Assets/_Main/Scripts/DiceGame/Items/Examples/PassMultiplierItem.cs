@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using _Main.Scripts.Core;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -18,6 +19,13 @@ namespace _Main.Scripts.Dice
 			this.scoreMultiplier = Mathf.Max(1f, scoreMultiplier);
 			_ = activationsPerDay;
 			customPrefab = prefabOverride;
+		}
+
+		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
+
+		public override bool IsActivationAllowed(DiceGameState gameState)
+		{
+			return gameState == DiceGameState.GAME;
 		}
 
 		public override UniTask ModifyValues(DiceModifierContext modifierContext)

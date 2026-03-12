@@ -44,6 +44,16 @@ namespace _Main.Scripts.Dice
 		bool TryHandleClick();
 
 		/// <summary>
+		/// Defines whether the item can be activated in the current game state.
+		/// </summary>
+		bool IsActivationAllowed(DiceGameState gameState);
+
+		/// <summary>
+		/// Localization key shown when activation is attempted in a forbidden phase.
+		/// </summary>
+		string InvalidActivationNotificationKey { get; }
+
+		/// <summary>
 		/// Restore the item to its initial state (e.g., at run start or after cleanup).
 		/// </summary>
 		void ResetItem();

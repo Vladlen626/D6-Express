@@ -98,6 +98,8 @@
         "modifier_reroll_selected_item_description": "When armed, the next clicked unsaved die rerolls immediately.",
         "modifier_step_up_item_title": "Courage Sip",
         "modifier_step_up_item_description": "Select several dice, then all dice advance their face by +1.",
+        "item_activation_only_select_dice": "This item can only be activated during dice selection",
+        "item_activation_only_game": "This item can only be activated during the match",
         "dice_banner_turn_player": "Your turn",
         "dice_banner_turn_enemy": "Enemy turn",
         "dice_banner_round_start": "Round start",

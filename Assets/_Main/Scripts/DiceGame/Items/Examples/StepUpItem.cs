@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using TMPro;
+using _Main.Scripts.Core;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -31,6 +32,13 @@ namespace _Main.Scripts.Dice
 			selectionTarget = Mathf.Max(1, selectionCount);
 			_ = cooldownPasses;
 			customPrefab = prefabOverride;
+		}
+
+		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
+
+		public override bool IsActivationAllowed(DiceGameState gameState)
+		{
+			return gameState == DiceGameState.GAME;
 		}
 
 		public override async UniTask ModifyValues(DiceModifierContext modifierContext)

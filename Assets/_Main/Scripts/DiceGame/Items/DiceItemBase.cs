@@ -13,6 +13,7 @@ namespace _Main.Scripts.Dice
 		public DiceItemActivationType ActivationType { get; }
 		public DiceItemState State { get; protected set; } = DiceItemState.Ready;
 		public bool IsVisible { get; protected set; } = true;
+		public virtual string InvalidActivationNotificationKey => string.Empty;
 
 		protected DiceItemView AttachedView { get; private set; }
 
@@ -51,6 +52,11 @@ namespace _Main.Scripts.Dice
 			}
 
 			return OnClick();
+		}
+
+		public virtual bool IsActivationAllowed(DiceGameState gameState)
+		{
+			return true;
 		}
 
 		/// <summary>

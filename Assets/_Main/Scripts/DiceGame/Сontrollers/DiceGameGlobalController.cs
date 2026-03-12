@@ -72,7 +72,12 @@ namespace _Main.Scripts.Dice
 			awaiterService = serviceLocator.Get<IAsyncAwaiterService>();
 			localizationService = serviceLocator.Get<ILocalizationService>();
 			scenarioSetup = new DiceGameScenarioSetup(diceGameModel, run, configService, resourceService);
-			itemsDisplayManager = new DiceGameItemsDisplayManager(diceGameModel, sceneContext.DiceGameTableView, lifecycleService, objectFactory);
+			itemsDisplayManager = new DiceGameItemsDisplayManager(
+				diceGameModel,
+				sceneContext.DiceGameTableView,
+				lifecycleService,
+				objectFactory,
+				notificationService);
 		}
 
 		public void Activate()
