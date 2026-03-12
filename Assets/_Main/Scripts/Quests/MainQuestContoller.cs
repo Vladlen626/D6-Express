@@ -32,6 +32,7 @@ public class MainQuestContoller : IBaseController, IPreloadable, IQuestGenerator
         var objectives = quest.AddComponent<QuestComponentObjectives>();
 
         var getMoneyObjective = objectives.Add();
+        var passStationObjective = objectives.Add();
 
         run.LevelChangeRequested += () =>
         {
@@ -69,6 +70,11 @@ public class MainQuestContoller : IBaseController, IPreloadable, IQuestGenerator
             UpdateState();
         };
 
+        run.LevelChanged += () =>
+        {
+            UpdateState();
+        };
+
         quest.StateChanged += (q, s) =>
         {
             getMoneyObjective.Completed = s switch
@@ -76,14 +82,22 @@ public class MainQuestContoller : IBaseController, IPreloadable, IQuestGenerator
                 Quest.State.COMPLETED => true,
                 _ => false,
             };
-            var localized = textsConfig.texts["quest_main_goal"];
-            var result = string.Format(localized, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
-            getMoneyObjective.Title = result;
+            var localizedMoneyGoal = textsConfig.texts["quest_money_goal"];
+            var resultMoneyGoal = string.Format(localizedMoneyGoal, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
+            getMoneyObjective.Title = resultMoneyGoal;
+
+            var localizedStationsGoal = textsConfig.texts["quest_stations_goal"];
+            var resultStationsGoal = string.Format(localizedStationsGoal, run.LevelsCount - run.Level);
+            passStationObjective.Title = resultStationsGoal;
         };
 
-        var localized = textsConfig.texts["quest_main_goal"];
-        var result = string.Format(localized, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
-        getMoneyObjective.Title = result;
+        var localizedMoneyGoal = textsConfig.texts["quest_money_goal"];
+        var resultMoneyGoal = string.Format(localizedMoneyGoal, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
+        getMoneyObjective.Title = resultMoneyGoal;
+
+        var localizedStationsGoal = textsConfig.texts["quest_stations_goal"];
+        var resultStationsGoal = string.Format(localizedStationsGoal, run.LevelsCount - run.Level);
+        passStationObjective.Title = resultStationsGoal;
 
         return quest;
     }

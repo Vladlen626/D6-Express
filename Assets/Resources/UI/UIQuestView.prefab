@@ -38,11 +38,11 @@ RectTransform:
   - {fileID: 5706261730247903544}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -20, y: -20}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &146087463769899523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,10 +58,10 @@ MonoBehaviour:
   m_Padding:
     m_Left: 15
     m_Right: 15
-    m_Top: 3
-    m_Bottom: 3
+    m_Top: 5
+    m_Bottom: 15
   m_ChildAlignment: 0
-  m_Spacing: 0
+  m_Spacing: 2
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
@@ -98,7 +98,7 @@ MonoBehaviour:
   title: {fileID: 8125202964640720672}
   goal: {fileID: 8906005637894428493}
   activeColor: {r: 0.5411765, g: 0.48235294, b: 0.4, a: 1}
-  completedColor: {r: 0.20754719, g: 0.18674351, b: 0.15761839, a: 1}
+  completedColor: {r: 0.3584906, g: 0.3169203, b: 0.25872198, a: 1}
 --- !u!114 &4271198081421992938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +149,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 35.275, y: -15.5}
+  m_AnchoredPosition: {x: 35.275, y: -17.5}
   m_SizeDelta: {x: 40.55, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1447187896575180007
@@ -386,6 +386,7 @@ GameObject:
   - component: {fileID: 1371696122059340781}
   - component: {fileID: 6401542330929994518}
   - component: {fileID: 8906005637894428493}
+  - component: {fileID: 4412114189592678052}
   m_Layer: 5
   m_Name: TextGoal
   m_TagString: Untagged
@@ -407,10 +408,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7709093121682382006}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 300, y: 50}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 165, y: -44.79}
+  m_SizeDelta: {x: 300, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1371696122059340781
 CanvasRenderer:
@@ -440,7 +441,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Can u please give me some space for work
+  m_text: some quest might be here
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
   m_sharedMaterial: {fileID: -5374591420838769158, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
@@ -467,10 +468,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 14
   m_fontSizeMax: 18
   m_fontStyle: 0
@@ -524,6 +525,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
   text: {fileID: 6401542330929994518}
+--- !u!114 &4412114189592678052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8345708238576486799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
+  m_HorizontalFit: 0
+  m_VerticalFit: 2
 --- !u!1001 &4283995055603084599
 PrefabInstance:
   m_ObjectHideFlags: 0
