@@ -43,6 +43,7 @@ namespace _Main.Scripts.Dice
 			if (State == DiceItemState.Ready)
 			{
 				SetState(DiceItemState.Armed);
+				NotifyActivationStarted();
 				return true;
 			}
 
@@ -61,6 +62,7 @@ namespace _Main.Scripts.Dice
 				entry.BaseScore = Mathf.RoundToInt(entry.BaseScore * scoreMultiplier);
 			}
 
+			NotifyEffectApplied();
 			Consume();
 		}
 

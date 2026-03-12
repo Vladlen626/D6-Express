@@ -72,6 +72,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			SetState(DiceItemState.Armed);
+			NotifyEffectApplied();
 			return true;
 		}
 

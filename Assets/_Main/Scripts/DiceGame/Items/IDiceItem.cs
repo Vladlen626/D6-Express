@@ -30,6 +30,8 @@ namespace _Main.Scripts.Dice
 		bool IsVisible { get; }
 
 		event Action<IModifierItem> OnChanged;
+		event Action<IModifierItem> ActivationStarted;
+		event Action<IModifierItem> EffectApplied;
 
 		/// <summary>
 		/// Attach a view so the item can update its 3D representation (color/highlight, visibility, etc.).

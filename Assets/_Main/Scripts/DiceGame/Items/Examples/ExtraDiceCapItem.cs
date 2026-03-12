@@ -46,6 +46,7 @@ namespace _Main.Scripts.Dice
 
 			ApplyBonus();
 			SetState(DiceItemState.Armed);
+			NotifyEffectApplied();
 			return true;
 		}
 

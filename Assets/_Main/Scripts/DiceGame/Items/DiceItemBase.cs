@@ -18,6 +18,8 @@ namespace _Main.Scripts.Dice
 		protected DiceItemView AttachedView { get; private set; }
 
 		public event Action<IModifierItem> OnChanged;
+		public event Action<IModifierItem> ActivationStarted;
+		public event Action<IModifierItem> EffectApplied;
 
 		protected ModifierItemBase(string id, string displayName, DiceItemActivationType activationType)
 		{
@@ -116,6 +118,16 @@ namespace _Main.Scripts.Dice
 		protected void NotifyChanged()
 		{
 			OnChanged?.Invoke(this);
+		}
+
+		protected void NotifyActivationStarted()
+		{
+			ActivationStarted?.Invoke(this);
+		}
+
+		protected void NotifyEffectApplied()
+		{
+			EffectApplied?.Invoke(this);
 		}
 
 		protected void UpdateView()

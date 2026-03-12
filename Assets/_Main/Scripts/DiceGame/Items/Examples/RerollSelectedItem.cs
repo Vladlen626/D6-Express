@@ -60,6 +60,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			SetState(DiceItemState.Armed);
+			NotifyActivationStarted();
 			return true;
 		}
 
@@ -116,6 +117,7 @@ namespace _Main.Scripts.Dice
 
 			UpdatePreview();
 			boundGameModel?.NotifyDiceValuesChanged();
+			NotifyEffectApplied();
 			ConsumeAndDeactivate();
 		}
 
