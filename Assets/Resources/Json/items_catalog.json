@@ -4,7 +4,7 @@
     "type": "Dice",
     "nameKey": "default_name",
     "descriptionKey": "default_description",
-    "rarity": "Common",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "default",
     "data": {
@@ -16,7 +16,7 @@
     "type": "Dice",
     "nameKey": "gen_1_focus_name",
     "descriptionKey": "gen_1_focus_description",
-    "rarity": "Common",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "gen_1_focus",
     "data": {
@@ -28,7 +28,7 @@
     "type": "Dice",
     "nameKey": "gen_2_focus_name",
     "descriptionKey": "gen_2_focus_description",
-    "rarity": "Common",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "gen_2_focus",
     "data": {
@@ -40,7 +40,7 @@
     "type": "Dice",
     "nameKey": "gen_3_focus_name",
     "descriptionKey": "gen_3_focus_description",
-    "rarity": "Common",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "gen_3_focus",
     "data": {
@@ -52,7 +52,7 @@
     "type": "Dice",
     "nameKey": "gen_4_focus_name",
     "descriptionKey": "gen_4_focus_description",
-    "rarity": "Common",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "gen_4_focus",
     "data": {
@@ -64,7 +64,7 @@
     "type": "Dice",
     "nameKey": "gen_5_focus_name",
     "descriptionKey": "gen_5_focus_description",
-    "rarity": "Common",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "gen_5_focus",
     "data": {
@@ -76,7 +76,7 @@
     "type": "Dice",
     "nameKey": "gen_6_focus_name",
     "descriptionKey": "gen_6_focus_description",
-    "rarity": "Common",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "gen_6_focus",
     "data": {
@@ -88,7 +88,7 @@
     "type": "Dice",
     "nameKey": "strat_safe_ones_fives_name",
     "descriptionKey": "strat_safe_ones_fives_description",
-    "rarity": "Uncommon",
+    "rarity": "Legendary",
     "price": 0,
     "visualId": "strat_safe_ones_fives",
     "data": {
@@ -100,7 +100,7 @@
     "type": "Dice",
     "nameKey": "strat_straight_1_6_hunter_name",
     "descriptionKey": "strat_straight_1_6_hunter_description",
-    "rarity": "Rare",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "strat_straight_1_6_hunter",
     "data": {
@@ -112,7 +112,7 @@
     "type": "Dice",
     "nameKey": "strat_straight_2_6_hunter_name",
     "descriptionKey": "strat_straight_2_6_hunter_description",
-    "rarity": "Rare",
+    "rarity": "Legendary",
     "price": 10,
     "visualId": "strat_straight_2_6_hunter",
     "data": {
@@ -136,7 +136,7 @@
     "type": "ModifierItem",
     "nameKey": "modifier_extra_dice_cap_title",
     "descriptionKey": "modifier_extra_dice_cap_description",
-    "rarity": "Uncommon",
+    "rarity": "Common",
     "price": 20,
     "visualId": "ExtraDiceCapItem",
     "data": {
@@ -149,7 +149,7 @@
     "type": "ModifierItem",
     "nameKey": "modifier_silencer_item_title",
     "descriptionKey": "modifier_silencer_item_description",
-    "rarity": "Rare",
+    "rarity": "Common",
     "price": 25,
     "visualId": "ModifierSilencerItem",
     "data": {
@@ -162,7 +162,7 @@
     "type": "ModifierItem",
     "nameKey": "modifier_pass_multiplier_item_title",
     "descriptionKey": "modifier_pass_multiplier_item_description",
-    "rarity": "Rare",
+    "rarity": "Common",
     "price": 20,
     "visualId": "PassMultiplierItem",
     "data": {
@@ -176,7 +176,7 @@
     "type": "ModifierItem",
     "nameKey": "modifier_reroll_selected_item_title",
     "descriptionKey": "modifier_reroll_selected_item_description",
-    "rarity": "Uncommon",
+    "rarity": "Common",
     "price": 15,
     "visualId": "RerollSelectedItem",
     "data": {
@@ -189,7 +189,7 @@
     "type": "ModifierItem",
     "nameKey": "modifier_step_up_item_title",
     "descriptionKey": "modifier_step_up_item_description",
-    "rarity": "Rare",
+    "rarity": "Common",
     "price": 18,
     "visualId": "StepUpItem",
     "data": {

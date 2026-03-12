@@ -462,6 +462,8 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < items.Count; i++)
 			{
 				var item = items[i];
+				(item as IOnMatchFinishedItem)?.OnMatchFinished();
+
 				if (item != null && item.State == DiceItemState.Consumed)
 				{
 					consumedIds.Add(item.Id);

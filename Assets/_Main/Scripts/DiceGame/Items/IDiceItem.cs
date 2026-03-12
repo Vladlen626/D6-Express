@@ -56,4 +56,12 @@ namespace _Main.Scripts.Dice
 	{
 		DiceItemView GetViewPrefab();
 	}
+
+	/// <summary>
+	/// Optional match lifecycle hook for item models that need to finalize state at match end.
+	/// </summary>
+	public interface IOnMatchFinishedItem
+	{
+		void OnMatchFinished();
+	}
 }

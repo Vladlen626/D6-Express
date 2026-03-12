@@ -41,11 +41,15 @@ namespace _Main.Scripts.Dice
 		public void Activate()
 		{
 			_view.OnPlayClicked += OnPlayClickedHandler;
+			_diceGameModel.OnMaxDiceCountChanged += OnMaxDiceCountChangedHandler;
+			_view.SetButtonInteractable("Play", false);
 			SetupSelectionStage().Forget();
 		}
 
 		public void Deactivate()
 		{
+			_diceGameModel.OnMaxDiceCountChanged -= OnMaxDiceCountChangedHandler;
+
 			foreach (var pair in _diceGameModel.ScreenDiceDict)
 			{
 				pair.Value.OnDiceClicked.RemoveAllListeners();
@@ -160,6 +164,11 @@ namespace _Main.Scripts.Dice
 			{
 				_isFinished = true;
 			}
+		}
+
+		private void OnMaxDiceCountChangedHandler(int oldValue, int newValue)
+		{
+			_view.SetButtonInteractable("Play", SelectedModel.Count == SelectionLimit);
 		}
 
 		public async UniTask WaitSelection() => await UniTask.WaitUntil(() => _isFinished);

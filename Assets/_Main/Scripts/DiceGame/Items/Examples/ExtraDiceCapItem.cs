@@ -5,10 +5,10 @@ using UnityEngine;
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
-	/// Passive item that increases the maximum dice cap by a fixed amount (default +4).
-	/// The mechanic is reusable by other items/modifiers via DiceGameModel.SetDiceCapModifier.
+	/// Click-to-activate item that increases the maximum dice cap by a fixed amount (default +4)
+	/// only for the current match. Activation is allowed during selection stage only.
 	/// </summary>
-	public class ExtraDiceCapItem : ModifierItemBase, IOnLevelStartModifier, IGameModelBoundItem, IModifierItemViewProvider
+	public class ExtraDiceCapItem : ModifierItemBase, IGameModelBoundItem, IModifierItemViewProvider, IOnMatchFinishedItem
 	{
 		private readonly int bonus;
 		private readonly DiceItemView customPrefab;
@@ -17,45 +17,67 @@ namespace _Main.Scripts.Dice
 		private bool boundIsPlayerSide = true;
 
 		public ExtraDiceCapItem(string id, int bonus = 4, DiceItemView prefabOverride = null)
-			: base(id, id, DiceItemActivationType.Passive)
+			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.bonus = Mathf.Max(1, bonus);
 			customPrefab = prefabOverride;
 			bonusKey = id;
 		}
 
-		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
+		protected override bool OnClick()
 		{
-			// Ensure the bonus is applied at level start so selections/setup use the expanded cap.
-			if (modifierContext.Stage == ModifierStage.LevelStart)
+			if (State != DiceItemState.Ready)
 			{
-				ApplyBonus(modifierContext.DiceGameModel);
+				return false;
 			}
 
+			if (boundGameModel == null || boundGameModel.DiceGameState != DiceGameState.SELECT_DICE)
+			{
+				return false;
+			}
+
+			ApplyBonus();
+			SetState(DiceItemState.Armed);
+			return true;
+		}
+
+		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
+		{
 			await UniTask.CompletedTask;
 		}
 
 		public void OnAddedToGameModel(DiceGameModel gameModel)
 		{
-			ApplyBonus(gameModel);
+			BindGameModel(gameModel);
 		}
 
 		public void OnRemovedFromGameModel(DiceGameModel gameModel)
 		{
-			gameModel?.RemoveDiceCapModifier(bonusKey, boundIsPlayerSide);
+			RemoveBonus();
 			boundGameModel = null;
+		}
+
+		public void OnMatchFinished()
+		{
+			if (State != DiceItemState.Armed)
+			{
+				return;
+			}
+
+			RemoveBonus();
+			Consume();
 		}
 
 		public override void ResetItem()
 		{
+			RemoveBonus();
 			base.ResetItem();
-			boundGameModel?.RemoveDiceCapModifier(bonusKey, boundIsPlayerSide);
 			boundGameModel = null;
 		}
 
 		public DiceItemView GetViewPrefab() => customPrefab;
 
-		private void ApplyBonus(DiceGameModel gameModel)
+		private void BindGameModel(DiceGameModel gameModel)
 		{
 			if (gameModel == null)
 			{
@@ -64,7 +86,21 @@ namespace _Main.Scripts.Dice
 
 			boundGameModel = gameModel;
 			boundIsPlayerSide = ResolveBoundSide(gameModel);
+		}
+
+		private void ApplyBonus()
+		{
+			if (boundGameModel == null)
+			{
+				return;
+			}
+
 			boundGameModel.SetDiceCapModifier(bonusKey, bonus, boundIsPlayerSide);
+		}
+
+		private void RemoveBonus()
+		{
+			boundGameModel?.RemoveDiceCapModifier(bonusKey, boundIsPlayerSide);
 		}
 
 		private bool ResolveBoundSide(DiceGameModel gameModel)
