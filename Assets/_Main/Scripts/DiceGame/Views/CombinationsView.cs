@@ -35,4 +35,16 @@ public class CombinationsView : MonoBehaviour
 
     [SerializeField]
     public TextMeshProUGUI threeOfAKind6;
+
+    [SerializeField]
+    public LocalizedText oneDiceDesc;
+
+    [SerializeField]
+    public LocalizedText threeOfAKindDesc;
+
+    [SerializeField]
+    public LocalizedText straightDesc;
+
+    [SerializeField]
+    public LocalizedText OfAKindDesc;
 }

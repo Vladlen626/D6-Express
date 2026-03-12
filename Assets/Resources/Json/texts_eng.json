@@ -119,6 +119,10 @@
         "dice_upgrade_label_max": "Max",
         "dice_upgrade_label_bonus": "Bonus",
         "dice_upgrade_label_min_len": "Min length",
-        "dice_upgrade_label_max_len": "Max length"
+        "dice_upgrade_label_max_len": "Max length",
+        "combination_desc_one": "One dice",
+        "combination_desc_three": "Three of a kind",
+        "combination_desc_straight": "Straight",
+        "combination_desc_kind_of": "each subsequent cube in \"of a kind\" multiplies the points"
     }
 }

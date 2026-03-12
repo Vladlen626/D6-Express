@@ -25,6 +25,11 @@ public sealed class CombinationsController : IBaseController, IActivatable
             ApplyModifier(item, delta: +1);
         }
 
+        combinationsView.oneDiceDesc.SetText("combination_desc_one");
+        combinationsView.threeOfAKindDesc.SetText("combination_desc_three");
+        combinationsView.straightDesc.SetText("combination_desc_straight");
+        combinationsView.OfAKindDesc.SetText("combination_desc_kind_of");
+
         UpdateText();
     }
 
