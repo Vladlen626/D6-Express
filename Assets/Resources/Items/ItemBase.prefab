@@ -97,7 +97,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5861b880299b12a578548bfb49d17f13, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::_Main.Scripts.Dice.DiceItemView
+  m_EditorClassIdentifier: Assembly-CSharp::_Main.Scripts.Dice.ItemView
   clickCollider: {fileID: 3006189164749017755}
   renderers:
   - {fileID: 0}

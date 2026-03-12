@@ -12,12 +12,12 @@ namespace _Main.Scripts.Dice
 	public class RerollSelectedItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
 	{
 		private readonly DiceScoringService scoringService;
-		private readonly DiceItemView customPrefab;
+		private readonly ItemView customPrefab;
 		private DiceGameModel boundGameModel;
 		private readonly Dictionary<DiceView, UnityAction> clickHandlers = new();
 		private bool handlersAttached;
 
-		public RerollSelectedItem(string id, DiceScoringService scoringService, int cooldownPasses = 2, DiceItemView prefabOverride = null)
+		public RerollSelectedItem(string id, DiceScoringService scoringService, int cooldownPasses = 2, ItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoringService = scoringService;
@@ -212,6 +212,6 @@ namespace _Main.Scripts.Dice
 			DetachDiceHandlers();
 		}
 
-		public DiceItemView GetViewPrefab() => customPrefab;
+		public ItemView GetViewPrefab() => customPrefab;
 	}
 }

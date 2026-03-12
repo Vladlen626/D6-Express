@@ -11,9 +11,9 @@ namespace _Main.Scripts.Dice
 	public class PassMultiplierItem : ModifierItemBase, IOnPassModifier, IModifierItemViewProvider
 	{
 		private readonly float scoreMultiplier;
-		private readonly DiceItemView customPrefab;
+		private readonly ItemView customPrefab;
 
-		public PassMultiplierItem(string id, float scoreMultiplier = 1.5f, int activationsPerDay = 1, DiceItemView prefabOverride = null)
+		public PassMultiplierItem(string id, float scoreMultiplier = 1.5f, int activationsPerDay = 1, ItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoreMultiplier = Mathf.Max(1f, scoreMultiplier);
@@ -71,7 +71,7 @@ namespace _Main.Scripts.Dice
 			base.ResetItem();
 		}
 
-		public DiceItemView GetViewPrefab()
+		public ItemView GetViewPrefab()
 		{
 			return customPrefab;
 		}

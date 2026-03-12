@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using _Main.Scripts.Dice;
 using UnityEngine;
 
-public class ShopItemDiceView : MonoBehaviour
+public class ShopItemView : MonoBehaviour
 {
     [SerializeField]
     private List<DiceVisualEntry> diceVisuals;
@@ -92,7 +92,7 @@ public class ShopItemDiceView : MonoBehaviour
 
     private void DisableRuntimeBehaviours(GameObject instance)
     {
-        var itemViews = instance.GetComponentsInChildren<DiceItemView>(true);
+        var itemViews = instance.GetComponentsInChildren<ItemView>(true);
         for (int i = 0; i < itemViews.Length; i++)
         {
             itemViews[i].enabled = false;

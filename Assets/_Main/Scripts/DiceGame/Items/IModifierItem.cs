@@ -36,7 +36,7 @@ namespace _Main.Scripts.Dice
 		/// <summary>
 		/// Attach a view so the item can update its 3D representation (color/highlight, visibility, etc.).
 		/// </summary>
-		void AttachView(DiceItemView view);
+		void AttachView(ItemView view);
 		void DetachView();
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace _Main.Scripts.Dice
 	/// </summary>
 	public interface IModifierItemViewProvider
 	{
-		DiceItemView GetViewPrefab();
+		ItemView GetViewPrefab();
 	}
 
 	/// <summary>

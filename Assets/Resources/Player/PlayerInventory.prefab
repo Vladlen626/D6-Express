@@ -3699,6 +3699,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryView
   couplePositionsHandler: {fileID: 8248742767700135685}
+  modifierItemSlots:
+  - {fileID: 8421765355375841833}
+  - {fileID: 6859372634763212721}
+  - {fileID: 8559849000159533420}
+  - {fileID: 115764852701032495}
+  - {fileID: 5487612499599341887}
 --- !u!1 &7957632811220218023
 GameObject:
   m_ObjectHideFlags: 0

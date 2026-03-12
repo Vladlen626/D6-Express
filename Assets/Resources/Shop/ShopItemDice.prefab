@@ -1065,7 +1065,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a0f27835a63b9f547bb7dcd55dd03969, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShopItemDiceView
+  m_EditorClassIdentifier: Assembly-CSharp::ShopItemView
   diceVisuals:
   - id: default
     visual: {fileID: 6075845673703236500}

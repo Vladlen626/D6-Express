@@ -12,12 +12,12 @@ namespace _Main.Scripts.Dice
 	public class ExtraDiceCapItem : ModifierItemBase, IGameModelBoundItem, IModifierItemViewProvider, IOnMatchFinishedItem
 	{
 		private readonly int bonus;
-		private readonly DiceItemView customPrefab;
+		private readonly ItemView customPrefab;
 		private DiceGameModel boundGameModel;
 		private readonly string bonusKey;
 		private bool boundIsPlayerSide = true;
 
-		public ExtraDiceCapItem(string id, int bonus = 4, DiceItemView prefabOverride = null)
+		public ExtraDiceCapItem(string id, int bonus = 4, ItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.bonus = Mathf.Max(1, bonus);
@@ -84,7 +84,7 @@ namespace _Main.Scripts.Dice
 			boundGameModel = null;
 		}
 
-		public DiceItemView GetViewPrefab() => customPrefab;
+		public ItemView GetViewPrefab() => customPrefab;
 
 		private void BindGameModel(DiceGameModel gameModel)
 		{

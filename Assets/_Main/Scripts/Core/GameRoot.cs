@@ -149,6 +149,7 @@ namespace _Main.Scripts.Core
 					sceneContext.InventoryView),
 				new ModifierItemsSyncController(playerModel.InventoryModel,
 					playerModel.InventoryModel.ModifierItemsModel, configService, scoringService),
+				new InventoryModifierItemsController(playerModel.InventoryModel, sceneContext.InventoryView, factory),
 				new TooltipsController(uiService, diceGameModel, configService, Camera.main,
 					sceneContext.DiceGameTableView),
 			};

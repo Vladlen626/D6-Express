@@ -15,7 +15,7 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceScoringService scoringService;
 		private readonly int selectionTarget;
-		private readonly DiceItemView customPrefab;
+		private readonly ItemView customPrefab;
 
 		private readonly HashSet<DiceModel> selectedDice = new();
 		private readonly Dictionary<DiceView, UnityAction> clickHandlers = new();
@@ -25,7 +25,7 @@ namespace _Main.Scripts.Dice
 		private bool handlersAttached;
 		private bool isProcessing;
 
-		public StepUpItem(string id, DiceScoringService scoringService, int selectionCount = 3, int? cooldownPasses = null, DiceItemView prefabOverride = null)
+		public StepUpItem(string id, DiceScoringService scoringService, int selectionCount = 3, int? cooldownPasses = null, ItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoringService = scoringService;
@@ -263,7 +263,7 @@ namespace _Main.Scripts.Dice
 			ClearLabels();
 		}
 
-		public DiceItemView GetViewPrefab() => customPrefab;
+		public ItemView GetViewPrefab() => customPrefab;
 
 		private GameObject SpawnLabel(Transform parent, string text)
 		{

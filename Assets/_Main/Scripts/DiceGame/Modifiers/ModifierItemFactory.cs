@@ -6,7 +6,7 @@ namespace _Main.Scripts.Dice
 {
 	public static class ModifierItemFactory
 	{
-		private static readonly Dictionary<string, DiceItemView> PrefabCache = new();
+		private static readonly Dictionary<string, ItemView> PrefabCache = new();
 
 		public static IModifierItem Create(ItemCatalogEntry entry, DiceScoringService scoringService)
 		{
@@ -58,7 +58,7 @@ namespace _Main.Scripts.Dice
 			return null;
 		}
 
-		private static DiceItemView LoadItemPrefab(ItemCatalogEntry entry)
+		private static ItemView LoadItemPrefab(ItemCatalogEntry entry)
 		{
 			if (entry == null)
 			{
@@ -76,7 +76,7 @@ namespace _Main.Scripts.Dice
 				return cached;
 			}
 
-			var prefab = Resources.Load<DiceItemView>($"Items/{visualId}");
+			var prefab = Resources.Load<ItemView>($"Items/{visualId}");
 			PrefabCache[visualId] = prefab;
 			return prefab;
 		}
