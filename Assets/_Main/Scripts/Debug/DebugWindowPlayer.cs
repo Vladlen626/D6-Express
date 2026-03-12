@@ -24,7 +24,7 @@ public class DebugWindowPlayer : DebugWindowModel
 	private int diceIdxBuffer;
 
 	private string[] modifierIds = Array.Empty<string>();
-    private string[] diceIds = Array.Empty<string>();
+	private string[] diceIds = Array.Empty<string>();
 
 	private Dictionary<string, ItemCatalogEntry> catalog;
 
@@ -39,17 +39,17 @@ public class DebugWindowPlayer : DebugWindowModel
 		modifierIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.ModifierItem).Select(x => x.Key).ToArray();
 	}
 
-    public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService, DiceGameModel diceGameModel)
-    {
-        this.run = run;
-        this.playerModel = playerModel;
-        this.playerView = playerView;
-        this.configService = configService;
-        this.notificationService = notificationService;
-        this.diceGameModel = diceGameModel;
-    }
+	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService, DiceGameModel diceGameModel)
+	{
+		this.run = run;
+		this.playerModel = playerModel;
+		this.playerView = playerView;
+		this.configService = configService;
+		this.notificationService = notificationService;
+		this.diceGameModel = diceGameModel;
+	}
 
-    protected override void OnLayout(UImGui.UImGui uImGui)
+	protected override void OnLayout(UImGui.UImGui uImGui)
 	{
 		if (!isOpen)
 		{
@@ -136,6 +136,16 @@ public class DebugWindowPlayer : DebugWindowModel
 			ImGui.Text("Current States:");
 			ImGui.Separator();
 			foreach (var item in playerModel.PlayerStateModel.CurrentStates)
+			{
+				ImGui.Text(item.ToString());
+			}
+		}
+
+		if (ImGui.CollapsingHeader("Actions"))
+		{
+			ImGui.Text("Current Action:");
+			ImGui.Separator();
+			foreach (var item in playerView.Interactor.activeActions)
 			{
 				ImGui.Text(item.ToString());
 			}

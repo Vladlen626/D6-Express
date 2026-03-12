@@ -11,7 +11,7 @@ public class Interactor : MonoBehaviour
 	[SubclassSelector]
 	private List<InteractionAction> actions = new();
 
-	protected readonly List<InteractionAction> activeActions = new();
+	public readonly List<InteractionAction> activeActions = new();
 
 	protected Interactable selectedInteractable;
 
@@ -48,6 +48,10 @@ public class Interactor : MonoBehaviour
 		{
 			var index = activeActions.Count - 1;
 			var action = activeActions[index];
+
+			action.Started -= OnInteractionStarted;
+			action.Ended -= OnInteractionEnded;
+
 			activeActions.RemoveAt(index);
 			action.StopInteract(immediate);
 		}
@@ -127,6 +131,7 @@ public class Interactor : MonoBehaviour
 		interactionAction.Ended -= OnInteractionEnded;
 		interactionAction.Started -= OnInteractionStarted;
 
+		activeActions.Remove(interactionAction);
 		InteractionEnded?.Invoke(interactionAction);
 	}
 }
