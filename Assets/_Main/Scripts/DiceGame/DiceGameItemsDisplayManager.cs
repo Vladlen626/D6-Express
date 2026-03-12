@@ -13,6 +13,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceTableView diceTableView;
 		private readonly LifecycleService lifecycleService;
 		private readonly IObjectFactory objectFactory;
+		private readonly GlobalNotificationService notificationService;
 
 		private readonly List<IBaseController> itemControllers = new();
 		private readonly List<DiceItemView> itemViews = new();
@@ -21,12 +22,14 @@ namespace _Main.Scripts.Dice
 			DiceGameModel diceGameModel,
 			DiceTableView diceTableView,
 			LifecycleService lifecycleService,
-			IObjectFactory objectFactory)
+			IObjectFactory objectFactory,
+			GlobalNotificationService notificationService)
 		{
 			this.diceGameModel = diceGameModel;
 			this.diceTableView = diceTableView;
 			this.lifecycleService = lifecycleService;
 			this.objectFactory = objectFactory;
+			this.notificationService = notificationService;
 		}
 
 		public async UniTask SetupItemsDisplayAsync()
@@ -59,7 +62,7 @@ namespace _Main.Scripts.Dice
 					view.transform.SetParent(slot);
 				}
 
-				var controller = new ModifierItemController(items[i], view);
+				var controller = new ModifierItemController(items[i], view, diceGameModel, notificationService);
 				itemControllers.Add(controller);
 				itemViews.Add(view);
 				await lifecycleService.RegisterAsync(controller);

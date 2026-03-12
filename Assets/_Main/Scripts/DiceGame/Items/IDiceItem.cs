@@ -30,6 +30,8 @@ namespace _Main.Scripts.Dice
 		bool IsVisible { get; }
 
 		event Action<IModifierItem> OnChanged;
+		event Action<IModifierItem> ActivationStarted;
+		event Action<IModifierItem> EffectApplied;
 
 		/// <summary>
 		/// Attach a view so the item can update its 3D representation (color/highlight, visibility, etc.).
@@ -44,6 +46,16 @@ namespace _Main.Scripts.Dice
 		bool TryHandleClick();
 
 		/// <summary>
+		/// Defines whether the item can be activated in the current game state.
+		/// </summary>
+		bool IsActivationAllowed(DiceGameState gameState);
+
+		/// <summary>
+		/// Localization key shown when activation is attempted in a forbidden phase.
+		/// </summary>
+		string InvalidActivationNotificationKey { get; }
+
+		/// <summary>
 		/// Restore the item to its initial state (e.g., at run start or after cleanup).
 		/// </summary>
 		void ResetItem();
@@ -55,5 +67,13 @@ namespace _Main.Scripts.Dice
 	public interface IModifierItemViewProvider
 	{
 		DiceItemView GetViewPrefab();
+	}
+
+	/// <summary>
+	/// Optional match lifecycle hook for item models that need to finalize state at match end.
+	/// </summary>
+	public interface IOnMatchFinishedItem
+	{
+		void OnMatchFinished();
 	}
 }

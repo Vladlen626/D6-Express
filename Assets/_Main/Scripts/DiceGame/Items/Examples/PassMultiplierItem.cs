@@ -1,46 +1,38 @@
 using Cysharp.Threading.Tasks;
+using _Main.Scripts.Core;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
 	/// Example clickable item: when armed, the next Pass gains a score multiplier.
-	/// Shows how to reuse the modifier pipeline while driving behaviour from a 3D item.
+	/// After the first successful activation, the item is consumed.
 	/// </summary>
-	public class PassMultiplierItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
+	public class PassMultiplierItem : ModifierItemBase, IOnPassModifier, IModifierItemViewProvider
 	{
 		private readonly float scoreMultiplier;
-		private readonly int activationsPerDay;
 		private readonly DiceItemView customPrefab;
-		private Run run;
-		private int lastDay = -1;
-		private int remaining;
 
 		public PassMultiplierItem(string id, float scoreMultiplier = 1.5f, int activationsPerDay = 1, DiceItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoreMultiplier = Mathf.Max(1f, scoreMultiplier);
-			this.activationsPerDay = Mathf.Max(1, activationsPerDay);
-			remaining = activationsPerDay;
+			_ = activationsPerDay;
 			customPrefab = prefabOverride;
-			Debug.Log($"[PassMultiplierItem] ctor | mult={scoreMultiplier} perDay={activationsPerDay}");
+		}
+
+		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
+
+		public override bool IsActivationAllowed(DiceGameState gameState)
+		{
+			return gameState == DiceGameState.GAME;
 		}
 
 		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
-			Debug.Log($"[PassMultiplierItem] ModifyValues stage={modifierContext.Stage} day={(run != null ? run.Day : -1)} remaining={remaining} state={State}");
-			switch (modifierContext.Stage)
+			if (modifierContext.Stage == ModifierStage.Pass)
 			{
-				case ModifierStage.RoundStart:
-					AttachRun(modifierContext.Run);
-					RefreshDailyAllowance();
-					break;
-
-				case ModifierStage.Pass:
-					AttachRun(modifierContext.Run);
-					RefreshDailyAllowance();
-					ApplyIfArmed(modifierContext.CombinationResult);
-					break;
+				ApplyIfArmed(modifierContext.CombinationResult);
 			}
 
 			return UniTask.CompletedTask;
@@ -48,15 +40,10 @@ namespace _Main.Scripts.Dice
 
 		protected override bool OnClick()
 		{
-			Debug.Log($"[PassMultiplierItem] OnClick state={State} remaining={remaining}");
-			if (remaining <= 0)
-			{
-				return false;
-			}
-
 			if (State == DiceItemState.Ready)
 			{
 				SetState(DiceItemState.Armed);
+				NotifyActivationStarted();
 				return true;
 			}
 
@@ -65,7 +52,7 @@ namespace _Main.Scripts.Dice
 
 		private void ApplyIfArmed(DiceCombinationResult combinationResult)
 		{
-			if (State != DiceItemState.Armed || remaining <= 0 || combinationResult.Combinations == null)
+			if (State != DiceItemState.Armed || combinationResult.Combinations == null)
 			{
 				return;
 			}
@@ -75,78 +62,13 @@ namespace _Main.Scripts.Dice
 				entry.BaseScore = Mathf.RoundToInt(entry.BaseScore * scoreMultiplier);
 			}
 
-			remaining = Mathf.Max(0, remaining - 1);
-			Debug.Log($"[PassMultiplierItem] Applied x{scoreMultiplier} -> remaining={remaining}");
-			SetState(remaining > 0 ? DiceItemState.Ready : DiceItemState.Cooldown);
-		}
-
-		private void RefreshDailyAllowance()
-		{
-			if (run == null)
-			{
-				return;
-			}
-
-			if (run.Day != lastDay)
-			{
-				lastDay = run.Day;
-				remaining = activationsPerDay;
-				Debug.Log($"[PassMultiplierItem] New day -> reset remaining={remaining}");
-				SetState(DiceItemState.Ready);
-			}
-		}
-
-		private void AttachRun(Run newRun)
-		{
-			if (newRun == null || ReferenceEquals(run, newRun))
-			{
-				return;
-			}
-
-			Debug.Log($"[PassMultiplierItem] AttachRun");
-			if (run != null)
-			{
-				run.DayChanged -= OnRunDayChanged;
-				run.LevelChanged -= OnLevelChanged;
-				run.RunFinished -= OnRunFinished;
-			}
-
-			run = newRun;
-			run.DayChanged += OnRunDayChanged;
-			run.LevelChanged += OnLevelChanged;
-			run.RunFinished += OnRunFinished;
-		}
-
-		private void OnRunDayChanged() => RefreshDailyAllowance();
-
-		private void OnLevelChanged()
-		{
-			lastDay = -1;
-			Debug.Log("[PassMultiplierItem] OnLevelChanged -> day reset");
-			RefreshDailyAllowance();
-		}
-
-		private void OnRunFinished(bool result)
-		{
-			remaining = activationsPerDay;
-			SetState(DiceItemState.Ready);
-			if (run != null)
-			{
-				run.DayChanged -= OnRunDayChanged;
-				run.LevelChanged -= OnLevelChanged;
-				run.RunFinished -= OnRunFinished;
-				run = null;
-			}
-
-			Debug.Log("[PassMultiplierItem] OnRunFinished -> state reset");
+			NotifyEffectApplied();
+			Consume();
 		}
 
 		public override void ResetItem()
 		{
 			base.ResetItem();
-			remaining = activationsPerDay;
-			lastDay = -1;
-			Debug.Log("[PassMultiplierItem] ResetItem");
 		}
 
 		public DiceItemView GetViewPrefab()

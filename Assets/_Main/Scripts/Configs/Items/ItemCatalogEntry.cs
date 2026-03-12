@@ -8,6 +8,8 @@ public class ItemCatalogEntry : BaseConfig
     public string type;
     public string nameKey;
     public string descriptionKey;
+    public string armDescriptionKey;
+    public string applyDescriptionKey;
     public string rarity;
     public int price;
     public string visualId;

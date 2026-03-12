@@ -13,10 +13,13 @@ namespace _Main.Scripts.Dice
 		public DiceItemActivationType ActivationType { get; }
 		public DiceItemState State { get; protected set; } = DiceItemState.Ready;
 		public bool IsVisible { get; protected set; } = true;
+		public virtual string InvalidActivationNotificationKey => string.Empty;
 
 		protected DiceItemView AttachedView { get; private set; }
 
 		public event Action<IModifierItem> OnChanged;
+		public event Action<IModifierItem> ActivationStarted;
+		public event Action<IModifierItem> EffectApplied;
 
 		protected ModifierItemBase(string id, string displayName, DiceItemActivationType activationType)
 		{
@@ -51,6 +54,11 @@ namespace _Main.Scripts.Dice
 			}
 
 			return OnClick();
+		}
+
+		public virtual bool IsActivationAllowed(DiceGameState gameState)
+		{
+			return true;
 		}
 
 		/// <summary>
@@ -110,6 +118,16 @@ namespace _Main.Scripts.Dice
 		protected void NotifyChanged()
 		{
 			OnChanged?.Invoke(this);
+		}
+
+		protected void NotifyActivationStarted()
+		{
+			ActivationStarted?.Invoke(this);
+		}
+
+		protected void NotifyEffectApplied()
+		{
+			EffectApplied?.Invoke(this);
 		}
 
 		protected void UpdateView()

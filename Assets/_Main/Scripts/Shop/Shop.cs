@@ -131,6 +131,12 @@ public class Shop : IGameStateChanger
                 continue;
             }
 
+            // Modifier items are currently unique in inventory; skip already owned ones.
+            if (entry.typeEnum == ItemCatalogType.ModifierItem && HasModifierItem(entry.id))
+            {
+                continue;
+            }
+
             var weight = GetRarityWeight(entry.rarityEnum);
             result.Add(new ShopCandidate(entry, weight));
         }
@@ -236,6 +242,25 @@ public class Shop : IGameStateChanger
             default:
                 return false;
         }
+    }
+
+    private bool HasModifierItem(string itemId)
+    {
+        if (string.IsNullOrEmpty(itemId))
+        {
+            return false;
+        }
+
+        var ownedItems = inventoryModel.ModifierItemIds;
+        for (int i = 0; i < ownedItems.Count; i++)
+        {
+            if (string.Equals(ownedItems[i], itemId, StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void IncreaseRestockPrice()
