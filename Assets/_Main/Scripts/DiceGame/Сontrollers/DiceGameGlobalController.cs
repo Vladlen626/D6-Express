@@ -203,6 +203,7 @@ namespace _Main.Scripts.Dice
 			CleanUpMainGameControllers();
 			ClenUpBetControllers();
 			ClenUpPersistentControllers();
+			RemoveConsumedPlayerModifierItemsFromInventory();
 			ResetModels();
 		}
 
@@ -447,6 +448,30 @@ namespace _Main.Scripts.Dice
 			}
 
 			diceGameModel.Reset();
+		}
+
+		private void RemoveConsumedPlayerModifierItemsFromInventory()
+		{
+			var items = diceGameModel.PlayerModifierItemsModel?.Items;
+			if (items == null || items.Count == 0)
+			{
+				return;
+			}
+
+			var consumedIds = new List<string>();
+			for (int i = 0; i < items.Count; i++)
+			{
+				var item = items[i];
+				if (item != null && item.State == DiceItemState.Consumed)
+				{
+					consumedIds.Add(item.Id);
+				}
+			}
+
+			for (int i = 0; i < consumedIds.Count; i++)
+			{
+				playerModel.InventoryModel.RemoveModifierItem(consumedIds[i]);
+			}
 		}
 
 		private void OnExitRequested()

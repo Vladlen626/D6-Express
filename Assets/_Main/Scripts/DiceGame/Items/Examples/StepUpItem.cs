@@ -8,13 +8,12 @@ namespace _Main.Scripts.Dice
 {
 	/// <summary>
 	/// Click-to-activate item: select N dice (default 3); after the Nth selection, every die
-	/// on the board advances its face by +1 (wrapping 6 -> 1). Then it goes on cooldown for N passes.
+	/// on the board advances its face by +1 (wrapping 6 -> 1). Then it is consumed.
 	/// </summary>
 	public class StepUpItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
 	{
 		private readonly DiceScoringService scoringService;
 		private readonly int selectionTarget;
-		private readonly int cooldownLengthInPasses;
 		private readonly DiceItemView customPrefab;
 
 		private readonly HashSet<DiceModel> selectedDice = new();
@@ -24,28 +23,30 @@ namespace _Main.Scripts.Dice
 		private DiceGameModel boundGameModel;
 		private bool handlersAttached;
 		private bool isProcessing;
-		private int cooldownRemaining;
 
 		public StepUpItem(string id, DiceScoringService scoringService, int selectionCount = 3, int? cooldownPasses = null, DiceItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoringService = scoringService;
 			selectionTarget = Mathf.Max(1, selectionCount);
-			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses ?? selectionTarget);
+			_ = cooldownPasses;
 			customPrefab = prefabOverride;
 		}
 
 		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			if (State == DiceItemState.Consumed)
+			{
+				await UniTask.CompletedTask;
+				return;
+			}
+
 			TryAttachDiceHandlers(modifierContext.DiceGameModel);
 
 			switch (modifierContext.Stage)
 			{
 				case ModifierStage.RoundStart:
 					// Keep armed state if the player queued the item; just ensure handlers are bound.
-					break;
-				case ModifierStage.Pass:
-					TickCooldown();
 					break;
 			}
 
@@ -89,7 +90,7 @@ namespace _Main.Scripts.Dice
 			var diceList = boundGameModel?.CurrentDiceModelList;
 			if (diceList == null || diceList.Count == 0)
 			{
-				BeginCooldown();
+				ConsumeAndDeactivate();
 				return;
 			}
 
@@ -145,7 +146,7 @@ namespace _Main.Scripts.Dice
 
 			UpdatePreview();
 			boundGameModel?.NotifyDiceValuesChanged();
-			BeginCooldown();
+			ConsumeAndDeactivate();
 		}
 
 		private static int GetNextValue(int current)
@@ -158,29 +159,11 @@ namespace _Main.Scripts.Dice
 			return current == 6 ? 1 : current + 1;
 		}
 
-		private void BeginCooldown()
+		private void ConsumeAndDeactivate()
 		{
-			cooldownRemaining = cooldownLengthInPasses;
 			selectedDice.Clear();
-			StartCooldown();
-		}
-
-		private void TickCooldown()
-		{
-			if (State != DiceItemState.Cooldown)
-			{
-				return;
-			}
-
-			if (cooldownRemaining > 0)
-			{
-				cooldownRemaining--;
-			}
-
-			if (cooldownRemaining <= 0)
-			{
-				SetState(DiceItemState.Ready);
-			}
+			Consume();
+			DetachDiceHandlers();
 		}
 
 		private void TryAttachDiceHandlers(DiceGameModel gameModel)
@@ -264,7 +247,6 @@ namespace _Main.Scripts.Dice
 		public override void ResetItem()
 		{
 			base.ResetItem();
-			cooldownRemaining = 0;
 			selectedDice.Clear();
 			isProcessing = false;
 			DetachDiceHandlers();

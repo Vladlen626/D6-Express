@@ -8,7 +8,7 @@ namespace _Main.Scripts.Dice
 	/// <summary>
 	/// Clickable item that temporarily silences every modifier (items and non-items alike).
 	/// When activated, it removes all other modifiers from the pipeline until the end of the current round
-	/// (RoundEnd stage), then restores them and enters a configurable cooldown tracked in passes.
+	/// (RoundEnd stage), then restores them and is consumed.
 	/// </summary>
 	public class ModifierSilencerItem : ModifierItemBase,
 		IOnLevelStartModifier,
@@ -24,7 +24,6 @@ namespace _Main.Scripts.Dice
 		private const string PassField = "onPassActionsHandler";
 		private const string RoundEndField = "onRoundEndActionsHandler";
 
-		private readonly int cooldownLengthInPasses;
 		private readonly DiceItemView customPrefab;
 
 		private ModifiersModel boundModifiersModel;
@@ -32,12 +31,11 @@ namespace _Main.Scripts.Dice
 		private SilencedState savedState;
 		private bool isSilencing;
 		private bool restoreScheduled;
-		private int cooldownRemaining;
 
 		public ModifierSilencerItem(string id, int cooldownPasses = 2, DiceItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
-			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses);
+			_ = cooldownPasses;
 			customPrefab = prefabOverride;
 		}
 
@@ -47,11 +45,7 @@ namespace _Main.Scripts.Dice
 
 			if (isSilencing && modifierContext.Stage == ModifierStage.RoundEnd && !restoreScheduled)
 			{
-				ScheduleRestoreAndCooldown();
-			}
-			else if (!isSilencing && State == DiceItemState.Cooldown && modifierContext.Stage == ModifierStage.Pass)
-			{
-				TickCooldown();
+				ScheduleRestoreAndConsume();
 			}
 
 			await UniTask.CompletedTask;
@@ -107,7 +101,7 @@ namespace _Main.Scripts.Dice
 			return true;
 		}
 
-		private void ScheduleRestoreAndCooldown()
+		private void ScheduleRestoreAndConsume()
 		{
 			restoreScheduled = true;
 
@@ -116,7 +110,7 @@ namespace _Main.Scripts.Dice
 				// Wait one frame so the enumerator in Play*Actions finishes before we touch the lists again.
 				await UniTask.Yield(PlayerLoopTiming.PostLateUpdate);
 				RestoreModifiers();
-				BeginCooldown();
+				Consume();
 			});
 		}
 
@@ -161,25 +155,6 @@ namespace _Main.Scripts.Dice
 			Debug.Log("[ModifierSilencerItem] Modifiers restored.");
 		}
 
-		private void BeginCooldown()
-		{
-			cooldownRemaining = cooldownLengthInPasses;
-			StartCooldown();
-		}
-
-		private void TickCooldown()
-		{
-			if (cooldownRemaining > 0)
-			{
-				cooldownRemaining--;
-			}
-
-			if (cooldownRemaining <= 0)
-			{
-				SetState(DiceItemState.Ready);
-			}
-		}
-
 		public override void ResetItem()
 		{
 			if (isSilencing)
@@ -190,7 +165,6 @@ namespace _Main.Scripts.Dice
 			savedState = null;
 			isSilencing = false;
 			restoreScheduled = false;
-			cooldownRemaining = 0;
 
 			base.ResetItem();
 		}

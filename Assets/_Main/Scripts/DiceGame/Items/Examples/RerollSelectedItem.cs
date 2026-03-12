@@ -1,20 +1,17 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.Events;
 
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
 	/// Clickable item: arm it, then the next clicked (unsaved) die rerolls immediately.
-	/// After use it goes on cooldown for a set number of Pass actions (default: 2).
+	/// After use it is consumed and cannot be activated again.
 	/// </summary>
 	public class RerollSelectedItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
 	{
 		private readonly DiceScoringService scoringService;
-		private readonly int cooldownLengthInPasses;
 		private readonly DiceItemView customPrefab;
-		private int cooldownRemaining;
 		private DiceGameModel boundGameModel;
 		private readonly Dictionary<DiceView, UnityAction> clickHandlers = new();
 		private bool handlersAttached;
@@ -23,22 +20,24 @@ namespace _Main.Scripts.Dice
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoringService = scoringService;
-			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses);
+			_ = cooldownPasses;
 			customPrefab = prefabOverride;
 		}
 
 		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			if (State == DiceItemState.Consumed)
+			{
+				await UniTask.CompletedTask;
+				return;
+			}
+
 			TryAttachDiceHandlers(modifierContext.DiceGameModel);
 
 			switch (modifierContext.Stage)
 			{
 				case ModifierStage.RoundStart:
-					// If a new round starts while armed, keep it armed; cooldown is tracked per pass only.
-					break;
-
-				case ModifierStage.Pass:
-					TickCooldown();
+					// If a new round starts while armed, keep it armed.
 					break;
 			}
 
@@ -96,7 +95,7 @@ namespace _Main.Scripts.Dice
 
 		private async void OnDiceClickedAsync(DiceModel model, DiceView view)
 		{
-			if (State != DiceItemState.Armed || cooldownRemaining > 0 || model == null || model.IsSaved || DiceGameUtils.IsDiceBanked(model, boundGameModel?.tableModel))
+			if (State != DiceItemState.Armed || model == null || model.IsSaved || DiceGameUtils.IsDiceBanked(model, boundGameModel?.tableModel))
 			{
 				return;
 			}
@@ -109,7 +108,7 @@ namespace _Main.Scripts.Dice
 
 			UpdatePreview();
 			boundGameModel?.NotifyDiceValuesChanged();
-			BeginCooldown();
+			ConsumeAndDeactivate();
 		}
 
 		private void TryAttachDiceHandlers(DiceGameModel gameModel)
@@ -191,34 +190,15 @@ namespace _Main.Scripts.Dice
 			boundGameModel.tableModel.SendUpdateUI();
 		}
 
-		private void BeginCooldown()
+		private void ConsumeAndDeactivate()
 		{
-			cooldownRemaining = cooldownLengthInPasses;
-			StartCooldown();
-		}
-
-		private void TickCooldown()
-		{
-			if (State != DiceItemState.Cooldown)
-			{
-				return;
-			}
-
-			if (cooldownRemaining > 0)
-			{
-				cooldownRemaining--;
-			}
-
-			if (cooldownRemaining <= 0)
-			{
-				SetState(DiceItemState.Ready);
-			}
+			Consume();
+			DetachDiceHandlers();
 		}
 
 		public override void ResetItem()
 		{
 			base.ResetItem();
-			cooldownRemaining = 0;
 			DetachDiceHandlers();
 		}
 
