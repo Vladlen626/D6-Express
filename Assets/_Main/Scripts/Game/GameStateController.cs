@@ -33,14 +33,12 @@ public class GameStateController : IBaseController, IActivatable
 
 	private static readonly GameStateTransitionTask[] TickRecipe =
 	{
-		GameStateTransitionTask.CHARACTER_TRANSITION_START,
-		GameStateTransitionTask.LOCK_CURSOR,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
-		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
-		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
 	private static readonly GameStateTransitionTask[] DayRecipe =

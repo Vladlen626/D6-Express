@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using _Main.Scripts.Core.Services;
+using _Main.Scripts.Dice;
 using PlatformCore.Services.UI;
 
 public static class DebugFactory
@@ -12,13 +13,14 @@ public static class DebugFactory
         PlayerModel playerModel,
         PlayerView playerView,
         ConfigService configService,
-        GlobalNotificationService notificationService)
+        GlobalNotificationService notificationService,
+        DiceGameModel diceGameModel)
     {
         var incrementTick = new DbgMenuItemIncrementTicks(run);
         var incrementDay = new DbgMenuItemIncrementDays(run);
         var switchToStation = new DbgMenuItemSwitchToStation(game);
         var switchToTrain = new DbgMenuItemSwitchToTrain(game);
-        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(run, playerModel, playerView, configService, notificationService);
+        var openPlayerWindow = new DbgMenuItemOpenPlayerWindow(run, playerModel, playerView, configService, notificationService, diceGameModel);
 
         var gameMenu = new DebugMenuModel("Game", incrementTick, incrementDay, switchToStation, switchToTrain, openPlayerWindow);
 

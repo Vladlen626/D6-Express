@@ -178,9 +178,9 @@ namespace _Main.Scripts.Core
 			});
 
 			var debugController = await DebugFactory.GetBaseController(inputService, cursorService, game, run,
-				playerModel, playerView, configService, notificationService);
+				playerModel, playerView, configService, notificationService, diceGameModel);
 			var speechController = await SpeechFactory.GetSpeechController(uiService, playerModel, playerView, game,
-				run, configService, inputService);
+				run, configService, inputService, diceGameModel);
 
 			controllersList.AddRange(new IBaseController[]
 			{

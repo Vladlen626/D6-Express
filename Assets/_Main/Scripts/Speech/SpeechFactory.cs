@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using _Main.Scripts.Core.Services;
+using _Main.Scripts.Dice;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
@@ -12,7 +13,8 @@ public static class SpeechFactory
         D6Game game,
         Run run,
         ConfigService configService,
-        IInputService inputService)
+        IInputService inputService,
+        DiceGameModel diceGameModel)
     {
         var textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
 
@@ -23,7 +25,7 @@ public static class SpeechFactory
         var speechShopkeeper = GetShopkeeperSpeech(playerModel, textsConfig);
         var speechShopkeeperFailedBuy = GetShopkeeperFailedBuySpeech(textsConfig);
         var speechEnemy = GetEnemySpeech(run, textsConfig);
-        var speechOpponentExit = GetDiceGameOpponentLeaveSpeech(playerView, textsConfig);
+        var speechOpponentExit = GetDiceGameOpponentLeaveSpeech(playerView, diceGameModel, textsConfig);
 
         var speeches = new Speech[]
         {
@@ -106,7 +108,7 @@ public static class SpeechFactory
         return speechBuyTicket;
     }
 
-    private static Speech GetDiceGameOpponentLeaveSpeech(PlayerView playerView, TextsConfig textsConfig)
+    private static Speech GetDiceGameOpponentLeaveSpeech(PlayerView playerView, DiceGameModel diceGameModel, TextsConfig textsConfig)
     {
         var speechLeaveGame = new Speech(96);
 
@@ -116,11 +118,20 @@ public static class SpeechFactory
         })
         .Init(speechLeaveGame);
 
-        var speechNodeTryLeave = new SpeechNodeChoice(textsConfig.texts["dice_game_opponent_on_leave"])
+        var tryLeaveOnGameStarted = new SpeechNodeChoice(textsConfig.texts["dice_game_opponent_on_leave"])
         .OnAccepted(speechNodeLeave)
         .Init(speechLeaveGame);
 
-        speechLeaveGame.SetRootNode(speechNodeTryLeave);
+        var tryLeaveOnGameNotStarted = new SpeechNodeChoice(textsConfig.texts["dice_game_opponent_on_early_leave"])
+        .OnAccepted(speechNodeLeave)
+        .Init(speechLeaveGame);
+
+        var speechNodeConditional = new SpeechNodeConditional(() => diceGameModel.IsDiceGameStarted)
+        .OnTrue(tryLeaveOnGameStarted)
+        .OnFalse(tryLeaveOnGameNotStarted)
+        .Init(speechLeaveGame);
+
+        speechLeaveGame.SetRootNode(speechNodeConditional);
         return speechLeaveGame;
     }
 

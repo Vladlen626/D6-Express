@@ -12,6 +12,7 @@ public class DebugWindowPlayer : DebugWindowModel
 {
 	private readonly Run run;
 	private readonly PlayerModel playerModel;
+	private readonly DiceGameModel diceGameModel;
 	private readonly PlayerView playerView;
 	private readonly ConfigService configService;
 	private readonly GlobalNotificationService notificationService;
@@ -38,16 +39,17 @@ public class DebugWindowPlayer : DebugWindowModel
 		modifierIds = catalog.Where(x => x.Value.typeEnum == ItemCatalogType.ModifierItem).Select(x => x.Key).ToArray();
 	}
 
-	public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService)
-	{
-		this.run = run;
-		this.playerModel = playerModel;
-		this.playerView = playerView;
-		this.configService = configService;
-		this.notificationService = notificationService;
-	}
+    public DebugWindowPlayer(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService, DiceGameModel diceGameModel)
+    {
+        this.run = run;
+        this.playerModel = playerModel;
+        this.playerView = playerView;
+        this.configService = configService;
+        this.notificationService = notificationService;
+        this.diceGameModel = diceGameModel;
+    }
 
-	protected override void OnLayout(UImGui.UImGui uImGui)
+    protected override void OnLayout(UImGui.UImGui uImGui)
 	{
 		if (!isOpen)
 		{
@@ -251,6 +253,21 @@ public class DebugWindowPlayer : DebugWindowModel
 				playerModel.InventoryModel.RemoveAllModifierItems();
 				playerModel.InventoryModel.ModifierItemsModel.Reset();
 				playerModel.InventoryModel.ModifiersModel.ClearModifiers();
+			}
+		}
+
+		if (ImGui.CollapsingHeader("Dice Game"))
+		{
+			ImGui.Text($"Is Dice Game Started: {diceGameModel.IsDiceGameStarted}");
+
+			if (ImGui.Button("Win"))
+			{
+				diceGameModel.SetConditionPassed();
+			}
+
+			if (ImGui.Button("Lose"))
+			{
+				diceGameModel.SetConditionFailed();
 			}
 		}
 

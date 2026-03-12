@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using _Main.Scripts.Dice;
 
 public abstract class DebugMenuItem
 {
@@ -84,9 +85,9 @@ public class DbgMenuItemOpenPlayerWindow : DebugMenuItem
 
     public override string Path => "Open Player Window";
 
-    public DbgMenuItemOpenPlayerWindow(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService)
+    public DbgMenuItemOpenPlayerWindow(Run run, PlayerModel playerModel, PlayerView playerView, ConfigService configService, GlobalNotificationService notificationService, DiceGameModel diceGameModel)
     {
-        debugWindowPlayer = new DebugWindowPlayer(run, playerModel, playerView, configService, notificationService);
+        debugWindowPlayer = new DebugWindowPlayer(run, playerModel, playerView, configService, notificationService, diceGameModel);
     }
 
     public override async Task Preload()
