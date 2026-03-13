@@ -220,6 +220,8 @@ namespace _Main.Scripts.Core
 			gameStateController.AddTask(async (x) => cursorService.LockCursor(), GameStateTransitionTask.LOCK_CURSOR);
 			gameStateController.AddTask(async (x) => cursorService.UnlockCursor(), GameStateTransitionTask.UNLOCK_CURSOR);
 			gameStateController.AddTask((x) => npcSpawner.Respawn(), GameStateTransitionTask.NPC_RESPAWN);
+			gameStateController.AddTask(async (x) => inputService.DisablePlayerInputs(), GameStateTransitionTask.LOCK_PLAYER_INPUT);
+			gameStateController.AddTask(async (x) => inputService.EnablePlayerInputs(), GameStateTransitionTask.UNLOCK_PLAYER_INPUT);
 			gameStateController.AddChanger(playerController);
 			gameStateController.AddChanger(shopController);
 			gameStateController.AddChanger(transitionViewController);

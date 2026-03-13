@@ -19,6 +19,8 @@ public enum GameStateTransitionTask
 	SHOW_STATS,
 	AWAIT_STATS,
 	HIDE_STATS,
+	LOCK_PLAYER_INPUT,
+	UNLOCK_PLAYER_INPUT,
 	// 
 	OTHER
 }
