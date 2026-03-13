@@ -24,7 +24,7 @@ namespace _Main.Scripts.Dice
 		private bool isProcessing;
 		private int cooldownRemaining;
 
-		public StepUpItem(string id, DiceScoringService scoringService, int selectionCount = 3, int? cooldownPasses = null, DiceItemView prefabOverride = null)
+		public StepUpItem(string id, DiceScoringService scoringService, int selectionCount = 3, int? cooldownPasses = null, ItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoringService = scoringService;

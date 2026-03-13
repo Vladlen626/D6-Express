@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Factory;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace _Main.Scripts.Dice
 {
@@ -16,7 +18,7 @@ namespace _Main.Scripts.Dice
 		private readonly GlobalNotificationService notificationService;
 
 		private readonly List<IBaseController> itemControllers = new();
-		private readonly List<DiceItemView> itemViews = new();
+		private readonly List<ItemView> itemViews = new();
 
 		public DiceGameItemsDisplayManager(
 			DiceGameModel diceGameModel,
@@ -40,27 +42,15 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			if (!diceTableView.ItemViewPrefab)
-			{
-				Debug.LogWarning("[DiceGame] ItemViewPrefab is not assigned on DiceTableView. Items will not be spawned.");
-				return;
-			}
-
 			var slots = diceTableView.ItemSlotsSelection;
+			ValidateSlots(slots, items.Count, "selection");
 
 			for (int i = 0; i < items.Count; i++)
 			{
-				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				var prefab = (items[i] as IModifierItemViewProvider)?.GetViewPrefab() ?? diceTableView.ItemViewPrefab;
-				var view = Object.Instantiate(
-					prefab,
-					slot ? slot.position : Vector3.zero,
-					slot ? slot.rotation : Quaternion.identity);
-
-				if (slot)
-				{
-					view.transform.SetParent(slot);
-				}
+				var slot = slots[i];
+				var prefab = ResolveItemPrefab(items[i]);
+				var view = Object.Instantiate(prefab);
+				PlaceViewInSlot(view, slot);
 
 				var controller = new ModifierItemController(items[i], view, diceGameModel, notificationService);
 				itemControllers.Add(controller);
@@ -77,18 +67,13 @@ namespace _Main.Scripts.Dice
 			}
 
 			var slots = diceTableView.ItemSlotsGame;
+			ValidateSlots(slots, itemViews.Count, "game");
+
 			for (int i = 0; i < itemViews.Count; i++)
 			{
-				var slot = slots != null && i < slots.Length ? slots[i] : null;
-				if (!slot)
-				{
-					continue;
-				}
-
+				var slot = slots[i];
 				var view = itemViews[i];
-				view.transform.SetParent(slot);
-				view.transform.position = slot.position;
-				view.transform.rotation = slot.rotation;
+				PlaceViewInSlot(view, slot);
 			}
 		}
 
@@ -105,6 +90,58 @@ namespace _Main.Scripts.Dice
 				}
 			}
 			itemViews.Clear();
+		}
+
+		private static ItemView ResolveItemPrefab(IModifierItem item)
+		{
+			if (item is not IModifierItemViewProvider provider)
+			{
+				throw new InvalidOperationException(
+					$"[DiceGame] Item '{item?.Id}' must implement IModifierItemViewProvider to be displayed.");
+			}
+
+			var prefab = provider.GetViewPrefab();
+			if (!prefab)
+			{
+				throw new InvalidOperationException(
+					$"[DiceGame] Item '{item.Id}' returned null ItemView prefab. Check item catalog visualId/prefab setup.");
+			}
+
+			return prefab;
+		}
+
+		private static void PlaceViewInSlot(ItemView view, Transform slot)
+		{
+			view.transform.SetParent(slot, false);
+			view.SetBaseLocalTransform(Vector3.zero, Quaternion.identity, Vector3.one);
+		}
+
+		private static void ValidateSlots(Transform[] slots, int requiredCount, string groupName)
+		{
+			if (requiredCount == 0)
+			{
+				return;
+			}
+
+			if (slots == null)
+			{
+				throw new InvalidOperationException($"[DiceGame] Item slots '{groupName}' are not assigned.");
+			}
+
+			if (slots.Length < requiredCount)
+			{
+				throw new InvalidOperationException(
+					$"[DiceGame] Item slots '{groupName}' count ({slots.Length}) is less than required items ({requiredCount}).");
+			}
+
+			for (int i = 0; i < requiredCount; i++)
+			{
+				if (!slots[i])
+				{
+					throw new InvalidOperationException(
+						$"[DiceGame] Item slot '{groupName}' at index {i} is not assigned.");
+				}
+			}
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace _Main.Scripts.Dice
 		public bool IsVisible { get; protected set; } = true;
 		public virtual string InvalidActivationNotificationKey => string.Empty;
 
-		protected DiceItemView AttachedView { get; private set; }
+		protected ItemView AttachedView { get; private set; }
 
 		public event Action<IModifierItem> OnChanged;
 		public event Action<IModifierItem> ActivationStarted;
@@ -28,7 +28,7 @@ namespace _Main.Scripts.Dice
 			ActivationType = activationType;
 		}
 
-		public void AttachView(DiceItemView view)
+		public void AttachView(ItemView view)
 		{
 			AttachedView = view;
 			AttachedView.Bind(this);

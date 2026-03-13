@@ -60,6 +60,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 04888c27240b38b4290879747e1297ad, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f440e29382c033e4f8afb5d8ca290e89, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 96435d35494c16041a2750a4aeee7a0b, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
+      propertyPath: 'm_Materials.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cbb64eb9ffc6b03498eb2bbffbbd3033, type: 2}
     - target: {fileID: 919132149155446097, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
       propertyPath: m_Name
       value: Cigar
@@ -67,13 +83,39 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4036963258318227798}
   m_SourcePrefab: {fileID: 100100000, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
 --- !u!4 &398654314299479157 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
   m_PrefabInstance: {fileID: 144946976830665630}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1063866904135798479 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
+  m_PrefabInstance: {fileID: 144946976830665630}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4036963258318227798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063866904135798479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  outlineWidth: 2
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &6384921128290149226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82,6 +124,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
+      propertyPath: visualOutline
+      value: 
+      objectReference: {fileID: 4036963258318227798}
+    - target: {fileID: 5552264432598873387, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.04
+      objectReference: {fileID: 0}
     - target: {fileID: 8359954028589816404, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
       propertyPath: m_Name
       value: ModifierSilencerItem

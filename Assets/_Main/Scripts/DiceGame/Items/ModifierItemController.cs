@@ -4,19 +4,19 @@ using PlatformCore.Infrastructure.Lifecycle;
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
-	/// Connects a DiceItemView with a modifier item and feeds state changes both ways.
+	/// Connects an ItemView with a modifier item and feeds state changes both ways.
 	/// Register this controller in the lifecycle to hook/unhook automatically.
 	/// </summary>
 	public class ModifierItemController : IBaseController, IActivatable
 	{
 		private readonly IModifierItem item;
-		private readonly DiceItemView view;
+		private readonly ItemView view;
 		private readonly DiceGameModel diceGameModel;
 		private readonly GlobalNotificationService notificationService;
 
 		public ModifierItemController(
 			IModifierItem item,
-			DiceItemView view,
+			ItemView view,
 			DiceGameModel diceGameModel,
 			GlobalNotificationService notificationService)
 		{

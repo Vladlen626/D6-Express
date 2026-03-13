@@ -56,7 +56,7 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private CouplePositionsHandler selectionStatePosHandler;
 
 	[Header("Items")]
-	[SerializeField] private DiceItemView itemViewPrefab;
+	[SerializeField] private ItemView itemViewPrefab;
 	[SerializeField] private Transform[] itemSlotsSelection;
 	[SerializeField] private Transform[] itemSlotsGame;
 
@@ -67,7 +67,7 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private float animDuration = 0.15f;
 	public CouplePositionsHandler GameStatePosHandler => gameStatePosHandler;
 	public CouplePositionsHandler SelectionStatePosHandler => selectionStatePosHandler;
-	public DiceItemView ItemViewPrefab => itemViewPrefab;
+	public ItemView ItemViewPrefab => itemViewPrefab;
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
 	public Transform UpgradeDicePos => upgradeDicePos;

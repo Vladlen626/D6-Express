@@ -19,7 +19,7 @@ namespace _Main.Scripts.Dice
 
 		private DiceModel currentDiceModel;
 		private IModifierItem currentItem;
-		private readonly List<DiceItemView> itemViews = new();
+		private readonly List<ItemView> itemViews = new();
 		private Camera mainCamera;
 
 		public TooltipsController(IUIService uiService, DiceGameModel diceGameModel, ConfigService configService,
@@ -94,7 +94,7 @@ namespace _Main.Scripts.Dice
 		{
 			UnsubscribeFromItemHoverEvents();
 
-			var views = UnityEngine.Object.FindObjectsByType<DiceItemView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+			var views = UnityEngine.Object.FindObjectsByType<ItemView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 			foreach (var view in views)
 			{
 				if (!view)

@@ -102,7 +102,7 @@ public class ShopViewController : IBaseController, IActivatable
         tradeItemView.Init(index);
         tradeItemView.Buyed += OnBuyed;
 
-        var view = await objectFactory.CreateAsync<ShopItemDiceView>(
+        var view = await objectFactory.CreateAsync<ShopItemView>(
             ResourcePaths.Shop.ShopItemDice,
             tradeItemView.transform.position,
             tradeItemView.transform.rotation,

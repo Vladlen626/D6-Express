@@ -25,7 +25,7 @@ namespace _Main.Scripts.Dice
 		private const string PassField = "onPassActionsHandler";
 		private const string RoundEndField = "onRoundEndActionsHandler";
 
-		private readonly DiceItemView customPrefab;
+		private readonly ItemView customPrefab;
 
 		private ModifiersModel boundModifiersModel;
 		private DiceGameModel boundGameModel;
@@ -33,7 +33,7 @@ namespace _Main.Scripts.Dice
 		private bool isSilencing;
 		private bool restoreScheduled;
 
-		public ModifierSilencerItem(string id, int cooldownPasses = 2, DiceItemView prefabOverride = null)
+		public ModifierSilencerItem(string id, int cooldownPasses = 2, ItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			_ = cooldownPasses;
@@ -178,7 +178,7 @@ namespace _Main.Scripts.Dice
 			base.ResetItem();
 		}
 
-		public DiceItemView GetViewPrefab() => customPrefab;
+		public ItemView GetViewPrefab() => customPrefab;
 
 		private static List<T> CloneList<T>(ModifiersModel model, string fieldName)
 		{
