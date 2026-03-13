@@ -48,5 +48,7 @@ public class UIHintView : UIBaseElement
 		hintText.text = text;
 		hintText.color = highlighted ? highlightedTextStyle.Color : defaultTextStyle.Color;
 		inputText.color = highlighted ? highlightedHintStyle.Color : defaultHintStyle.Color;
+		hintBg.color = highlighted ? highlightedBgTextStyle.Value : defaultBgTextStyle.Value;
+		inputBg.color = highlighted ? highlightedBgHintStyle.Value : bgHintStyle.Value;
 	}
 }
