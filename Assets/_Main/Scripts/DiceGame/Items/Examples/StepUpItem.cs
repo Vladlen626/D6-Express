@@ -14,7 +14,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceScoringService scoringService;
 		private readonly int selectionTarget;
 		private readonly int cooldownLengthInPasses;
-		private readonly DiceItemView customPrefab;
+		private readonly ItemView customPrefab;
 
 		private readonly HashSet<DiceModel> selectedDice = new();
 		private readonly Dictionary<DiceView, UnityAction> clickHandlers = new();
@@ -240,6 +240,6 @@ namespace _Main.Scripts.Dice
 			DetachDiceHandlers();
 		}
 
-		public DiceItemView GetViewPrefab() => customPrefab;
+		public ItemView GetViewPrefab() => customPrefab;
 	}
 }
