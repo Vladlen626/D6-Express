@@ -1,60 +1,49 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using TMPro;
-using _Main.Scripts.Core;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace _Main.Scripts.Dice
 {
 	/// <summary>
-	/// Click-to-activate item: select N dice (default 3); after the Nth selection, every die
-	/// on the board advances its face by +1 (wrapping 6 -> 1). Then it is consumed.
+	/// Click-to-activate item: select N dice (default 3); after the Nth selection, selected dice
+	/// advance their face by +1 (wrapping 6 -> 1). Then it goes on cooldown for N passes.
 	/// </summary>
 	public class StepUpItem : ModifierItemBase, IOnPassModifier, IOnRoundStartModifier, IModifierItemViewProvider
 	{
 		private readonly DiceScoringService scoringService;
 		private readonly int selectionTarget;
-		private readonly ItemView customPrefab;
+		private readonly int cooldownLengthInPasses;
+		private readonly DiceItemView customPrefab;
 
 		private readonly HashSet<DiceModel> selectedDice = new();
 		private readonly Dictionary<DiceView, UnityAction> clickHandlers = new();
-		private readonly List<GameObject> floatingLabels = new();
 
 		private DiceGameModel boundGameModel;
 		private bool handlersAttached;
 		private bool isProcessing;
+		private int cooldownRemaining;
 
 		public StepUpItem(string id, DiceScoringService scoringService, int selectionCount = 3, int? cooldownPasses = null, ItemView prefabOverride = null)
 			: base(id, id, DiceItemActivationType.ClickToActivate)
 		{
 			this.scoringService = scoringService;
 			selectionTarget = Mathf.Max(1, selectionCount);
-			_ = cooldownPasses;
+			cooldownLengthInPasses = Mathf.Max(1, cooldownPasses ?? selectionTarget);
 			customPrefab = prefabOverride;
-		}
-
-		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
-
-		public override bool IsActivationAllowed(DiceGameState gameState)
-		{
-			return gameState == DiceGameState.GAME;
 		}
 
 		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
-			if (State == DiceItemState.Consumed)
-			{
-				await UniTask.CompletedTask;
-				return;
-			}
-
 			TryAttachDiceHandlers(modifierContext.DiceGameModel);
 
 			switch (modifierContext.Stage)
 			{
 				case ModifierStage.RoundStart:
 					// Keep armed state if the player queued the item; just ensure handlers are bound.
+					break;
+				case ModifierStage.Pass:
+					TickCooldown();
 					break;
 			}
 
@@ -70,7 +59,6 @@ namespace _Main.Scripts.Dice
 
 			selectedDice.Clear();
 			SetState(DiceItemState.Armed);
-			NotifyActivationStarted();
 			return true;
 		}
 
@@ -99,64 +87,35 @@ namespace _Main.Scripts.Dice
 			var diceList = boundGameModel?.CurrentDiceModelList;
 			if (diceList == null || diceList.Count == 0)
 			{
-				ConsumeAndDeactivate();
+				BeginCooldown();
 				return;
 			}
 
-			var animateSet = new HashSet<DiceModel>(selectedDice);
-			List<UniTask> animations = null;
-			List<GameObject> labels = null;
-
-			foreach (var dice in diceList)
+			var availableDice = new HashSet<DiceModel>(diceList);
+			var targetDice = new List<DiceModel>(selectedDice.Count);
+			foreach (var dice in selectedDice)
 			{
-				if (dice == null)
+				if (dice != null && availableDice.Contains(dice))
 				{
-					continue;
+					targetDice.Add(dice);
 				}
+			}
 
+			if (targetDice.Count == 0)
+			{
+				BeginCooldown();
+				return;
+			}
+
+			foreach (var dice in targetDice)
+			{
 				var nextValue = GetNextValue(dice.CurrentValue);
 				dice.SetValue(nextValue);
-
-				if (animateSet.Contains(dice) &&
-				    boundGameModel.ScreenDiceDict != null &&
-				    boundGameModel.ScreenDiceDict.TryGetValue(dice, out var view) &&
-				    view)
-				{
-					var label = SpawnLabel(view.transform, "+1");
-					if (label)
-					{
-						labels ??= new List<GameObject>();
-						labels.Add(label);
-						floatingLabels.Add(label);
-					}
-
-					animations ??= new List<UniTask>();
-					animations.Add(view.PlayRollAnimationAsync(0.25f));
-				}
-			}
-
-			if (animations is { Count: > 0 })
-			{
-				await UniTask.WhenAll(animations);
-			}
-
-			if (labels is { Count: > 0 })
-			{
-				await UniTask.Delay(600);
-				foreach (var go in labels)
-				{
-					if (go)
-					{
-						floatingLabels.Remove(go);
-						Object.Destroy(go);
-					}
-				}
 			}
 
 			UpdatePreview();
 			boundGameModel?.NotifyDiceValuesChanged();
-			NotifyEffectApplied();
-			ConsumeAndDeactivate();
+			BeginCooldown();
 		}
 
 		private static int GetNextValue(int current)
@@ -169,11 +128,29 @@ namespace _Main.Scripts.Dice
 			return current == 6 ? 1 : current + 1;
 		}
 
-		private void ConsumeAndDeactivate()
+		private void BeginCooldown()
 		{
+			cooldownRemaining = cooldownLengthInPasses;
 			selectedDice.Clear();
-			Consume();
-			DetachDiceHandlers();
+			StartCooldown();
+		}
+
+		private void TickCooldown()
+		{
+			if (State != DiceItemState.Cooldown)
+			{
+				return;
+			}
+
+			if (cooldownRemaining > 0)
+			{
+				cooldownRemaining--;
+			}
+
+			if (cooldownRemaining <= 0)
+			{
+				SetState(DiceItemState.Ready);
+			}
 		}
 
 		private void TryAttachDiceHandlers(DiceGameModel gameModel)
@@ -257,49 +234,12 @@ namespace _Main.Scripts.Dice
 		public override void ResetItem()
 		{
 			base.ResetItem();
+			cooldownRemaining = 0;
 			selectedDice.Clear();
 			isProcessing = false;
 			DetachDiceHandlers();
-			ClearLabels();
 		}
 
-		public ItemView GetViewPrefab() => customPrefab;
-
-		private GameObject SpawnLabel(Transform parent, string text)
-		{
-			if (!parent)
-			{
-				return null;
-			}
-
-			var go = new GameObject("StepUp_Label");
-			go.transform.SetParent(parent, false);
-			go.transform.localPosition = Vector3.up * 0.4f;
-
-			var tmp = go.AddComponent<TextMeshPro>();
-			tmp.text = text;
-			tmp.fontSize = 1.2f;
-			tmp.enableAutoSizing = true;
-			tmp.fontSizeMin = 0.8f;
-			tmp.fontSizeMax = 1.6f;
-			tmp.color = Color.yellow;
-			tmp.alignment = TextAlignmentOptions.Center;
-			tmp.sortingOrder = 10;
-
-			return go;
-		}
-
-		private void ClearLabels()
-		{
-			foreach (var go in floatingLabels)
-			{
-				if (go)
-				{
-					Object.Destroy(go);
-				}
-			}
-
-			floatingLabels.Clear();
-		}
+		public DiceItemView GetViewPrefab() => customPrefab;
 	}
 }
