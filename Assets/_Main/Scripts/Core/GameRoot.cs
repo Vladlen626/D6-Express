@@ -92,7 +92,7 @@ namespace _Main.Scripts.Core
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(persistentSceneName));
 			// --------------
 
-			var mainMenuController = new MainMenuController(uiService, game, run, cursorService);
+			var mainMenuController = new MainMenuController(uiService, game, run);
 			await _lifecycle.RegisterAsync(mainMenuController);
 
 			await sceneService.LoadSceneAsync(SceneNames.Train);

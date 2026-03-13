@@ -6,18 +6,16 @@ namespace _Main.Scripts.UI
 	public class MainMenuController : BaseContextController<UIMainMenu>
 	{
 		private readonly D6Game game;
-        private readonly Run run;
-		private readonly ICursorService cursorService;
+		private readonly Run run;
 
-        public MainMenuController(IUIService uiService, D6Game game, Run run, ICursorService cursorService)
-            : base(uiService)
-        {
-            this.game = game;
-            this.run = run;
-            this.cursorService = cursorService;
-        }
+		public MainMenuController(IUIService uiService, D6Game game, Run run)
+			: base(uiService)
+		{
+			this.game = game;
+			this.run = run;
+		}
 
-        protected override void OnActivate()
+		protected override void OnActivate()
 		{
 			_context.Hide();
 
@@ -49,7 +47,10 @@ namespace _Main.Scripts.UI
 
 		private void OnStartClickedHandler()
 		{
-			run.Start();
+			if (!run.Started)
+			{
+				run.Start();
+			}
 		}
 
 		private void OnSettingsClickedHandler()
