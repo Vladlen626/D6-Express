@@ -129,6 +129,15 @@ MonoBehaviour:
   _group: {fileID: 4557773065376660714}
   _canvasType: 5
   hintText: {fileID: 6858549831824332020}
+  inputText: {fileID: 8113632164864754133}
+  defaultTextStyle:
+    id: BrownFont
+  highlightedTextStyle:
+    id: BiruzoviyFont
+  defaultHintStyle:
+    id: LightFont
+  highlightedHintStyle:
+    id: TextHighlightOrange
 --- !u!225 &4557773065376660714
 CanvasGroup:
   m_ObjectHideFlags: 0

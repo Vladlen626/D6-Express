@@ -30,7 +30,7 @@ public class HintController : BaseContextController<UIHintView>
 		_context.Show();
 		if (interactable.TryGetComponent<IHintable>(out var hintable))
 		{
-			_context.SetHintText(hintable.HintText);
+			_context.SetHintText(hintable.HintText, hintable.Highlighted);
 		}
 	} 
 
