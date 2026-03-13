@@ -211,10 +211,18 @@ public class Shop : IGameStateChanger
         {
             case ItemCatalogType.Dice:
                 inventoryModel.TakeCash(tradeItem.Price);
+                RemoveTradeItemFromStock(tradeItem);
                 inventoryModel.AddDice(tradeItem.ItemId);
                 break;
             case ItemCatalogType.ModifierItem:
+                if (HasModifierItem(tradeItem.ItemId))
+                {
+                    BuyFailed?.Invoke();
+                    return;
+                }
+
                 inventoryModel.TakeCash(tradeItem.Price);
+                RemoveTradeItemFromStock(tradeItem);
                 inventoryModel.AddModifierItem(tradeItem.ItemId);
                 break;
             default:
@@ -223,11 +231,6 @@ public class Shop : IGameStateChanger
                 BuyFailed?.Invoke();
                 return;
         }
-
-        tradeItem.Buyed -= OnBuyed;
-        var index = Array.IndexOf(tradeItems, tradeItem);
-        tradeItems[index] = null;
-        ItemRemoved?.Invoke(index, tradeItem);
 
         BuyCompleted?.Invoke(tradeItem);
     }
@@ -261,6 +264,25 @@ public class Shop : IGameStateChanger
         }
 
         return false;
+    }
+
+    private void RemoveTradeItemFromStock(TradeItem tradeItem)
+    {
+        if (tradeItem == null)
+        {
+            return;
+        }
+
+        tradeItem.Buyed -= OnBuyed;
+
+        var index = Array.IndexOf(tradeItems, tradeItem);
+        if (index < 0)
+        {
+            return;
+        }
+
+        tradeItems[index] = null;
+        ItemRemoved?.Invoke(index, tradeItem);
     }
 
     private void IncreaseRestockPrice()

@@ -90,6 +90,19 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 	};
 
+	private static readonly GameStateTransitionTask[] LocationStationToTrainRecipe =
+	{
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHARACTER_TRANSITION_START,
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.CHANGE_LOCATION,
+		GameStateTransitionTask.NPC_RESPAWN,
+		GameStateTransitionTask.SHOP_RESTOCK,
+		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+	};
+
 	private static readonly GameStateTransitionTask[] RunFinishedWinRecipe =
 	{
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
@@ -173,7 +186,7 @@ public class GameStateController : IBaseController, IActivatable
 		}
 		else if (location == Location.TRAIN && game.Location == Location.STATION)
 		{
-			RequestChange(new GameStateTransition(LocationMainMenuRecipe, location, false));
+			RequestChange(new GameStateTransition(LocationStationToTrainRecipe, location, false));
 		}
 		else
 		{
