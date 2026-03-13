@@ -28,6 +28,6 @@ public class UIHintView : UIBaseElement
 	{
 		hintText.text = text;
 		hintText.color = highlighted ? highlightedTextStyle.Color : defaultTextStyle.Color;
-		inputText.color = highlighted ? defaultHintStyle.Color : highlightedHintStyle.Color;
+		inputText.color = highlighted ? highlightedHintStyle.Color : defaultHintStyle.Color;
 	}
 }
