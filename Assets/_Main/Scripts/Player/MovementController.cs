@@ -47,6 +47,11 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	public void OnUpdate(float deltaTime)
 	{
+		if (!playerView.gameObject.activeSelf)
+		{
+			return;
+		}
+
 		if (controller.isGrounded && velocity.y < 0)
 		{
 			velocity.y = -2f;

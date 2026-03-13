@@ -28,3 +28,13 @@ MonoBehaviour:
     UseAdvanced: 0
     FontSize: 0
     FontStyle: 0
+  - Id: TextHighlightOrange
+    Color: {r: 1, g: 0.46666667, b: 0.09019608, a: 1}
+    UseAdvanced: 0
+    FontSize: 0
+    FontStyle: 0
+  - Id: LightFont
+    Color: {r: 0.96862745, g: 0.972549, b: 0.9019608, a: 1}
+    UseAdvanced: 0
+    FontSize: 0
+    FontStyle: 0

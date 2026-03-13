@@ -35,8 +35,22 @@ public class InteractorPlayer : Interactor
 		InteractableDetectionEnabled = false;
 	}
 
+	private void OnEnable()
+	{
+		if (inputService != null)
+		{
+			inputService.OnInteractPressed += OnInteract;
+		}
+	}
+
 	private void OnDisable()
 	{
+		if (selectedInteractable != null)
+		{
+			FireMissed(selectedInteractable);
+		}
+		selectedInteractable = null;
+
 		if (inputService != null)
 		{
 			inputService.OnInteractPressed -= OnInteract;

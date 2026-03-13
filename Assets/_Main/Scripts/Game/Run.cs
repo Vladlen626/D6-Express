@@ -12,6 +12,7 @@ public class Run
     public int LevelsCount { get; private set; }
     public int TicketPrice { get; private set; }
     public int NextTicketPrice { get; private set; }
+    public bool Started { get; private set; }
 
     public event Action<int> TickChangeRequested;
     public event Action<int> DayChangeRequested;
@@ -48,6 +49,7 @@ public class Run
 
     public void Start()
     {
+        Started = true;
         RunStarted?.Invoke();
     }
 
@@ -138,6 +140,7 @@ public class Run
 
     public void FinishRun(bool result)
     {
+        Started = false;
         RunFinished?.Invoke(result);
     }
 }
