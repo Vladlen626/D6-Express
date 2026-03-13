@@ -8,7 +8,7 @@ namespace _Main.Scripts.Dice
 	{
 		private static readonly Dictionary<string, ItemView> PrefabCache = new();
 
-		public static IModifierItem Create(ItemCatalogEntry entry, DiceScoringService scoringService)
+		public static IModifierItem Create(ItemCatalogEntry entry, DiceScoringService scoringService, InventoryModel inventoryModel = null)
 		{
 			if (entry == null || entry.typeEnum != ItemCatalogType.ModifierItem)
 			{
@@ -30,6 +30,50 @@ namespace _Main.Scripts.Dice
 				{
 					var bonus = ReadInt(data?["bonus"], 4);
 					return new ExtraDiceCapItem(entry.id, bonus, prefab);
+				}
+				case nameof(InvertAllFacesItem):
+				{
+					return new InvertAllFacesItem(entry.id, scoringService, prefab);
+				}
+				case nameof(PairUpItem):
+				{
+					var selectionCount = ReadInt(data?["selectionCount"], 2);
+					return new PairUpItem(entry.id, scoringService, selectionCount, prefab);
+				}
+				case nameof(MedianBlendItem):
+				{
+					var selectionCount = ReadInt(data?["selectionCount"], 3);
+					return new MedianBlendItem(entry.id, scoringService, selectionCount, prefab);
+				}
+				case nameof(BankWithoutPassItem):
+				{
+					return new BankWithoutPassItem(entry.id, scoringService, prefab);
+				}
+				case nameof(SelectedToOppositeItem):
+				{
+					return new SelectedToOppositeItem(entry.id, scoringService, prefab);
+				}
+				case nameof(PassScoreFloorItem):
+				{
+					return new PassScoreFloorItem(entry.id, scoringService, inventoryModel, prefab);
+				}
+				case nameof(RerollAllUnsavedItem):
+				{
+					return new RerollAllUnsavedItem(entry.id, scoringService, prefab);
+				}
+				case nameof(CopyFaceItem):
+				{
+					return new CopyFaceItem(entry.id, scoringService, prefab);
+				}
+				case nameof(TargetDiscountItem):
+				{
+					var bonus = ReadInt(data?["bonus"], -300);
+					return new TargetDiscountItem(entry.id, bonus, prefab);
+				}
+				case nameof(SelectedDoubleStepItem):
+				{
+					var stepAmount = ReadInt(data?["stepAmount"], 2);
+					return new SelectedDoubleStepItem(entry.id, scoringService, stepAmount, prefab);
 				}
 				case nameof(ModifierSilencerItem):
 				{

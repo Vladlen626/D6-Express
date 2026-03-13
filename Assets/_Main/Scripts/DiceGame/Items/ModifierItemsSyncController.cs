@@ -73,7 +73,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			var item = ModifierItemFactory.Create(entry, scoringService);
+			var item = ModifierItemFactory.Create(entry, scoringService, inventory);
 			itemsModel.AddItem(item);
 			if (item == null)
 			{
