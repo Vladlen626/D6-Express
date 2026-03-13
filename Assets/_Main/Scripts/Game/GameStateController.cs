@@ -29,6 +29,7 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.ENABLE_CHARACTER,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
@@ -124,13 +125,13 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.SHOW_WIN,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.DISABLE_CHARACTER,
 		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
 	private static readonly GameStateTransitionTask[] RunFinishedLoseRecipe =
 	{
 		GameStateTransitionTask.LOCK_PLAYER_INPUT,
-
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.UNLOCK_CURSOR,

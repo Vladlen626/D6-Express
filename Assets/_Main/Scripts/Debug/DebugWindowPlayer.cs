@@ -107,6 +107,16 @@ public class DebugWindowPlayer : DebugWindowModel
 			{
 				run.SetNextTicketPrice(nextTicketPriceBuffer);
 			}
+
+			if (ImGui.Button("Win Run"))
+			{
+				run.FinishRun(true);
+			}
+
+			if (ImGui.Button("Lose Run"))
+			{
+				run.FinishRun(false);
+			}
 		}
 
 		if (ImGui.CollapsingHeader("Cash"))
