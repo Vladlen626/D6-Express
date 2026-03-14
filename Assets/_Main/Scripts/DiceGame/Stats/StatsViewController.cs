@@ -80,18 +80,18 @@ public class StatsViewController : BaseContextController<UIStatsView>, IGameStat
             {
                 audioService.PlaySound(SoundNames.Button);
                 _context.StartButtonClicked -= OnButtonClicked;
-                inputService.OnInteractPressed -= OnInteracted;
+                inputService.OnUISubmit -= OnInteracted;
                 source.TrySetResult();
             }
 
             void OnButtonClicked()
             {
                 _context.StartButtonClicked -= OnButtonClicked;
-                inputService.OnInteractPressed -= OnInteracted;
+                inputService.OnUISubmit -= OnInteracted;
                 source.TrySetResult();
             }
 
-            inputService.OnInteractPressed += OnInteracted;
+            inputService.OnUISubmit += OnInteracted;
             _context.StartButtonClicked += OnButtonClicked;
 
             await source.Task;

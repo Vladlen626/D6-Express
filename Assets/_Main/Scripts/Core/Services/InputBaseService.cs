@@ -1,5 +1,6 @@
 using System;
 using PlatformCore.Services;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace _Main.Scripts.Core.Services
@@ -26,6 +27,10 @@ namespace _Main.Scripts.Core.Services
 		public event Action OnFarted;
 		public event Action OnDiceGameNext;
 		public event Action OnDiceGamePrevious;
+		public event Action OnDiceGameLeave;
+
+		public event Action OnUISubmit;
+		public event Action OnUICancel;
 
 		public event Action OnDebugSwitchPressed;
 
@@ -233,7 +238,17 @@ namespace _Main.Scripts.Core.Services
 				OnJumpReleased?.Invoke();
 			};
 
-			_actions.UI.Cancel.started += _ =>
+			_actions.UI.Cancel.performed += _ =>
+			{
+				OnUICancel?.Invoke();
+			};
+
+			_actions.UI.Submit.performed += _ =>
+			{
+				OnUISubmit?.Invoke();
+			};
+
+			_actions.UI.Pause.started += _ =>
 			{
 				OnPausePressed?.Invoke();
 			};
@@ -271,6 +286,11 @@ namespace _Main.Scripts.Core.Services
 			_actions.DiceGame.Previous.performed += _ =>
 			{
 				OnDiceGamePrevious?.Invoke();
+			};
+			
+			_actions.DiceGame.Leave.performed += _ =>
+			{
+				OnDiceGameLeave?.Invoke();
 			};
 		}
 

@@ -138,6 +138,7 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.SHOW_LOSE,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.DISABLE_CHARACTER,
 		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 

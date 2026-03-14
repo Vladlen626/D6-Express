@@ -26,6 +26,10 @@ public static class SpeechFactory
         var speechShopkeeperFailedBuy = GetShopkeeperFailedBuySpeech(textsConfig);
         var speechEnemy = GetEnemySpeech(run, textsConfig);
         var speechOpponentExit = GetDiceGameOpponentLeaveSpeech(playerView, diceGameModel, textsConfig);
+        var speechOpponentNoMoney = GetOpponentNoMoneySpeech(textsConfig);
+        var speechOpponentWin = GetOpponentWinSpeech(textsConfig);
+        var speechOpponentLose = GetOpponentLooseSpeech(textsConfig);
+        var speechOpponentNoTicks = GetOpponentNoTicks(textsConfig);
 
         var speeches = new Speech[]
         {
@@ -36,7 +40,11 @@ public static class SpeechFactory
             speechShopkeeper,
             speechShopkeeperFailedBuy,
             speechEnemy,
-            speechOpponentExit
+            speechOpponentExit,
+            speechOpponentNoMoney,
+            speechOpponentWin,
+            speechOpponentLose,
+            speechOpponentNoTicks
         };
 
         var speechModel = new SpeechModel(speeches);
@@ -236,12 +244,72 @@ public static class SpeechFactory
             textsConfig.texts["enemy_refuse"]
         );
 
-        var speechNodeCondition = new SpeechNodeConditional(() => run.Tick < run.TicksPerDay)
+        var speechNodeConditionTicks = new SpeechNodeConditional(() => run.Tick < run.TicksPerDay)
             .OnTrue(speechNodePositive)
             .OnFalse(speechNodeNegative)
             .Init(speechEnemy);
 
-        speechEnemy.SetRootNode(speechNodeCondition);
+        speechEnemy.SetRootNode(speechNodeConditionTicks);
+        return speechEnemy;
+    }
+
+    private static Speech GetOpponentNoTicks(TextsConfig textsConfig)
+    {
+        var speechEnemy = new Speech(95);
+
+        var speechNodePositive = Say(
+            speechEnemy,
+            textsConfig.texts["enemy_refuse"]
+        );
+
+        speechEnemy.SetRootNode(speechNodePositive);
+        return speechEnemy;
+    }
+
+    private static Speech GetOpponentNoMoneySpeech(TextsConfig textsConfig)
+    {
+        var speechEnemy = new Speech(97);
+
+        var speechNodePositive = Say(
+            speechEnemy,
+            textsConfig.texts["dice_game_opponent_no_money"]
+        );
+
+        speechEnemy.SetRootNode(speechNodePositive);
+        return speechEnemy;
+    }
+
+    private static Speech GetOpponentWinSpeech(TextsConfig textsConfig)
+    {
+        var speechEnemy = new Speech(98);
+
+        var speechNodePositive = SayRandom(
+            speechEnemy,
+            textsConfig.texts["dice_game_opponent_win_1"],
+            textsConfig.texts["dice_game_opponent_win_2"],
+            textsConfig.texts["dice_game_opponent_win_3"],
+            textsConfig.texts["dice_game_opponent_win_4"],
+            textsConfig.texts["dice_game_opponent_win_5"]
+        );
+
+        speechEnemy.SetRootNode(speechNodePositive);
+        return speechEnemy;
+    }
+
+    private static Speech GetOpponentLooseSpeech(TextsConfig textsConfig)
+    {
+        var speechEnemy = new Speech(99);
+
+        var speechNodePositive = SayRandom(
+            speechEnemy,
+            textsConfig.texts["dice_game_opponent_lose_1"],
+            textsConfig.texts["dice_game_opponent_lose_2"],
+            textsConfig.texts["dice_game_opponent_lose_3"],
+            textsConfig.texts["dice_game_opponent_lose_4"],
+            textsConfig.texts["dice_game_opponent_lose_5"]
+        );
+
+        speechEnemy.SetRootNode(speechNodePositive);
         return speechEnemy;
     }
 }

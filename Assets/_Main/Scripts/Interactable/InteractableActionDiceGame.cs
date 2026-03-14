@@ -14,6 +14,26 @@ public class InteractableActionDiceGame : InteractionAction
 
 	protected override async void StartInteractInternal(bool immediate = false)
 	{
+		var diceTableView = (Interactable as Interactable).GetComponent<DiceTableView>();
+		diceTableView.OnPlayAllowed += OnPlayAllowed;
+
+		diceTableView.RequestPlay();
+	}
+
+	protected override async void StopInteractInternal(bool immediate = false)
+	{
+		var diceTableView = (Interactable as Interactable).GetComponent<DiceTableView>();
+		diceTableView.OnPlayAllowed -= OnPlayAllowed;
+
+		(Interactor as InteractorPlayer).EnableInteractableDetection();
+
+		Interactor.transform.SetPositionAndRotation(lastPos, lastRot);
+
+		StateModel.TryRemoveState(CharacterState.DICE_GAME);
+	}
+
+	private void OnPlayAllowed()
+	{
 		(Interactor as InteractorPlayer).DisableInteractableDetection();
 
 		StateModel.TryAddState(CharacterState.TRANSITION);
@@ -27,14 +47,5 @@ public class InteractableActionDiceGame : InteractionAction
 
 		StateModel.TryRemoveState(CharacterState.TRANSITION);
 		StateModel.TryAddState(CharacterState.DICE_GAME);
-	}
-
-	protected override async void StopInteractInternal(bool immediate = false)
-	{
-		(Interactor as InteractorPlayer).EnableInteractableDetection();
-
-		Interactor.transform.SetPositionAndRotation(lastPos, lastRot);
-
-		StateModel.TryRemoveState(CharacterState.DICE_GAME);
 	}
 }
