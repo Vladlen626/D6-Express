@@ -148,7 +148,7 @@ namespace _Main.Scripts.Dice
 			gamePreviousStoped = false;
 			inputService.EnableDiceGameInputs();
 
-			inputService.OnUISubmit += OnExitRequested;
+			inputService.OnDiceGameLeave += OnExitRequested;
 
 			if (!await SetupBaseModels())
 			{
@@ -198,7 +198,7 @@ namespace _Main.Scripts.Dice
 		// ReSharper disable Unity.PerformanceAnalysis
 		private void StopDiceGame()
 		{
-			inputService.OnUISubmit -= OnExitRequested;
+			inputService.OnDiceGameLeave -= OnExitRequested;
 
 			if (gamePreviousStoped)
 			{

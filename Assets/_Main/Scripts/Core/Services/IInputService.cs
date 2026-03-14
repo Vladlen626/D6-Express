@@ -16,6 +16,7 @@ namespace _Main.Scripts.Core.Services
 
 		public event Action OnDiceGameNext;
 		public event Action OnDiceGamePrevious;
+		public event Action OnDiceGameLeave;
 
 		public event Action OnUISubmit;
 		public event Action OnUICancel;
