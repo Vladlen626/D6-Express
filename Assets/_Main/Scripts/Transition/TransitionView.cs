@@ -8,15 +8,25 @@ public class UITransitionView : UIBaseElement
 	[SerializeField]
 	private RectTransform toScale;
 
+	[SerializeField]
+	private CanvasGroup loadingTextGroup;
+
 	public UniTask ShowAsync(float duration)
 	{
-		return toScale.DOSizeDelta(Vector2.zero, duration).SetEase(Ease.InOutBack).AsyncWaitForCompletion().AsUniTask();
+		return UniTask.WhenAll(
+			loadingTextGroup.DOFade(1, duration * 0.8f).AsyncWaitForCompletion().AsUniTask(),
+			toScale.DOSizeDelta(Vector2.zero, duration).SetEase(Ease.InOutBack).AsyncWaitForCompletion().AsUniTask()
+		);
 	}
 
 	public UniTask HideAsync(float duration)
 	{
 		toScale.sizeDelta = Vector2.zero;
-		return toScale.DOSizeDelta(GetExpandedSize(), duration).SetEase(Ease.OutBack).AsyncWaitForCompletion().AsUniTask();
+
+		return UniTask.WhenAll(
+			loadingTextGroup.DOFade(0, duration * 0.8f).AsyncWaitForCompletion().AsUniTask(),
+			toScale.DOSizeDelta(GetExpandedSize(), duration).SetEase(Ease.OutBack).AsyncWaitForCompletion().AsUniTask()
+		);
 	}
 
 	private Vector2 GetExpandedSize()
