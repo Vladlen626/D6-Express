@@ -124,7 +124,7 @@ namespace _Main.Scripts.Core
 			var npcSpawner = NpcFactory.CreateNpcSpawner(factory, game, run, sceneContext.SpawnPoints);
 
 			//Player
-			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, playerModel,
+			var playerView = await PlayerFactory.SpawnPlayerView(factory, inputService, audioService, playerModel,
 				state == Location.STATION
 					? sceneContext.PlayerStationSpawnPosition
 					: sceneContext.PlayerTrainSpawnPosition, sceneContext.InteractionToStateTable);
@@ -146,7 +146,7 @@ namespace _Main.Scripts.Core
 				winViewController,
 				loseViewController,
 				new SettingsController(uiService, audioService, cursorService, inputService, pauseState),
-				new DiceGameUIController(uiService, inputService, playerModel.PlayerStateModel),
+				new DiceGameUIController(uiService, inputService, audioService, playerModel.PlayerStateModel),
 				new DiceGameGlobalController(diceGameModel, playerModel, playerView, sceneContext, _serviceLocator,
 					run, configService, notificationService),
 				new LightController(sceneContext.Lights, run),
@@ -169,7 +169,7 @@ namespace _Main.Scripts.Core
 			var locationController = new LocationController(game, sceneContext, audioService);
 			var playerController = new PlayerController(playerModel, playerView, sceneContext);
 			var shopController = new ShopController(run, trainShop, stationShop);
-			var statsController = new StatsViewController(uiService, run, configService, inputService,
+			var statsController = new StatsViewController(uiService, run, configService, inputService, audioService,
 				playerModel.InventoryModel.ModifiersModel, factory);
 
 			controllersList.AddRange(new IBaseController[]

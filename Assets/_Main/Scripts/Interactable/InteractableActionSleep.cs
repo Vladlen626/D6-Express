@@ -10,6 +10,7 @@ public class InteractableActionSleep : InteractionAction
 	
 	protected override async void StartInteractInternal(bool immediate = false)
 	{
+		PlayInteractableSound(SoundNames.DayChange);
 		StateModel.TryAddState(CharacterState.SLEEPING);
 	}
 

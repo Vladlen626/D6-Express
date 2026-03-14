@@ -16,6 +16,7 @@ public class InteractableActionLay : InteractionAction
 	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
+		PlayInteractableSound(SoundNames.SitSoft);
 
 		lastPos = Interactor.transform.position;
 
@@ -40,6 +41,8 @@ public class InteractableActionLay : InteractionAction
 	protected async override void StopInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
+
+		PlayInteractableSound(SoundNames.SitHard);
 
 		if (immediate)
 		{

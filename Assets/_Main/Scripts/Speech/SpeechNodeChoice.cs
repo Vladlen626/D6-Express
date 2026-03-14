@@ -1,6 +1,7 @@
 using System;
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.UI;
 
 // todo: ноды не должны дергать UI напрямую, контроллер должен следить за изменениями в диалоге
@@ -39,6 +40,8 @@ public class SpeechNodeChoice : SpeechNodeShowTextLine
 
     private void AcceptSelected()
     {
+        PlayButtonSound();
+
         var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
 
         if (uISpeechView.IsWriting())
@@ -54,6 +57,8 @@ public class SpeechNodeChoice : SpeechNodeShowTextLine
 
     private void DeclineSelected()
     {
+        PlayButtonSound();
+
         var uISpeechView = Locator.Resolve<IUIService>().GetWindow<UISpeechView>();
 
         if (uISpeechView.IsWriting())
@@ -85,5 +90,10 @@ public class SpeechNodeChoice : SpeechNodeShowTextLine
         };
 
         return this;
+    }
+
+    private static void PlayButtonSound()
+    {
+        Locator.Resolve<IAudioService>().PlaySound(SoundNames.Button);
     }
 }

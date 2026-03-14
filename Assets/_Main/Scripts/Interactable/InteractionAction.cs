@@ -45,6 +45,19 @@ public abstract class InteractionAction
 		Ended?.Invoke(this);
 	}
 
+	protected void PlayInteractableSound(string eventPath)
+	{
+		if (Interactor is not InteractorPlayer)
+		{
+			return;
+		}
+
+		if (Interactable is Interactable interactable)
+		{
+			interactable.PlayInteractionSound(eventPath);
+		}
+	}
+
 	protected virtual void StartInteractInternal(bool immediate = false) { }
 	protected virtual void StopInteractInternal(bool immediate = false) { }
 }

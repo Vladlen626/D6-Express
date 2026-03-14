@@ -34,6 +34,11 @@ public class InteractableCurtains : Interactable
 
     public override void StartInteract(Interactor interactor)
     {
+        if (interactor is InteractorPlayer)
+        {
+            PlayInteractionSound(SoundNames.CurtainsInteract);
+        }
+
         isOpened = !isOpened;
         ApplyState();
         StopInteract(interactor);

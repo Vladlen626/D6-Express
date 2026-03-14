@@ -1441,6 +1441,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1089456869674085130}
   - component: {fileID: 1355165776252956740}
+  - component: {fileID: 3622729168062358104}
   m_Layer: 0
   m_Name: ButtonExit
   m_TagString: Untagged
@@ -1513,6 +1514,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3622729168062358104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8486106855886354237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2bd0aa80b9a3a443b6f17b708bf4b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonClickSound
 --- !u!1 &8742940569419139099
 GameObject:
   m_ObjectHideFlags: 0

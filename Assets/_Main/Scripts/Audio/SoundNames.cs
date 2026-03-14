@@ -26,4 +26,5 @@
     public const string PositiveNotification = "event:/PositiveNotification";
     public const string NegativeNotification = "event:/NegativeNotification";
     public const string SpendMoney = "event:/SpendMoney";
+    public const string CurtainsInteract = "event:/CurtainsInteract";
 }
