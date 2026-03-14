@@ -48,8 +48,15 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 
 	private void OnTickChangeRequested(int value)
 	{
-		run.SetTick(value);
-		game.NotifyTickChanged();
+		if (value >= run.TicksPerDay && !CanMoveNextLevel())
+		{
+			run.FinishRun(false);
+		}
+		else
+		{
+			run.SetTick(value);
+			game.NotifyTickChanged();
+		}
 	}
 
 	private void OnLevelChangeRequested()
@@ -100,8 +107,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	{
 		if (value >= run.DaysPerLevel)
 		{
-			var canMoveNextLevel = playerModel.InventoryModel.CashCount >= run.NextTicketPrice;
-			if (canMoveNextLevel)
+			if (CanMoveNextLevel())
 			{
 				if (run.Level + 1 == run.LevelsCount)
 				{
@@ -124,5 +130,10 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			run.SetDay(value);
 			game.NotifyDayChanged();
 		}
+	}
+
+	private bool CanMoveNextLevel()
+	{
+		return playerModel.InventoryModel.CashCount >= run.NextTicketPrice;
 	}
 }
