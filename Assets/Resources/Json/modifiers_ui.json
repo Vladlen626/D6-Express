@@ -1,9 +1,81 @@
 [
     {
-        "id": "ScrambleCombinationsModifier",
+        "id": "scramble_combinations",
         "title": "modifier_scramble_combinations_title",
         "description": "modifier_scramble_combinations_description",
         "value": "modifier_scramble_combinations_value"
+    },
+    {
+        "id": "shake_reroll",
+        "title": "modifier_shake_reroll_title",
+        "description": "modifier_shake_reroll_description",
+        "value": "modifier_shake_reroll_value"
+    },
+    {
+        "id": "multiply_combo_three_kind",
+        "title": "modifier_multiply_combo_three_kind_title",
+        "description": "modifier_multiply_combo_three_kind_description",
+        "value": "modifier_multiply_combo_three_kind_value"
+    },
+    {
+        "id": "multiply_kind_single_ones",
+        "title": "modifier_multiply_kind_single_ones_title",
+        "description": "modifier_multiply_kind_single_ones_description",
+        "value": "modifier_multiply_kind_single_ones_value"
+    },
+    {
+        "id": "adjust_ticks_plus1",
+        "title": "modifier_adjust_ticks_plus1_title",
+        "description": "modifier_adjust_ticks_plus1_description",
+        "value": "modifier_adjust_ticks_plus1_value"
+    },
+    {
+        "id": "three_kind_plus100",
+        "title": "modifier_three_kind_plus100_title",
+        "description": "modifier_three_kind_plus100_description",
+        "value": "modifier_three_kind_plus100_value"
+    },
+    {
+        "id": "straight_x2",
+        "title": "modifier_straight_x2_title",
+        "description": "modifier_straight_x2_description",
+        "value": "modifier_straight_x2_value"
+    },
+    {
+        "id": "ones_plus50",
+        "title": "modifier_ones_plus50_title",
+        "description": "modifier_ones_plus50_description",
+        "value": "modifier_ones_plus50_value"
+    },
+    {
+        "id": "reroll_lowest_unsaved",
+        "title": "modifier_reroll_lowest_unsaved_title",
+        "description": "modifier_reroll_lowest_unsaved_description",
+        "value": "modifier_reroll_lowest_unsaved_value"
+    },
+    {
+        "id": "lowest_unsaved_plus1",
+        "title": "modifier_lowest_unsaved_plus1_title",
+        "description": "modifier_lowest_unsaved_plus1_description",
+        "value": "modifier_lowest_unsaved_plus1_value"
+    },
+    {
+        "id": "ticks_plus1",
+        "title": "modifier_ticks_plus1_title",
+        "description": "modifier_ticks_plus1_description",
+        "value": "modifier_ticks_plus1_value"
+    },
+    {
+        "id": "MultiplyComboModifier",
+        "title": "modifier_multiply_combo_three_kind_title",
+        "description": "modifier_multiply_combo_three_kind_description",
+        "value": "modifier_multiply_combo_three_kind_value"
+    },
+    {
+        "id": "MultiplyKindOfModifiers",
+        "title": "modifier_multiply_kind_single_ones_title",
+        "description": "modifier_multiply_kind_single_ones_description",
+        "value": "modifier_multiply_kind_single_ones_value"
     },
     {
         "id": "ShakeRerollModifier",
@@ -12,27 +84,15 @@
         "value": "modifier_shake_reroll_value"
     },
     {
-        "id": "MultiplyComboModifier",
-        "title": "modifier_multiply_combo_title",
-        "description": "modifier_multiply_combo_description",
-        "value": "modifier_multiply_combo_value"
-    },
-    {
-        "id": "MultiplyKindOfModifiers",
-        "title": "modifier_multiply_kind_title",
-        "description": "modifier_multiply_kind_description",
-        "value": "modifier_multiply_kind_value"
-    },
-    {
-        "id": "PassActivationMultiplierModifier",
-        "title": "modifier_pass_activation_multiplier_title",
-        "description": "modifier_pass_activation_multiplier_description",
-        "value": "modifier_pass_activation_multiplier_value"
-    },
-    {
         "id": "AdjustTicksPerDayModifier",
-        "title": "modifier_adjust_tick_title",
-        "description": "modifier_adjust_tick_description",
-        "value": "modifier_adjust_tick_value"
+        "title": "modifier_adjust_ticks_plus1_title",
+        "description": "modifier_adjust_ticks_plus1_description",
+        "value": "modifier_adjust_ticks_plus1_value"
+    },
+    {
+        "id": "ScrambleCombinationsModifier",
+        "title": "modifier_scramble_combinations_title",
+        "description": "modifier_scramble_combinations_description",
+        "value": "modifier_scramble_combinations_value"
     }
 ]

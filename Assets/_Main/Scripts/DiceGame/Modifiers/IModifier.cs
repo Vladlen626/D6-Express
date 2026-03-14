@@ -26,4 +26,9 @@ namespace _Main.Scripts.Dice
 	{
 		UniTask ModifyValues(DiceModifierContext modifierContext);
 	}
+
+	public interface IModifierUiConfigProvider
+	{
+		string UiConfigId { get; }
+	}
 }

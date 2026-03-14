@@ -1,44 +1,45 @@
-﻿using Cysharp.Threading.Tasks;
-using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 namespace _Main.Scripts.Dice
 {
-	public class MultiplyComboModifier : IOnPassModifier, IModifierUiConfigProvider
+	public class FlatComboBonusModifier : IOnPassModifier, IModifierUiConfigProvider
 	{
 		public readonly DiceCombination combination;
-		public readonly int deltaMultiplier;
+		public readonly int bonusScore;
 		public string UiConfigId { get; }
+
 		private readonly bool matchStraightFamily;
 
-		public MultiplyComboModifier(
+		public FlatComboBonusModifier(
 			DiceCombination combination,
-			int deltaMultiplier = 1,
+			int bonusScore,
 			string uiConfigId = null,
 			bool matchStraightFamily = false)
 		{
 			this.combination = combination;
-			this.deltaMultiplier = deltaMultiplier;
+			this.bonusScore = bonusScore;
 			UiConfigId = uiConfigId;
 			this.matchStraightFamily = matchStraightFamily;
 		}
-		
+
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
-			foreach (var diceCombinationEntry in modifierContext.CombinationResult.Combinations)
+			var combinations = modifierContext.CombinationResult.Combinations;
+			for (int i = 0; i < combinations.Count; i++)
 			{
-				if (IsCombinationMatch(diceCombinationEntry.Combination))
+				var entry = combinations[i];
+				if (!IsCombinationMatch(entry.Combination))
 				{
-					if (CheckDiceCombinationEntry(diceCombinationEntry))
-					{
-						diceCombinationEntry.Multiplier = Mathf.Max(1, diceCombinationEntry.Multiplier + deltaMultiplier);
-					}
+					continue;
 				}
+
+				entry.BaseScore += bonusScore;
 			}
 
 			return UniTask.CompletedTask;
 		}
 
-		protected virtual bool IsCombinationMatch(DiceCombination target)
+		private bool IsCombinationMatch(DiceCombination target)
 		{
 			if (target == combination)
 			{
@@ -53,12 +54,7 @@ namespace _Main.Scripts.Dice
 			return IsStraight(target) && IsStraight(combination);
 		}
 
-		protected virtual bool CheckDiceCombinationEntry(DiceCombinationEntry diceCombinationEntry)
-		{
-			return true;
-		}
-
-		protected static bool IsStraight(DiceCombination combinationToCheck)
+		private static bool IsStraight(DiceCombination combinationToCheck)
 		{
 			switch (combinationToCheck)
 			{

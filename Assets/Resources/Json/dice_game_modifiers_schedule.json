@@ -1,12 +1,26 @@
 {
   "id": "default",
-  "default_set_id": "baseline",
+  "default_set_id": "simple_global_modifiers",
   "sets": {
     "baseline": {
       "player_modifiers": [
-        "multiply_combo_three_kind",
-        "shake_reroll",
-        "adjust_ticks_plus1"
+        "three_kind_plus100",
+        "straight_x2",
+        "ones_plus50",
+        "reroll_lowest_unsaved",
+        "lowest_unsaved_plus1",
+        "ticks_plus1"
+      ],
+      "enemy_modifiers": []
+    },
+    "simple_global_modifiers": {
+      "player_modifiers": [
+        "three_kind_plus100",
+        "straight_x2",
+        "ones_plus50",
+        "reroll_lowest_unsaved",
+        "lowest_unsaved_plus1",
+        "ticks_plus1"
       ],
       "enemy_modifiers": []
     },
@@ -16,38 +30,38 @@
     },
     "player_safe_enemy_shake": {
       "player_modifiers": [
-        "multiply_combo_three_kind"
+        "three_kind_plus100"
       ],
       "enemy_modifiers": []
     }
   },
   "by_level": {
     "1": {
-      "default_set_id": "baseline",
+      "default_set_id": "simple_global_modifiers",
       "by_day": {
         "1": {
-          "default_set_id": "baseline",
+          "default_set_id": "simple_global_modifiers",
           "by_match": {
             "1": "player_empty_enemy_empty",
             "2": "player_safe_enemy_shake",
-            "*": "baseline"
+            "*": "simple_global_modifiers"
           }
         },
         "*": {
-          "default_set_id": "baseline",
+          "default_set_id": "simple_global_modifiers",
           "by_match": {
-            "*": "baseline"
+            "*": "simple_global_modifiers"
           }
         }
       }
     },
     "*": {
-      "default_set_id": "baseline",
+      "default_set_id": "simple_global_modifiers",
       "by_day": {
         "*": {
-          "default_set_id": "baseline",
+          "default_set_id": "simple_global_modifiers",
           "by_match": {
-            "*": "baseline"
+            "*": "simple_global_modifiers"
           }
         }
       }
