@@ -29,6 +29,7 @@ public static class SpeechFactory
         var speechOpponentNoMoney = GetOpponentNoMoneySpeech(textsConfig);
         var speechOpponentWin = GetOpponentWinSpeech(textsConfig);
         var speechOpponentLose = GetOpponentLooseSpeech(textsConfig);
+        var speechOpponentNoTicks = GetOpponentNoTicks(textsConfig);
 
         var speeches = new Speech[]
         {
@@ -42,7 +43,8 @@ public static class SpeechFactory
             speechOpponentExit,
             speechOpponentNoMoney,
             speechOpponentWin,
-            speechOpponentLose
+            speechOpponentLose,
+            speechOpponentNoTicks
         };
 
         var speechModel = new SpeechModel(speeches);
@@ -248,6 +250,19 @@ public static class SpeechFactory
             .Init(speechEnemy);
 
         speechEnemy.SetRootNode(speechNodeConditionTicks);
+        return speechEnemy;
+    }
+
+    private static Speech GetOpponentNoTicks(TextsConfig textsConfig)
+    {
+        var speechEnemy = new Speech(95);
+
+        var speechNodePositive = Say(
+            speechEnemy,
+            textsConfig.texts["enemy_refuse"]
+        );
+
+        speechEnemy.SetRootNode(speechNodePositive);
         return speechEnemy;
     }
 

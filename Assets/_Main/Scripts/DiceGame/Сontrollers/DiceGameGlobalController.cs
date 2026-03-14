@@ -91,7 +91,7 @@ namespace _Main.Scripts.Dice
 			diceGameModel.OnGameConditionFailed += OnGameConditionFailedHandler;
 			OnDiceGameStateChangedHandler();
 
-			dicePreGameController = new DicePreGameController(sceneContext, playerView, playerModel);
+			dicePreGameController = new DicePreGameController(sceneContext, playerView, playerModel, run);
 			lifecycleService.RegisterAsync(dicePreGameController).Forget();
 		}
 

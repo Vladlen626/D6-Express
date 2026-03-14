@@ -9,12 +9,14 @@ namespace _Main.Scripts.Dice
 		private readonly SceneContext sceneContext;
 		private readonly PlayerView playerView;
 		private readonly PlayerModel playerModel;
+		private readonly Run run;
 
-		public DicePreGameController(SceneContext sceneContext, PlayerView playerView, PlayerModel playerModel)
+		public DicePreGameController(SceneContext sceneContext, PlayerView playerView, PlayerModel playerModel, Run run)
 		{
 			this.sceneContext = sceneContext;
 			this.playerView = playerView;
 			this.playerModel = playerModel;
+			this.run = run;
 		}
 
 		public void Activate()
@@ -29,17 +31,25 @@ namespace _Main.Scripts.Dice
 
 		private void OnPlayRequested()
 		{
-			if (playerModel.InventoryModel.CashCount > 0)
-			{
-				sceneContext.DiceGameTableView.AllowPlay();
-			}
-			else
+			if (playerModel.InventoryModel.CashCount <= 0)
 			{
 				// todo: убрать такой способ
 				var interactable = sceneContext.DiceGameOpponent.GetComponent<InteractableSpeakable>();
 				interactable.SetId(97);
 				playerView.Interactor.Interact(interactable);
 				interactable.ResetId();
+			}
+			else if (run.TicksPerDay - run.Tick == 0)
+			{
+				// todo: убрать такой способ
+				var interactable = sceneContext.DiceGameOpponent.GetComponent<InteractableSpeakable>();
+				interactable.SetId(95);
+				playerView.Interactor.Interact(interactable);
+				interactable.ResetId();
+			}
+			else
+			{
+				sceneContext.DiceGameTableView.AllowPlay();
 			}
 		}
 	}
