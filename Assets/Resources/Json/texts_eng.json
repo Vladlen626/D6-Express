@@ -80,7 +80,7 @@
         "days_progress": "days remaining: {0}",
         "cash_progress": "progress: \n{0}$ / {1}$",
         "enemy_offer": "Hey! Wanna <color=#FF7717>play dices</color>?",
-        "enemy_refuse": "Oh. Another time maybe? I'm going <color=#FF7717>to bed</color> now.",
+        "enemy_refuse": "Oh. Another time maybe? You better go and <color=#FF7717>get some sleep</color>.",
         "quest_main_title": "Train adventure",
         "quest_money_goal": "Get money for the next train ticket: {0}/{1}",
         "quest_stations_goal": "Make it to the last station. Left: {0}",
