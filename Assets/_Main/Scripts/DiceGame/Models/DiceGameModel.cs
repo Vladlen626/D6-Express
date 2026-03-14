@@ -15,6 +15,7 @@ namespace _Main.Scripts.Dice
 		public event Action<int, int> OnTargetPointsChanged;
 		public event Action<int, int> OnCurrentTurnChanged;
 		public event Action<int, int> OnMaxDiceCountChanged;
+		public event Action<bool, bool> OnDiceAnimationInProgressChanged;
 		public event Action OnDiceGameStateChanged;
 		public event Action OnRollClicked;
 		public event Action OnPassClicked;
@@ -51,11 +52,13 @@ namespace _Main.Scripts.Dice
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
 		public bool EnemyComboUpgradesEnabled { get; private set; } = true;
+		public bool IsDiceAnimationInProgress => diceAnimationInProgressCounter > 0;
 		public int MaxDiceCount => GetMaxDiceCount(IsPlayerTurn);
 		public int BaseMaxDiceCount => baseMaxDiceCount;
 
 		private const int DefaultMaxDiceCount = 6;
 		private int baseMaxDiceCount = DefaultMaxDiceCount;
+		private int diceAnimationInProgressCounter;
 		private readonly Dictionary<string, int> playerDiceCapBonuses = new();
 		private readonly Dictionary<string, int> enemyDiceCapBonuses = new();
 
@@ -79,11 +82,40 @@ namespace _Main.Scripts.Dice
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
 		{
 			this.tableModel = tableModel;
+			ResetDiceAnimationState();
 			SetMinBetSize(diceGameConfig.min_bet_size);
 			SetMaxBetSize(maxBetSize);
 			SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
 			EnemyComboUpgradesEnabled = diceGameConfig.enemy_combo_upgrades_enabled;
 			SetCurrentTurn(1, true);
+		}
+
+		public void BeginDiceAnimation()
+		{
+			var oldValue = IsDiceAnimationInProgress;
+			diceAnimationInProgressCounter++;
+			var newValue = IsDiceAnimationInProgress;
+			if (oldValue != newValue)
+			{
+				OnDiceAnimationInProgressChanged?.Invoke(oldValue, newValue);
+			}
+		}
+
+		public void EndDiceAnimation()
+		{
+			if (diceAnimationInProgressCounter <= 0)
+			{
+				throw new InvalidOperationException(
+					"[DiceGameModel] EndDiceAnimation called without matching BeginDiceAnimation.");
+			}
+
+			var oldValue = IsDiceAnimationInProgress;
+			diceAnimationInProgressCounter--;
+			var newValue = IsDiceAnimationInProgress;
+			if (oldValue != newValue)
+			{
+				OnDiceAnimationInProgressChanged?.Invoke(oldValue, newValue);
+			}
 		}
 
 		/// <summary>
@@ -424,12 +456,24 @@ namespace _Main.Scripts.Dice
 			tableModel.Reset();
 			PlayerDiceModelList.Clear();
 			EnemyDiceModelList.Clear();
+			ResetDiceAnimationState();
 			ResetEnemyRuntime();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;
 			CurrentTurn = 0;
 			IsAllInBet = false;
+		}
+
+		private void ResetDiceAnimationState()
+		{
+			var oldValue = IsDiceAnimationInProgress;
+			diceAnimationInProgressCounter = 0;
+			var newValue = IsDiceAnimationInProgress;
+			if (oldValue != newValue)
+			{
+				OnDiceAnimationInProgressChanged?.Invoke(oldValue, newValue);
+			}
 		}
 
 		private void ResetEnemyRuntime()

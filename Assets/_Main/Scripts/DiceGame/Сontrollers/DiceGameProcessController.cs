@@ -1,4 +1,4 @@
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using _Main.Scripts.Core;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
@@ -111,7 +111,7 @@ namespace _Main.Scripts.Dice
 		// ReSharper disable Unity.PerformanceAnalysis
 		public async UniTask HandleRollAsync()
 		{
-			IsProcessing = true;
+			SetProcessingState(true);
 
 			try
 			{
@@ -191,7 +191,7 @@ namespace _Main.Scripts.Dice
 			finally
 			{
 				diceGameModel.RollEnded();
-				IsProcessing = false;
+				SetProcessingState(false);
 			}
 		}
 
@@ -224,7 +224,7 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask HandlePassAsync()
 		{
-			IsProcessing = true;
+			SetProcessingState(true);
 
 			try
 			{
@@ -255,7 +255,25 @@ namespace _Main.Scripts.Dice
 			finally
 			{
 				diceGameModel.PassEnded();
-				IsProcessing = false;
+				SetProcessingState(false);
+			}
+		}
+
+		private void SetProcessingState(bool value)
+		{
+			if (IsProcessing == value)
+			{
+				return;
+			}
+
+			IsProcessing = value;
+			if (value)
+			{
+				diceGameModel.BeginDiceAnimation();
+			}
+			else
+			{
+				diceGameModel.EndDiceAnimation();
 			}
 		}
 
