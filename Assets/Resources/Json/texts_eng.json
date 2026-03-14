@@ -76,7 +76,7 @@
         "shop_item_bought_notification": "Bought \"{0}\"",
         "dice_added_to_inventory_notification": "{0} added",
         "fart_reaction": "What is that smell?!",
-        "ticks_progress": "ticks left: {0}",
+        "ticks_progress": "games left: {0}",
         "days_progress": "days remaining: {0}",
         "cash_progress": "progress: \n{0}$ / {1}$",
         "enemy_offer": "Hey! Wanna <color=#FF7717>play dices</color>?",
