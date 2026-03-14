@@ -19,14 +19,18 @@ public class CharacterStateHandlerDiceGame : CharacterStateHandler
 	protected override void EnterInternal()
 	{
 		base.EnterInternal();
+
+		CharacterView.GetComponent<InteractorPlayer>().DisableInteractableDetection();
 		inputService.DisableCameraInputs();
 		cursorService.UnlockCursor();
 	}
 
-    protected override void ExitInternal()
+	protected override void ExitInternal()
 	{
-		base.ExitInternal();
+		CharacterView.GetComponent<InteractorPlayer>().EnableInteractableDetection();
 		inputService.EnableCameraInputs();
 		cursorService.LockCursor();
+
+		base.ExitInternal();
 	}
 }

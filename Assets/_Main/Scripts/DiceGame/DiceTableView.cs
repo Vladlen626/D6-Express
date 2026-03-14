@@ -9,6 +9,9 @@ public class DiceTableView : MonoBehaviour
 {
 	private const float DefaultUpgradeDiceScale = 1f;
 
+	public event Action OnPlayRequested;
+	public event Action OnPlayAllowed;
+
 	public event Action<int> OnBetSliderChange;
 	public event Action OnRollClicked;
 	public event Action OnPassClicked;
@@ -98,6 +101,16 @@ public class DiceTableView : MonoBehaviour
 	private void OnSliderChanged(float value)
 	{
 		OnBetSliderChange?.Invoke((int)value);
+	}
+
+	public void RequestPlay()
+	{
+		OnPlayRequested?.Invoke();
+	}
+
+	public void AllowPlay()
+	{
+		OnPlayAllowed?.Invoke();
 	}
 
 	//Todo: когда-то здесь будут не строки, обязательно....
@@ -202,7 +215,7 @@ public class DiceTableView : MonoBehaviour
 	{
 		return;
 		PlayerDiceBonusPositions.gameObject.SetActive(visible);
-	} 
+	}
 
 	public void SetEnemyDiceBonusPositionVisibility(bool visible)
 	{
