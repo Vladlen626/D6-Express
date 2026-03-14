@@ -30,6 +30,7 @@ namespace _Main.Scripts.Dice
 
 			diceTableView.OnPassClicked += diceGameModel.SendPassClicked;
 			diceTableView.OnRollClicked += diceGameModel.SendRollClicked;
+			diceTableView.OnRollClicked += OnRollClickedHandler;
 
 			tableModel.OnPlayerBankedPointsChanged += OnPlayerBankedPointsChangedHandler;
 			tableModel.OnEnemyBankedPointsChanged += OnEnemyBankedPointsChangedHandler;
@@ -55,6 +56,7 @@ namespace _Main.Scripts.Dice
 
 			diceTableView.OnPassClicked -= diceGameModel.SendPassClicked;
 			diceTableView.OnRollClicked -= diceGameModel.SendRollClicked;
+			diceTableView.OnRollClicked -= OnRollClickedHandler;
 
 			tableModel.OnPlayerBankedPointsChanged -= OnPlayerBankedPointsChangedHandler;
 			tableModel.OnEnemyBankedPointsChanged -= OnEnemyBankedPointsChangedHandler;

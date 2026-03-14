@@ -168,6 +168,7 @@ namespace _Main.Scripts.Dice
 
 				await UniTask.WhenAll(tasks);
 				audioService.PlaySound(SoundNames.DiceDrop);
+				await cameraShakeService.ShakeAsync(0.4f, 0.065f);
 
 				await UniTask.Delay(GlobalParameters.Delay / 2);
 				
