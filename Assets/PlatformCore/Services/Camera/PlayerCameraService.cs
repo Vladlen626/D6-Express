@@ -25,6 +25,7 @@ namespace PlatformCore.Services
 		private readonly Transform _cameraParent;
 
 		private CinemachineBasicMultiChannelPerlin _noise;
+		private CinemachineBasicMultiChannelPerlin _activeShakeNoise;
 		private CancellationTokenSource _shakeCts;
 		public bool IsShaking { get; private set; }
 
@@ -55,6 +56,8 @@ namespace PlatformCore.Services
 
 		public override void Dispose()
 		{
+			StopShake();
+
 			foreach (var cam in allCameras.Values)
 			{
 				if (cam)
@@ -110,6 +113,8 @@ namespace PlatformCore.Services
 				Debug.LogWarning($"Camera {state} not found!");
 				return;
 			}
+
+			StopShake();
 
 			if (currentCamera != null)
 			{
@@ -167,38 +172,69 @@ namespace PlatformCore.Services
 		// ReSharper disable Unity.PerformanceAnalysis
 		public async UniTask ShakeAsync(float intensity, float duration)
 		{
-			if (_noise == null || IsShaking)
+			var noise = _noise;
+			if (noise == null || IsShaking)
+			{
 				return;
+			}
 
 			IsShaking = true;
 			_shakeCts?.Cancel();
+			_shakeCts?.Dispose();
 			_shakeCts = new CancellationTokenSource();
+			var shakeCts = _shakeCts;
+			_activeShakeNoise = noise;
 
-			_noise.AmplitudeGain = intensity;
-			_noise.FrequencyGain = intensity * 1.5f;
+			noise.AmplitudeGain = intensity;
+			noise.FrequencyGain = intensity * 1.5f;
 
 			try
 			{
-				await UniTask.WaitForSeconds(duration, cancellationToken: _shakeCts.Token);
+				await UniTask.WaitForSeconds(duration, cancellationToken: shakeCts.Token);
 			}
 			catch (OperationCanceledException)
 			{
 			}
 			finally
 			{
-				StopShake();
+				ResetNoise(noise);
+
+				if (ReferenceEquals(_shakeCts, shakeCts))
+				{
+					_shakeCts.Dispose();
+					_shakeCts = null;
+					_activeShakeNoise = null;
+					IsShaking = false;
+				}
 			}
 		}
 
 		public void StopShake()
 		{
-			if (_noise == null)
-				return;
-
 			_shakeCts?.Cancel();
-			_noise.AmplitudeGain = 0;
-			_noise.FrequencyGain = 0;
+			_shakeCts?.Dispose();
+			_shakeCts = null;
+
+			ResetNoise(_activeShakeNoise);
+
+			if (!ReferenceEquals(_activeShakeNoise, _noise))
+			{
+				ResetNoise(_noise);
+			}
+
+			_activeShakeNoise = null;
 			IsShaking = false;
+		}
+
+		private static void ResetNoise(CinemachineBasicMultiChannelPerlin noise)
+		{
+			if (noise == null)
+			{
+				return;
+			}
+
+			noise.AmplitudeGain = 0;
+			noise.FrequencyGain = 0;
 		}
 	}
 }

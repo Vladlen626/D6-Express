@@ -128,18 +128,27 @@
 			<value>-4</value>
 		</property>
 		<property name="midGain">
-			<value>-4</value>
+			<value>-13</value>
+		</property>
+		<property name="highGain">
+			<value>-13</value>
 		</property>
 	</object>
 	<object class="CompressorEffect" id="{d4718c5c-6959-4303-a0cd-7964063323c2}">
 		<property name="threshold">
 			<value>-25</value>
 		</property>
+		<property name="ratio">
+			<value>2.9000001</value>
+		</property>
 		<property name="attackTime">
 			<value>7.4000001</value>
 		</property>
 		<property name="releaseTime">
 			<value>260</value>
+		</property>
+		<property name="gain">
+			<value>-4.5</value>
 		</property>
 	</object>
 	<object class="GainEffect" id="{e85e2d66-6f3a-4f8a-8c8b-2830005a53b8}">

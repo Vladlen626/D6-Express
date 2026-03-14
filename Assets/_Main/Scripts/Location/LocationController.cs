@@ -30,11 +30,11 @@ public class LocationController : IBaseController, IGameStateChanger
 		if (data.Location == Location.STATION)
 		{
 			audioService.StopParallelSound(SoundNames.TrainSound);
-			audioService.PlaySoundParallel(SoundNames.StationSound);
+			//audioService.PlaySoundParallel(SoundNames.StationSound);
 		}
 		else
 		{
-			audioService.StopParallelSound(SoundNames.StationSound);
+			//audioService.StopParallelSound(SoundNames.StationSound);
 			audioService.PlaySoundParallel(SoundNames.TrainSound);
 		}
 

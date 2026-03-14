@@ -44,6 +44,7 @@ namespace _Main.Scripts.Dice
 		public int BetSize { get; private set; }
 		public int MaxBetSize { get; private set; }
 		public int MinBetSize { get; private set; }
+		public bool IsAllInBet { get; private set; }
 		public int CurrentTurn { get; private set; }
 		public bool IsPlayerTurn { get; private set; }
 		public int TargetPoints { get; private set; }
@@ -234,7 +235,13 @@ namespace _Main.Scripts.Dice
 
 		public void SetBetSize(int size)
 		{
+			SetBetSize(size, false);
+		}
+
+		public void SetBetSize(int size, bool isAllInBet)
+		{
 			BetSize = size;
+			IsAllInBet = isAllInBet;
 			OnBetSizeChanged?.Invoke();
 		}
 
@@ -248,6 +255,11 @@ namespace _Main.Scripts.Dice
 		{
 			MaxBetSize = size;
 			OnBetSizeChanged?.Invoke();
+		}
+
+		public int CalculateWinPayout()
+		{
+			return IsAllInBet ? BetSize + MinBetSize : BetSize * 2;
 		}
 
 
@@ -417,6 +429,7 @@ namespace _Main.Scripts.Dice
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;
 			CurrentTurn = 0;
+			IsAllInBet = false;
 		}
 
 		private void ResetEnemyRuntime()

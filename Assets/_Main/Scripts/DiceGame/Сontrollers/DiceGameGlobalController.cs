@@ -101,7 +101,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnGameConditionPassedHandler()
 		{
-			playerModel.InventoryModel.GiveCash(diceGameModel.BetSize * 2);
+			playerModel.InventoryModel.GiveCash(diceGameModel.CalculateWinPayout());
 			StopDiceGame();
 		}
 
