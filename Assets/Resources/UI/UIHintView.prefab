@@ -130,24 +130,24 @@ MonoBehaviour:
   _canvasType: 5
   hintText: {fileID: 6858549831824332020}
   inputText: {fileID: 8113632164864754133}
-  hintBg: {fileID: 0}
-  inputBg: {fileID: 0}
+  hintBg: {fileID: 3612154046540433543}
+  inputBg: {fileID: 4968767903860279231}
   defaultTextStyle:
     id: BrownFont
   highlightedTextStyle:
-    id: GreenBgFont
+    id: BrownFont
   defaultHintStyle:
     id: LightFont
   highlightedHintStyle:
-    id: TextHighlightOrange
+    id: GreenBgFont
   defaultBgTextStyle:
     id: TooltipBg
   highlightedBgTextStyle:
-    id: GreenBlue
+    id: TooltipBg
   bgHintStyle:
     id: DrownBg
   highlightedBgHintStyle:
-    id: TooltipBg
+    id: GreenBlue
 --- !u!225 &4557773065376660714
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -720,6 +720,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+--- !u!114 &4968767903860279231 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+  m_PrefabInstance: {fileID: 431954439986202612}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!224 &6139426516425109649 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5822313901381269349, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
@@ -850,6 +861,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 5822313901381269349, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
   m_PrefabInstance: {fileID: 8298712053069891788}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3612154046540433543 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
+  m_PrefabInstance: {fileID: 8298712053069891788}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4586473848660868649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
 --- !u!1 &4586473848660868649 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5515958528675116773, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
