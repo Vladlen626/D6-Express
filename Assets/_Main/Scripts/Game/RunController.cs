@@ -1,4 +1,5 @@
 ﻿using _Main.Scripts.Dice;
+using System;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
@@ -44,6 +45,12 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	public async UniTask PreloadAsync()
 	{
 		playerConfig = await configService.GetFirstOrDefaultAsync<PlayerConfig>(ResourcePaths.Json.player);
+		if (playerConfig == null)
+		{
+			throw new InvalidOperationException("[RunController] Player config was not loaded.");
+		}
+
+		playerModel.InventoryModel.SetModifierItemsCapacity(playerConfig.modifierItemsCapacity);
 	}
 
 	private void OnTickChangeRequested(int value)
@@ -85,7 +92,12 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		{
 			foreach (var modifierId in playerConfig.modifierItems)
 			{
-				playerModel.InventoryModel.AddModifierItem(modifierId);
+				var addResult = playerModel.InventoryModel.TryAddModifierItem(modifierId);
+				if (addResult != ModifierItemAddResult.Success)
+				{
+					throw new InvalidOperationException(
+						$"[RunController] Failed to add starting modifier item '{modifierId}'. Reason: {addResult}.");
+				}
 			}
 		}
 

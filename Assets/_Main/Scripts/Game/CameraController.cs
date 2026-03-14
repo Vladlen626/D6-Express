@@ -3,6 +3,7 @@ using _Main.Scripts.Dice;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
+using PlatformCore.Services.Audio;
 
 public class CameraController : IBaseController, IActivatable
 {
@@ -21,6 +22,7 @@ public class CameraController : IBaseController, IActivatable
 	};
 
 	private readonly IInputService inputService;
+	private readonly IAudioService audioService;
 	private readonly ICameraService cameraService;
 	private readonly PlayerStateModel playerStateModel;
 	private readonly D6Game game;
@@ -31,11 +33,13 @@ public class CameraController : IBaseController, IActivatable
 		IInputService inputService,
 		ICameraService cameraService,
 		PlayerStateModel playerStateModel,
-		D6Game game)
+		D6Game game,
+		IAudioService audioService)
 	{
 		this.inputService = inputService;
 		this.cameraService = cameraService;
 		this.playerStateModel = playerStateModel;
+		this.audioService = audioService;
 		this.game = game;
 	}
 
@@ -102,6 +106,7 @@ public class CameraController : IBaseController, IActivatable
 			currentCameraIndex = 0;
 		}
 
+		audioService.PlaySound(SoundNames.CameraMove);
 		await cameraService.SetActiveCameraAsync(diceGameCameraStates[currentCameraIndex]);
 	}
 
@@ -113,6 +118,7 @@ public class CameraController : IBaseController, IActivatable
 			currentCameraIndex = diceGameCameraStates.Length - 1;
 		}
 
+		audioService.PlaySound(SoundNames.CameraMove);
 		await cameraService.SetActiveCameraAsync(diceGameCameraStates[currentCameraIndex]);
 	}
 }

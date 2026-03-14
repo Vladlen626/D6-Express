@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Services.Factory;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.UI;
 using PlatformCore.Services;
 
@@ -9,25 +9,27 @@ public class GlobalNotificationService : BaseAsyncService
 	private readonly IUIService uiService;
 	private readonly IObjectFactory objectFactory;
 	private readonly ILocalizationService localizationService;
+	private readonly IAudioService audioService;
+	private readonly string positiveNotificationSound;
+	private readonly string negativeNotificationSound;
 
 	private UIGlobalNotificationView bannerView;
 	private UINotificationsView notificationsView;
 
-	private readonly Queue<ToastRequest> toastQueue = new();
-	private bool isToastPlaying;
-
-	private class ToastRequest
-	{
-		public string Message;
-		public bool IsNegative;
-		public UniTaskCompletionSource Completion;
-	}
-
-	public GlobalNotificationService(IUIService uiService, IObjectFactory objectFactory, ILocalizationService localizationService)
+	public GlobalNotificationService(
+		IUIService uiService,
+		IObjectFactory objectFactory,
+		ILocalizationService localizationService,
+		IAudioService audioService,
+		string positiveNotificationSound,
+		string negativeNotificationSound)
 	{
 		this.uiService = uiService;
 		this.objectFactory = objectFactory;
 		this.localizationService = localizationService;
+		this.audioService = audioService;
+		this.positiveNotificationSound = positiveNotificationSound;
+		this.negativeNotificationSound = negativeNotificationSound;
 	}
 
 	/// <summary>
@@ -97,11 +99,12 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		bannerView.Interrupt();
+		PlayNotificationSound(isNegative);
 		await bannerView.PlayAsync(message, holdSeconds, isNegative);
 	}
 
 	/// <summary>
-	/// Enqueues a localized toast for sequential display (queue).
+	/// Shows a localized toast immediately (parallel with other toasts).
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
 	public void EnqueueToast(string id, bool isNegative = false)
@@ -110,7 +113,7 @@ public class GlobalNotificationService : BaseAsyncService
 	}
 
 	/// <summary>
-	/// Enqueues a localized toast and returns a task that completes when the toast finishes.
+	/// Shows a localized toast immediately and returns a task that completes when it finishes.
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
 	public UniTask EnqueueToastAsync(string id, bool isNegative = false)
@@ -125,7 +128,7 @@ public class GlobalNotificationService : BaseAsyncService
 	}
 
 	/// <summary>
-	/// Enqueues a formatted localized toast (string.Format) and returns a task that completes when it finishes.
+	/// Shows a formatted localized toast immediately (string.Format) and returns a task that completes when it finishes.
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
 	public UniTask EnqueueToastAsync(string id, string[] args, bool isNegative = false)
@@ -141,7 +144,7 @@ public class GlobalNotificationService : BaseAsyncService
 	}
 
 	/// <summary>
-	/// Enqueues a raw toast message immediately (no localization).
+	/// Shows a raw toast message immediately (no localization).
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
 	public void EnqueueToastRaw(string message, bool isNegative = false)
@@ -150,7 +153,7 @@ public class GlobalNotificationService : BaseAsyncService
 	}
 
 	/// <summary>
-	/// Enqueues a raw toast message (no localization) and returns a task that completes when it finishes.
+	/// Shows a raw toast message immediately (no localization) and returns a task that completes when it finishes.
 	/// Toast duration is defined by <c>UINotificationView</c> (show delay and animations).
 	/// </summary>
 	public UniTask EnqueueToastRawAsync(string message, bool isNegative = false)
@@ -160,20 +163,7 @@ public class GlobalNotificationService : BaseAsyncService
 			return UniTask.CompletedTask;
 		}
 
-		var request = new ToastRequest
-		{
-			Message = message,
-			IsNegative = isNegative,
-			Completion = new UniTaskCompletionSource()
-		};
-
-		toastQueue.Enqueue(request);
-		if (!isToastPlaying)
-		{
-			PlayToastQueue().Forget();
-		}
-
-		return request.Completion.Task;
+		return ShowToastInternal(message, isNegative);
 	}
 
 	/// <summary>
@@ -274,20 +264,6 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 	}
 
-	private async UniTaskVoid PlayToastQueue()
-	{
-		isToastPlaying = true;
-
-		while (toastQueue.Count > 0)
-		{
-			var request = toastQueue.Dequeue();
-			await ShowToastInternal(request.Message, request.IsNegative);
-			request.Completion.TrySetResult();
-		}
-
-		isToastPlaying = false;
-	}
-
 	private async UniTask ShowToastInternal(string message, bool isNegative)
 	{
 		await EnsureNotificationsViewAsync();
@@ -322,10 +298,23 @@ public class GlobalNotificationService : BaseAsyncService
 
 		view.Showed += OnShowed;
 		view.SetText(message, isNegative);
+		PlayNotificationSound(isNegative);
 		view.Show();
 
 		await tcs.Task;
 
 		UnityEngine.Object.Destroy(view.gameObject);
+	}
+
+	private void PlayNotificationSound(bool isNegative)
+	{
+		if (audioService == null)
+		{
+			return;
+		}
+
+		audioService.PlaySound(isNegative
+			? negativeNotificationSound
+			: positiveNotificationSound);
 	}
 }

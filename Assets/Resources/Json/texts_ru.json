@@ -86,6 +86,7 @@
     "modifier_pass_score_floor_item_apply": "Очки Pass повышены до суммы денег в кармане",
     "item_activation_only_select_dice": "Этот предмет можно активировать только на этапе выбора кубиков",
     "item_activation_only_game": "Этот предмет можно активировать только во время игры",
+    "shop_modifier_inventory_full": "Инвентарь заполнен",
     "dice_banner_upgrade_triggered": "Апгрейд комбинации!",
     "dice_banner_upgrade_failed": "Ничего не апгрейднулось",
     "dice_upgrade_combo_straight": "Стрит",

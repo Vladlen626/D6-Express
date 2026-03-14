@@ -4,13 +4,17 @@ using _Main.Scripts.Dice;
 
 public class InventoryModel
 {
+	private const int DefaultModifierItemsCapacity = 6;
+
 	private readonly List<string> diceIdList = new();
 	private readonly List<string> modifierItemIds = new();
 	private int cashCount;
+	private int modifierItemsCapacity = DefaultModifierItemsCapacity;
 
 	public int CashCount => cashCount;
 	public IReadOnlyList<string> DiceIdList => diceIdList;
 	public IReadOnlyList<string> ModifierItemIds => modifierItemIds;
+	public int ModifierItemsCapacity => modifierItemsCapacity;
 	public ModifiersModel ModifiersModel { get; }
 	public ModifierItemsModel ModifierItemsModel { get; }
 	public event Action ItemsChanged;
@@ -62,18 +66,40 @@ public class InventoryModel
 
 	public void AddModifierItem(string itemId)
 	{
+		TryAddModifierItem(itemId);
+	}
+
+	public ModifierItemAddResult ValidateModifierItemAdd(string itemId)
+	{
 		if (string.IsNullOrEmpty(itemId))
 		{
-			return;
+			return ModifierItemAddResult.InvalidId;
 		}
 
 		if (modifierItemIds.Contains(itemId))
 		{
-			return;
+			return ModifierItemAddResult.Duplicate;
+		}
+
+		if (modifierItemIds.Count >= modifierItemsCapacity)
+		{
+			return ModifierItemAddResult.InventoryFull;
+		}
+
+		return ModifierItemAddResult.Success;
+	}
+
+	public ModifierItemAddResult TryAddModifierItem(string itemId)
+	{
+		var result = ValidateModifierItemAdd(itemId);
+		if (result != ModifierItemAddResult.Success)
+		{
+			return result;
 		}
 
 		modifierItemIds.Add(itemId);
 		ModifierItemAdded?.Invoke(itemId);
+		return ModifierItemAddResult.Success;
 	}
 
 	public void RemoveModifierItem(string itemId)
@@ -98,10 +124,35 @@ public class InventoryModel
 		modifierItemIds.Clear();
 	}
 
+	public void SetModifierItemsCapacity(int value)
+	{
+		if (value < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(value), value,
+				"[InventoryModel] Modifier items capacity cannot be negative.");
+		}
+
+		if (value < modifierItemIds.Count)
+		{
+			throw new InvalidOperationException(
+				$"[InventoryModel] Cannot set modifier items capacity to {value} because inventory already contains {modifierItemIds.Count} items.");
+		}
+
+		modifierItemsCapacity = value;
+	}
+
 	public InventoryModel()
 	{
 		ModifiersModel = new ModifiersModel();
 		ModifierItemsModel = new ModifierItemsModel(ModifiersModel);
 		ModifierItemsModel.ItemsChanged += () => ItemsChanged?.Invoke();
 	}
+}
+
+public enum ModifierItemAddResult
+{
+	Success = 0,
+	InvalidId = 1,
+	Duplicate = 2,
+	InventoryFull = 3
 }
