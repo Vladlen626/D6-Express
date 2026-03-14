@@ -313,6 +313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hintable
   hintText: speak
+  highlighted: 0
 --- !u!114 &3846627723556643445
 MonoBehaviour:
   m_ObjectHideFlags: 0
