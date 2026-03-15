@@ -8,9 +8,11 @@ using Random=UnityEngine.Random;
 
 namespace _Main.Scripts.Dice
 {
-	public class ScrambleCombinationsModifier : IOnRoundStartModifier, IOnRollModifier
+	public class ScrambleCombinationsModifier : IOnRoundStartModifier, IOnRollModifier, IModifierUiConfigProvider, IModifierApplyResultProvider
 	{
 		private readonly DiceScoringService scoringService;
+		public string UiConfigId { get; }
+		public bool LastApplyHadEffect { get; private set; }
 		private static readonly DiceCombination[] AvailableCombinations = Enum
 			.GetValues(typeof(DiceCombination))
 			.Cast<DiceCombination>()
@@ -35,13 +37,15 @@ namespace _Main.Scripts.Dice
 
 		private readonly Dictionary<DiceCombination, int> scrambledScores = new ();
 
-		public ScrambleCombinationsModifier(DiceScoringService scoringService)
+		public ScrambleCombinationsModifier(DiceScoringService scoringService, string uiConfigId = null)
 		{
 			this.scoringService = scoringService;
+			UiConfigId = uiConfigId;
 		}
 
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			LastApplyHadEffect = false;
 			if (scoringService == null)
 			{
 				return UniTask.CompletedTask;
@@ -54,10 +58,11 @@ namespace _Main.Scripts.Dice
 					BuildNewRoundMap();
 					LogScrambledScores();
 					ScrambleCombinationsOverlay.UpdateMap(scoringService, scrambledScores);
+					LastApplyHadEffect = true;
 					break;
 
 				case ModifierStage.Roll:
-					ApplyScramble(modifierContext.CombinationResult.Combinations);
+					LastApplyHadEffect = ApplyScramble(modifierContext.CombinationResult.Combinations);
 					break;
 
 				default:
@@ -134,11 +139,11 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		private void ApplyScramble(List<DiceCombinationEntry> combinations)
+		private bool ApplyScramble(List<DiceCombinationEntry> combinations)
 		{
 			if (combinations == null || combinations.Count == 0)
 			{
-				return;
+				return false;
 			}
 
 			if (scrambledScores.Count == 0)
@@ -160,6 +165,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			LogScramble(combinations);
+			return true;
 		}
 
 		private void LogScramble(List<DiceCombinationEntry> combinations)

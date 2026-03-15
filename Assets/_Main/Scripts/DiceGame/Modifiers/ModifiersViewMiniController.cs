@@ -112,7 +112,8 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
             return;
         }
 
-        if (!configs.TryGetValue(modifier.GetType().Name, out var config))
+        var configKey = ResolveConfigKey(modifier);
+        if (!configs.TryGetValue(configKey, out var config))
         {
             return;
         }
@@ -134,7 +135,17 @@ public class ModifiersViewMiniController : IActivatable, IPreloadable
             return false;
         }
 
-        return configs.ContainsKey(modifier.GetType().Name);
+        return configs.ContainsKey(ResolveConfigKey(modifier));
+    }
+
+    private static string ResolveConfigKey(IModifier modifier)
+    {
+        if (modifier is IModifierUiConfigProvider provider && !string.IsNullOrWhiteSpace(provider.UiConfigId))
+        {
+            return provider.UiConfigId;
+        }
+
+        return modifier.GetType().Name;
     }
 
     private void OnModifierRemoved(IModifier modifier)

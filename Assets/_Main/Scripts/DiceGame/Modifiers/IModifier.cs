@@ -26,4 +26,14 @@ namespace _Main.Scripts.Dice
 	{
 		UniTask ModifyValues(DiceModifierContext modifierContext);
 	}
+
+	public interface IModifierUiConfigProvider
+	{
+		string UiConfigId { get; }
+	}
+
+	public interface IModifierApplyResultProvider
+	{
+		bool LastApplyHadEffect { get; }
+	}
 }

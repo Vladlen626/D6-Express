@@ -1,53 +1,168 @@
 {
-  "id": "default",
-  "default_set_id": "baseline",
+  "id": "run_upgrade_map_v1",
+  "default_set_id": "player_empty_enemy_empty",
   "sets": {
-    "baseline": {
-      "player_modifiers": [
-        "multiply_combo_three_kind",
-        "shake_reroll",
-        "adjust_ticks_plus1"
-      ],
-      "enemy_modifiers": []
-    },
     "player_empty_enemy_empty": {
       "player_modifiers": [],
       "enemy_modifiers": []
     },
-    "player_safe_enemy_shake": {
+
+    "wb_stage_ones_only": {
       "player_modifiers": [
-        "multiply_combo_three_kind"
+        "ones_plus50"
+      ],
+      "enemy_modifiers": []
+    },
+    "wb_stage_ones__day_three_kind": {
+      "player_modifiers": [
+        "ones_plus50",
+        "three_kind_plus100"
+      ],
+      "enemy_modifiers": []
+    },
+
+    "sp_stage_lowest_plus1_only": {
+      "player_modifiers": [
+        "lowest_unsaved_plus1"
+      ],
+      "enemy_modifiers": []
+    },
+    "sp_stage_lowest_plus1__day_three_kind": {
+      "player_modifiers": [
+        "lowest_unsaved_plus1",
+        "three_kind_plus100"
+      ],
+      "enemy_modifiers": []
+    },
+    "sp_stage_lowest_plus1__day_ones": {
+      "player_modifiers": [
+        "lowest_unsaved_plus1",
+        "ones_plus50"
+      ],
+      "enemy_modifiers": []
+    },
+    "sp_stage_lowest_plus1__day_straight": {
+      "player_modifiers": [
+        "lowest_unsaved_plus1",
+        "straight_x2"
+      ],
+      "enemy_modifiers": []
+    },
+    "sp_stage_lowest_plus1__day_reroll": {
+      "player_modifiers": [
+        "lowest_unsaved_plus1",
+        "reroll_lowest_unsaved"
+      ],
+      "enemy_modifiers": []
+    },
+
+    "mh_stage_ticks_only": {
+      "player_modifiers": [
+        "ticks_plus1"
+      ],
+      "enemy_modifiers": []
+    },
+    "mh_stage_ticks__day_straight": {
+      "player_modifiers": [
+        "ticks_plus1",
+        "straight_x2"
+      ],
+      "enemy_modifiers": []
+    },
+    "mh_stage_ticks__day_reroll": {
+      "player_modifiers": [
+        "ticks_plus1",
+        "reroll_lowest_unsaved"
       ],
       "enemy_modifiers": []
     }
   },
   "by_level": {
     "1": {
-      "default_set_id": "baseline",
+      "default_set_id": "wb_stage_ones_only",
       "by_day": {
         "1": {
-          "default_set_id": "baseline",
+          "default_set_id": "wb_stage_ones__day_three_kind",
           "by_match": {
-            "1": "player_empty_enemy_empty",
-            "2": "player_safe_enemy_shake",
-            "*": "baseline"
+            "*": "wb_stage_ones__day_three_kind"
           }
         },
         "*": {
-          "default_set_id": "baseline",
+          "default_set_id": "wb_stage_ones_only",
           "by_match": {
-            "*": "baseline"
+            "*": "wb_stage_ones_only"
           }
         }
       }
     },
+
+    "2": {
+      "default_set_id": "sp_stage_lowest_plus1_only",
+      "by_day": {
+        "1": {
+          "default_set_id": "sp_stage_lowest_plus1__day_three_kind",
+          "by_match": {
+            "*": "sp_stage_lowest_plus1__day_three_kind"
+          }
+        },
+        "2": {
+          "default_set_id": "sp_stage_lowest_plus1__day_ones",
+          "by_match": {
+            "*": "sp_stage_lowest_plus1__day_ones"
+          }
+        },
+        "3": {
+          "default_set_id": "sp_stage_lowest_plus1__day_straight",
+          "by_match": {
+            "*": "sp_stage_lowest_plus1__day_straight"
+          }
+        },
+        "4": {
+          "default_set_id": "sp_stage_lowest_plus1__day_reroll",
+          "by_match": {
+            "*": "sp_stage_lowest_plus1__day_reroll"
+          }
+        },
+        "*": {
+          "default_set_id": "sp_stage_lowest_plus1_only",
+          "by_match": {
+            "*": "sp_stage_lowest_plus1_only"
+          }
+        }
+      }
+    },
+
+    "3": {
+      "default_set_id": "mh_stage_ticks_only",
+      "by_day": {
+        "1": {
+          "default_set_id": "mh_stage_ticks__day_straight",
+          "by_match": {
+            "*": "mh_stage_ticks__day_straight"
+          }
+        },
+        "2": {
+          "default_set_id": "mh_stage_ticks__day_reroll",
+          "by_match": {
+            "*": "mh_stage_ticks__day_reroll"
+          }
+        },
+        "*": {
+          "default_set_id": "mh_stage_ticks_only",
+          "by_match": {
+            "*": "mh_stage_ticks_only"
+          }
+        }
+      }
+    },
+
     "*": {
-      "default_set_id": "baseline",
+      "default_set_id": "player_empty_enemy_empty",
       "by_day": {
         "*": {
-          "default_set_id": "baseline",
+          "default_set_id": "player_empty_enemy_empty",
           "by_match": {
-            "*": "baseline"
+            "*": "player_empty_enemy_empty"
           }
         }
       }
