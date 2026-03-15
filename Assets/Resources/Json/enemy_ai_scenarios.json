@@ -1,131 +1,751 @@
 {
-  "wb_d1m1_safe_finish_straight": {
-    "mode": "scripted",
-    "strict_validation": true,
-    "on_mismatch": "fail_scenario",
-    "target_score": 2000,
-    "enemy_setup": {
-      "use_modifiers": false,
-      "dice_in_hand": ["default","default","default","default","default","default"]
-    },
-    "turns": [
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [5,5,5,2,3,4], "save_unbanked_indexes": [0,1,2] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [1,5,2,3,4,6], "save_unbanked_indexes": [0,1] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [1,2,3,4,6,5], "save_unbanked_indexes": [0] },
-          { "action": "roll", "forced_values": [2,2,2,5,3], "save_unbanked_indexes": [0,1,2,3] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [4,4,4,1,5,2], "save_unbanked_indexes": [0,1,2,3,4] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [6,6,6,1,2,3], "save_unbanked_indexes": [0,1,2,3] },
-          { "action": "pass" }
-        ]
-      }
-    ],
-    "expected_result": {
-      "completed_in_enemy_turns": 5,
-      "enemy_final_banked_score": 2250,
-      "enemy_reaches_target": true
-    }
-  },
-
-  "wb_d1m2_hot_pairs_then_triple_ones": {
-    "mode": "scripted",
-    "strict_validation": true,
-    "on_mismatch": "fail_scenario",
-    "target_score": 2500,
-    "enemy_setup": {
-      "use_modifiers": false,
-      "dice_in_hand": ["default","default","default","default","default","default"]
-    },
-    "turns": [
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [2,2,2,5,3,4], "save_unbanked_indexes": [0,1,2,3] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [3,3,3,5,2,4], "save_unbanked_indexes": [0,1,2,3] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [1,1,2,2,3,3], "save_unbanked_indexes": [0,1,2,3,4,5] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [1,2,3,4,6,2], "save_unbanked_indexes": [0] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [1,5,2,3,4,6], "save_unbanked_indexes": [0,1] },
-          { "action": "pass" }
-        ]
-      },
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [2,2,2,1,3,4], "save_unbanked_indexes": [0,1,2,3] },
-          { "action": "pass" }
-        ]
-      }
-    ],
-    "expected_result": {
-      "completed_in_enemy_turns": 6,
-      "enemy_final_banked_score": 2650,
-      "enemy_reaches_target": true
-    }
-  },
-
-  "wb_d1m3_greedy_hot_chain_to_straight": {
-    "mode": "scripted",
-    "strict_validation": true,
-    "on_mismatch": "fail_scenario",
-    "target_score": 3000,
-    "enemy_setup": {
-      "use_modifiers": false,
-      "dice_in_hand": ["default","default","default","default","default","default"]
-    },
-    "turns": [
-      {
-        "steps": [
-          { "action": "roll", "forced_values": [1,1,1,5,2,3], "save_unbanked_indexes": [0,1,2] },
-          { "action": "roll", "forced_values": [5,5,5], "save_unbanked_indexes": [0,1,2] },
-          { "action": "roll", "forced_values": [1,2,3,4,5,6], "save_unbanked_indexes": [0,1,2,3,4,5] },
-          { "action": "roll", "forced_values": [1,2,3,4,6,2], "save_unbanked_indexes": [0] },
-          { "action": "pass" }
-        ]
-      }
-    ],
-    "expected_result": {
-      "completed_in_enemy_turns": 1,
-      "enemy_final_banked_score": 3100,
-      "enemy_reaches_target": true
-    }
-  }
+	"wb_d1m1_safe_ones_and_fives": {
+		"mode": "scripted",
+		"strict_validation": true,
+		"on_mismatch": "fail_scenario",
+		"target_score": 2000,
+		"enemy_setup": {
+			"use_modifiers": false,
+			"dice_in_hand": 
+			[
+				"default",
+				"default",
+				"gen_1_focus",
+				"gen_5_focus",
+				"strat_safe_ones_fives",
+				"default"
+			]
+		},
+		"turns": 
+		[
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							1,
+							5,
+							2,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							5,
+							2,
+							2,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							5,
+							5,
+							5,
+							5,
+							1,
+							1
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3,
+							4,
+							5
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			}
+		],
+		"expected_result": {
+			"completed_in_enemy_turns": 3,
+			"enemy_final_banked_score": 2500,
+			"enemy_reaches_target": true
+		}
+	},
+	"wb_d1m2_triple_ones_then_fives": {
+		"mode": "scripted",
+		"strict_validation": true,
+		"on_mismatch": "fail_scenario",
+		"target_score": 2500,
+		"enemy_setup": {
+			"use_modifiers": false,
+			"dice_in_hand": 
+			[
+				"gen_1_focus",
+				"gen_1_focus",
+				"gen_5_focus",
+				"strat_safe_ones_fives",
+				"default",
+				"default"
+			]
+		},
+		"turns": 
+		[
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							5,
+							2,
+							3,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2
+						]
+					},
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							5,
+							2
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							1,
+							1,
+							2,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							5,
+							5,
+							5,
+							2,
+							3,
+							4
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			}
+		],
+		"expected_result": {
+			"completed_in_enemy_turns": 3,
+			"enemy_final_banked_score": 2900,
+			"enemy_reaches_target": true
+		}
+	},
+	"wb_d1m3_light_straight_pressure": {
+		"mode": "scripted",
+		"strict_validation": true,
+		"on_mismatch": "fail_scenario",
+		"target_score": 3000,
+		"enemy_setup": {
+			"use_modifiers": false,
+			"dice_in_hand": 
+			[
+				"strat_straight_1_6_hunter",
+				"default",
+				"default",
+				"gen_1_focus",
+				"gen_5_focus",
+				"strat_safe_ones_fives"
+			]
+		},
+		"turns": 
+		[
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							2,
+							3,
+							4,
+							5,
+							1
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3,
+							4,
+							5
+						]
+					},
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							5,
+							2,
+							2,
+							3,
+							6
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							1,
+							1,
+							2,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							5,
+							5,
+							5,
+							1,
+							2,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			}
+		],
+		"expected_result": {
+			"completed_in_enemy_turns": 3,
+			"enemy_final_banked_score": 3350,
+			"enemy_reaches_target": true
+		}
+	},
+	"sp_d1m1_stable_triples_curve": {
+		"mode": "scripted",
+		"strict_validation": true,
+		"on_mismatch": "fail_scenario",
+		"target_score": 3500,
+		"enemy_setup": {
+			"use_modifiers": false,
+			"dice_in_hand": 
+			[
+				"gen_1_focus",
+				"gen_5_focus",
+				"strat_safe_ones_fives",
+				"default",
+				"default",
+				"default",
+				"gen_1_focus"
+			]
+		},
+		"turns": 
+		[
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							1,
+							5,
+							2,
+							3,
+							6
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3
+						]
+					},
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							5,
+							2
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							5,
+							5,
+							5,
+							1,
+							2,
+							3,
+							6
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							1,
+							1,
+							2,
+							3,
+							4
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			}
+		],
+		"expected_result": {
+			"completed_in_enemy_turns": 3,
+			"enemy_final_banked_score": 3800,
+			"enemy_reaches_target": true
+		}
+	},
+	"sp_d1m2_mid_straight_mix": {
+		"mode": "scripted",
+		"strict_validation": true,
+		"on_mismatch": "fail_scenario",
+		"target_score": 4000,
+		"enemy_setup": {
+			"use_modifiers": false,
+			"dice_in_hand": 
+			[
+				"strat_straight_2_6_hunter",
+				"strat_straight_1_6_hunter",
+				"default",
+				"gen_1_focus",
+				"gen_5_focus",
+				"default",
+				"strat_safe_ones_fives"
+			]
+		},
+		"turns": 
+		[
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							2,
+							3,
+							4,
+							5,
+							6,
+							1,
+							5
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6
+						]
+					},
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							2,
+							2,
+							3,
+							4,
+							4,
+							6
+						],
+						"save_unbanked_indexes": 
+						[
+							0
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							1,
+							1,
+							2,
+							3,
+							4
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							5,
+							5,
+							5,
+							5,
+							1,
+							2,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3,
+							4
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			}
+		],
+		"expected_result": {
+			"completed_in_enemy_turns": 3,
+			"enemy_final_banked_score": 4750,
+			"enemy_reaches_target": true
+		}
+	},
+	"sp_d1m3_four_kind_pressure": {
+		"mode": "scripted",
+		"strict_validation": true,
+		"on_mismatch": "fail_scenario",
+		"target_score": 4500,
+		"enemy_setup": {
+			"use_modifiers": false,
+			"dice_in_hand": 
+			[
+				"gen_1_focus",
+				"gen_5_focus",
+				"gen_5_focus",
+				"strat_safe_ones_fives",
+				"default",
+				"default",
+				"strat_polar_ends"
+			]
+		},
+		"turns": 
+		[
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							1,
+							1,
+							1,
+							5,
+							2,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3,
+							4
+						]
+					},
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							5
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							2
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3,
+							4,
+							5
+						]
+					},
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							1
+						],
+						"save_unbanked_indexes": 
+						[
+							0
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			},
+			{
+				"steps": 
+				[
+					{
+						"action": "roll",
+						"forced_values": 
+						[
+							5,
+							5,
+							5,
+							5,
+							1,
+							2,
+							3
+						],
+						"save_unbanked_indexes": 
+						[
+							0,
+							1,
+							2,
+							3,
+							4
+						]
+					},
+					{
+						"action": "pass"
+					}
+				]
+			}
+		],
+		"expected_result": {
+			"completed_in_enemy_turns": 3,
+			"enemy_final_banked_score": 4900,
+			"enemy_reaches_target": true
+		}
+	}
 }

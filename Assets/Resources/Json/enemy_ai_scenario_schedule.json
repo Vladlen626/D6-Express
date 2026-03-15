@@ -1,17 +1,17 @@
 {
-  "default_scenario_id": "wb_d1m1_safe_finish_straight",
+  "default_scenario_id": "wb_d1m1_safe_ones_and_fives",
   "by_level": {
     "*": {
       "by_day": {
         "1": {
           "by_match": {
-            "1": "wb_d1m1_safe_finish_straight",
-            "2": "wb_d1m2_hot_pairs_then_triple_ones",
-            "3": "wb_d1m3_greedy_hot_chain_to_straight",
-            "*": "wb_d1m3_greedy_hot_chain_to_straight"
+            "1": "wb_d1m1_safe_ones_and_fives",
+            "2": "wb_d1m2_triple_ones_then_fives",
+            "3": "wb_d1m3_light_straight_pressure",
+            "*": "wb_d1m3_light_straight_pressure"
           }
         },
-        "*": { "by_match": { "*": "wb_d1m3_greedy_hot_chain_to_straight" } }
+        "*": { "by_match": { "*": "wb_d1m3_light_straight_pressure" } }
       }
     }
   }
