@@ -53,17 +53,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2406711090406682806}
     m_Modifications:
+    - target: {fileID: 1885280820132006513, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2577801678900187767, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_LODs.Array.data[0].screenRelativeHeight
-      value: 0.02573945
+      value: 0.79521304
       objectReference: {fileID: 0}
     - target: {fileID: 2577801678900187767, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_LODs.Array.data[1].screenRelativeHeight
-      value: 0.012295009
+      value: 0.49982846
       objectReference: {fileID: 0}
     - target: {fileID: 2577801678900187767, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_LODs.Array.data[2].screenRelativeHeight
-      value: 0.00603207
+      value: 0.3029119
       objectReference: {fileID: 0}
     - target: {fileID: 2577801678900187767, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_LODs.Array.data[3].screenRelativeHeight
@@ -72,6 +76,10 @@ PrefabInstance:
     - target: {fileID: 3731095390187986728, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_Name
       value: Spruce 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4859832360398608661, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4945563664222880364, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_LocalScale.x
@@ -123,6 +131,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4945563664222880364, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6212658864275681124, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7913072882568581480, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
