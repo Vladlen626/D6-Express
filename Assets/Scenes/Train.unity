@@ -815,6 +815,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 237216330909773803, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 341422172985340685, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 530296643540684055, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -858,6 +866,30 @@ PrefabInstance:
     - target: {fileID: 1355620770823827789, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
       propertyPath: m_Name
       value: StationBlock
+      objectReference: {fileID: 0}
+    - target: {fileID: 1532505916854388240, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1658378296848751165, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2490617137532620230, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3099965667288557792, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3184449168606992796, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5008201154036108430, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
+      propertyPath: m_StaticShadowCaster
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
