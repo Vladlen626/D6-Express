@@ -103,7 +103,7 @@ MonoBehaviour:
   _background: {fileID: 161130961797486512}
   _text: {fileID: 5572449897106820572}
   _layoutElement: {fileID: 3543873495202656704}
-  _maxWidth: 300
+  _maxWidth: 400
   _wrap: 1
   _useLayoutElement: 1
   _autoAddLayoutElement: 1
