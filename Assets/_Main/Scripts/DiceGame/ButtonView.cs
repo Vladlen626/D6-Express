@@ -1,5 +1,7 @@
 ﻿using System;
 using DG.Tweening;
+using PlatformCore.Core;
+using PlatformCore.Services.Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,10 +17,12 @@ namespace _Main.Scripts.Game.Views
 
 		private bool isInteractable = true;
 		private Camera mainCamera;
+		private IAudioService audioService;
 
 		private void Start()
 		{
 			mainCamera = Camera.main;
+			audioService = Locator.Resolve<IAudioService>();
 			SetInteractable(true);
 		}
 
@@ -45,6 +49,7 @@ namespace _Main.Scripts.Game.Views
 				if (hit.collider == buttonCollider)
 				{
 					OnClicked?.Invoke();
+					PlayButtonSound();
 					PlayClickAnimation();
 				}
 			}
@@ -54,6 +59,12 @@ namespace _Main.Scripts.Game.Views
 		{
 			buttonModel.DOScale(0.9f, 0.1f).OnComplete(() =>
 				buttonModel.DOScale(1f, 0.1f));
+		}
+
+		private void PlayButtonSound()
+		{
+			audioService ??= Locator.Resolve<IAudioService>();
+			audioService?.PlaySound(SoundNames.Button);
 		}
 		
 		public void SetInteractable(bool interactable)

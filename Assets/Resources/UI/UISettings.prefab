@@ -298,6 +298,7 @@ GameObject:
   - component: {fileID: 2994345906527562342}
   - component: {fileID: 2840624384681102779}
   - component: {fileID: 2167334904950361017}
+  - component: {fileID: 3326727277995324475}
   m_Layer: 0
   m_Name: close
   m_TagString: Untagged
@@ -481,6 +482,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3326727277995324475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4184708862654971563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2bd0aa80b9a3a443b6f17b708bf4b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonClickSound
 --- !u!1 &7537804601626833751
 GameObject:
   m_ObjectHideFlags: 0

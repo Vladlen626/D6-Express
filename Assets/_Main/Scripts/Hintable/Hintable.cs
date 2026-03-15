@@ -2,8 +2,12 @@ using UnityEngine;
 
 public class Hintable : MonoBehaviour, IHintable
 {
-    [SerializeField]
-    private string hintText;
+	[SerializeField] 
+	private string hintText;
 
-    public string HintText => hintText;
+	[SerializeField]
+	private bool highlighted;
+
+	public string HintText => hintText;
+	public bool Highlighted => highlighted;
 }

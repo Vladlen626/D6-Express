@@ -1,4 +1,5 @@
 using _Main.Scripts.Core.Services;
+using PlatformCore.Services.Audio;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -16,12 +17,18 @@ public class InteractorPlayer : Interactor
 	public bool InteractableDetectionEnabled { get; private set; } = true;
 
 	private IInputService inputService;
+	private IAudioService audioService;
 
-	public void Initialize(IInputService inputService, PlayerStateModel playerStateModel, InteractionToStateTable interactionToStateTable)
+	public void Initialize(
+		IInputService inputService,
+		IAudioService audioService,
+		PlayerStateModel playerStateModel,
+		InteractionToStateTable interactionToStateTable)
 	{
 		Initialize(playerStateModel, interactionToStateTable);
 
 		this.inputService = inputService;
+		this.audioService = audioService;
 		this.inputService.OnInteractPressed += OnInteract;
 	}
 
@@ -35,8 +42,22 @@ public class InteractorPlayer : Interactor
 		InteractableDetectionEnabled = false;
 	}
 
+	private void OnEnable()
+	{
+		if (inputService != null)
+		{
+			inputService.OnInteractPressed += OnInteract;
+		}
+	}
+
 	private void OnDisable()
 	{
+		if (selectedInteractable != null)
+		{
+			FireMissed(selectedInteractable);
+		}
+		selectedInteractable = null;
+
 		if (inputService != null)
 		{
 			inputService.OnInteractPressed -= OnInteract;
@@ -76,6 +97,7 @@ public class InteractorPlayer : Interactor
 	{
 		if (selectedInteractable != null)
 		{
+			audioService?.PlaySound(SoundNames.Button);
 			Interact(selectedInteractable);
 		}
 	}

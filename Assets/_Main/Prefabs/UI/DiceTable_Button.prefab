@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 7047825427780474497}
   - component: {fileID: 8643164594215386315}
   - component: {fileID: 5004987255150195709}
+  - component: {fileID: 3672975028875518386}
   m_Layer: 5
   m_Name: DiceTable_Button
   m_TagString: Untagged
@@ -269,3 +270,15 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &3672975028875518386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7580782640973988870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2bd0aa80b9a3a443b6f17b708bf4b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonClickSound

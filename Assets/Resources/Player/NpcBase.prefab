@@ -313,6 +313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hintable
   hintText: speak
+  highlighted: 0
 --- !u!114 &3846627723556643445
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -557,14 +558,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: SkeletonCute
       objectReference: {fileID: 0}
+    - target: {fileID: 2622315507144001795, guid: c34543c0cd65b0149a3fe1737a25b7a2, type: 3}
+      propertyPath: m_CastShadows
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: c34543c0cd65b0149a3fe1737a25b7a2, type: 3}
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 680bf8b1187f66c4c95e2db3fe0c9849, type: 2}
+    - target: {fileID: 5866666021909216657, guid: c34543c0cd65b0149a3fe1737a25b7a2, type: 3}
+      propertyPath: m_CullingMode
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -8551654070373378105, guid: c34543c0cd65b0149a3fe1737a25b7a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1292304014923851366}
   m_SourcePrefab: {fileID: 100100000, guid: c34543c0cd65b0149a3fe1737a25b7a2, type: 3}
 --- !u!4 &2043859314068341438 stripped
 Transform:
@@ -576,6 +588,29 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c34543c0cd65b0149a3fe1737a25b7a2, type: 3}
   m_PrefabInstance: {fileID: 2419915183409085584}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2938369954303650647 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -8551654070373378105, guid: c34543c0cd65b0149a3fe1737a25b7a2, type: 3}
+  m_PrefabInstance: {fileID: 2419915183409085584}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1292304014923851366
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2938369954303650647}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Outline
+  outlineMode: 1
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  outlineWidth: 2.5
+  precomputeOutline: 1
+  bakeKeys: []
+  bakeValues: []
 --- !u!95 &8142457137615634689 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: c34543c0cd65b0149a3fe1737a25b7a2, type: 3}

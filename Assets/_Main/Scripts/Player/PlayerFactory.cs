@@ -12,6 +12,7 @@ public static class PlayerFactory
 	public static async UniTask<PlayerView> SpawnPlayerView(
 		IObjectFactory factory,
 		IInputService inputService,
+		IAudioService audioService,
 		PlayerModel playerModel,
 		Transform spawnTfm,
 		InteractionToStateTable interactionToStateTable)
@@ -20,7 +21,7 @@ public static class PlayerFactory
 			spawnTfm.rotation);
 
 		var playerInteractSystem = playerView.GetComponent<InteractorPlayer>();
-		playerInteractSystem.Initialize(inputService, playerModel.PlayerStateModel, interactionToStateTable);
+		playerInteractSystem.Initialize(inputService, audioService, playerModel.PlayerStateModel, interactionToStateTable);
 
 		return playerView;
 	}

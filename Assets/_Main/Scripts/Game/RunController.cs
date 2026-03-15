@@ -1,4 +1,5 @@
 ﻿using _Main.Scripts.Dice;
+using System;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
@@ -44,12 +45,25 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	public async UniTask PreloadAsync()
 	{
 		playerConfig = await configService.GetFirstOrDefaultAsync<PlayerConfig>(ResourcePaths.Json.player);
+		if (playerConfig == null)
+		{
+			throw new InvalidOperationException("[RunController] Player config was not loaded.");
+		}
+
+		playerModel.InventoryModel.SetModifierItemsCapacity(playerConfig.modifierItemsCapacity);
 	}
 
 	private void OnTickChangeRequested(int value)
 	{
-		run.SetTick(value);
-		game.NotifyTickChanged();
+		if (value >= run.TicksPerDay && !CanMoveNextLevel())
+		{
+			run.FinishRun(false);
+		}
+		else
+		{
+			run.SetTick(value);
+			game.NotifyTickChanged();
+		}
 	}
 
 	private void OnLevelChangeRequested()
@@ -85,7 +99,12 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		{
 			foreach (var modifierId in playerConfig.modifierItems)
 			{
-				playerModel.InventoryModel.AddModifierItem(modifierId);
+				var addResult = playerModel.InventoryModel.TryAddModifierItem(modifierId);
+				if (addResult != ModifierItemAddResult.Success)
+				{
+					throw new InvalidOperationException(
+						$"[RunController] Failed to add starting modifier item '{modifierId}'. Reason: {addResult}.");
+				}
 			}
 		}
 
@@ -100,8 +119,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	{
 		if (value >= run.DaysPerLevel)
 		{
-			var canMoveNextLevel = playerModel.InventoryModel.CashCount >= run.NextTicketPrice;
-			if (canMoveNextLevel)
+			if (CanMoveNextLevel())
 			{
 				if (run.Level + 1 == run.LevelsCount)
 				{
@@ -124,5 +142,10 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			run.SetDay(value);
 			game.NotifyDayChanged();
 		}
+	}
+
+	private bool CanMoveNextLevel()
+	{
+		return playerModel.InventoryModel.CashCount >= run.NextTicketPrice;
 	}
 }

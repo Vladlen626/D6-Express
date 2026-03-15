@@ -5,6 +5,10 @@ namespace _Main.Scripts.Dice
 {
 	public class DiceGameBetViewController : IBaseController, IActivatable
 	{
+		private const int Bet1xMultiplier = 1;
+		private const int Bet3xMultiplier = 3;
+		private const int Bet5xMultiplier = 5;
+
 		public readonly DiceGameModel diceGameModel;
 		public readonly DiceTableView diceTableView;
 
@@ -15,22 +19,38 @@ namespace _Main.Scripts.Dice
 		}
 		public void Activate()
 		{
-			diceGameModel.OnBetSizeChanged += OnBetSizeChangedHandler;
-			
-			diceTableView.SetMinBet(diceGameModel.MinBetSize);
-			diceTableView.SetMaxBet(diceGameModel.MaxBetSize);
-			diceTableView.SetBet(diceGameModel.BetSize);
-			OnBetSizeChangedHandler();
+			ConfigureBetMode();
 		}
 
 		public void Deactivate()
 		{
-			diceGameModel.OnBetSizeChanged -= OnBetSizeChangedHandler;
 		}
 
-		private void OnBetSizeChangedHandler()
+		private void ConfigureBetMode()
 		{
-			diceTableView.SetCurrentBetText(diceGameModel.BetSize.ToString());
+			var minBet = diceGameModel.MinBetSize;
+			var maxBet = diceGameModel.MaxBetSize;
+			var bet1x = minBet * Bet1xMultiplier;
+			var bet3x = minBet * Bet3xMultiplier;
+			var bet5x = minBet * Bet5xMultiplier;
+			diceTableView.SetBetButtonsAmounts(bet1x, bet3x, bet5x, maxBet);
+
+			var hasEnoughForMinBet = maxBet >= minBet;
+			diceTableView.ShowBetMultipliers(hasEnoughForMinBet);
+			diceTableView.ShowAllInButton(!hasEnoughForMinBet);
+
+			if (!hasEnoughForMinBet)
+			{
+				diceTableView.SetBetMultiplierButtonsInteractable(false, false, false);
+				diceTableView.SetAllInButtonInteractable(maxBet > 0);
+				return;
+			}
+
+			diceTableView.SetAllInButtonInteractable(false);
+			diceTableView.SetBetMultiplierButtonsInteractable(
+				maxBet >= bet1x,
+				maxBet >= bet3x,
+				maxBet >= bet5x);
 		}
 	}
 }

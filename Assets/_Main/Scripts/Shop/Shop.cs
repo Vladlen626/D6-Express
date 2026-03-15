@@ -23,6 +23,7 @@ public class Shop : IGameStateChanger
 
     public event Action<TradeItem> BuyCompleted;
     public event Action BuyFailed;
+    public event Action<ShopBuyFailReason, TradeItem> BuyFailedDetailed;
 
     public event Action RestockFailed;
 
@@ -203,7 +204,7 @@ public class Shop : IGameStateChanger
     {
         if (inventoryModel.CashCount < tradeItem.Price)
         {
-            BuyFailed?.Invoke();
+            FailPurchase(ShopBuyFailReason.NotEnoughCash, tradeItem, true);
             return;
         }
 
@@ -211,25 +212,60 @@ public class Shop : IGameStateChanger
         {
             case ItemCatalogType.Dice:
                 inventoryModel.TakeCash(tradeItem.Price);
+                RemoveTradeItemFromStock(tradeItem);
                 inventoryModel.AddDice(tradeItem.ItemId);
                 break;
             case ItemCatalogType.ModifierItem:
+                var validationResult = inventoryModel.ValidateModifierItemAdd(tradeItem.ItemId);
+                if (validationResult != ModifierItemAddResult.Success)
+                {
+                    var failureReason = MapModifierItemAddFailure(validationResult);
+                    FailPurchase(failureReason, tradeItem, false);
+                    return;
+                }
+
                 inventoryModel.TakeCash(tradeItem.Price);
-                inventoryModel.AddModifierItem(tradeItem.ItemId);
+                RemoveTradeItemFromStock(tradeItem);
+                var addResult = inventoryModel.TryAddModifierItem(tradeItem.ItemId);
+                if (addResult != ModifierItemAddResult.Success)
+                {
+                    throw new InvalidOperationException(
+                        $"[Shop] Failed to add modifier item '{tradeItem.ItemId}' after successful validation. Reason: {addResult}.");
+                }
                 break;
             default:
                 UnityEngine.Debug.LogError(
                     $"[Shop] Unsupported purchase type '{tradeItem.ItemType}' for item '{tradeItem.ItemId}'. Purchase aborted.");
-                BuyFailed?.Invoke();
+                FailPurchase(ShopBuyFailReason.UnsupportedItemType, tradeItem, true);
                 return;
         }
 
-        tradeItem.Buyed -= OnBuyed;
-        var index = Array.IndexOf(tradeItems, tradeItem);
-        tradeItems[index] = null;
-        ItemRemoved?.Invoke(index, tradeItem);
-
         BuyCompleted?.Invoke(tradeItem);
+    }
+
+    private static ShopBuyFailReason MapModifierItemAddFailure(ModifierItemAddResult result)
+    {
+        switch (result)
+        {
+            case ModifierItemAddResult.InvalidId:
+                return ShopBuyFailReason.InvalidItemId;
+            case ModifierItemAddResult.Duplicate:
+                return ShopBuyFailReason.ModifierItemAlreadyOwned;
+            case ModifierItemAddResult.InventoryFull:
+                return ShopBuyFailReason.ModifierInventoryFull;
+            case ModifierItemAddResult.Success:
+            default:
+                return ShopBuyFailReason.Unknown;
+        }
+    }
+
+    private void FailPurchase(ShopBuyFailReason reason, TradeItem tradeItem, bool invokeLegacy)
+    {
+        BuyFailedDetailed?.Invoke(reason, tradeItem);
+        if (invokeLegacy)
+        {
+            BuyFailed?.Invoke();
+        }
     }
 
     private static bool IsSupportedShopItemType(ItemCatalogType itemType)
@@ -263,9 +299,38 @@ public class Shop : IGameStateChanger
         return false;
     }
 
+    private void RemoveTradeItemFromStock(TradeItem tradeItem)
+    {
+        if (tradeItem == null)
+        {
+            return;
+        }
+
+        tradeItem.Buyed -= OnBuyed;
+
+        var index = Array.IndexOf(tradeItems, tradeItem);
+        if (index < 0)
+        {
+            return;
+        }
+
+        tradeItems[index] = null;
+        ItemRemoved?.Invoke(index, tradeItem);
+    }
+
     private void IncreaseRestockPrice()
     {
         RestockPrice += RestockPriceScale;
         RestockPriceChanged?.Invoke();
     }
+}
+
+public enum ShopBuyFailReason
+{
+    Unknown = 0,
+    NotEnoughCash = 1,
+    ModifierItemAlreadyOwned = 2,
+    ModifierInventoryFull = 3,
+    UnsupportedItemType = 4,
+    InvalidItemId = 5
 }

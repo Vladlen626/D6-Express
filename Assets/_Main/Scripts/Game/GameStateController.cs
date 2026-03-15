@@ -15,6 +15,7 @@ public class GameStateController : IBaseController, IActivatable
 
 	private static readonly GameStateTransitionTask[] RunStartRecipe =
 	{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.SHOW_STATS,
@@ -28,21 +29,26 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.ENABLE_CHARACTER,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
 	private static readonly GameStateTransitionTask[] TickRecipe =
 	{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.NPC_RESPAWN,
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
 	private static readonly GameStateTransitionTask[] DayRecipe =
 	{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.SHOW_STATS,
@@ -56,10 +62,12 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
 	private static readonly GameStateTransitionTask[] LocationRecipe =
 	{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.SHOW_STATS,
@@ -74,10 +82,12 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.SHOP_RESTOCK,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
 	private static readonly GameStateTransitionTask[] LocationMainMenuRecipe =
 	{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.LOCK_CURSOR,
@@ -88,26 +98,48 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
+	};
+
+	private static readonly GameStateTransitionTask[] LocationStationToTrainRecipe =
+	{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.CHARACTER_TRANSITION_START,
+		GameStateTransitionTask.LOCK_CURSOR,
+		GameStateTransitionTask.CHANGE_LOCATION,
+		GameStateTransitionTask.NPC_RESPAWN,
+		GameStateTransitionTask.SHOP_RESTOCK,
+		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
 	private static readonly GameStateTransitionTask[] RunFinishedWinRecipe =
 	{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.SHOW_WIN,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.DISABLE_CHARACTER,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
 	private static readonly GameStateTransitionTask[] RunFinishedLoseRecipe =
 	{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
 		GameStateTransitionTask.CHARACTER_TRANSITION_START,
 		GameStateTransitionTask.VISUAL_TRANSITION_START,
 		GameStateTransitionTask.UNLOCK_CURSOR,
 		GameStateTransitionTask.SHOW_LOSE,
 		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
 		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.DISABLE_CHARACTER,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
 	public GameStateController(D6Game game, Run run)
@@ -173,7 +205,7 @@ public class GameStateController : IBaseController, IActivatable
 		}
 		else if (location == Location.TRAIN && game.Location == Location.STATION)
 		{
-			RequestChange(new GameStateTransition(LocationMainMenuRecipe, location, false));
+			RequestChange(new GameStateTransition(LocationStationToTrainRecipe, location, false));
 		}
 		else
 		{

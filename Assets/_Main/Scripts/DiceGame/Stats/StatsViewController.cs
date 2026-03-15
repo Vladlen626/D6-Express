@@ -3,6 +3,7 @@ using _Main.Scripts.Core.Services;
 using _Main.Scripts.Dice;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 
@@ -12,14 +13,23 @@ public class StatsViewController : BaseContextController<UIStatsView>, IGameStat
     private readonly ConfigService configService;
     private Dictionary<string, StationConfig> stationConfigs;
     private readonly IInputService inputService;
+    private readonly IAudioService audioService;
 
     private readonly ModifiersViewMiniController modifiersController;
 
-    public StatsViewController(IUIService uiService, Run run, ConfigService configService, IInputService inputService, ModifiersModel modifiersModel, IObjectFactory objectFactory) : base(uiService)
+    public StatsViewController(
+        IUIService uiService,
+        Run run,
+        ConfigService configService,
+        IInputService inputService,
+        IAudioService audioService,
+        ModifiersModel modifiersModel,
+        IObjectFactory objectFactory) : base(uiService)
     {
         this.run = run;
         this.configService = configService;
         this.inputService = inputService;
+        this.audioService = audioService;
         this.modifiersController = new ModifiersViewMiniController(modifiersModel, objectFactory, configService);
     }
 
@@ -68,19 +78,20 @@ public class StatsViewController : BaseContextController<UIStatsView>, IGameStat
 
             void OnInteracted()
             {
+                audioService.PlaySound(SoundNames.Button);
                 _context.StartButtonClicked -= OnButtonClicked;
-                inputService.OnInteractPressed -= OnInteracted;
+                inputService.OnUISubmit -= OnInteracted;
                 source.TrySetResult();
             }
 
             void OnButtonClicked()
             {
                 _context.StartButtonClicked -= OnButtonClicked;
-                inputService.OnInteractPressed -= OnInteracted;
+                inputService.OnUISubmit -= OnInteracted;
                 source.TrySetResult();
             }
 
-            inputService.OnInteractPressed += OnInteracted;
+            inputService.OnUISubmit += OnInteracted;
             _context.StartButtonClicked += OnButtonClicked;
 
             await source.Task;

@@ -19,4 +19,12 @@
     public const string GibberishLow0 = "event:/NpcTalk/GibberishLow0";
     public const string DiceMove = "event:/DiceMove";
     public const string Fart = "event:/Fart";
+    public const string SitSoft = "event:/SitSoft";
+    public const string SitHard = "event:/SitHard";
+    public const string DayChange = "event:/DayChange";
+    public const string CameraMove = "event:/CameraMove";
+    public const string PositiveNotification = "event:/PositiveNotification";
+    public const string NegativeNotification = "event:/NegativeNotification";
+    public const string SpendMoney = "event:/SpendMoney";
+    public const string CurtainsInteract = "event:/CurtainsInteract";
 }

@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 7448572346449838821}
   - component: {fileID: 3318451685123584342}
   - component: {fileID: 5692910259455094324}
+  - component: {fileID: 7239223672655618550}
   m_Layer: 0
   m_Name: settings_btn
   m_TagString: Untagged
@@ -497,6 +498,18 @@ MonoBehaviour:
   initDatabase: 1
   eventsEnabled: 0
   commandsEnabled: 1
+--- !u!114 &7239223672655618550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3941544694984507984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2bd0aa80b9a3a443b6f17b708bf4b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonClickSound
 --- !u!1 &4184708862654971563
 GameObject:
   m_ObjectHideFlags: 0
@@ -510,6 +523,7 @@ GameObject:
   - component: {fileID: 2840624384681102779}
   - component: {fileID: 2167334904950361017}
   - component: {fileID: 1949012535893157652}
+  - component: {fileID: 5033919430185683000}
   m_Layer: 0
   m_Name: start_btn
   m_TagString: Untagged
@@ -754,6 +768,18 @@ MonoBehaviour:
   initDatabase: 1
   eventsEnabled: 0
   commandsEnabled: 1
+--- !u!114 &5033919430185683000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4184708862654971563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2bd0aa80b9a3a443b6f17b708bf4b22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonClickSound
 --- !u!1 &7613454160042855105
 GameObject:
   m_ObjectHideFlags: 0

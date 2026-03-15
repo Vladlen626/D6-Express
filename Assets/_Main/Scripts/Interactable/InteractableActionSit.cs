@@ -16,6 +16,7 @@ public class InteractableActionSit : InteractionAction
 	protected override async void StartInteractInternal(bool immediate = false)
 	{
 		StateModel.TryAddState(CharacterState.TRANSITION);
+		PlayInteractableSound(SoundNames.SitSoft);
 
 		lastPos = Interactor.transform.position;
 
@@ -30,7 +31,6 @@ public class InteractableActionSit : InteractionAction
 			var moveTask = Interactor.transform.DOMove(sittable.SitTfm.position, 0.25f).AsyncWaitForCompletion().AsUniTask();
 			var rotateTask = Interactor.transform.DORotateQuaternion(sittable.SitTfm.rotation, 0.25f).AsyncWaitForCompletion().AsUniTask();
 
-			
 			// TODO: НУжна какая-то более адекватная тема, и инты поменять на енам
 			Interactor.GetComponent<CharacterView>().Animator.SetInteger(State, 1);
 			await UniTask.WhenAll(moveTask, rotateTask);
@@ -45,6 +45,7 @@ public class InteractableActionSit : InteractionAction
 		StateModel.TryAddState(CharacterState.TRANSITION);
 
 		// TODO: НУжна какая-то более адекватная тема, и инты поменять на енам
+		PlayInteractableSound(SoundNames.SitHard);
 		Interactor.GetComponent<CharacterView>().Animator.SetInteger(State, 0);
 
 		if (immediate)

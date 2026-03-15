@@ -12,6 +12,7 @@ namespace _Main.Scripts.Dice
 	/// (RoundEnd stage), then restores them and is consumed.
 	/// </summary>
 	public class ModifierSilencerItem : ModifierItemBase,
+		IGameModelBoundItem,
 		IOnLevelStartModifier,
 		IOnRoundStartModifier,
 		IOnRollModifier,
@@ -40,11 +41,11 @@ namespace _Main.Scripts.Dice
 			customPrefab = prefabOverride;
 		}
 
-		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
+		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlySelectDice;
 
 		public override bool IsActivationAllowed(DiceGameState gameState)
 		{
-			return gameState == DiceGameState.GAME;
+			return gameState == DiceGameState.SELECT_DICE;
 		}
 
 		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
@@ -74,6 +75,28 @@ namespace _Main.Scripts.Dice
 			SetState(DiceItemState.Armed);
 			NotifyEffectApplied();
 			return true;
+		}
+
+		public void OnAddedToGameModel(DiceGameModel gameModel)
+		{
+			if (gameModel == null)
+			{
+				return;
+			}
+
+			boundGameModel = gameModel;
+			boundModifiersModel = ResolveBoundModifiersModel(gameModel);
+		}
+
+		public void OnRemovedFromGameModel(DiceGameModel gameModel)
+		{
+			if (isSilencing)
+			{
+				RestoreModifiers();
+			}
+
+			boundModifiersModel = null;
+			boundGameModel = null;
 		}
 
 		private void BindContext(DiceModifierContext context)
@@ -108,6 +131,21 @@ namespace _Main.Scripts.Dice
 
 			Debug.Log("[ModifierSilencerItem] Modifiers silenced until RoundEnd.");
 			return true;
+		}
+
+		private ModifiersModel ResolveBoundModifiersModel(DiceGameModel gameModel)
+		{
+			if (ContainsReference(gameModel?.PlayerModifierItemsModel?.Items, this))
+			{
+				return gameModel.PlayerModifiersModel;
+			}
+
+			if (ContainsReference(gameModel?.EnemyModifierItemsModel?.Items, this))
+			{
+				return gameModel.EnemyModifiersModel;
+			}
+
+			return gameModel?.ModifiersModel;
 		}
 
 		private void ScheduleRestoreAndConsume()
@@ -201,6 +239,24 @@ namespace _Main.Scripts.Dice
 			}
 
 			field.SetValue(model, newList ?? new List<T>());
+		}
+
+		private static bool ContainsReference(IReadOnlyList<IModifierItem> items, IModifierItem target)
+		{
+			if (items == null || target == null)
+			{
+				return false;
+			}
+
+			for (int i = 0; i < items.Count; i++)
+			{
+				if (ReferenceEquals(items[i], target))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private class SilencedState

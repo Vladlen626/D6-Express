@@ -1,5 +1,6 @@
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
+using PlatformCore.Services.Audio;
 using PlatformCore.Services.UI;
 
 public class DiceGameUIController : BaseContextController<DiceGameUIView>
@@ -13,13 +14,19 @@ public class DiceGameUIController : BaseContextController<DiceGameUIView>
     };
 
     private readonly IInputService inputService;
+    private readonly IAudioService audioService;
     private readonly PlayerStateModel playerStateModel;
 
     private int currentCameraIndex;
 
-    public DiceGameUIController(IUIService uiService, IInputService inputService, PlayerStateModel playerStateModel) : base(uiService)
+    public DiceGameUIController(
+        IUIService uiService,
+        IInputService inputService,
+        IAudioService audioService,
+        PlayerStateModel playerStateModel) : base(uiService)
     {
         this.inputService = inputService;
+        this.audioService = audioService;
         this.playerStateModel = playerStateModel;
     }
 
@@ -60,8 +67,15 @@ public class DiceGameUIController : BaseContextController<DiceGameUIView>
         }
     }
 
-    private async void OnNextHandler()
+    private void OnNextHandler()
     {
+        if (!playerStateModel.HasState(CharacterState.DICE_GAME))
+        {
+            return;
+        }
+
+        audioService.PlaySound(SoundNames.Button);
+
         currentCameraIndex++;
         if (currentCameraIndex >= DiceGameCameraStates.Length)
         {
@@ -71,8 +85,15 @@ public class DiceGameUIController : BaseContextController<DiceGameUIView>
         UpdateHints();
     }
 
-    private async void OnPreviousHandler()
+    private void OnPreviousHandler()
     {
+        if (!playerStateModel.HasState(CharacterState.DICE_GAME))
+        {
+            return;
+        }
+
+        audioService.PlaySound(SoundNames.Button);
+
         currentCameraIndex--;
         if (currentCameraIndex < 0)
         {

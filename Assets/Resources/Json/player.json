@@ -8,5 +8,6 @@
     "default",
     "default"
   ],
-  "modifierItems": []
+  "modifierItems": [],
+  "modifierItemsCapacity": 6
 }

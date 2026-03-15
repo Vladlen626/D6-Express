@@ -111,7 +111,7 @@ namespace _Main.Scripts.Dice
 		// ReSharper disable Unity.PerformanceAnalysis
 		public async UniTask HandleRollAsync()
 		{
-			IsProcessing = true;
+			SetProcessingState(true);
 
 			try
 			{
@@ -168,6 +168,7 @@ namespace _Main.Scripts.Dice
 
 				await UniTask.WhenAll(tasks);
 				audioService.PlaySound(SoundNames.DiceDrop);
+				cameraShakeService.ShakeAsync(0.4f, 0.065f).Forget();
 
 				await UniTask.Delay(GlobalParameters.Delay / 2);
 				
@@ -190,7 +191,7 @@ namespace _Main.Scripts.Dice
 			finally
 			{
 				diceGameModel.RollEnded();
-				IsProcessing = false;
+				SetProcessingState(false);
 			}
 		}
 
@@ -223,7 +224,7 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask HandlePassAsync()
 		{
-			IsProcessing = true;
+			SetProcessingState(true);
 
 			try
 			{
@@ -254,7 +255,25 @@ namespace _Main.Scripts.Dice
 			finally
 			{
 				diceGameModel.PassEnded();
-				IsProcessing = false;
+				SetProcessingState(false);
+			}
+		}
+
+		private void SetProcessingState(bool value)
+		{
+			if (IsProcessing == value)
+			{
+				return;
+			}
+
+			IsProcessing = value;
+			if (value)
+			{
+				diceGameModel.BeginDiceAnimation();
+			}
+			else
+			{
+				diceGameModel.EndDiceAnimation();
 			}
 		}
 
@@ -308,6 +327,12 @@ namespace _Main.Scripts.Dice
 		{
 			diceGameModel.EndTurn(success);
 			audioService.PlaySound(SoundNames.TurnChange);
+
+			if (diceGameModel.IsPlayerTurn)
+			{
+				TryStartInitialRoll();
+			}
+
 			UpdateUI();
 		}
 

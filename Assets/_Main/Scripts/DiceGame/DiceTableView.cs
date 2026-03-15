@@ -9,11 +9,15 @@ public class DiceTableView : MonoBehaviour
 {
 	private const float DefaultUpgradeDiceScale = 1f;
 
-	public event Action<int> OnBetSliderChange;
+	public event Action OnPlayRequested;
+	public event Action OnPlayAllowed;
 	public event Action OnRollClicked;
 	public event Action OnPassClicked;
-	public event Action OnBetClicked;
 	public event Action OnPlayClicked;
+	public event Action OnBet1xClicked;
+	public event Action OnBet3xClicked;
+	public event Action OnBet5xClicked;
+	public event Action OnAllInClicked;
 
 	[Header("Global")]
 	[SerializeField] private Transform tooltipPos;
@@ -43,15 +47,20 @@ public class DiceTableView : MonoBehaviour
 	[Header("Buttons")]
 	[SerializeField] private Button rollButton;
 	[SerializeField] private Button passButton;
-	[SerializeField] private Button betButton;
 	[SerializeField] private Button playButton;
 
 	[Header("Bet")]
-	[SerializeField] private Slider betSlider;
-	[SerializeField] private TextMeshPro currentBetText;
-	[SerializeField] private TextMeshPro minBetText;
-	[SerializeField] private TextMeshPro maxBetText;
-
+	[SerializeField] private string betPrefix = "$";
+	[SerializeField] private Button bet1xButton;
+	[SerializeField] private Button bet3xButton;
+	[SerializeField] private Button bet5xButton;
+	[SerializeField] private Button allInButton;
+	[SerializeField] private Transform betMultipliersRoot;
+	[SerializeField] private Transform allInRoot;
+	[SerializeField] private TMP_Text bet1xLabelText;
+	[SerializeField] private TMP_Text bet3xLabelText;
+	[SerializeField] private TMP_Text bet5xLabelText;
+	[SerializeField] private TMP_Text allInLabelText;
 	[SerializeField] private CouplePositionsHandler gameStatePosHandler;
 	[SerializeField] private CouplePositionsHandler selectionStatePosHandler;
 
@@ -79,25 +88,35 @@ public class DiceTableView : MonoBehaviour
 
 	private void Start()
 	{
+		ValidateBetReferences();
 		rollButton.onClick.AddListener(() => OnRollClicked?.Invoke());
 		passButton.onClick.AddListener(() => OnPassClicked?.Invoke());
-		betButton.onClick.AddListener(() => OnBetClicked?.Invoke());
 		playButton.onClick.AddListener(() => OnPlayClicked?.Invoke());
-		betSlider.onValueChanged.AddListener(OnSliderChanged);
+		bet1xButton.onClick.AddListener(() => OnBet1xClicked?.Invoke());
+		bet3xButton.onClick.AddListener(() => OnBet3xClicked?.Invoke());
+		bet5xButton.onClick.AddListener(() => OnBet5xClicked?.Invoke());
+		allInButton.onClick.AddListener(() => OnAllInClicked?.Invoke());
 	}
 
 	private void OnDestroy()
 	{
 		rollButton.onClick.RemoveAllListeners();
 		passButton.onClick.RemoveAllListeners();
-		betButton.onClick.RemoveAllListeners();
 		playButton.onClick.RemoveAllListeners();
-		betSlider.onValueChanged.RemoveAllListeners();
+		bet1xButton.onClick.RemoveAllListeners();
+		bet3xButton.onClick.RemoveAllListeners();
+		bet5xButton.onClick.RemoveAllListeners();
+		allInButton.onClick.RemoveAllListeners();
 	}
 
-	private void OnSliderChanged(float value)
+	public void RequestPlay()
 	{
-		OnBetSliderChange?.Invoke((int)value);
+		OnPlayRequested?.Invoke();
+	}
+
+	public void AllowPlay()
+	{
+		OnPlayAllowed?.Invoke();
 	}
 
 	//Todo: когда-то здесь будут не строки, обязательно....
@@ -187,22 +206,12 @@ public class DiceTableView : MonoBehaviour
 		UIUtils.UpdateUiIntValueText(turnText, oldValue, newValue, v => $"Turn: {v}");
 	}
 
-	public void SetCurrentBetText(string text)
-	{
-		currentBetText.text = text;
-	}
-
-	public void SetBet(int bet)
-	{
-		betSlider.value = bet;
-	}
-
 	//todo: Это должно динамически включать бонусные позиции для кубов
 	public void SetDiceBonusPositionVisibility(bool visible)
 	{
 		return;
 		PlayerDiceBonusPositions.gameObject.SetActive(visible);
-	} 
+	}
 
 	public void SetEnemyDiceBonusPositionVisibility(bool visible)
 	{
@@ -210,15 +219,47 @@ public class DiceTableView : MonoBehaviour
 		EnemyDiceBonusPositions.gameObject.SetActive(visible);
 	}
 
-	public void SetMinBet(int minBet)
+	public void ShowBetMultipliers(bool visible)
 	{
-		minBetText.text = minBet.ToString();
-		betSlider.minValue = minBet;
+		betMultipliersRoot.gameObject.SetActive(visible);
 	}
 
-	public void SetMaxBet(int MaxBet)
+	public void ShowAllInButton(bool visible)
 	{
-		maxBetText.text = MaxBet.ToString();
-		betSlider.maxValue = MaxBet;
+		allInRoot.gameObject.SetActive(visible);
+	}
+
+	public void SetBetMultiplierButtonsInteractable(bool can1x, bool can3x, bool can5x)
+	{
+		bet1xButton.interactable = can1x;
+		bet3xButton.interactable = can3x;
+		bet5xButton.interactable = can5x;
+	}
+
+	public void SetAllInButtonInteractable(bool interactable)
+	{
+		allInButton.interactable = interactable;
+	}
+
+	public void SetBetButtonsAmounts(int bet1x, int bet3x, int bet5x, int allInBet)
+	{
+		bet1xLabelText.text = FormatBetLabel(bet1x);
+		bet3xLabelText.text = FormatBetLabel(bet3x);
+		bet5xLabelText.text = FormatBetLabel(bet5x);
+		allInLabelText.text = $"ALL IN: {FormatBetLabel(allInBet)}";
+	}
+
+	private string FormatBetLabel(int amount)
+	{
+		return string.IsNullOrEmpty(betPrefix) ? amount.ToString() : $"{betPrefix}{amount}";
+	}
+
+	private void ValidateBetReferences()
+	{
+		if (!bet1xButton || !bet3xButton || !bet5xButton || !allInButton || !betMultipliersRoot || !allInRoot ||
+			bet1xLabelText == null || bet3xLabelText == null || bet5xLabelText == null || allInLabelText == null)
+		{
+			throw new MissingReferenceException("[DiceTableView] BET controls are not configured. Assign bet buttons, roots and label texts in prefab.");
+		}
 	}
 }

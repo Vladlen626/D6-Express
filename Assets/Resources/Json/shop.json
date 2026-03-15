@@ -18,7 +18,17 @@
       { "itemId": "modifier_silencer_item" },
       { "itemId": "pass_multiplier_item" },
       { "itemId": "reroll_selected_item" },
-      { "itemId": "step_up_item" }
+      { "itemId": "step_up_item" },
+      { "itemId": "reroll_all_unsaved_item" },
+      { "itemId": "copy_face_item" },
+      { "itemId": "target_discount_item" },
+      { "itemId": "selected_double_step_item" },
+      { "itemId": "invert_all_faces_item" },
+      { "itemId": "pair_up_item" },
+      { "itemId": "median_blend_item" },
+      { "itemId": "bank_without_pass_item" },
+      { "itemId": "selected_to_opposite_item" },
+      { "itemId": "pass_score_floor_item" }
     ]
   },
   "station": {
@@ -40,7 +50,17 @@
       { "itemId": "modifier_silencer_item" },
       { "itemId": "pass_multiplier_item" },
       { "itemId": "reroll_selected_item" },
-      { "itemId": "step_up_item" }
+      { "itemId": "step_up_item" },
+      { "itemId": "reroll_all_unsaved_item" },
+      { "itemId": "copy_face_item" },
+      { "itemId": "target_discount_item" },
+      { "itemId": "selected_double_step_item" },
+      { "itemId": "invert_all_faces_item" },
+      { "itemId": "pair_up_item" },
+      { "itemId": "median_blend_item" },
+      { "itemId": "bank_without_pass_item" },
+      { "itemId": "selected_to_opposite_item" },
+      { "itemId": "pass_score_floor_item" }
     ]
   }
 }

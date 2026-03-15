@@ -13,6 +13,7 @@ using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
+
 	public class DiceGameGlobalController : IBaseController, IActivatable
 	{
 		private readonly DiceGameModel diceGameModel;
@@ -41,6 +42,7 @@ namespace _Main.Scripts.Dice
 		private DiceView[] enemyDiceViewsArray;
 		private EnemyAiScenarioRuntime enemyScenarioRuntime;
 
+		private DicePreGameController dicePreGameController;
 		private List<IBaseController> persistentControllers = new();
 		private List<IBaseController> gameControllers = new();
 		private List<IBaseController> betControllers = new();
@@ -88,10 +90,16 @@ namespace _Main.Scripts.Dice
 			diceGameModel.OnGameConditionPassed += OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed += OnGameConditionFailedHandler;
 			OnDiceGameStateChangedHandler();
+
+			dicePreGameController = new DicePreGameController(sceneContext, playerView, playerModel, run);
+			lifecycleService.RegisterAsync(dicePreGameController).Forget();
 		}
 
 		public void Deactivate()
 		{
+			lifecycleService.Unregister(dicePreGameController);
+			dicePreGameController = null;
+
 			playerModel.PlayerStateModel.StateAdded -= OnCharacterStateAddedHandler;
 			playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateRemovedHandler;
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
@@ -101,13 +109,16 @@ namespace _Main.Scripts.Dice
 
 		private void OnGameConditionPassedHandler()
 		{
-			playerModel.InventoryModel.GiveCash(diceGameModel.BetSize * 2);
-			StopDiceGame();
+			playerModel.InventoryModel.GiveCash(diceGameModel.CalculateWinPayout());
+
+			playerModel.PlayerStateModel.StateRemoved += OnPostDialogueFinished;
+			PostGameDialogue(true);
 		}
 
 		private void OnGameConditionFailedHandler()
 		{
-			StopDiceGame();
+			playerModel.PlayerStateModel.StateRemoved += OnPostDialogueFinished;
+			PostGameDialogue(false);
 		}
 
 		private void OnDiceGameStateChangedHandler()
@@ -136,8 +147,8 @@ namespace _Main.Scripts.Dice
 		{
 			gamePreviousStoped = false;
 			inputService.EnableDiceGameInputs();
-			
-			inputService.OnInteractPressed += OnExitRequested;
+
+			inputService.OnDiceGameLeave += OnExitRequested;
 
 			if (!await SetupBaseModels())
 			{
@@ -187,7 +198,7 @@ namespace _Main.Scripts.Dice
 		// ReSharper disable Unity.PerformanceAnalysis
 		private void StopDiceGame()
 		{
-			inputService.OnInteractPressed -= OnExitRequested;
+			inputService.OnDiceGameLeave -= OnExitRequested;
 
 			if (gamePreviousStoped)
 			{
@@ -487,7 +498,7 @@ namespace _Main.Scripts.Dice
 			{
 				return;
 			}
-			
+
 			// todo: убрать такой способ
 			var interactable = sceneContext.DiceGameOpponent.GetComponent<InteractableSpeakable>();
 			interactable.SetId(96);
@@ -510,11 +521,11 @@ namespace _Main.Scripts.Dice
 			if (scriptedDiceIds != null && scriptedDiceIds.Length > 0)
 			{
 				if (!DiceGameSetupUtils.TryResolveScriptedEnemyDiceConfigs(
-					    catalog,
-					    scriptedDiceIds,
-					    maxBySlots,
-					    out var scriptedConfigs,
-					    out var error))
+						catalog,
+						scriptedDiceIds,
+						maxBySlots,
+						out var scriptedConfigs,
+						out var error))
 				{
 					Debug.LogError($"[DiceGame] {error}");
 					return null;
@@ -526,10 +537,10 @@ namespace _Main.Scripts.Dice
 			// Enemy should not benefit from player dice cap bonuses.
 			var enemyLimit = Mathf.Min(diceGameModel.BaseMaxDiceCount, maxBySlots);
 			if (!DiceGameSetupUtils.TryResolveDefaultEnemyDiceConfigs(
-				    catalog,
-				    enemyLimit,
-				    out var defaults,
-				    out var defaultError))
+					catalog,
+					enemyLimit,
+					out var defaults,
+					out var defaultError))
 			{
 				Debug.LogWarning($"[DiceGame] {defaultError}");
 				return null;
@@ -542,6 +553,25 @@ namespace _Main.Scripts.Dice
 		{
 			Debug.LogError(message);
 			diceGameModel.SetConditionFailed();
+		}
+
+		private void OnPostDialogueFinished(CharacterState state)
+		{
+			if (state == CharacterState.SPEAKING)
+			{
+				playerModel.PlayerStateModel.StateRemoved -= OnPostDialogueFinished;
+				StopDiceGame();
+			}
+		}
+
+		private void PostGameDialogue(bool result)
+		{
+			var id = result ? 98 : 99;
+			// todo: убрать такой способ
+			var interactable = sceneContext.DiceGameOpponent.GetComponent<InteractableSpeakable>();
+			interactable.SetId(id);
+			playerView.Interactor.Interact(interactable);
+			interactable.ResetId();
 		}
 	}
 }

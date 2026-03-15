@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Main.Scripts.Core;
 using Cysharp.Threading.Tasks;
 using _Main.Scripts.Core.Services;
 using PlatformCore.Core;
@@ -45,10 +46,12 @@ public class ShopPurchaseNotificationController : IBaseController, IActivatable,
 	public void Activate()
 	{
 		shop.BuyCompleted += OnBuyCompleted;
+		shop.BuyFailedDetailed += OnBuyFailedDetailed;
 	}
 
 	public void Deactivate()
 	{
+		shop.BuyFailedDetailed -= OnBuyFailedDetailed;
 		shop.BuyCompleted -= OnBuyCompleted;
 	}
 
@@ -73,6 +76,16 @@ public class ShopPurchaseNotificationController : IBaseController, IActivatable,
 		}
 
 		notificationService?.ShowToastRawImmediate(string.Format(buyText, itemName));
+	}
+
+	private void OnBuyFailedDetailed(ShopBuyFailReason reason, TradeItem tradeItem)
+	{
+		if (reason != ShopBuyFailReason.ModifierInventoryFull)
+		{
+			return;
+		}
+
+		notificationService?.ShowToastImmediate(GlobalConstants.Localization.ShopModifierInventoryFull, true);
 	}
 
 	private string ResolveItemName(TradeItem tradeItem)
