@@ -15,7 +15,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4
   m_IsActive: 1
 --- !u!4 &2406711090406682806
 Transform:
@@ -73,9 +73,21 @@ PrefabInstance:
       propertyPath: m_LODs.Array.data[3].screenRelativeHeight
       value: 0.0022039874
       objectReference: {fileID: 0}
+    - target: {fileID: 3013064464910278001, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 3731095390187986728, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_Name
       value: Spruce 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3731095390187986728, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3828991336546146468, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4859832360398608661, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_CastShadows
@@ -132,6 +144,14 @@ PrefabInstance:
     - target: {fileID: 4945563664222880364, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5289512668786254364, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6119422277959754521, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 6212658864275681124, guid: 04054a3651be51d4193414f850cf6bde, type: 3}
       propertyPath: m_CastShadows
