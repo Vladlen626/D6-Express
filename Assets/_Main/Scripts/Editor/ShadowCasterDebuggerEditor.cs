@@ -12,7 +12,12 @@ public class ShadowCasterDebuggerEditor : Editor
 
         EditorGUILayout.Space();
 
-        if (GUILayout.Button("Log Shadow Casters"))
+        if (GUILayout.Button("Log All Shadow Casters"))
+        {
+            debugger.LogAllShadowCasters();
+        }
+
+        if (GUILayout.Button("Log Shadow Casters (Use Filter)"))
         {
             debugger.LogShadowCasters();
         }

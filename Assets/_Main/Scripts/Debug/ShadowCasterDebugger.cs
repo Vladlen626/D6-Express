@@ -9,7 +9,7 @@ public class ShadowCasterDebugger : MonoBehaviour
 	[SerializeField] private Camera targetCamera;
 
 	[Header("Filter")]
-	[SerializeField] private bool onlyVisibleForCamera = true;
+	[SerializeField] private bool onlyVisibleForCamera = false;
 	[SerializeField] private bool includeInactiveObjects = false;
 
 	[Header("Logging")]
@@ -27,9 +27,20 @@ public class ShadowCasterDebugger : MonoBehaviour
 	[ContextMenu("Log Shadow Casters")]
 	public void LogShadowCasters()
 	{
-		Camera cameraToUse = GetTargetCamera();
+		LogShadowCastersInternal(onlyVisibleForCamera);
+	}
 
-		if (onlyVisibleForCamera && !cameraToUse)
+	[ContextMenu("Log Shadow Casters (All Objects)")]
+	public void LogAllShadowCasters()
+	{
+		LogShadowCastersInternal(false);
+	}
+
+	private void LogShadowCastersInternal(bool filterByCamera)
+	{
+		Camera cameraToUse = filterByCamera ? GetTargetCamera() : null;
+
+		if (filterByCamera && !cameraToUse)
 		{
 			Debug.LogWarning("ShadowCasterDebugger: targetCamera is not assigned and Camera.main was not found.");
 			return;
@@ -43,7 +54,7 @@ public class ShadowCasterDebugger : MonoBehaviour
 		Renderer[] allRenderers = FindObjectsByType<Renderer>(findObjectsInactive, FindObjectsSortMode.None);
 		Plane[] frustumPlanes = null;
 
-		if (onlyVisibleForCamera)
+		if (filterByCamera)
 		{
 			frustumPlanes = GeometryUtility.CalculateFrustumPlanes(cameraToUse);
 		}
@@ -70,7 +81,7 @@ public class ShadowCasterDebugger : MonoBehaviour
 
 			totalShadowCapable++;
 
-			if (onlyVisibleForCamera && !GeometryUtility.TestPlanesAABB(frustumPlanes, renderer.bounds))
+			if (filterByCamera && !GeometryUtility.TestPlanesAABB(frustumPlanes, renderer.bounds))
 			{
 				continue;
 			}
@@ -103,7 +114,7 @@ public class ShadowCasterDebugger : MonoBehaviour
 
 		StringBuilder sb = new StringBuilder(8192);
 		sb.AppendLine("========== SHADOW CASTER DEBUG ==========");
-		sb.AppendLine($"Only visible for camera: {onlyVisibleForCamera}");
+		sb.AppendLine($"Only visible for camera: {filterByCamera}");
 		sb.AppendLine($"Camera: {(cameraToUse ? cameraToUse.name : "None")}");
 		sb.AppendLine($"Total renderers with shadows enabled: {totalShadowCapable}");
 		sb.AppendLine($"Matched renderers: {_lastMatchedRenderers.Count}");
