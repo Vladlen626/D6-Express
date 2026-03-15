@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class NpcSpawner
 {
-    private const int NPC_SPAWNED_COUNT = 8;
+    private const int NPC_SPAWNED_COUNT = 3;
 
     private readonly IObjectFactory factory;
     private readonly D6Game d6Game;
