@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
-	public class AdjustUnsavedDieValueModifier : IOnRollModifier, IModifierUiConfigProvider
+	public class AdjustUnsavedDieValueModifier : IOnRollModifier, IModifierUiConfigProvider, IModifierApplyResultProvider
 	{
 		private readonly DiceScoringService scoringService;
 		public readonly UnsavedDieSelectionStrategy selectionStrategy;
@@ -12,6 +12,7 @@ namespace _Main.Scripts.Dice
 		public readonly int minValue;
 		public readonly int maxValue;
 		public string UiConfigId { get; }
+		public bool LastApplyHadEffect { get; private set; }
 
 		public AdjustUnsavedDieValueModifier(
 			DiceScoringService scoringService,
@@ -36,6 +37,7 @@ namespace _Main.Scripts.Dice
 
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			LastApplyHadEffect = false;
 			if (scoringService == null || delta == 0)
 			{
 				return UniTask.CompletedTask;
@@ -54,6 +56,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			selectedDice.SetValue(nextValue);
+			LastApplyHadEffect = true;
 			RollModifierUtils.RefreshCombinationResult(modifierContext, scoringService);
 			return UniTask.CompletedTask;
 		}

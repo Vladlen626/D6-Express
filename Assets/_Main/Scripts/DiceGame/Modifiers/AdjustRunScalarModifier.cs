@@ -8,12 +8,13 @@ namespace _Main.Scripts.Dice
 		TicksPerDay = 0
 	}
 
-	public class AdjustRunScalarModifier : IOnLevelStartModifier, IModifierUiConfigProvider
+	public class AdjustRunScalarModifier : IOnLevelStartModifier, IModifierUiConfigProvider, IModifierApplyResultProvider
 	{
 		public readonly RunScalarTarget target;
 		public readonly int delta;
 		public readonly bool revertOnLevelOrRunEnd;
 		public string UiConfigId { get; }
+		public bool LastApplyHadEffect { get; private set; }
 
 		private bool isApplied;
 		private Run run;
@@ -32,6 +33,7 @@ namespace _Main.Scripts.Dice
 
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			LastApplyHadEffect = false;
 			if (modifierContext.Run == null || isApplied)
 			{
 				return UniTask.CompletedTask;
@@ -46,6 +48,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			isApplied = true;
+			LastApplyHadEffect = true;
 			return UniTask.CompletedTask;
 		}
 

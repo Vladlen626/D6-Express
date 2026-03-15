@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
-	public class RerollUnsavedDieModifier : IOnRollModifier, IModifierUiConfigProvider
+	public class RerollUnsavedDieModifier : IOnRollModifier, IModifierUiConfigProvider, IModifierApplyResultProvider
 	{
 		private readonly DiceScoringService scoringService;
 		private readonly float chance;
@@ -11,6 +11,7 @@ namespace _Main.Scripts.Dice
 
 		public readonly UnsavedDieSelectionStrategy selectionStrategy;
 		public string UiConfigId { get; }
+		public bool LastApplyHadEffect { get; private set; }
 
 		public RerollUnsavedDieModifier(
 			DiceScoringService scoringService,
@@ -28,6 +29,7 @@ namespace _Main.Scripts.Dice
 
 		public async UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			LastApplyHadEffect = false;
 			if (scoringService == null)
 			{
 				return;
@@ -45,6 +47,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			selectedDice.Roll();
+			LastApplyHadEffect = true;
 
 			if (modifierContext.DiceGameModel != null &&
 			    modifierContext.DiceGameModel.ScreenDiceDict.TryGetValue(selectedDice, out var view))

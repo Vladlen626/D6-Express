@@ -2,11 +2,12 @@ using Cysharp.Threading.Tasks;
 
 namespace _Main.Scripts.Dice
 {
-	public class FlatComboBonusModifier : IOnPassModifier, IModifierUiConfigProvider
+	public class FlatComboBonusModifier : IOnPassModifier, IModifierUiConfigProvider, IModifierApplyResultProvider
 	{
 		public readonly DiceCombination combination;
 		public readonly int bonusScore;
 		public string UiConfigId { get; }
+		public bool LastApplyHadEffect { get; private set; }
 
 		private readonly bool matchStraightFamily;
 
@@ -24,6 +25,7 @@ namespace _Main.Scripts.Dice
 
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			LastApplyHadEffect = false;
 			var combinations = modifierContext.CombinationResult.Combinations;
 			for (int i = 0; i < combinations.Count; i++)
 			{
@@ -34,6 +36,7 @@ namespace _Main.Scripts.Dice
 				}
 
 				entry.BaseScore += bonusScore;
+				LastApplyHadEffect = true;
 			}
 
 			return UniTask.CompletedTask;

@@ -3,11 +3,12 @@ using Cysharp.Threading.Tasks;
 
 namespace _Main.Scripts.Dice
 {
-	public class FaceScoreBonusModifier : IOnPassModifier, IModifierUiConfigProvider
+	public class FaceScoreBonusModifier : IOnPassModifier, IModifierUiConfigProvider, IModifierApplyResultProvider
 	{
 		public readonly int faceValue;
 		public readonly int bonusPerScoringDie;
 		public string UiConfigId { get; }
+		public bool LastApplyHadEffect { get; private set; }
 
 		public FaceScoreBonusModifier(int faceValue, int bonusPerScoringDie, string uiConfigId = null)
 		{
@@ -23,6 +24,7 @@ namespace _Main.Scripts.Dice
 
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			LastApplyHadEffect = false;
 			var combinations = modifierContext.CombinationResult.Combinations;
 			for (int i = 0; i < combinations.Count; i++)
 			{
@@ -34,6 +36,7 @@ namespace _Main.Scripts.Dice
 				}
 
 				entry.BaseScore += scoringDiceCount * bonusPerScoringDie;
+				LastApplyHadEffect = true;
 			}
 
 			return UniTask.CompletedTask;

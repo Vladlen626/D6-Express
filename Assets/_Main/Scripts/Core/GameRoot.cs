@@ -190,6 +190,7 @@ namespace _Main.Scripts.Core
 				speechController,
 				new QuestsViewController(uiService, playerModel.Quests, factory, game),
 				new ModifierAppliedNotificationController(playerModel.InventoryModel.ModifierItemsModel,
+					playerModel.InventoryModel.ModifiersModel,
 					notificationService, configService, localizationService),
 				new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory,
 					configService, pauseState),

@@ -31,4 +31,9 @@ namespace _Main.Scripts.Dice
 	{
 		string UiConfigId { get; }
 	}
+
+	public interface IModifierApplyResultProvider
+	{
+		bool LastApplyHadEffect { get; }
+	}
 }

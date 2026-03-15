@@ -3,11 +3,12 @@ using UnityEngine;
 
 namespace _Main.Scripts.Dice
 {
-	public class MultiplyComboModifier : IOnPassModifier, IModifierUiConfigProvider
+	public class MultiplyComboModifier : IOnPassModifier, IModifierUiConfigProvider, IModifierApplyResultProvider
 	{
 		public readonly DiceCombination combination;
 		public readonly int deltaMultiplier;
 		public string UiConfigId { get; }
+		public bool LastApplyHadEffect { get; protected set; }
 		private readonly bool matchStraightFamily;
 
 		public MultiplyComboModifier(
@@ -24,13 +25,19 @@ namespace _Main.Scripts.Dice
 		
 		public UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
+			LastApplyHadEffect = false;
 			foreach (var diceCombinationEntry in modifierContext.CombinationResult.Combinations)
 			{
 				if (IsCombinationMatch(diceCombinationEntry.Combination))
 				{
 					if (CheckDiceCombinationEntry(diceCombinationEntry))
 					{
+						var oldValue = diceCombinationEntry.Multiplier;
 						diceCombinationEntry.Multiplier = Mathf.Max(1, diceCombinationEntry.Multiplier + deltaMultiplier);
+						if (diceCombinationEntry.Multiplier != oldValue)
+						{
+							LastApplyHadEffect = true;
+						}
 					}
 				}
 			}

@@ -8,20 +8,24 @@ using PlatformCore.Services.Factory;
 public class ModifierAppliedNotificationController : IBaseController, IActivatable, IPreloadable
 {
 	private readonly ModifierItemsModel modifierItemsModel;
+	private readonly ModifiersModel modifiersModel;
 	private readonly GlobalNotificationService notificationService;
 	private readonly ConfigService configService;
 	private readonly ILocalizationService localizationService;
 
 	private readonly HashSet<IModifierItem> subscribedItems = new();
 	private IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
+	private IReadOnlyDictionary<string, ModifierUIConfig> modifierUiCatalog;
 
 	public ModifierAppliedNotificationController(
 		ModifierItemsModel modifierItemsModel,
+		ModifiersModel modifiersModel,
 		GlobalNotificationService notificationService,
 		ConfigService configService,
 		ILocalizationService localizationService)
 	{
 		this.modifierItemsModel = modifierItemsModel;
+		this.modifiersModel = modifiersModel;
 		this.notificationService = notificationService;
 		this.configService = configService;
 		this.localizationService = localizationService;
@@ -30,28 +34,35 @@ public class ModifierAppliedNotificationController : IBaseController, IActivatab
 	public async UniTask PreloadAsync()
 	{
 		catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
+		modifierUiCatalog = await configService.GetConfigsAsync<ModifierUIConfig>(ResourcePaths.Json.modifiers_ui);
 	}
 
 	public void Activate()
 	{
-		if (modifierItemsModel == null)
+		if (modifierItemsModel != null)
 		{
-			return;
+			modifierItemsModel.ItemsChanged += OnItemsChanged;
+			SyncItemSubscriptions();
 		}
 
-		modifierItemsModel.ItemsChanged += OnItemsChanged;
-		SyncItemSubscriptions();
+		if (modifiersModel != null)
+		{
+			modifiersModel.ModifierApplied += OnGlobalModifierApplied;
+		}
 	}
 
 	public void Deactivate()
 	{
-		if (modifierItemsModel == null)
+		if (modifierItemsModel != null)
 		{
-			return;
+			modifierItemsModel.ItemsChanged -= OnItemsChanged;
+			ClearItemSubscriptions();
 		}
 
-		modifierItemsModel.ItemsChanged -= OnItemsChanged;
-		ClearItemSubscriptions();
+		if (modifiersModel != null)
+		{
+			modifiersModel.ModifierApplied -= OnGlobalModifierApplied;
+		}
 	}
 
 	private void OnItemsChanged()
@@ -159,6 +170,33 @@ public class ModifierAppliedNotificationController : IBaseController, IActivatab
 		notificationService.ShowToastRawImmediate(message);
 	}
 
+	private void OnGlobalModifierApplied(IModifier modifier, ModifierStage stage)
+	{
+		_ = stage;
+		if (notificationService == null || modifier == null || modifier is IModifierItem)
+		{
+			return;
+		}
+
+		if (modifier is not IModifierApplyResultProvider applyResultProvider)
+		{
+			return;
+		}
+
+		if (!applyResultProvider.LastApplyHadEffect)
+		{
+			return;
+		}
+
+		var messageKey = ResolveGlobalModifierApplyDescriptionKey(modifier);
+		if (string.IsNullOrWhiteSpace(messageKey))
+		{
+			return;
+		}
+
+		notificationService.ShowToastImmediate(messageKey);
+	}
+
 	private string ResolveArmDescription(IModifierItem item)
 	{
 		if (catalog != null &&
@@ -205,5 +243,31 @@ public class ModifierAppliedNotificationController : IBaseController, IActivatab
 		}
 
 		return item.Id;
+	}
+
+	private string ResolveGlobalModifierApplyDescriptionKey(IModifier modifier)
+	{
+		if (modifierUiCatalog == null)
+		{
+			return null;
+		}
+
+		var configKey = ResolveModifierConfigKey(modifier);
+		if (!modifierUiCatalog.TryGetValue(configKey, out var config) || config == null)
+		{
+			return null;
+		}
+
+		return config.description;
+	}
+
+	private static string ResolveModifierConfigKey(IModifier modifier)
+	{
+		if (modifier is IModifierUiConfigProvider provider && !string.IsNullOrWhiteSpace(provider.UiConfigId))
+		{
+			return provider.UiConfigId;
+		}
+
+		return modifier.GetType().Name;
 	}
 }
