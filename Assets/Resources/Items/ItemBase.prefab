@@ -126,8 +126,8 @@ MonoBehaviour:
     id: Black
   disabledVisual:
     scaleMultiplier: 0.9
-    outlineColor: {r: 0.38, g: 0.38, b: 0.38, a: 1}
-    disabledMaterial: {fileID: 2100000, guid: 740fdf07152066646981707cd01bd357, type: 2}
+    outlineColor: {r: 0.4339623, g: 0, b: 0, a: 1}
+    disabledMaterial: {fileID: 2100000, guid: ba558210c19220d4f8d88902e2dcc13d, type: 2}
     renderers:
     - {fileID: 3994485364066627492}
   OnClicked:
@@ -200,7 +200,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: d3563a020dd59814c906946ae7de62ee, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: f65e12097dbf14648871271d9c31389e, type: 2}
+      objectReference: {fileID: 2100000, guid: f440e29382c033e4f8afb5d8ca290e89, type: 2}
     - target: {fileID: -7511558181221131132, guid: d3563a020dd59814c906946ae7de62ee, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
