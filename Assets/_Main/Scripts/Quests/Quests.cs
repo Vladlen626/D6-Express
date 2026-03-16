@@ -30,7 +30,7 @@ public class Quests : IEnumerable<Quest>
 
     public void Clear()
     {
-        for (int i = 0; i < quests.Count; i++)
+        for (int i = quests.Count - 1; i >= 0; i--)
         {
             Remove(quests[i]);
         }

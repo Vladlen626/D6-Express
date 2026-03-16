@@ -47,7 +47,7 @@ public class Quest
 
     public void RequestFinish()
     {
-        CurrentState = State.IN_PROGRESS;
+        CurrentState = State.FINISHED;
         StateChanged?.Invoke(this, CurrentState);
     }
 
@@ -68,11 +68,15 @@ public class Quest
 
     public void RemoveComponent<T>() where T : QuestComponent
     {
-        var component = components[typeof(T)];
+        if (!components.TryGetValue(typeof(T), out var component))
+        {
+            return;
+        }
+
         component.Deactivate();
         components.Remove(typeof(T));
 
-        ComponentAdded?.Invoke(component);
+        ComponentRemoved?.Invoke(component);
     }
 
     public T GetComponent<T>() where T : QuestComponent

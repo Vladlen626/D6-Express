@@ -173,22 +173,22 @@ public class DiceTableView : MonoBehaviour
 
 	public void SetPlayerBankedPointsText(int oldValue, int newValue)
 	{
-		UIUtils.UpdateUiIntValueText(bankedScoreText, oldValue, newValue, v => v.ToString());
+		UIUtils.UpdateUiIntValueText(bankedScoreText, oldValue, newValue, "{0:0}", animDuration);
 	}
 
 	public void SetEnemyBankedPointsText(int oldValue, int newValue)
 	{
-		UIUtils.UpdateUiIntValueText(enemyBankedScoreText, oldValue, newValue, v => v.ToString());
+		UIUtils.UpdateUiIntValueText(enemyBankedScoreText, oldValue, newValue, "{0:0}", animDuration);
 	}
 
 	public void SetTargetPointsText(int oldValue, int newValue)
 	{
-		UIUtils.UpdateUiIntValueText(targetScoreText, oldValue, newValue, v => $"Target: {v}");
+		UIUtils.UpdateUiIntValueText(targetScoreText, oldValue, newValue, "Target: {0:0}", animDuration);
 	}
 
 	public void SetCurrentPointsText(int oldValue, int newValue)
 	{
-		UIUtils.UpdateUiIntValueText(turnScoreText, oldValue, newValue, v => v.ToString());
+		UIUtils.UpdateUiIntValueText(turnScoreText, oldValue, newValue, "{0:0}", animDuration);
 	}
 
 	public void SetComboNameText(string id)
@@ -198,12 +198,12 @@ public class DiceTableView : MonoBehaviour
 
 	public void SetPreviewPointsText(int oldValue, int newValue)
 	{
-		UIUtils.UpdateUiIntValueText(previewScoreText, oldValue, newValue, v => v.ToString());
+		UIUtils.UpdateUiIntValueText(previewScoreText, oldValue, newValue, "{0:0}", animDuration);
 	}
 
 	public void SetTurnText(int oldValue, int newValue)
 	{
-		UIUtils.UpdateUiIntValueText(turnText, oldValue, newValue, v => $"Turn: {v}");
+		UIUtils.UpdateUiIntValueText(turnText, oldValue, newValue, "Turn: {0:0}", animDuration);
 	}
 
 	//todo: Это должно динамически включать бонусные позиции для кубов

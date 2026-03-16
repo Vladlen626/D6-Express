@@ -16,6 +16,7 @@ public static class DebugFactory
         GlobalNotificationService notificationService,
         DiceGameModel diceGameModel)
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         var incrementTick = new DbgMenuItemIncrementTicks(run);
         var incrementDay = new DbgMenuItemIncrementDays(run);
         var switchToStation = new DbgMenuItemSwitchToStation(game);
@@ -29,5 +30,9 @@ public static class DebugFactory
         var menu = new DebugMenuUIModel(gameMenu);
 
         return new DebugMenuUIController(inputService, cursorService, menu);
+#else
+        await Task.CompletedTask;
+        return new DebugMenuUIController(inputService, cursorService, null);
+#endif
     }
 }

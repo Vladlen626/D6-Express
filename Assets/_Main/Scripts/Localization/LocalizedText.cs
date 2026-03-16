@@ -5,12 +5,13 @@ using UnityEngine;
 public class LocalizedText : MonoBehaviour
 {
 	[SerializeField] private TMP_Text text;
+	private ILocalizationService localizationService;
 
 	public TMP_Text Tmp => text;
 
 	public void SetText(string id)
 	{
-		text.text = Locator.Resolve<ILocalizationService>().GetLocalized(id);
+		text.text = GetLocalizationService().GetLocalized(id);
 	}
 
 	public void SetRawText(string text)
@@ -20,7 +21,23 @@ public class LocalizedText : MonoBehaviour
 
 	public void SetText(string id, params string[] agrs)
 	{
-		var localized = Locator.Resolve<ILocalizationService>().GetLocalized(id);
+		var localized = GetLocalizationService().GetLocalized(id);
 		text.text = string.Format(localized, agrs);
+	}
+
+	public void SetText(string id, int arg)
+	{
+		var localized = GetLocalizationService().GetLocalized(id);
+		text.SetText(localized, arg);
+	}
+
+	private ILocalizationService GetLocalizationService()
+	{
+		if (localizationService == null)
+		{
+			localizationService = Locator.Resolve<ILocalizationService>();
+		}
+
+		return localizationService;
 	}
 }

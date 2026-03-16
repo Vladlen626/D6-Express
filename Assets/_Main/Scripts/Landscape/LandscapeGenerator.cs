@@ -24,8 +24,8 @@ public class LandscapeGenerator : MonoBehaviour
     [SerializeField]
     private bool movable;
 
-    private readonly List<GameObject> activeObjects = new();
-    private readonly Queue<GameObject> pooledObjects = new();
+    private readonly List<LandscapeObject> activeObjects = new();
+    private readonly Queue<LandscapeObject> pooledObjects = new();
 
     private float lastSpawnTime;
 
@@ -68,19 +68,18 @@ public class LandscapeGenerator : MonoBehaviour
     {
         spawnPos.x += Random.Range(-GetWidth(), GetWidth());
 
-        GameObject obj = GetFromPool();
-        obj.transform.SetParent(instantiatedObjectsParent);
-        obj.transform.position = spawnPos;
-        obj.transform.rotation = Quaternion.identity;
-        obj.SetActive(true);
-
-        var landscapeObject = obj.GetComponent<LandscapeObject>();
+        LandscapeObject landscapeObject = GetFromPool();
+        Transform objectTransform = landscapeObject.transform;
+        objectTransform.SetParent(instantiatedObjectsParent);
+        objectTransform.position = spawnPos;
+        objectTransform.rotation = Quaternion.identity;
+        landscapeObject.gameObject.SetActive(true);
         landscapeObject.Initialize(speed, movable);
 
-        activeObjects.Add(obj);
+        activeObjects.Add(landscapeObject);
     }
 
-    private GameObject GetFromPool()
+    private LandscapeObject GetFromPool()
     {
         if (pooledObjects.Count > 0)
         {
@@ -89,26 +88,31 @@ public class LandscapeGenerator : MonoBehaviour
 
         GameObject prefab = landScapePrefabs[Random.Range(0, landScapePrefabs.Length)];
         GameObject obj = Instantiate(prefab, instantiatedObjectsParent);
-        obj.AddComponent<LandscapeObject>();
-        return obj;
+        if (!obj.TryGetComponent(out LandscapeObject landscapeObject))
+        {
+            landscapeObject = obj.AddComponent<LandscapeObject>();
+        }
+
+        return landscapeObject;
     }
 
-    private void ReturnToPool(GameObject obj)
+    private void ReturnToPool(LandscapeObject landscapeObject)
     {
-        obj.SetActive(false);
-        pooledObjects.Enqueue(obj);
+        landscapeObject.gameObject.SetActive(false);
+        pooledObjects.Enqueue(landscapeObject);
     }
 
     private void InitialSpawnObjects()
     {
         Vector3 spawnPos = GetStartPoint();
+        float endZ = GetEndPoint().z;
 
         for (var i = 0; i < maxSpawnedObjects; i++)
         {
             SpawnLandscapeObject(spawnPos);
             spawnPos.z -= Random.Range(spawnCooldownMin, spawnCooldownMax) * speed;
 
-            if (spawnPos.z < GetEndPoint().z)
+            if (spawnPos.z < endZ)
             {
                 break;
             }
@@ -117,10 +121,11 @@ public class LandscapeGenerator : MonoBehaviour
 
     private void ManageObjects()
     {
+        float endZ = GetEndPoint().z;
         for (int i = activeObjects.Count - 1; i >= 0; i--)
         {
-            var activeObject = activeObjects[i];
-            if (OutOfBounds(activeObject))
+            LandscapeObject activeObject = activeObjects[i];
+            if (activeObject.transform.position.z < endZ)
             {
                 activeObjects.RemoveAt(i);
                 ReturnToPool(activeObject);
@@ -128,11 +133,6 @@ public class LandscapeGenerator : MonoBehaviour
         }
 
         TrySpawnLandScapeObject();
-    }
-
-    private bool OutOfBounds(GameObject activeObject)
-    {
-        return activeObject.transform.position.z < GetEndPoint().z;
     }
 
     private void OnDrawGizmos()

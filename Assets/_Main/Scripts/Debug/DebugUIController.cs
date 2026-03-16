@@ -20,16 +20,39 @@ public class DebugMenuUIController : IBaseController, IActivatable
 
     public void Activate()
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (model == null)
+        {
+            return;
+        }
+
         inputService.OnDebugSwitchPressed += OnDebugSwitched;
+#endif
     }
 
     public void Deactivate()
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         inputService.OnDebugSwitchPressed -= OnDebugSwitched;
+
+        if (opened)
+        {
+            UImGuiUtility.Layout -= OnLayout;
+            inputService.EnableCameraInputs();
+            cursorService.LockCursor();
+            opened = false;
+        }
+#endif
     }
 
     private void OnDebugSwitched()
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        if (model == null)
+        {
+            return;
+        }
+
         if (opened)
         {
             UImGuiUtility.Layout -= OnLayout;
@@ -44,10 +67,16 @@ public class DebugMenuUIController : IBaseController, IActivatable
         }
 
         opened = !opened;
+#endif
     }
 
     private void OnLayout(UImGui.UImGui uImGui)
     {
+        if (model == null)
+        {
+            return;
+        }
+
         model.OnLayout(uImGui);
     }
 }

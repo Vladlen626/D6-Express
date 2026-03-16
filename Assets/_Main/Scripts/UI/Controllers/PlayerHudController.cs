@@ -8,6 +8,9 @@ namespace _Main.Scripts.UI
 		private readonly PlayerModel playerModel;
 		private readonly D6Game game;
         private readonly Run run;
+		private int _lastCash = int.MinValue;
+		private int _lastTicksLeft = int.MinValue;
+		private int _lastDaysLeft = int.MinValue;
 
 		public PlayerHudController(IUIService uiService, PlayerModel playerModel, D6Game game, Run run) : base(uiService)
 		{
@@ -19,6 +22,10 @@ namespace _Main.Scripts.UI
 		protected override void OnActivate()
 		{
 			base.OnActivate();
+			_lastCash = int.MinValue;
+			_lastTicksLeft = int.MinValue;
+			_lastDaysLeft = int.MinValue;
+
 			playerModel.InventoryModel.OnCashCountChanged += OnCashCountChangedHandler;
 			OnCashCountChangedHandler();
 
@@ -38,6 +45,8 @@ namespace _Main.Scripts.UI
 		{
 			run.DayChanged -= OnDaysChanged;
 			run.TickChanged -= OnTickChanged;
+			run.DaysPerLevelChanged -= OnDaysChanged;
+			run.TicksPerDayChanged -= OnTickChanged;
 
 			game.LocationChanged -= OnLocationChanged;
 
@@ -47,18 +56,38 @@ namespace _Main.Scripts.UI
 
 		private void OnCashCountChangedHandler()
 		{
-			var cashCountText = $"$: {playerModel.InventoryModel.CashCount}";
-			_context.SetCashCountText(cashCountText);
+			int cash = playerModel.InventoryModel.CashCount;
+			if (_lastCash == cash)
+			{
+				return;
+			}
+
+			_lastCash = cash;
+			_context.SetCashCountText(cash);
 		}
 
 		private void OnTickChanged()
 		{
-			_context.SetTicksText("ticks_progress", (run.TicksPerDay - run.Tick).ToString());
+			int ticksLeft = run.TicksPerDay - run.Tick;
+			if (_lastTicksLeft == ticksLeft)
+			{
+				return;
+			}
+
+			_lastTicksLeft = ticksLeft;
+			_context.SetTicksText("ticks_progress", ticksLeft);
 		}
 
 		private void OnDaysChanged()
 		{
-			_context.SetDaysText("days_progress", (run.DaysPerLevel - run.Day).ToString());
+			int daysLeft = run.DaysPerLevel - run.Day;
+			if (_lastDaysLeft == daysLeft)
+			{
+				return;
+			}
+
+			_lastDaysLeft = daysLeft;
+			_context.SetDaysText("days_progress", daysLeft);
 		}
 
 		private void OnLocationChanged()

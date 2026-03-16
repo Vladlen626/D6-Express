@@ -33,11 +33,27 @@ public class MainQuestContoller : IBaseController, IPreloadable, IQuestGenerator
 
         var getMoneyObjective = objectives.Add();
         var passStationObjective = objectives.Add();
+        var isSubscribed = false;
 
-        run.LevelChangeRequested += () =>
+        bool CanMoveNextLevel()
         {
-            var canMoveNextLevel = playerModel.InventoryModel.CashCount >= run.NextTicketPrice;
-            if (canMoveNextLevel)
+            return playerModel.InventoryModel.CashCount >= run.NextTicketPrice;
+        }
+
+        void UpdateObjectivesText()
+        {
+            var localizedMoneyGoal = textsConfig.texts["quest_money_goal"];
+            var resultMoneyGoal = string.Format(localizedMoneyGoal, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
+            getMoneyObjective.Title = resultMoneyGoal;
+
+            var localizedStationsGoal = textsConfig.texts["quest_stations_goal"];
+            var resultStationsGoal = string.Format(localizedStationsGoal, run.LevelsCount - run.Level);
+            passStationObjective.Title = resultStationsGoal;
+        }
+
+        void OnLevelChangeRequested()
+        {
+            if (CanMoveNextLevel())
             {
                 quest.RequestComplete();
             }
@@ -45,12 +61,11 @@ public class MainQuestContoller : IBaseController, IPreloadable, IQuestGenerator
             {
                 quest.RequestFail();
             }
-        };
+        }
 
         void UpdateState()
         {
-            var canMoveNextLevel = playerModel.InventoryModel.CashCount >= run.NextTicketPrice;
-            if (canMoveNextLevel)
+            if (CanMoveNextLevel())
             {
                 quest.RequestComplete();
             }
@@ -60,44 +75,68 @@ public class MainQuestContoller : IBaseController, IPreloadable, IQuestGenerator
             }
         }
 
-        run.NextTicketPriceChanged += () =>
+        void OnNextTicketPriceChanged()
         {
             UpdateState();
-        };
+        }
 
-        playerModel.InventoryModel.OnCashCountChanged += () =>
+        void OnCashCountChanged()
         {
             UpdateState();
-        };
+        }
 
-        run.LevelChanged += () =>
+        void OnLevelChanged()
         {
             UpdateState();
-        };
+        }
 
-        quest.StateChanged += (q, s) =>
+        void OnQuestStateChanged(Quest q, Quest.State state)
         {
-            getMoneyObjective.Completed = s switch
+            getMoneyObjective.Completed = state switch
             {
                 Quest.State.COMPLETED => true,
                 _ => false,
             };
-            var localizedMoneyGoal = textsConfig.texts["quest_money_goal"];
-            var resultMoneyGoal = string.Format(localizedMoneyGoal, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
-            getMoneyObjective.Title = resultMoneyGoal;
+            UpdateObjectivesText();
 
-            var localizedStationsGoal = textsConfig.texts["quest_stations_goal"];
-            var resultStationsGoal = string.Format(localizedStationsGoal, run.LevelsCount - run.Level);
-            passStationObjective.Title = resultStationsGoal;
-        };
+            if (state == Quest.State.FINISHED)
+            {
+                Unsubscribe();
+            }
+        }
 
-        var localizedMoneyGoal = textsConfig.texts["quest_money_goal"];
-        var resultMoneyGoal = string.Format(localizedMoneyGoal, playerModel.InventoryModel.CashCount, run.NextTicketPrice);
-        getMoneyObjective.Title = resultMoneyGoal;
+        void Subscribe()
+        {
+            if (isSubscribed)
+            {
+                return;
+            }
 
-        var localizedStationsGoal = textsConfig.texts["quest_stations_goal"];
-        var resultStationsGoal = string.Format(localizedStationsGoal, run.LevelsCount - run.Level);
-        passStationObjective.Title = resultStationsGoal;
+            run.LevelChangeRequested += OnLevelChangeRequested;
+            run.NextTicketPriceChanged += OnNextTicketPriceChanged;
+            playerModel.InventoryModel.OnCashCountChanged += OnCashCountChanged;
+            run.LevelChanged += OnLevelChanged;
+            quest.StateChanged += OnQuestStateChanged;
+            isSubscribed = true;
+        }
+
+        void Unsubscribe()
+        {
+            if (!isSubscribed)
+            {
+                return;
+            }
+
+            run.LevelChangeRequested -= OnLevelChangeRequested;
+            run.NextTicketPriceChanged -= OnNextTicketPriceChanged;
+            playerModel.InventoryModel.OnCashCountChanged -= OnCashCountChanged;
+            run.LevelChanged -= OnLevelChanged;
+            quest.StateChanged -= OnQuestStateChanged;
+            isSubscribed = false;
+        }
+
+        Subscribe();
+        UpdateObjectivesText();
 
         return quest;
     }

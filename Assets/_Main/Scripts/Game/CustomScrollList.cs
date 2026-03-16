@@ -126,24 +126,23 @@ public class CustomScrollList : MonoBehaviour
     private void AnimateScroll(int oldStart, int newStart)
     {
         _isAnimating = true;
-
-        var hiding = GetRange(oldStart, _visibleCount);
-        var showing = GetRange(newStart, _visibleCount);
+        int oldEnd = Mathf.Min(oldStart + _visibleCount, _items.Count);
+        int newEnd = Mathf.Min(newStart + _visibleCount, _items.Count);
 
         KillActiveTweens();
         _scrollSequence = DOTween.Sequence();
 
-        foreach (int i in hiding)
+        for (int i = oldStart; i < oldEnd; i++)
         {
-            if (!showing.Contains(i))
+            if (i < newStart || i >= newEnd)
             {
                 _scrollSequence.Join(AnimateItem(i, _hiddenScale, _hiddenAlpha));
             }
         }
 
-        foreach (int i in showing)
+        for (int i = newStart; i < newEnd; i++)
         {
-            if (!hiding.Contains(i))
+            if (i < oldStart || i >= oldEnd)
             {
                 SetItemImmediate(i, _hiddenScale, _hiddenAlpha);
                 _scrollSequence.Join(AnimateItem(i, Vector3.one, 1f));
@@ -256,16 +255,6 @@ public class CustomScrollList : MonoBehaviour
 
         _arrowPrev.interactable = _startIndex > 0;
         _arrowNext.interactable = _startIndex < _items.Count - _visibleCount;
-    }
-
-    private HashSet<int> GetRange(int start, int count)
-    {
-        var set = new HashSet<int>();
-        for (int i = start; i < Mathf.Min(start + count, _items.Count); i++)
-        {
-            set.Add(i);
-        }
-        return set;
     }
 
     private void KillActiveTweens()

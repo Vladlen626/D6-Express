@@ -16,6 +16,7 @@ public class QuestComponentObjectives : QuestComponent, IEnumerable<QuestObjecti
         var questObjective = new QuestObjective(lastGivenId);
         objectives[lastGivenId] = questObjective;
         lastGivenId++;
+        Added?.Invoke(questObjective);
         return questObjective;
     }
 
@@ -26,7 +27,13 @@ public class QuestComponentObjectives : QuestComponent, IEnumerable<QuestObjecti
 
     public void Remove(int id)
     {
+        if (!objectives.TryGetValue(id, out var questObjective))
+        {
+            return;
+        }
+
         objectives.Remove(id);
+        Removed?.Invoke(questObjective);
     }
 
     public QuestObjective Get(int id)

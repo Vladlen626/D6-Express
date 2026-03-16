@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Cysharp.Threading.Tasks;
 using _Main.Scripts.Core;
 using PlatformCore.Core;
@@ -20,6 +19,7 @@ namespace _Main.Scripts.Dice
 		private readonly ConfigService _configService;
 		
 		private List<DiceModel> SelectedModel => _diceGameModel.PlayerDiceModelList;
+		private readonly List<DiceModel> _unselectedBuffer = new();
 
 		private CouplePositionsHandler _posHandler;
 		private bool _isFinished;
@@ -126,12 +126,21 @@ namespace _Main.Scripts.Dice
 			}
 
 			// 2. Все остальные кубы расставляем по порядку в основные слоты стола
-			var unselected = _diceGameModel.SelectionDiceModelList.Where(m => !SelectedModel.Contains(m)).ToList();
-			for (int i = 0; i < unselected.Count; i++)
+			_unselectedBuffer.Clear();
+			for (int i = 0; i < _diceGameModel.SelectionDiceModelList.Count; i++)
+			{
+				var model = _diceGameModel.SelectionDiceModelList[i];
+				if (!SelectedModel.Contains(model))
+				{
+					_unselectedBuffer.Add(model);
+				}
+			}
+
+			for (int i = 0; i < _unselectedBuffer.Count; i++)
 			{
 				if (i < _posHandler.FirstPosArray.Length)
 				{
-					MoveToSlot(unselected[i], _posHandler.FirstPosArray[i]);
+					MoveToSlot(_unselectedBuffer[i], _posHandler.FirstPosArray[i]);
 				}
 			}
 		}

@@ -15,6 +15,8 @@ public class SpeechBubbleView : MonoBehaviour
 	[SerializeField]
 	private float duration;
 
+	private ICameraService cameraService;
+
 	bool showing;
 
 	public async UniTask ShowLine(string line)
@@ -34,8 +36,12 @@ public class SpeechBubbleView : MonoBehaviour
 	{
 		if (showing)
 		{
-			// todo не резолвай тут
-			var cameraTfm = Locator.Resolve<ICameraService>().GetCameraTransform();
+			if (cameraService == null)
+			{
+				cameraService = Locator.Resolve<ICameraService>();
+			}
+
+			var cameraTfm = cameraService.GetCameraTransform();
 			bubbleTransform.rotation = Quaternion.LookRotation(
 				cameraTfm.position - bubbleTransform.position,
 				Vector3.up
