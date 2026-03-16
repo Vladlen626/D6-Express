@@ -112,6 +112,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7a8f803b36f075248a1d9cef3eb6730f, type: 3}
   m_PrefabInstance: {fileID: 648899166773872265}
   m_PrefabAsset: {fileID: 0}
+--- !u!23 &2215999695626967565 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 7a8f803b36f075248a1d9cef3eb6730f, type: 3}
+  m_PrefabInstance: {fileID: 648899166773872265}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7173895980032546285
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -124,6 +129,14 @@ PrefabInstance:
       propertyPath: visualOutline
       value: 
       objectReference: {fileID: 5544913988591535412}
+    - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
+      propertyPath: disabledVisual.renderers.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
+      propertyPath: 'disabledVisual.renderers.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2215999695626967565}
     - target: {fileID: 5552264432598873387, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.02

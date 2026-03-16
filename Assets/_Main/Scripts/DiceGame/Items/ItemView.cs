@@ -41,6 +41,9 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private ColorStyleRef armedOutlineColor;
 		[SerializeField] private ColorStyleRef consumedOutlineColor;
 
+		[Header("Disabled")]
+		[SerializeField] private ItemDisabledVisual disabledVisual = new();
+
 		private IModifierItem boundItem;
 		public UnityEvent OnClicked = new();
 		public event Action<IModifierItem> OnHoverEnter;
@@ -48,6 +51,7 @@ namespace _Main.Scripts.Dice
 		private Camera _cam;
 		private bool _isHovered;
 		private bool _isStateInitialized;
+		private bool _isPhaseDisabled;
 		private DiceItemState _currentState = DiceItemState.Ready;
 		private Vector3 _baseVisualScale = Vector3.one;
 		private Vector3 _baseVisualLocalPosition;
@@ -98,8 +102,44 @@ namespace _Main.Scripts.Dice
 			if (_isStateInitialized)
 			{
 				ApplyStateImmediate(_currentState);
+				ApplyDisabledScaleIfNeeded();
 				ApplyOutlineColor();
 			}
+		}
+
+		public void SetPhaseDisabled(bool isDisabled)
+		{
+			if (_isPhaseDisabled == isDisabled)
+			{
+				return;
+			}
+
+			_isPhaseDisabled = isDisabled;
+			if (_isPhaseDisabled)
+			{
+				disabledVisual.EnsureConfiguredOrThrow();
+				disabledVisual.Apply();
+
+				if (_isHovered)
+				{
+					_isHovered = false;
+					if (boundItem != null)
+					{
+						OnHoverExit?.Invoke(boundItem);
+					}
+
+					StopHoverAnimation();
+				}
+
+				ApplyDisabledScaleIfNeeded();
+				SetClickEnabled(false);
+				ApplyOutlineColor();
+				return;
+			}
+
+			disabledVisual.Restore();
+			ApplyStateImmediate(_currentState);
+			ApplyOutlineColor();
 		}
 
 		public void Unbind(IModifierItem item)
@@ -107,6 +147,12 @@ namespace _Main.Scripts.Dice
 			if (item == null || boundItem != item)
 			{
 				return;
+			}
+
+			if (_isPhaseDisabled)
+			{
+				_isPhaseDisabled = false;
+				disabledVisual.Restore();
 			}
 
 			if (_isHovered)
@@ -134,6 +180,12 @@ namespace _Main.Scripts.Dice
 				boundItem = null;
 			}
 
+			if (_isPhaseDisabled)
+			{
+				_isPhaseDisabled = false;
+				disabledVisual.Restore();
+			}
+
 			KillTweens();
 			OnClicked.RemoveAllListeners();
 		}
@@ -142,6 +194,19 @@ namespace _Main.Scripts.Dice
 		{
 			if (boundItem == null || !clickCollider)
 			{
+				return;
+			}
+
+			if (_isPhaseDisabled)
+			{
+				if (_isHovered)
+				{
+					_isHovered = false;
+					OnHoverExit?.Invoke(boundItem);
+					StopHoverAnimation();
+					ApplyOutlineColor();
+				}
+
 				return;
 			}
 
@@ -298,6 +363,8 @@ namespace _Main.Scripts.Dice
 					SetClickEnabled(state is DiceItemState.Ready or DiceItemState.Armed);
 					break;
 			}
+
+			ApplyDisabledScaleIfNeeded();
 		}
 
 		private void ApplyStateTransition(DiceItemState newState)
@@ -337,6 +404,11 @@ namespace _Main.Scripts.Dice
 					visualRoot.DOLocalMove(targetPosition, settleDuration).SetEase(settleEase);
 					visualRoot.DOLocalRotateQuaternion(_baseVisualLocalRotation, settleDuration).SetEase(settleEase);
 					SetClickEnabled(newState is DiceItemState.Ready or DiceItemState.Armed);
+
+					if (_isPhaseDisabled)
+					{
+						visualRoot.DOScale(ScaleBy(disabledVisual.ScaleMultiplier), settleDuration).SetEase(settleEase);
+					}
 					break;
 			}
 		}
@@ -411,7 +483,7 @@ namespace _Main.Scripts.Dice
 
 		private void StartHoverAnimation()
 		{
-			if (_currentState == DiceItemState.Consumed)
+			if (_currentState == DiceItemState.Consumed || _isPhaseDisabled)
 			{
 				return;
 			}
@@ -444,6 +516,12 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			if (_isPhaseDisabled)
+			{
+				visualOutline.OutlineColor = disabledVisual.OutlineColor;
+				return;
+			}
+
 			if (_isHovered)
 			{
 				visualOutline.OutlineColor = hoverOutlineColor.Value;
@@ -458,5 +536,28 @@ namespace _Main.Scripts.Dice
 
 			visualOutline.OutlineColor = _baseOutlineColor;
 		}
+
+		private void ApplyDisabledScaleIfNeeded()
+		{
+			if (!_isPhaseDisabled)
+			{
+				return;
+			}
+
+			visualRoot.localScale = ScaleBy(disabledVisual.ScaleMultiplier);
+		}
+
+#if UNITY_EDITOR
+		public void AutoConfigureDisabledRenderers()
+		{
+			if (!visualRoot)
+			{
+				throw new InvalidOperationException(
+					"[ItemView] Visual Root is not assigned. Disabled renderer auto-configuration requires Visual Root.");
+			}
+
+			disabledVisual.AutoAssignMeshRenderers(visualRoot);
+		}
+#endif
 	}
 }

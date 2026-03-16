@@ -30,10 +30,24 @@ namespace _Main.Scripts.Dice
 		{
 			item.AttachView(view);
 			view.OnClicked.AddListener(OnViewClicked);
+			item.OnChanged += OnItemChanged;
+
+			if (diceGameModel != null)
+			{
+				diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChanged;
+			}
+
+			RefreshPhaseDisabledVisual();
 		}
 
 		public void Deactivate()
 		{
+			if (diceGameModel != null)
+			{
+				diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChanged;
+			}
+
+			item.OnChanged -= OnItemChanged;
 			view.OnClicked.RemoveListener(OnViewClicked);
 			item.DetachView();
 		}
@@ -53,6 +67,29 @@ namespace _Main.Scripts.Dice
 			}
 
 			item.TryHandleClick();
+		}
+
+		private void OnDiceGameStateChanged()
+		{
+			RefreshPhaseDisabledVisual();
+		}
+
+		private void OnItemChanged(IModifierItem _)
+		{
+			RefreshPhaseDisabledVisual();
+		}
+
+		private void RefreshPhaseDisabledVisual()
+		{
+			if (!view || item == null || diceGameModel == null)
+			{
+				return;
+			}
+
+			var isPhaseDisabled = item.ActivationType == DiceItemActivationType.ClickToActivate &&
+			                      item.State == DiceItemState.Ready &&
+			                      !item.IsActivationAllowed(diceGameModel.DiceGameState);
+			view.SetPhaseDisabled(isPhaseDisabled);
 		}
 	}
 }

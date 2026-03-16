@@ -124,6 +124,12 @@ MonoBehaviour:
     id: GreenLight
   consumedOutlineColor:
     id: Black
+  disabledVisual:
+    scaleMultiplier: 0.9
+    outlineColor: {r: 0.38, g: 0.38, b: 0.38, a: 1}
+    disabledMaterial: {fileID: 2100000, guid: 740fdf07152066646981707cd01bd357, type: 2}
+    renderers:
+    - {fileID: 3994485364066627492}
   OnClicked:
     m_PersistentCalls:
       m_Calls: []
@@ -610,3 +616,8 @@ MonoBehaviour:
     - {x: -0.48951522, y: 0.15905356, z: 0.85736626}
     - {x: 0.20303108, y: 0.69130266, z: 0.6934545}
     - {x: -0.20007296, y: 0.80275506, z: -0.56174284}
+--- !u!23 &3994485364066627492 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: d3563a020dd59814c906946ae7de62ee, type: 3}
+  m_PrefabInstance: {fileID: 2355055945791484704}
+  m_PrefabAsset: {fileID: 0}
