@@ -2027,6 +2027,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -4718040791104185828, guid: 86e83bc9506a7f0418a10fc8e37c7c01, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3195828791156449804, guid: 86e83bc9506a7f0418a10fc8e37c7c01, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -2093772787462966335, guid: 86e83bc9506a7f0418a10fc8e37c7c01, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.3
@@ -2034,6 +2042,10 @@ PrefabInstance:
     - target: {fileID: -2093772787462966335, guid: 86e83bc9506a7f0418a10fc8e37c7c01, type: 3}
       propertyPath: m_LocalPosition.z
       value: -0.04
+      objectReference: {fileID: 0}
+    - target: {fileID: -1120989108687609925, guid: 86e83bc9506a7f0418a10fc8e37c7c01, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 86e83bc9506a7f0418a10fc8e37c7c01, type: 3}
       propertyPath: m_Name
@@ -2046,6 +2058,10 @@ PrefabInstance:
     - target: {fileID: 6426448320267853852, guid: 86e83bc9506a7f0418a10fc8e37c7c01, type: 3}
       propertyPath: m_LocalPosition.z
       value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7071182760956848314, guid: 86e83bc9506a7f0418a10fc8e37c7c01, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2419,11 +2435,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6646717370196683383, guid: c8800b79a4d59aa499fb3b7afa5d5de1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.85
+      value: 0.888
       objectReference: {fileID: 0}
     - target: {fileID: 6646717370196683383, guid: c8800b79a4d59aa499fb3b7afa5d5de1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.491
+      value: 0.38
       objectReference: {fileID: 0}
     - target: {fileID: 6933792755390483073, guid: c8800b79a4d59aa499fb3b7afa5d5de1, type: 3}
       propertyPath: m_CastShadows

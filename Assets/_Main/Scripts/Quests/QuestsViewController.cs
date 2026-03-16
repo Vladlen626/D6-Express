@@ -4,6 +4,7 @@ using PlatformCore.Core;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class QuestsViewController : BaseContextController<UIQuestsView>
 {
@@ -58,7 +59,7 @@ public class QuestsViewController : BaseContextController<UIQuestsView>
     {
         var questView = await objectFactory.CreateAsync<UIQuestView>(ResourcePaths.UI.UIQuestView, Vector3.zero, Quaternion.identity);
 
-        if (_context == null || questViews.ContainsKey(quest))
+        if (!_context || questViews.ContainsKey(quest))
         {
             Object.Destroy(questView.gameObject);
             return;
