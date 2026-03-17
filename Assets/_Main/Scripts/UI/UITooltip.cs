@@ -4,6 +4,7 @@ using DG.Tweening;
 using PlatformCore.Services.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace _Main.Scripts.UI
 {
@@ -18,11 +19,28 @@ namespace _Main.Scripts.UI
 		[SerializeField] 
 		private TextMeshProUGUI description;
 
+		[SerializeField]
+		private GameObject activationLabelRoot;
+
+		[SerializeField]
+		private TextMeshProUGUI activationLabelText;
+
+		[SerializeField]
+		private Image activationLabelBackground;
+
+		[SerializeField] 
+		private ColorStyleRef inMatchColor;
+
+		[SerializeField] 
+		private ColorStyleRef preMatchColor;
+
 		[SerializeField] 
 		private RectTransform tooltipRectTransform;
 		
 		[SerializeField]
 		private List<TooltipSeparatorEntry> tooltipEntries;
+
+		private bool activationLabelSetupErrorLogged;
  
 		public void ShowTooltip()
 		{
@@ -42,6 +60,34 @@ namespace _Main.Scripts.UI
 		public void SetDescriptionText(string text)
 		{
 			description.text = text;
+		}
+
+		public void SetActivationLabel(string text, TooltipActivationLabelStyle? style = null)
+		{
+			if (!TryValidateActivationLabelSetup())
+			{
+				return;
+			}
+
+			var hasLabel = !string.IsNullOrWhiteSpace(text);
+			activationLabelRoot.SetActive(hasLabel);
+			if (!hasLabel)
+			{
+				return;
+			}
+
+			if (!style.HasValue)
+			{
+				throw new InvalidOperationException(
+					"[UITooltip] Activation label style is not specified for a non-empty activation label.");
+			}
+
+			activationLabelText.text = text;
+			activationLabelBackground.color = style.Value switch
+			{
+				TooltipActivationLabelStyle.InMatch => inMatchColor.Value,
+				_ => preMatchColor.Value
+			};
 		}
 
 		public void SetRarity(Rarity rarity)
@@ -73,6 +119,28 @@ namespace _Main.Scripts.UI
 
 			tooltipRectTransform.position = screenPos;
 		}
+
+		private bool TryValidateActivationLabelSetup()
+		{
+			if (activationLabelRoot && activationLabelText && activationLabelBackground)
+			{
+				return true;
+			}
+
+			if (!activationLabelSetupErrorLogged)
+			{
+				activationLabelSetupErrorLogged = true;
+				Debug.LogError("[UITooltip] Activation label references are not assigned.", this);
+			}
+
+			return false;
+		}
+	}
+
+	public enum TooltipActivationLabelStyle
+	{
+		PreMatch,
+		InMatch
 	}
 
 	[Serializable]

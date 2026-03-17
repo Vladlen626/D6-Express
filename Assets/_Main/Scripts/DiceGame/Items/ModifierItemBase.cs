@@ -6,7 +6,7 @@ namespace _Main.Scripts.Dice
 	/// Base implementation for dice items that double as modifiers.
 	/// Derive from this and implement ModifyValues to plug into the modifier pipeline.
 	/// </summary>
-	public abstract class ModifierItemBase : IModifierItem
+	public abstract class ModifierItemBase : IModifierItem, IItemTooltipActivationLabelProvider
 	{
 		public string Id { get; }
 		public string DisplayName { get; }
@@ -14,6 +14,25 @@ namespace _Main.Scripts.Dice
 		public DiceItemState State { get; protected set; } = DiceItemState.Ready;
 		public bool IsVisible { get; protected set; } = true;
 		public virtual string InvalidActivationNotificationKey => string.Empty;
+		public virtual ItemTooltipActivationLabel? TooltipActivationLabel
+		{
+			get
+			{
+				if (ActivationType != DiceItemActivationType.ClickToActivate)
+				{
+					return null;
+				}
+
+				var isAllowedInSelection = IsActivationAllowed(DiceGameState.SELECT_DICE);
+				var isAllowedInMatch = IsActivationAllowed(DiceGameState.GAME);
+				if (isAllowedInSelection == isAllowedInMatch)
+				{
+					return null;
+				}
+
+				return isAllowedInSelection ? ItemTooltipActivationLabel.PreMatch : ItemTooltipActivationLabel.InMatch;
+			}
+		}
 
 		protected ItemView AttachedView { get; private set; }
 

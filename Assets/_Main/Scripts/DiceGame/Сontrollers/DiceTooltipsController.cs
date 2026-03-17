@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using _Main.Scripts.Core;
 using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
+using PlatformCore.Services;
 using PlatformCore.Services.Factory;
 using PlatformCore.Services.UI;
 using UnityEngine;
@@ -13,23 +15,26 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly ConfigService configService;
 		private readonly DiceTableView tableView;
+		private readonly ICameraService cameraService;
 
 		private TextsConfig textsConfig;
 		private IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
 
 		private DiceModel currentDiceModel;
 		private IModifierItem currentItem;
+		private ItemView currentItemView;
 		private readonly List<ItemView> itemViews = new();
 		private Camera mainCamera;
 
 		public TooltipsController(IUIService uiService, DiceGameModel diceGameModel, ConfigService configService,
-			Camera mainCamera, DiceTableView tableView = null)
+			ICameraService cameraService, Camera mainCamera, DiceTableView tableView = null)
 			: base(uiService)
 		{
 			this.mainCamera = mainCamera;
 			this.diceGameModel = diceGameModel;
 			this.configService = configService;
 			this.tableView = tableView;
+			this.cameraService = cameraService;
 		}
 
 		protected override async UniTask OnPreloadAsync()
@@ -43,7 +48,12 @@ namespace _Main.Scripts.Dice
 			base.OnActivate();
 
 			_context.Show();
+			_context.SetActivationLabel(null);
 			_context.HideTooltip();
+			if (cameraService != null)
+			{
+				cameraService.ActiveCameraChanged += OnActiveCameraChanged;
+			}
 			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
 			diceGameModel.ScreenDiceDictChanged += ScreenDiceDictChangedHandler;
 			ScreenDiceDictChangedHandler();
@@ -58,6 +68,10 @@ namespace _Main.Scripts.Dice
 
 		protected override void OnDeactivate()
 		{
+			if (cameraService != null)
+			{
+				cameraService.ActiveCameraChanged -= OnActiveCameraChanged;
+			}
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.ScreenDiceDictChanged -= ScreenDiceDictChangedHandler;
 			UnsubscribeFromItemHoverEvents();
@@ -126,12 +140,14 @@ namespace _Main.Scripts.Dice
 			if (currentItem != null)
 			{
 				currentItem = null;
+				currentItemView = null;
 				if (currentDiceModel != null)
 				{
 					OnDiceHoverEnter(currentDiceModel);
 				}
 				else
 				{
+					_context.SetActivationLabel(null);
 					_context.HideTooltip();
 				}
 			}
@@ -155,8 +171,8 @@ namespace _Main.Scripts.Dice
 			var description = textsConfig.texts[diceConfig.descriptionKey];
 			_context.SetHeaderText(header);
 			_context.SetDescriptionText(description);
+			_context.SetActivationLabel(null);
 			_context.SetRarity(diceConfig.rarityEnum);
-
 
 			var pos = diceModel.CurrentPosition;
 			if (tableView && tableView.TooltipPos)
@@ -180,6 +196,7 @@ namespace _Main.Scripts.Dice
 				currentDiceModel = null;
 				if (currentItem == null)
 				{
+					_context.SetActivationLabel(null);
 					_context.HideTooltip();
 				}
 			}
@@ -198,17 +215,23 @@ namespace _Main.Scripts.Dice
 			}
 
 			currentItem = item;
+			currentItemView = FindItemView(item);
 
 			var header = textsConfig.texts[entry.nameKey];
 			var description = textsConfig.texts[entry.descriptionKey];
 			_context.SetHeaderText(header);
 			_context.SetDescriptionText(description);
+			if (TryGetActivationLabel(item, out var activationLabelText, out var activationLabelStyle))
+			{
+				_context.SetActivationLabel(activationLabelText, activationLabelStyle);
+			}
+			else
+			{
+				_context.SetActivationLabel(null);
+			}
 			_context.SetRarity(entry.rarityEnum);
 
-			if (tableView && tableView.TooltipPos)
-			{
-				_context.SetPositionFromWorld(tableView.TooltipPos, Vector3.zero, mainCamera);
-			}
+			SetItemTooltipPosition();
 
 			_context.ShowTooltip();
 		}
@@ -221,6 +244,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			currentItem = null;
+			currentItemView = null;
 
 			if (currentDiceModel != null)
 			{
@@ -228,7 +252,101 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			_context.SetActivationLabel(null);
 			_context.HideTooltip();
+		}
+
+		private bool TryGetActivationLabel(
+			IModifierItem item,
+			out string activationLabelText,
+			out TooltipActivationLabelStyle activationLabelStyle)
+		{
+			activationLabelText = null;
+			activationLabelStyle = TooltipActivationLabelStyle.PreMatch;
+
+			if (item is not IItemTooltipActivationLabelProvider provider)
+			{
+				return false;
+			}
+
+			if (!provider.TooltipActivationLabel.HasValue)
+			{
+				return false;
+			}
+
+			var localizationKey = provider.TooltipActivationLabel.Value switch
+			{
+				ItemTooltipActivationLabel.PreMatch => GlobalConstants.Localization.ItemTooltipActivationPreMatch,
+				ItemTooltipActivationLabel.InMatch => GlobalConstants.Localization.ItemTooltipActivationInMatch,
+				_ => null
+			};
+			if (string.IsNullOrWhiteSpace(localizationKey))
+			{
+				return false;
+			}
+
+			activationLabelText = textsConfig.texts[localizationKey];
+			activationLabelStyle = provider.TooltipActivationLabel.Value == ItemTooltipActivationLabel.InMatch
+				? TooltipActivationLabelStyle.InMatch
+				: TooltipActivationLabelStyle.PreMatch;
+			return true;
+		}
+
+		private void OnActiveCameraChanged(CameraStateEnum _)
+		{
+			if (currentItem != null)
+			{
+				SetItemTooltipPosition();
+				return;
+			}
+
+			if (currentDiceModel != null)
+			{
+				OnDiceHoverEnter(currentDiceModel);
+			}
+		}
+
+		private void SetItemTooltipPosition()
+		{
+			if (cameraService != null && cameraService.ActiveCameraState == CameraStateEnum.Inventory)
+			{
+				if (currentItemView)
+				{
+					_context.SetPositionFromWorld(currentItemView.transform, Vector3.zero, mainCamera);
+				}
+
+				return;
+			}
+
+			if (tableView && tableView.TooltipPos)
+			{
+				_context.SetPositionFromWorld(tableView.TooltipPos, Vector3.zero, mainCamera);
+				return;
+			}
+
+			if (currentItemView)
+			{
+				_context.SetPositionFromWorld(currentItemView.transform, Vector3.zero, mainCamera);
+			}
+		}
+
+		private ItemView FindItemView(IModifierItem item)
+		{
+			for (var i = 0; i < itemViews.Count; i++)
+			{
+				var view = itemViews[i];
+				if (!view)
+				{
+					continue;
+				}
+
+				if (object.ReferenceEquals(view.BoundItem, item))
+				{
+					return view;
+				}
+			}
+
+			return null;
 		}
 	}
 }

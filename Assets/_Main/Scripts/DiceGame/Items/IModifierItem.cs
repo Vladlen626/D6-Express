@@ -18,6 +18,12 @@ namespace _Main.Scripts.Dice
 		Disabled
 	}
 
+	public enum ItemTooltipActivationLabel
+	{
+		PreMatch,
+		InMatch
+	}
+
 	/// <summary>
 	/// A modifier item is a modifier with a physical (3D) representation. It can be passive or require a click to arm/activate.
 	/// </summary>
@@ -67,6 +73,15 @@ namespace _Main.Scripts.Dice
 	public interface IModifierItemViewProvider
 	{
 		ItemView GetViewPrefab();
+	}
+
+	/// <summary>
+	/// Optional: implement to provide an activation stage badge for item tooltip UI.
+	/// Return null when no badge should be shown.
+	/// </summary>
+	public interface IItemTooltipActivationLabelProvider
+	{
+		ItemTooltipActivationLabel? TooltipActivationLabel { get; }
 	}
 
 	/// <summary>

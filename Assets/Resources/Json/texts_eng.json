@@ -181,6 +181,8 @@
         "modifier_pass_score_floor_item_apply": "Your Pass was raised to match your pocket cash",
         "item_activation_only_select_dice": "This item can only be activated during dice selection",
         "item_activation_only_game": "This item can only be activated during the match",
+        "item_tooltip_activation_pre_match": "Pre-Match",
+        "item_tooltip_activation_in_match": "In-Match",
         "dice_banner_turn_player": "Your turn",
         "dice_banner_turn_enemy": "Enemy turn",
         "dice_banner_round_start": "Round start",

@@ -18,6 +18,8 @@ namespace _Main.Scripts.Core
 			public const string ShopModifierInventoryFull = "shop_modifier_inventory_full";
 			public const string ItemActivationOnlySelectDice = "item_activation_only_select_dice";
 			public const string ItemActivationOnlyGame = "item_activation_only_game";
+			public const string ItemTooltipActivationPreMatch = "item_tooltip_activation_pre_match";
+			public const string ItemTooltipActivationInMatch = "item_tooltip_activation_in_match";
 		}
 	}
 }

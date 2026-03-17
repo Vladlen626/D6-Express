@@ -31,6 +31,8 @@ namespace PlatformCore.Services
 
 		private CinemachineCamera currentCamera;
 		private CinemachineBrain brain;
+		public CameraStateEnum ActiveCameraState { get; private set; }
+		public event Action<CameraStateEnum> ActiveCameraChanged;
 
 		private readonly Dictionary<CameraStateEnum, CinemachineCamera> allCameras =
 			new Dictionary<CameraStateEnum, CinemachineCamera>();
@@ -114,6 +116,11 @@ namespace PlatformCore.Services
 				return;
 			}
 
+			if (currentCamera == allCameras[state] && ActiveCameraState == state)
+			{
+				return;
+			}
+
 			StopShake();
 
 			if (currentCamera != null)
@@ -123,6 +130,8 @@ namespace PlatformCore.Services
 
 			currentCamera = allCameras[state];
 			currentCamera.gameObject.SetActive(true);
+			ActiveCameraState = state;
+			ActiveCameraChanged?.Invoke(state);
 
 
 			_noise = (CinemachineBasicMultiChannelPerlin)currentCamera.GetCinemachineComponent(CinemachineCore.Stage

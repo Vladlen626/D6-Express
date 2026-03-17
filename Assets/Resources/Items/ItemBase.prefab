@@ -102,12 +102,12 @@ MonoBehaviour:
   visualRoot: {fileID: 5552264432598873387}
   clickCollider: {fileID: 3006189164749017755}
   visualOutline: {fileID: 6356880930539322664}
-  hoverLift: 0.025
+  hoverLift: 0.0125
   hoverEnterDuration: 0.12
   hoverExitDuration: 0.12
   hoverEnterEase: 8
   hoverExitEase: 8
-  armedScaleMultiplier: 1.02
+  armedScaleMultiplier: 1.025
   armedPulseDuration: 0.5
   armedPulseEase: 9
   consumedScaleMultiplier: 0

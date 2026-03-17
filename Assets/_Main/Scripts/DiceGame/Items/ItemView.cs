@@ -45,6 +45,7 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private ItemDisabledVisual disabledVisual = new();
 
 		private IModifierItem boundItem;
+		public IModifierItem BoundItem => boundItem;
 		public UnityEvent OnClicked = new();
 		public event Action<IModifierItem> OnHoverEnter;
 		public event Action<IModifierItem> OnHoverExit;
@@ -102,7 +103,6 @@ namespace _Main.Scripts.Dice
 			if (_isStateInitialized)
 			{
 				ApplyStateImmediate(_currentState);
-				ApplyDisabledScaleIfNeeded();
 				ApplyOutlineColor();
 			}
 		}
@@ -119,20 +119,7 @@ namespace _Main.Scripts.Dice
 			{
 				disabledVisual.EnsureConfiguredOrThrow();
 				disabledVisual.Apply();
-
-				if (_isHovered)
-				{
-					_isHovered = false;
-					if (boundItem != null)
-					{
-						OnHoverExit?.Invoke(boundItem);
-					}
-
-					StopHoverAnimation();
-				}
-
 				ApplyDisabledScaleIfNeeded();
-				SetClickEnabled(false);
 				ApplyOutlineColor();
 				return;
 			}
@@ -197,19 +184,6 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			if (_isPhaseDisabled)
-			{
-				if (_isHovered)
-				{
-					_isHovered = false;
-					OnHoverExit?.Invoke(boundItem);
-					StopHoverAnimation();
-					ApplyOutlineColor();
-				}
-
-				return;
-			}
-
 			var mouse = Mouse.current;
 			if (mouse == null)
 			{
@@ -233,11 +207,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			if (!mouse.leftButton.wasPressedThisFrame)
-			{
-				return;
-			}
-
-			if (!_cam)
 			{
 				return;
 			}

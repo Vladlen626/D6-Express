@@ -54,9 +54,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnViewClicked()
 		{
-			if (item.State == DiceItemState.Ready &&
-			    diceGameModel != null &&
-			    !item.IsActivationAllowed(diceGameModel.DiceGameState))
+			if (IsPhaseActivationBlocked())
 			{
 				if (!string.IsNullOrWhiteSpace(item.InvalidActivationNotificationKey))
 				{
@@ -81,15 +79,24 @@ namespace _Main.Scripts.Dice
 
 		private void RefreshPhaseDisabledVisual()
 		{
-			if (!view || item == null || diceGameModel == null)
+			if (!view || diceGameModel == null)
 			{
 				return;
 			}
 
-			var isPhaseDisabled = item.ActivationType == DiceItemActivationType.ClickToActivate &&
-			                      item.State == DiceItemState.Ready &&
-			                      !item.IsActivationAllowed(diceGameModel.DiceGameState);
-			view.SetPhaseDisabled(isPhaseDisabled);
+			view.SetPhaseDisabled(IsPhaseActivationBlocked());
+		}
+
+		private bool IsPhaseActivationBlocked()
+		{
+			if (diceGameModel == null)
+			{
+				return false;
+			}
+
+			return item.ActivationType == DiceItemActivationType.ClickToActivate &&
+			       item.State == DiceItemState.Ready &&
+			       !item.IsActivationAllowed(diceGameModel.DiceGameState);
 		}
 	}
 }

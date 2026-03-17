@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using _Main.Scripts.Core;
+using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
@@ -15,6 +18,8 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
 
     private TextsConfig textsConfig;
     private IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
+    private readonly Dictionary<string, ItemTooltipActivationLabel> tooltipActivationLabelByItemId =
+        new(StringComparer.Ordinal);
 
     public ShopTooltipsController(IUIService uiService, Shop shop, ShopView shopView, Interactor interactor, Camera camera) : base(uiService)
     {
@@ -29,6 +34,7 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
         var configService = Locator.Resolve<ConfigService>();
         catalog = await configService.GetConfigsAsync<ItemCatalogEntry>(ResourcePaths.Json.items_catalog);
         textsConfig = await configService.GetFirstOrDefaultAsync<TextsConfig>(ResourcePaths.Json.texts_eng);
+        BuildActivationLabelCache();
     }
 
     protected override void OnActivate()
@@ -36,6 +42,7 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
         base.OnActivate();
 
         _context.Hide();
+        _context.SetActivationLabel(null);
         _context.HideTooltip();
 
         interactor.Noticed += OnNoticed;
@@ -106,6 +113,14 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
 
             _context.SetHeaderText(header);
             _context.SetDescriptionText(description);
+            if (TryGetActivationLabel(shopItem.ItemId, out var activationLabelText, out var activationLabelStyle))
+            {
+                _context.SetActivationLabel(activationLabelText, activationLabelStyle);
+            }
+            else
+            {
+                _context.SetActivationLabel(null);
+            }
             _context.SetRarity(entry.rarityEnum);
 
             _context.SetPositionFromWorld(
@@ -121,6 +136,71 @@ public class ShopTooltipsController : BaseContextController<UITooltip>
     private void OnMissed(Interactable interactable)
     {
         _context.Hide();
+        _context.SetActivationLabel(null);
         _context.HideTooltip();
+    }
+
+    private void BuildActivationLabelCache()
+    {
+        tooltipActivationLabelByItemId.Clear();
+
+        foreach (var pair in catalog)
+        {
+            var entry = pair.Value;
+            if (entry == null || entry.typeEnum != ItemCatalogType.ModifierItem)
+            {
+                continue;
+            }
+
+            var runtimeItem = ModifierItemFactory.Create(entry, null, null);
+            if (runtimeItem is not IItemTooltipActivationLabelProvider provider ||
+                !provider.TooltipActivationLabel.HasValue)
+            {
+                continue;
+            }
+
+            tooltipActivationLabelByItemId[entry.id] = provider.TooltipActivationLabel.Value;
+        }
+    }
+
+    private bool TryGetActivationLabel(
+        string itemId,
+        out string activationLabelText,
+        out TooltipActivationLabelStyle activationLabelStyle)
+    {
+        activationLabelText = null;
+        activationLabelStyle = TooltipActivationLabelStyle.PreMatch;
+
+        if (string.IsNullOrWhiteSpace(itemId))
+        {
+            return false;
+        }
+
+        if (!tooltipActivationLabelByItemId.TryGetValue(itemId, out var activationLabel))
+        {
+            return false;
+        }
+
+        var localizationKey = activationLabel switch
+        {
+            ItemTooltipActivationLabel.PreMatch => GlobalConstants.Localization.ItemTooltipActivationPreMatch,
+            ItemTooltipActivationLabel.InMatch => GlobalConstants.Localization.ItemTooltipActivationInMatch,
+            _ => null
+        };
+        if (string.IsNullOrWhiteSpace(localizationKey))
+        {
+            return false;
+        }
+
+        if (!textsConfig.texts.TryGetValue(localizationKey, out activationLabelText) ||
+            string.IsNullOrWhiteSpace(activationLabelText))
+        {
+            return false;
+        }
+
+        activationLabelStyle = activationLabel == ItemTooltipActivationLabel.InMatch
+            ? TooltipActivationLabelStyle.InMatch
+            : TooltipActivationLabelStyle.PreMatch;
+        return true;
     }
 }
