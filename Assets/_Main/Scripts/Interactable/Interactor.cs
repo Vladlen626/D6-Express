@@ -46,13 +46,7 @@ public class Interactor : MonoBehaviour
 	{
 		while (activeActions.Count > 0)
 		{
-			var index = activeActions.Count - 1;
-			var action = activeActions[index];
-
-			action.Started -= OnInteractionStarted;
-			action.Ended -= OnInteractionEnded;
-
-			activeActions.RemoveAt(index);
+			var action = activeActions[^1];
 			action.StopInteract(immediate);
 		}
 	}

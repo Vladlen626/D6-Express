@@ -89,6 +89,8 @@ namespace _Main.Scripts.Dice
 			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
 			diceGameModel.OnGameConditionPassed += OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed += OnGameConditionFailedHandler;
+			diceGameModel.OnDiceAnimationInProgressChanged += OnDiceAnimationInProgressChangedHandler;
+
 			OnDiceGameStateChangedHandler();
 
 			dicePreGameController = new DicePreGameController(sceneContext, playerView, playerModel, run);
@@ -100,6 +102,7 @@ namespace _Main.Scripts.Dice
 			lifecycleService.Unregister(dicePreGameController);
 			dicePreGameController = null;
 
+			diceGameModel.OnDiceAnimationInProgressChanged -= OnDiceAnimationInProgressChangedHandler;
 			playerModel.PlayerStateModel.StateAdded -= OnCharacterStateAddedHandler;
 			playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateRemovedHandler;
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
@@ -132,6 +135,10 @@ namespace _Main.Scripts.Dice
 			{
 				StartDiceGame().Forget();
 			}
+			else if (playerModel.PlayerStateModel.HasState(CharacterState.DICE_GAME) && state == CharacterState.SPEAKING)
+			{
+				inputService.DisableDiceGameInputs();
+			}
 		}
 
 		// ReSharper disable Unity.PerformanceAnalysis
@@ -140,6 +147,10 @@ namespace _Main.Scripts.Dice
 			if (state == CharacterState.DICE_GAME)
 			{
 				StopDiceGame();
+			}
+			else if (playerModel.PlayerStateModel.HasState(CharacterState.DICE_GAME) && state == CharacterState.SPEAKING)
+			{
+				inputService.EnableDiceGameInputs();
 			}
 		}
 
@@ -559,6 +570,18 @@ namespace _Main.Scripts.Dice
 			interactable.SetId(id);
 			playerView.Interactor.Interact(interactable);
 			interactable.ResetId();
+		}
+
+		private void OnDiceAnimationInProgressChangedHandler(bool oldValuem, bool newValue)
+		{
+			if (diceGameModel.IsDiceAnimationInProgress)
+			{
+				inputService.DisableDiceGameInputs();
+			}
+			else
+			{
+				inputService.EnableDiceGameInputs();
+			}
 		}
 	}
 }
