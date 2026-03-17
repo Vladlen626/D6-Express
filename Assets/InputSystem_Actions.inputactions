@@ -1336,7 +1336,7 @@
                 {
                     "name": "",
                     "id": "2a76e2b9-330d-459f-b7eb-a5d476184355",
-                    "path": "<Keyboard>/escape",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
