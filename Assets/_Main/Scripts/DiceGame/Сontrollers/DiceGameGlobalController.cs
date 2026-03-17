@@ -177,26 +177,28 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			var upgradeAwaiter = awaiterService.GetPool("dice.upgrade");
+			var turnFlowAwaiter = awaiterService.GetPool("dice.turn_flow");
+			diceGameModel.SetTurnFlowAwaiter(turnFlowAwaiter);
 			var tableView = sceneContext.DiceGameTableView;
 			var upgradeController = new DiceGameUpgradeController(
 				diceGameModel,
 				run,
 				loggerService,
-				upgradeAwaiter,
+				turnFlowAwaiter,
 				objectFactory,
 				audioService,
 				notificationService,
 				localizationService,
 				tableView);
 			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, upgradeAwaiter);
+				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, turnFlowAwaiter);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
 				upgradeController,
 				processController,
-				new DiceGameUpgradeVisualController(uiService, upgradeController, upgradeAwaiter, resourceService, loggerService),
+				new DiceGameUpgradeVisualController(uiService, upgradeController, turnFlowAwaiter, resourceService, loggerService),
+				new DiceGameCombinationsDisplayController(diceGameModel, tableView, turnFlowAwaiter),
 				new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
 				new DiceGameViewController(tableView, diceGameModel, cameraShakeService, notificationService),
 				new DiceGameResultController(diceGameModel)

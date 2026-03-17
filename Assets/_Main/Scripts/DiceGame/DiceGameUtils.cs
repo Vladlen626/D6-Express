@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Main.Scripts.Dice
 {
@@ -98,6 +100,29 @@ namespace _Main.Scripts.Dice
 			}
 
 			return table.IsBankedPosition(position);
+		}
+
+		public static bool HasRemainingTrash(int[] remainingCounts)
+		{
+			if (remainingCounts == null)
+			{
+				return false;
+			}
+
+			if (remainingCounts.Length < 7)
+			{
+				throw new InvalidOperationException("[DiceGameUtils] Remaining counts array must have size 7.");
+			}
+
+			for (int face = 1; face <= 6; face++)
+			{
+				if (remainingCounts[face] > 0)
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }

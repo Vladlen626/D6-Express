@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using _Main.Scripts.Core;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceGameModel diceGameModel;
 		private readonly Run run;
 		private readonly GlobalNotificationService notificationService;
-		private readonly IAsyncAwaiterPool upgradeAwaiter;
+		private readonly IAsyncAwaiterPool turnFlowAwaiter;
 		private TableModel tableModel => diceGameModel.tableModel;
 
 		public bool IsProcessing { get; private set; }
@@ -30,7 +31,7 @@ namespace _Main.Scripts.Dice
 			IAudioService audioService,
 			Run run,
 			GlobalNotificationService notificationService,
-			IAsyncAwaiterPool upgradeAwaiter)
+			IAsyncAwaiterPool turnFlowAwaiter)
 		{
 			this.logger = logger;
 			this.diceGameModel = diceGameModel;
@@ -38,7 +39,7 @@ namespace _Main.Scripts.Dice
 			this.audioService = audioService;
 			this.run = run;
 			this.notificationService = notificationService;
-			this.upgradeAwaiter = upgradeAwaiter;
+			this.turnFlowAwaiter = turnFlowAwaiter ?? throw new ArgumentNullException(nameof(turnFlowAwaiter));
 		}
 
 		public void Activate()
@@ -140,9 +141,10 @@ namespace _Main.Scripts.Dice
 				
 
 				var activeScoringService = diceGameModel.GetCurrentScoringService();
+				var selectedDice = diceGameModel.GetSelected();
 				bool isHotDice = await TrySaveSelected(
-					diceGameModel.GetSelected(),
-					activeScoringService.Evaluate(GetValues(diceGameModel.GetSelected())));
+					selectedDice,
+					activeScoringService.Evaluate(GetValues(selectedDice)));
 				tableModel.SetPreviewPoints(0);
 
 				// Если все кубы забанкированы после сохранения, сбросить пул
@@ -157,16 +159,17 @@ namespace _Main.Scripts.Dice
 				}
 
 				// Роллим актуальные кубы
-				var tasks = new List<UniTask>();
 				var diceToRoll = diceGameModel.GetUnbanked();
-				foreach (var dice in diceToRoll)
+				var rollAnimationTasks = new UniTask[diceToRoll.Length];
+				for (int i = 0; i < diceToRoll.Length; i++)
 				{
+					var dice = diceToRoll[i];
 					dice.Roll();
 					var view = diceGameModel.ScreenDiceDict[dice];
-					tasks.Add(view.PlayRollAnimationAsync());
+					rollAnimationTasks[i] = view.PlayRollAnimationAsync();
 				}
 
-				await UniTask.WhenAll(tasks);
+				await UniTask.WhenAll(rollAnimationTasks);
 				audioService.PlaySound(SoundNames.DiceDrop);
 				cameraShakeService.ShakeAsync(0.4f, 0.065f).Forget();
 
@@ -345,8 +348,10 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
-			tableModel.AddTurnPoints(points);
-			var tweenList = new List<Tween>();
+			diceGameModel.PublishCombinationPreview(DiceCombinationCardsSnapshot.Empty);
+
+			var tweens = new Tween[selected.Length];
+			var tweenCount = 0;
 			foreach (var diceModel in selected)
 			{
 				diceModel.SetSaved(true);
@@ -357,16 +362,20 @@ namespace _Main.Scripts.Dice
 				var view = diceGameModel.ScreenDiceDict[diceModel];
 				view.transform.SetParent(position);
 				view.ResetYRotation();
-				tweenList.Add(view.MoveToPosition(position.position));
+				tweens[tweenCount] = view.MoveToPosition(position.position);
+				tweenCount++;
 			}
 
-			await UniTaskUtils.WaitAllTweens(tweenList.ToArray());
+			await UniTaskUtils.WaitAllTweens(tweens, tweenCount);
+			var committedSnapshot = DiceCombinationCardsSnapshotBuilder.Build(combinationResult, activeScoringService);
+			diceGameModel.PublishCombinationCommitted(committedSnapshot);
+
+			await WaitTurnFlowAsync();
+
+			tableModel.AddTurnPoints(points);
 
 			diceGameModel.RequestUpgrade(combinationResult);
-			if (upgradeAwaiter != null)
-			{
-				await upgradeAwaiter.WaitForEmptyAsync();
-			}
+			await WaitTurnFlowAsync();
 
 			UpdateUI();
 
@@ -376,7 +385,8 @@ namespace _Main.Scripts.Dice
 		private async UniTask ResetAllDiceToActiveAsync()
 		{
 			tableModel.ResetAllPositions();
-			var tweens = new List<Tween>();
+			var tweens = new Tween[diceGameModel.CurrentDiceModelList.Count];
+			var tweenCount = 0;
 			
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
@@ -393,7 +403,8 @@ namespace _Main.Scripts.Dice
 				if (diceGameModel.ScreenDiceDict.TryGetValue(diceModel, out var view) && view)
 				{
 					view.transform.SetParent(pos);
-					tweens.Add(view.MoveToPosition(pos.position));
+					tweens[tweenCount] = view.MoveToPosition(pos.position);
+					tweenCount++;
 				}
 				else
 				{
@@ -401,7 +412,7 @@ namespace _Main.Scripts.Dice
 				}
 			}
 
-			await UniTaskUtils.WaitAllTweens(tweens.ToArray());
+			await UniTaskUtils.WaitAllTweens(tweens, tweenCount);
 		}
 
 		private void UpdateUI()
@@ -416,26 +427,34 @@ namespace _Main.Scripts.Dice
 			}
 
 			var selectedDice = diceGameModel.GetSelected();
-			var selectedValues = new int[selectedDice.Length];
-			for (int i = 0; i < selectedDice.Length; i++)
-			{
-				selectedValues[i] = selectedDice[i].CurrentValue;
-			}
+			var selectedValues = GetValues(selectedDice);
 
 			var activeScoringService = diceGameModel.GetCurrentScoringService();
+			var previewSnapshot = DiceCombinationCardsSnapshot.Empty;
+			var combo = activeScoringService.Evaluate(selectedValues);
 
-			if (activeScoringService.HasTrash(selectedValues))
+			if (DiceGameUtils.HasRemainingTrash(combo.RemainingCounts))
 			{
 				tableModel.SetPreviewPoints(0);
 			}
 			else
 			{
-				var combo = activeScoringService.Evaluate(selectedValues);
-				tableModel.SetPreviewPoints(activeScoringService.CalculateTotalScore(combo));
+				var previewPoints = activeScoringService.CalculateTotalScore(combo);
+				tableModel.SetPreviewPoints(previewPoints);
+				if (previewPoints > 0 && diceGameModel.IsPlayerTurn)
+				{
+					previewSnapshot = DiceCombinationCardsSnapshotBuilder.Build(combo, activeScoringService);
+				}
 			}
 
+			diceGameModel.PublishCombinationPreview(previewSnapshot);
 
 			diceGameModel.tableModel.SendUpdateUI();
+		}
+
+		private UniTask WaitTurnFlowAsync()
+		{
+			return turnFlowAwaiter.WaitForEmptyAsync();
 		}
 	}
 }

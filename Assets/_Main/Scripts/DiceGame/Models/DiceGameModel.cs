@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Main.Scripts.Core.Services;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -21,6 +22,8 @@ namespace _Main.Scripts.Dice
 		public event Action OnPassClicked;
 		public event Action DiceValuesChanged;
 		public event Action<DiceCombinationResult> UpgradeRequested;
+		public event Action<DiceCombinationCardsSnapshot> CombinationPreviewChanged;
+		public event Action<DiceCombinationCardsSnapshot> CombinationCommitted;
 		
 		public TableModel tableModel;
 		public ModifiersModel PlayerModifiersModel { get; }
@@ -55,6 +58,7 @@ namespace _Main.Scripts.Dice
 		public bool IsDiceAnimationInProgress => diceAnimationInProgressCounter > 0;
 		public int MaxDiceCount => GetMaxDiceCount(IsPlayerTurn);
 		public int BaseMaxDiceCount => baseMaxDiceCount;
+		public IAsyncAwaiterPool TurnFlowAwaiter { get; private set; }
 
 		private const int DefaultMaxDiceCount = 6;
 		private int baseMaxDiceCount = DefaultMaxDiceCount;
@@ -119,6 +123,11 @@ namespace _Main.Scripts.Dice
 			{
 				OnDiceAnimationInProgressChanged?.Invoke(oldValue, newValue);
 			}
+		}
+
+		public void SetTurnFlowAwaiter(IAsyncAwaiterPool awaiterPool)
+		{
+			TurnFlowAwaiter = awaiterPool;
 		}
 
 		/// <summary>
@@ -238,6 +247,11 @@ namespace _Main.Scripts.Dice
 			if (diceGameState == DiceGameState.GAME)
 			{
 				IsDiceGameStarted = true;
+			}
+			else
+			{
+				PublishCombinationPreview(DiceCombinationCardsSnapshot.Empty);
+				PublishCombinationCommitted(DiceCombinationCardsSnapshot.Empty);
 			}
 			OnDiceGameStateChanged?.Invoke();
 		}
@@ -389,9 +403,21 @@ namespace _Main.Scripts.Dice
 			UpgradeRequested?.Invoke(combinationResult);
 		}
 
+		public void PublishCombinationPreview(DiceCombinationCardsSnapshot snapshot)
+		{
+			CombinationPreviewChanged?.Invoke(snapshot);
+		}
+
+		public void PublishCombinationCommitted(DiceCombinationCardsSnapshot snapshot)
+		{
+			CombinationCommitted?.Invoke(snapshot);
+		}
+
 		public void EndTurn(bool success)
 		{
 			OnEndTurn?.Invoke(success);
+			PublishCombinationPreview(DiceCombinationCardsSnapshot.Empty);
+			PublishCombinationCommitted(DiceCombinationCardsSnapshot.Empty);
 			HideAllDiceGameModels();
 			if (success)
 			{
@@ -475,6 +501,8 @@ namespace _Main.Scripts.Dice
 		public void Reset()
 		{
 			tableModel.Reset();
+			PublishCombinationPreview(DiceCombinationCardsSnapshot.Empty);
+			PublishCombinationCommitted(DiceCombinationCardsSnapshot.Empty);
 			PlayerDiceModelList.Clear();
 			EnemyDiceModelList.Clear();
 			ResetDiceAnimationState();
@@ -485,6 +513,7 @@ namespace _Main.Scripts.Dice
 			isGameConditionResolved = false;
 			CurrentTurn = 0;
 			IsAllInBet = false;
+			TurnFlowAwaiter = null;
 		}
 
 		private void ResetDiceAnimationState()

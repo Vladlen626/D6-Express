@@ -47,6 +47,13 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private TextMeshProUGUI turnScoreText;
 	[SerializeField] private TextMeshProUGUI previewScoreText;
 
+	[Header("Combinations Cards")]
+	[SerializeField] private Transform combinationCardsRoot;
+	[SerializeField] private DiceCombinationCardView combinationCardPrefab;
+	[SerializeField] private RectTransform combinationFlyLayer;
+	[SerializeField] private TextMeshProUGUI combinationFlyScorePrefab;
+	[SerializeField] private RectTransform turnScoreFlyTarget;
+
 	[Header("Buttons")]
 	[SerializeField] private Button rollButton;
 	[SerializeField] private Button passButton;
@@ -87,6 +94,11 @@ public class DiceTableView : MonoBehaviour
 	public Transform UpgradeDicePos => upgradeDicePos;
 	public float UpgradeDiceScreenScale => upgradeDiceScreenScale > 0.05f ? upgradeDiceScreenScale : DefaultUpgradeDiceScale;
 	public Transform TooltipPos => tooltipPos;
+	public Transform CombinationCardsRoot => combinationCardsRoot;
+	public DiceCombinationCardView CombinationCardPrefab => combinationCardPrefab;
+	public RectTransform CombinationFlyLayer => combinationFlyLayer;
+	public TextMeshProUGUI CombinationFlyScorePrefab => combinationFlyScorePrefab;
+	public RectTransform TurnScoreFlyTarget => turnScoreFlyTarget;
 
 	private bool isCombinationsOpen;
 	private bool inAnimProcess;
@@ -268,6 +280,15 @@ public class DiceTableView : MonoBehaviour
 			bet1xLabelText == null || bet3xLabelText == null || bet5xLabelText == null || allInLabelText == null)
 		{
 			throw new MissingReferenceException("[DiceTableView] BET controls are not configured. Assign bet buttons, roots and label texts in prefab.");
+		}
+	}
+
+	public void ValidateCombinationCardReferences()
+	{
+		if (!combinationCardsRoot || !combinationCardPrefab || !combinationFlyLayer || !combinationFlyScorePrefab || !turnScoreFlyTarget)
+		{
+			throw new MissingReferenceException(
+				"[DiceTableView] Combination card UI is not configured. Assign cards root, card prefab, fly layer, fly label prefab and turn score fly target.");
 		}
 	}
 }
