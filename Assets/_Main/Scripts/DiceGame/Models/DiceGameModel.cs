@@ -59,6 +59,7 @@ namespace _Main.Scripts.Dice
 		private const int DefaultMaxDiceCount = 6;
 		private int baseMaxDiceCount = DefaultMaxDiceCount;
 		private int diceAnimationInProgressCounter;
+		private bool isGameConditionResolved;
 		private readonly Dictionary<string, int> playerDiceCapBonuses = new();
 		private readonly Dictionary<string, int> enemyDiceCapBonuses = new();
 
@@ -82,6 +83,8 @@ namespace _Main.Scripts.Dice
 		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
 		{
 			this.tableModel = tableModel;
+			IsConditionPassed = false;
+			isGameConditionResolved = false;
 			ResetDiceAnimationState();
 			SetMinBetSize(diceGameConfig.min_bet_size);
 			SetMaxBetSize(maxBetSize);
@@ -322,12 +325,24 @@ namespace _Main.Scripts.Dice
 
 		public void SetConditionPassed()
 		{
+			if (isGameConditionResolved)
+			{
+				return;
+			}
+
+			isGameConditionResolved = true;
 			IsConditionPassed = true;
 			OnGameConditionPassed?.Invoke();
 		}
 
 		public void SetConditionFailed()
 		{
+			if (isGameConditionResolved)
+			{
+				return;
+			}
+
+			isGameConditionResolved = true;
 			IsConditionPassed = false;
 			OnGameConditionFailed?.Invoke();
 		}
@@ -388,6 +403,12 @@ namespace _Main.Scripts.Dice
 				{
 					tableModel.AddBankedPointsForEnemy(tableModel.TurnPoints);
 				}
+			}
+
+			if (TargetPoints > 0 &&
+			    (tableModel.PlayerBankedPoints >= TargetPoints || tableModel.EnemyBankedPoints >= TargetPoints))
+			{
+				return;
 			}
 
 			IncreaseCurrentTurn();
@@ -461,6 +482,7 @@ namespace _Main.Scripts.Dice
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;
+			isGameConditionResolved = false;
 			CurrentTurn = 0;
 			IsAllInBet = false;
 		}

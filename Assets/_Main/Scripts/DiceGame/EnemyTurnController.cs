@@ -213,6 +213,13 @@ public class EnemyTurnController : IBaseController, IActivatable
 					break;
 			}
 
+			if (diceGameModel.TargetPoints > 0 &&
+			    (tableModel.PlayerBankedPoints >= diceGameModel.TargetPoints ||
+			     tableModel.EnemyBankedPoints >= diceGameModel.TargetPoints))
+			{
+				return;
+			}
+
 			if (stepIndex < scriptTurn.steps.Count - 1 && diceGameModel.IsPlayerTurn)
 			{
 				ThrowScriptValidation($"Enemy turn ended too early at turn {expectedTurnNumber}, step {stepIndex + 1}.");
