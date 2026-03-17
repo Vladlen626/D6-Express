@@ -31,17 +31,24 @@ namespace _Main.Scripts.Dice
 		[SerializeField]
 		private float scoreAnimationDuration = 0.24f;
 
+		[SerializeField]
+		private float visibilityAnimationDuration = 0.15f;
+
 		private readonly List<Image> faceIcons = new();
 		private readonly List<int> cachedFaces = new(6);
 		private Tween scoreTween;
+		private Tween visibilityTween;
 		private int currentScore;
 		private bool isScoreInitialized;
+		private bool isShown;
 
 		public RectTransform FlyOrigin => flyOrigin;
+		public bool IsShown => isShown;
 
 		private void Awake()
 		{
 			ValidateReferences();
+			isShown = transform.localScale.x > 0.001f;
 		}
 
 		private void OnDestroy()
@@ -51,7 +58,13 @@ namespace _Main.Scripts.Dice
 				scoreTween.Kill();
 			}
 
+			if (visibilityTween != null && visibilityTween.IsActive())
+			{
+				visibilityTween.Kill();
+			}
+
 			scoreTween = null;
+			visibilityTween = null;
 		}
 
 		public void SetPresentation(string combinationName, IReadOnlyList<int> faces)
@@ -104,6 +117,57 @@ namespace _Main.Scripts.Dice
 
 			await scoreTween.AsyncWaitForCompletion().AsUniTask();
 			scoreTween = null;
+		}
+
+		public void SetVisibleImmediate(bool visible)
+		{
+			if (visibilityTween != null && visibilityTween.IsActive())
+			{
+				visibilityTween.Kill();
+				visibilityTween = null;
+			}
+
+			transform.localScale = visible ? Vector3.one : Vector3.zero;
+			isShown = visible;
+		}
+
+		public async UniTask AnimateShowAsync()
+		{
+			if (isShown)
+			{
+				return;
+			}
+
+			if (visibilityTween != null && visibilityTween.IsActive())
+			{
+				visibilityTween.Kill();
+			}
+
+			transform.localScale = Vector3.zero;
+			visibilityTween = transform.DOScale(Vector3.one, visibilityAnimationDuration)
+				.SetEase(Ease.OutQuad);
+			await visibilityTween.AsyncWaitForCompletion().AsUniTask();
+			visibilityTween = null;
+			isShown = true;
+		}
+
+		public async UniTask AnimateHideAsync()
+		{
+			if (!isShown)
+			{
+				return;
+			}
+
+			if (visibilityTween != null && visibilityTween.IsActive())
+			{
+				visibilityTween.Kill();
+			}
+
+			visibilityTween = transform.DOScale(Vector3.zero, visibilityAnimationDuration)
+				.SetEase(Ease.InQuad);
+			await visibilityTween.AsyncWaitForCompletion().AsUniTask();
+			visibilityTween = null;
+			isShown = false;
 		}
 
 		private void ApplyFaces(IReadOnlyList<int> faces)

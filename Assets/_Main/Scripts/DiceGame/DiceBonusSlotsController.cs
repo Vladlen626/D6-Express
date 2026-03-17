@@ -15,7 +15,7 @@ namespace _Main.Scripts.Dice
 		private readonly DiceTableView diceTableView;
 		private readonly Dictionary<Transform, Vector3> slotDefaultScales = new();
 		private readonly Dictionary<Transform, Tween> slotOpenTweens = new();
-		private readonly List<Transform> tweenSlotsBuffer = new();
+		private readonly List<Tween> tweenBuffer = new();
 
 		private int visibleGameSlotsCount;
 		private int visibleSelectSlotsCount;
@@ -124,6 +124,11 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < slots.Length; i++)
 			{
 				var slot = slots[i];
+				if (!slot)
+				{
+					continue;
+				}
+
 				var shouldBeVisible = i < targetVisibleCount;
 				var wasVisible = i < currentVisibleCount;
 
@@ -142,6 +147,11 @@ namespace _Main.Scripts.Dice
 
 		private void ShowSlot(Transform slot, bool animate)
 		{
+			if (!slot)
+			{
+				return;
+			}
+
 			KillSlotTween(slot);
 			slot.gameObject.SetActive(true);
 
@@ -161,6 +171,11 @@ namespace _Main.Scripts.Dice
 
 		private void HideSlot(Transform slot)
 		{
+			if (!slot)
+			{
+				return;
+			}
+
 			KillSlotTween(slot);
 			slot.localScale = slotDefaultScales[slot];
 			slot.gameObject.SetActive(false);
@@ -171,6 +186,11 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < slots.Length; i++)
 			{
 				var slot = slots[i];
+				if (!slot)
+				{
+					continue;
+				}
+
 				if (!slotDefaultScales.ContainsKey(slot))
 				{
 					slotDefaultScales.Add(slot, slot.localScale);
@@ -196,7 +216,12 @@ namespace _Main.Scripts.Dice
 
 		private void KillSlotTween(Transform slot)
 		{
-			if (slotOpenTweens.TryGetValue(slot, out var tween))
+			if (!slot)
+			{
+				return;
+			}
+
+			if (slotOpenTweens.TryGetValue(slot, out var tween) && tween != null && tween.IsActive())
 			{
 				tween.Kill();
 			}
@@ -204,19 +229,23 @@ namespace _Main.Scripts.Dice
 
 		private void KillAllTweens()
 		{
-			tweenSlotsBuffer.Clear();
+			tweenBuffer.Clear();
 			foreach (var pair in slotOpenTweens)
 			{
-				tweenSlotsBuffer.Add(pair.Key);
+				tweenBuffer.Add(pair.Value);
 			}
 
-			for (int i = 0; i < tweenSlotsBuffer.Count; i++)
+			for (int i = 0; i < tweenBuffer.Count; i++)
 			{
-				KillSlotTween(tweenSlotsBuffer[i]);
+				var tween = tweenBuffer[i];
+				if (tween != null && tween.IsActive())
+				{
+					tween.Kill();
+				}
 			}
 
 			slotOpenTweens.Clear();
-			tweenSlotsBuffer.Clear();
+			tweenBuffer.Clear();
 		}
 	}
 }

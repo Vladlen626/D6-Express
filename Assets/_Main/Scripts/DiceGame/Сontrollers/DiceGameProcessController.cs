@@ -86,22 +86,7 @@ namespace _Main.Scripts.Dice
 
 		public void TryStartInitialRoll()
 		{
-			if (IsProcessing)
-			{
-				return;
-			}
-
-			if (diceGameModel.DiceGameState != DiceGameState.GAME)
-			{
-				return;
-			}
-
-			if (!diceGameModel.IsPlayerTurn)
-			{
-				return;
-			}
-
-			if (!tableModel.isFirstRoll)
+			if (!CanStartInitialRoll())
 			{
 				return;
 			}
@@ -195,6 +180,7 @@ namespace _Main.Scripts.Dice
 			{
 				diceGameModel.RollEnded();
 				SetProcessingState(false);
+				await TryStartInitialRollAfterProcessingAsync();
 			}
 		}
 
@@ -259,6 +245,7 @@ namespace _Main.Scripts.Dice
 			{
 				diceGameModel.PassEnded();
 				SetProcessingState(false);
+				await TryStartInitialRollAfterProcessingAsync();
 			}
 		}
 
@@ -330,13 +317,6 @@ namespace _Main.Scripts.Dice
 		{
 			diceGameModel.EndTurn(success);
 			audioService.PlaySound(SoundNames.TurnChange);
-
-			if (diceGameModel.IsPlayerTurn)
-			{
-				TryStartInitialRoll();
-			}
-
-			UpdateUI();
 		}
 
 		public async UniTask<bool> TrySaveSelected(DiceModel[] selected, DiceCombinationResult combinationResult)
@@ -347,8 +327,6 @@ namespace _Main.Scripts.Dice
 			{
 				return false;
 			}
-
-			diceGameModel.PublishCombinationPreview(DiceCombinationCardsSnapshot.Empty);
 
 			var tweens = new Tween[selected.Length];
 			var tweenCount = 0;
@@ -376,8 +354,6 @@ namespace _Main.Scripts.Dice
 
 			diceGameModel.RequestUpgrade(combinationResult);
 			await WaitTurnFlowAsync();
-
-			UpdateUI();
 
 			return diceGameModel.AllBanked();
 		}
@@ -417,6 +393,11 @@ namespace _Main.Scripts.Dice
 
 		private void UpdateUI()
 		{
+			if (diceGameModel.IsDiceAnimationInProgress)
+			{
+				return;
+			}
+
 			if (tableModel.isFirstRoll)
 			{
 				diceGameModel.HideAllDiceGameModels();
@@ -455,6 +436,43 @@ namespace _Main.Scripts.Dice
 		private UniTask WaitTurnFlowAsync()
 		{
 			return turnFlowAwaiter.WaitForEmptyAsync();
+		}
+
+		private bool CanStartInitialRoll()
+		{
+			if (IsProcessing)
+			{
+				return false;
+			}
+
+			if (diceGameModel.DiceGameState != DiceGameState.GAME)
+			{
+				return false;
+			}
+
+			if (!diceGameModel.IsPlayerTurn)
+			{
+				return false;
+			}
+
+			return tableModel.isFirstRoll;
+		}
+
+		private async UniTask TryStartInitialRollAfterProcessingAsync()
+		{
+			if (!CanStartInitialRoll())
+			{
+				return;
+			}
+
+			await WaitTurnFlowAsync();
+
+			if (!CanStartInitialRoll())
+			{
+				return;
+			}
+
+			HandleRoll();
 		}
 	}
 }

@@ -62,7 +62,23 @@ public class EnemyTurnController : IBaseController, IActivatable
 			return;
 		}
 
-		TakeTurn().Forget();
+		StartEnemyTurnAsync().Forget();
+	}
+
+	private async UniTaskVoid StartEnemyTurnAsync()
+	{
+		var turnFlowAwaiter = diceGameModel.TurnFlowAwaiter;
+		if (turnFlowAwaiter != null)
+		{
+			await turnFlowAwaiter.WaitForEmptyAsync();
+		}
+
+		if (diceGameModel.DiceGameState != DiceGameState.GAME || diceGameModel.IsPlayerTurn)
+		{
+			return;
+		}
+
+		await TakeTurn();
 	}
 
 	public async UniTask TakeTurn()

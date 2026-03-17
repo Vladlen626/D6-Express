@@ -119,7 +119,6 @@ namespace _Main.Scripts.Dice
 		{
 			var activeScoringService = GetScoringServiceOrThrow();
 			var table = gameModel.tableModel;
-			gameModel.PublishCombinationPreview(DiceCombinationCardsSnapshot.Empty);
 
 			var tweens = new Tween[bankRequest.Selected.Length];
 			var tweenCount = 0;

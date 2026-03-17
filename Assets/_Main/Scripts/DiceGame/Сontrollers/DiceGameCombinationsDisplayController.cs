@@ -59,14 +59,14 @@ namespace _Main.Scripts.Dice
 
 		private void OnCurrentTurnChangedHandler(int oldValue, int newValue)
 		{
-			ClearAllCards();
+			ApplyPreview(DiceCombinationCardsSnapshot.Empty);
 		}
 
 		private void OnDiceGameStateChangedHandler()
 		{
 			if (diceGameModel.DiceGameState != DiceGameState.GAME)
 			{
-				ClearAllCards();
+				ApplyPreview(DiceCombinationCardsSnapshot.Empty);
 			}
 		}
 
@@ -103,8 +103,6 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			ApplyPreview(DiceCombinationCardsSnapshot.Empty);
-
 			for (int i = 0; i < snapshot.Entries.Length; i++)
 			{
 				if (!isActive)
@@ -114,11 +112,13 @@ namespace _Main.Scripts.Dice
 
 				var entry = snapshot.Entries[i];
 				var runtime = GetOrCreateCard(entry);
-				var fromValue = runtime.CommittedScore;
-				var toValue = fromValue + entry.Score;
-				runtime.CommittedScore = toValue;
-
-				await runtime.View.AnimateScoreAsync(fromValue, toValue);
+				runtime.InPreview = true;
+				runtime.PendingRemoval = false;
+				runtime.View.SetScoreImmediate(entry.Score);
+				if (!runtime.View.IsShown)
+				{
+					await runtime.View.AnimateShowAsync();
+				}
 
 				if (!isActive)
 				{
@@ -127,13 +127,15 @@ namespace _Main.Scripts.Dice
 
 				await AnimateScoreFlyAsync(entry.Score, runtime.View.FlyOrigin);
 			}
+
+			ApplyPreview(DiceCombinationCardsSnapshot.Empty);
 		}
 
 		private void ApplyPreview(DiceCombinationCardsSnapshot snapshot)
 		{
 			foreach (var runtime in cardByKey.Values)
 			{
-				runtime.PreviewScore = 0;
+				runtime.InPreview = false;
 			}
 
 			if (snapshot.HasEntries)
@@ -142,7 +144,13 @@ namespace _Main.Scripts.Dice
 				{
 					var entry = snapshot.Entries[i];
 					var runtime = GetOrCreateCard(entry);
-					runtime.PreviewScore = entry.Score;
+					runtime.InPreview = true;
+					runtime.PendingRemoval = false;
+					runtime.View.SetScoreImmediate(entry.Score);
+					if (!runtime.View.IsShown)
+					{
+						runtime.View.AnimateShowAsync().RegisterAwaiter(turnFlowAwaiter).Forget();
+					}
 				}
 			}
 
@@ -150,10 +158,7 @@ namespace _Main.Scripts.Dice
 			foreach (var pair in cardByKey)
 			{
 				var runtime = pair.Value;
-				var displayedScore = runtime.CommittedScore + runtime.PreviewScore;
-				runtime.View.SetScoreImmediate(displayedScore);
-
-				if (runtime.CommittedScore <= 0 && runtime.PreviewScore <= 0)
+				if (!runtime.InPreview)
 				{
 					keysToRemove.Add(pair.Key);
 				}
@@ -161,7 +166,7 @@ namespace _Main.Scripts.Dice
 
 			for (int i = 0; i < keysToRemove.Count; i++)
 			{
-				RemoveCard(keysToRemove[i]);
+				ScheduleRemoveCard(keysToRemove[i]);
 			}
 		}
 
@@ -172,6 +177,7 @@ namespace _Main.Scripts.Dice
 				var view = UnityEngine.Object.Instantiate(
 					diceTableView.CombinationCardPrefab,
 					diceTableView.CombinationCardsRoot);
+				view.SetVisibleImmediate(false);
 				runtime = new CardRuntime(view);
 				cardByKey.Add(entry.Key, runtime);
 			}
@@ -180,10 +186,38 @@ namespace _Main.Scripts.Dice
 			return runtime;
 		}
 
-		private void RemoveCard(string key)
+		private void ScheduleRemoveCard(string key)
 		{
 			if (!cardByKey.TryGetValue(key, out var runtime))
 			{
+				return;
+			}
+
+			if (runtime.PendingRemoval)
+			{
+				return;
+			}
+
+			runtime.PendingRemoval = true;
+			RemoveCardAsync(key, runtime).RegisterAwaiter(turnFlowAwaiter).Forget();
+		}
+
+		private async UniTask RemoveCardAsync(string key, CardRuntime runtime)
+		{
+			await runtime.View.AnimateHideAsync();
+
+			if (!cardByKey.TryGetValue(key, out var current) || !ReferenceEquals(current, runtime))
+			{
+				return;
+			}
+
+			if (runtime.InPreview)
+			{
+				runtime.PendingRemoval = false;
+				if (!runtime.View.IsShown)
+				{
+					runtime.View.AnimateShowAsync().RegisterAwaiter(turnFlowAwaiter).Forget();
+				}
 				return;
 			}
 
@@ -284,14 +318,14 @@ namespace _Main.Scripts.Dice
 		private sealed class CardRuntime
 		{
 			public DiceCombinationCardView View { get; }
-			public int CommittedScore { get; set; }
-			public int PreviewScore { get; set; }
+			public bool InPreview { get; set; }
+			public bool PendingRemoval { get; set; }
 
 			public CardRuntime(DiceCombinationCardView view)
 			{
 				View = view;
-				CommittedScore = 0;
-				PreviewScore = 0;
+				InPreview = false;
+				PendingRemoval = false;
 			}
 		}
 	}
