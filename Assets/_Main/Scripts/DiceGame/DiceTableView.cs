@@ -3,6 +3,7 @@ using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class DiceTableView : MonoBehaviour
@@ -21,8 +22,10 @@ public class DiceTableView : MonoBehaviour
 
 	[Header("Global")]
 	[SerializeField] private Transform tooltipPos;
-	[SerializeField] private Transform PlayerDiceBonusPositions;
-	[SerializeField] private Transform EnemyDiceBonusPositions;
+	[SerializeField]
+	private Transform[] DiceBonusPositions;
+	[SerializeField]
+	private Transform[] SelectDiceBonusPositions;
 
 	[Header("StateHandlers")]
 	[SerializeField] private Transform defaultStateHandler;
@@ -79,6 +82,8 @@ public class DiceTableView : MonoBehaviour
 	public ItemView ItemViewPrefab => itemViewPrefab;
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
+	public Transform[] DiceBonusSlots => DiceBonusPositions;
+	public Transform[] SelectDiceBonusSlots => SelectDiceBonusPositions;
 	public Transform UpgradeDicePos => upgradeDicePos;
 	public float UpgradeDiceScreenScale => upgradeDiceScreenScale > 0.05f ? upgradeDiceScreenScale : DefaultUpgradeDiceScale;
 	public Transform TooltipPos => tooltipPos;
@@ -206,17 +211,20 @@ public class DiceTableView : MonoBehaviour
 		UIUtils.UpdateUiIntValueText(turnText, oldValue, newValue, "Turn: {0:0}", animDuration);
 	}
 
-	//todo: Это должно динамически включать бонусные позиции для кубов
 	public void SetDiceBonusPositionVisibility(bool visible)
 	{
-		return;
-		PlayerDiceBonusPositions.gameObject.SetActive(visible);
+		for (int i = 0; i < DiceBonusPositions.Length; i++)
+		{
+			DiceBonusPositions[i].gameObject.SetActive(visible);
+		}
 	}
 
-	public void SetEnemyDiceBonusPositionVisibility(bool visible)
+	public void SetSelectDiceBonusPositionVisibility(bool visible)
 	{
-		return;
-		EnemyDiceBonusPositions.gameObject.SetActive(visible);
+		for (int i = 0; i < SelectDiceBonusPositions.Length; i++)
+		{
+			SelectDiceBonusPositions[i].gameObject.SetActive(visible);
+		}
 	}
 
 	public void ShowBetMultipliers(bool visible)

@@ -274,7 +274,6 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
-			UpdateDiceBonusPositions();
 			return true;
 		}
 
@@ -287,18 +286,6 @@ namespace _Main.Scripts.Dice
 
 			await lifecycleService.RegisterControllersGroupAsync(persistentControllers);
 		}
-
-		private void UpdateDiceBonusPositions()
-		{
-			if (!diceTableView)
-			{
-				return;
-			}
-
-			diceTableView.SetDiceBonusPositionVisibility(diceGameModel.GetMaxDiceCount(true) > 6);
-			diceTableView.SetEnemyDiceBonusPositionVisibility(diceGameModel.GetMaxDiceCount(false) > 6);
-		}
-
 
 		private async UniTask SelectionProcess()
 		{

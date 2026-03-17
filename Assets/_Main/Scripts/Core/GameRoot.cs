@@ -149,6 +149,7 @@ namespace _Main.Scripts.Core
 				new DiceGameUIController(uiService, inputService, audioService, playerModel.PlayerStateModel),
 				new DiceGameGlobalController(diceGameModel, playerModel, playerView, sceneContext, _serviceLocator,
 					run, configService, notificationService),
+				new DiceBonusSlotsController(diceGameModel, sceneContext.DiceGameTableView),
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
