@@ -4,8 +4,8 @@
     "type": "Dice",
     "nameKey": "default_name",
     "descriptionKey": "default_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Common",
+    "price": 70,
     "visualId": "default",
     "data": {
       "weights": [1, 1, 1, 1, 1, 1]
@@ -16,8 +16,8 @@
     "type": "Dice",
     "nameKey": "gen_1_focus_name",
     "descriptionKey": "gen_1_focus_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Rare",
+    "price": 180,
     "visualId": "gen_1_focus",
     "data": {
       "weights": [3, 1, 1, 1, 1, 1]
@@ -28,8 +28,8 @@
     "type": "Dice",
     "nameKey": "gen_2_focus_name",
     "descriptionKey": "gen_2_focus_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Uncommon",
+    "price": 130,
     "visualId": "gen_2_focus",
     "data": {
       "weights": [1, 3, 1, 1, 1, 1]
@@ -40,8 +40,8 @@
     "type": "Dice",
     "nameKey": "gen_3_focus_name",
     "descriptionKey": "gen_3_focus_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Uncommon",
+    "price": 125,
     "visualId": "gen_3_focus",
     "data": {
       "weights": [1, 1, 3, 1, 1, 1]
@@ -52,8 +52,8 @@
     "type": "Dice",
     "nameKey": "gen_4_focus_name",
     "descriptionKey": "gen_4_focus_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Uncommon",
+    "price": 125,
     "visualId": "gen_4_focus",
     "data": {
       "weights": [1, 1, 1, 3, 1, 1]
@@ -64,8 +64,8 @@
     "type": "Dice",
     "nameKey": "gen_5_focus_name",
     "descriptionKey": "gen_5_focus_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Rare",
+    "price": 170,
     "visualId": "gen_5_focus",
     "data": {
       "weights": [1, 1, 1, 1, 3, 1]
@@ -76,8 +76,8 @@
     "type": "Dice",
     "nameKey": "gen_6_focus_name",
     "descriptionKey": "gen_6_focus_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Uncommon",
+    "price": 135,
     "visualId": "gen_6_focus",
     "data": {
       "weights": [1, 1, 1, 1, 1, 3]
@@ -89,7 +89,7 @@
     "nameKey": "strat_safe_ones_fives_name",
     "descriptionKey": "strat_safe_ones_fives_description",
     "rarity": "Legendary",
-    "price": 10,
+    "price": 240,
     "visualId": "strat_safe_ones_fives",
     "data": {
       "weights": [3, 1, 1, 1, 3, 1]
@@ -100,8 +100,8 @@
     "type": "Dice",
     "nameKey": "strat_straight_1_6_hunter_name",
     "descriptionKey": "strat_straight_1_6_hunter_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Rare",
+    "price": 190,
     "visualId": "strat_straight_1_6_hunter",
     "data": {
       "weights": [1, 2, 2, 2, 2, 1]
@@ -112,8 +112,8 @@
     "type": "Dice",
     "nameKey": "strat_straight_2_6_hunter_name",
     "descriptionKey": "strat_straight_2_6_hunter_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Rare",
+    "price": 180,
     "visualId": "strat_straight_2_6_hunter",
     "data": {
       "weights": [1, 2, 2, 2, 2, 2]
@@ -124,8 +124,8 @@
     "type": "Dice",
     "nameKey": "strat_polar_ends_name",
     "descriptionKey": "strat_polar_ends_description",
-    "rarity": "Legendary",
-    "price": 10,
+    "rarity": "Rare",
+    "price": 165,
     "visualId": "strat_polar_ends",
     "data": {
       "weights": [3, 1, 1, 1, 1, 3]
@@ -138,8 +138,8 @@
     "descriptionKey": "modifier_extra_dice_cap_description",
     "armDescriptionKey": "modifier_extra_dice_cap_arm",
     "applyDescriptionKey": "modifier_extra_dice_cap_apply",
-    "rarity": "Common",
-    "price": 20,
+    "rarity": "Uncommon",
+    "price": 55,
     "visualId": "ExtraDiceCapItem",
     "data": {
       "itemType": "ExtraDiceCapItem",
@@ -153,8 +153,8 @@
     "descriptionKey": "modifier_silencer_item_description",
     "armDescriptionKey": "modifier_silencer_item_arm",
     "applyDescriptionKey": "modifier_silencer_item_apply",
-    "rarity": "Common",
-    "price": 25,
+    "rarity": "Uncommon",
+    "price": 50,
     "visualId": "ModifierSilencerItem",
     "data": {
       "itemType": "ModifierSilencerItem",
@@ -168,8 +168,8 @@
     "descriptionKey": "modifier_pass_multiplier_item_description",
     "armDescriptionKey": "modifier_pass_multiplier_item_arm",
     "applyDescriptionKey": "modifier_pass_multiplier_item_apply",
-    "rarity": "Common",
-    "price": 20,
+    "rarity": "Rare",
+    "price": 85,
     "visualId": "PassMultiplierItem",
     "data": {
       "itemType": "PassMultiplierItem",
@@ -185,7 +185,7 @@
     "armDescriptionKey": "modifier_reroll_selected_item_arm",
     "applyDescriptionKey": "modifier_reroll_selected_item_apply",
     "rarity": "Common",
-    "price": 15,
+    "price": 32,
     "visualId": "RerollSelectedItem",
     "data": {
       "itemType": "RerollSelectedItem",
@@ -199,8 +199,8 @@
     "descriptionKey": "modifier_step_up_item_description",
     "armDescriptionKey": "modifier_step_up_item_arm",
     "applyDescriptionKey": "modifier_step_up_item_apply",
-    "rarity": "Common",
-    "price": 18,
+    "rarity": "Uncommon",
+    "price": 48,
     "visualId": "StepUpItem",
     "data": {
       "itemType": "StepUpItem",
@@ -215,8 +215,8 @@
     "descriptionKey": "modifier_reroll_all_unsaved_item_description",
     "armDescriptionKey": "modifier_reroll_all_unsaved_item_arm",
     "applyDescriptionKey": "modifier_reroll_all_unsaved_item_apply",
-    "rarity": "Common",
-    "price": 22,
+    "rarity": "Uncommon",
+    "price": 58,
     "visualId": "RerollAllUnsavedItem",
     "data": {
       "itemType": "RerollAllUnsavedItem"
@@ -229,8 +229,8 @@
     "descriptionKey": "modifier_copy_face_item_description",
     "armDescriptionKey": "modifier_copy_face_item_arm",
     "applyDescriptionKey": "modifier_copy_face_item_apply",
-    "rarity": "Common",
-    "price": 20,
+    "rarity": "Uncommon",
+    "price": 60,
     "visualId": "CopyFaceItem",
     "data": {
       "itemType": "CopyFaceItem"
@@ -243,8 +243,8 @@
     "descriptionKey": "modifier_target_discount_item_description",
     "armDescriptionKey": "modifier_target_discount_item_arm",
     "applyDescriptionKey": "modifier_target_discount_item_apply",
-    "rarity": "Common",
-    "price": 24,
+    "rarity": "Rare",
+    "price": 90,
     "visualId": "TargetDiscountItem",
     "data": {
       "itemType": "TargetDiscountItem",
@@ -259,7 +259,7 @@
     "armDescriptionKey": "modifier_selected_double_step_item_arm",
     "applyDescriptionKey": "modifier_selected_double_step_item_apply",
     "rarity": "Common",
-    "price": 16,
+    "price": 34,
     "visualId": "SelectedDoubleStepItem",
     "data": {
       "itemType": "SelectedDoubleStepItem",
@@ -273,8 +273,8 @@
     "descriptionKey": "modifier_invert_all_faces_item_description",
     "armDescriptionKey": "modifier_invert_all_faces_item_arm",
     "applyDescriptionKey": "modifier_invert_all_faces_item_apply",
-    "rarity": "Common",
-    "price": 20,
+    "rarity": "Uncommon",
+    "price": 44,
     "visualId": "InvertAllFacesItem",
     "data": {
       "itemType": "InvertAllFacesItem"
@@ -287,8 +287,8 @@
     "descriptionKey": "modifier_pair_up_item_description",
     "armDescriptionKey": "modifier_pair_up_item_arm",
     "applyDescriptionKey": "modifier_pair_up_item_apply",
-    "rarity": "Common",
-    "price": 19,
+    "rarity": "Uncommon",
+    "price": 62,
     "visualId": "PairUpItem",
     "data": {
       "itemType": "PairUpItem",
@@ -302,8 +302,8 @@
     "descriptionKey": "modifier_median_blend_item_description",
     "armDescriptionKey": "modifier_median_blend_item_arm",
     "applyDescriptionKey": "modifier_median_blend_item_apply",
-    "rarity": "Common",
-    "price": 21,
+    "rarity": "Uncommon",
+    "price": 52,
     "visualId": "MedianBlendItem",
     "data": {
       "itemType": "MedianBlendItem",
@@ -317,8 +317,8 @@
     "descriptionKey": "modifier_bank_without_pass_item_description",
     "armDescriptionKey": "modifier_bank_without_pass_item_arm",
     "applyDescriptionKey": "modifier_bank_without_pass_item_apply",
-    "rarity": "Rare",
-    "price": 30,
+    "rarity": "Legendary",
+    "price": 145,
     "visualId": "BankWithoutPassItem",
     "data": {
       "itemType": "BankWithoutPassItem"
@@ -332,7 +332,7 @@
     "armDescriptionKey": "modifier_selected_to_opposite_item_arm",
     "applyDescriptionKey": "modifier_selected_to_opposite_item_apply",
     "rarity": "Common",
-    "price": 16,
+    "price": 30,
     "visualId": "SelectedToOppositeItem",
     "data": {
       "itemType": "SelectedToOppositeItem"
@@ -345,8 +345,8 @@
     "descriptionKey": "modifier_pass_score_floor_item_description",
     "armDescriptionKey": "modifier_pass_score_floor_item_arm",
     "applyDescriptionKey": "modifier_pass_score_floor_item_apply",
-    "rarity": "Common",
-    "price": 22,
+    "rarity": "Rare",
+    "price": 105,
     "visualId": "PassScoreFloorItem",
     "data": {
       "itemType": "PassScoreFloorItem"

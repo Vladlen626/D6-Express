@@ -1,17 +1,96 @@
 {
-  "default_scenario_id": "wb_d1m1_safe_ones_and_fives",
+  "default_scenario_id": "wb_d1m1_safe_opening_curve",
   "by_level": {
-    "*": {
+    "1": {
       "by_day": {
         "1": {
           "by_match": {
-            "1": "wb_d1m1_safe_ones_and_fives",
-            "2": "wb_d1m2_triple_ones_then_fives",
-            "3": "wb_d1m3_light_straight_pressure",
-            "*": "wb_d1m3_light_straight_pressure"
+            "1": "wb_d1m1_safe_opening_curve",
+            "2": "wb_d1m2_triples_then_straight",
+            "3": "wb_d1m3_mixed_pressure_finish",
+            "*": "wb_d1m3_mixed_pressure_finish"
           }
         },
-        "*": { "by_match": { "*": "wb_d1m3_light_straight_pressure" } }
+        "*": {
+          "by_match": {
+            "*": "wb_d1m3_mixed_pressure_finish"
+          }
+        }
+      }
+    },
+    "2": {
+      "by_day": {
+        "1": {
+          "by_match": {
+            "1": "sp_d1m1_safe_pairs_of_pressure",
+            "2": "sp_d1m2_straight_builder_line",
+            "3": "sp_d1m3_rising_ones_curve",
+            "*": "sp_d1m3_rising_ones_curve"
+          }
+        },
+        "2": {
+          "by_match": {
+            "1": "sp_d2m1_stable_straight_mix",
+            "2": "sp_d2m2_four_kind_route",
+            "3": "sp_d2m3_clean_line_then_spike",
+            "*": "sp_d2m3_clean_line_then_spike"
+          }
+        },
+        "3": {
+          "by_match": {
+            "1": "sp_d3m1_long_safe_grind",
+            "2": "sp_d3m2_two_lines_one_finish",
+            "3": "sp_d3m3_polar_midroute_push",
+            "*": "sp_d3m3_polar_midroute_push"
+          }
+        },
+        "4": {
+          "by_match": {
+            "1": "sp_d4m1_calm_then_cleaner",
+            "2": "sp_d4m2_layered_straight_route",
+            "3": "sp_d4m3_heavier_close_pattern",
+            "*": "sp_d4m3_heavier_close_pattern"
+          }
+        },
+        "*": {
+          "by_match": {
+            "*": "sp_d4m3_heavier_close_pattern"
+          }
+        }
+      }
+    },
+    "3": {
+      "by_day": {
+        "1": {
+          "by_match": {
+            "1": "mh_d1m1_composed_final_station",
+            "2": "mh_d1m2_pressure_with_detours",
+            "3": "mh_d1m3_end_weighted_route",
+            "*": "mh_d1m3_end_weighted_route"
+          }
+        },
+        "2": {
+          "by_match": {
+            "1": "mh_d2m1_long_finale_mix",
+            "2": "mh_d2m2_stronger_second_day",
+            "3": "mh_d2m3_final_long_pressure",
+            "*": "mh_d2m3_final_long_pressure"
+          }
+        },
+        "*": {
+          "by_match": {
+            "*": "mh_d2m3_final_long_pressure"
+          }
+        }
+      }
+    },
+    "*": {
+      "by_day": {
+        "*": {
+          "by_match": {
+            "*": "wb_d1m1_safe_opening_curve"
+          }
+        }
       }
     }
   }

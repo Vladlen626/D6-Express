@@ -15,7 +15,7 @@
       "MaxLenMax": 6
     },
     "Upgrade": {
-      "Chance": 1,
+      "Chance": 0.6,
       "Debug": false,
       "AllowInventorySelection": false,
       "VisualPolarity": { "Min": -1, "Max": 1, "Bonus": 1 },
@@ -32,17 +32,17 @@
   "Upgrades": [
     {
       "ComboId": "ofakind",
-      "Chance": 1,
+      "Chance": 0.3,
       "Debug": false,
       "Constraints": { "MinLowerBound": 2, "MaxUpperBound": 6 },
       "VisualPolarity": { "Min": -1, "Max": 1, "Bonus": 1 },
       "Outcomes": [
-        { "Face": 1, "DeltaScoreBonus": 50 },
-        { "Face": 2, "DeltaScoreBonus": 100 },
+        { "Face": 1, "DeltaScoreBonus": 25 },
+        { "Face": 2, "DeltaScoreBonus": 50 },
         { "Face": 3, "DeltaScoreBonus": -50 },
         { "Face": 4, "DeltaMin": -1 },
         { "Face": 5, "DeltaMax": 1 },
-        { "Face": 6, "DeltaScoreBonus": 150 }
+        { "Face": 6, "DeltaScoreBonus": 75 }
       ]
     }
   ]
