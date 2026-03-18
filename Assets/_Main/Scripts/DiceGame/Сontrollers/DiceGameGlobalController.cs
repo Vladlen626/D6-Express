@@ -490,6 +490,25 @@ namespace _Main.Scripts.Dice
 			{
 				playerModel.InventoryModel.RemoveModifierItem(consumedIds[i]);
 			}
+
+			ResetRemainingPlayerModifierItems();
+		}
+
+		private void ResetRemainingPlayerModifierItems()
+		{
+			var remainingItems = diceGameModel.PlayerModifierItemsModel?.Items;
+			if (remainingItems == null || remainingItems.Count == 0)
+			{
+				return;
+			}
+
+			for (int i = 0; i < remainingItems.Count; i++)
+			{
+				remainingItems[i]?.ResetItem();
+			}
+
+			// Some items clear their bound game model in ResetItem; bind again for the next match.
+			diceGameModel.PlayerModifierItemsModel.BindGameModel(diceGameModel);
 		}
 
 		private void OnExitRequested()
