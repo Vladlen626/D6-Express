@@ -7,6 +7,8 @@ using PlatformCore.Services.Factory;
 
 public class RunController : IBaseController, IActivatable, IPreloadable
 {
+	private const string DiceGameTacticsPoolPath = "Json/dice_game_tactics_pool";
+
 	private readonly D6Game game;
 	private readonly Run run;
 	private readonly RunConfig runConfig;
@@ -15,6 +17,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	private readonly ConfigService configService;
 
 	private PlayerConfig playerConfig;
+	private DiceGameTacticsPoolConfig diceGameTacticsPoolConfig;
 
 	public RunController(D6Game game, Run run, RunConfig runConfig, PlayerModel playerModel, DiceScoringService scoringService, ConfigService configService)
 	{
@@ -51,6 +54,18 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		}
 
 		playerModel.InventoryModel.SetModifierItemsCapacity(playerConfig.modifierItemsCapacity);
+
+		diceGameTacticsPoolConfig =
+			await configService.GetFirstOrDefaultAsync<DiceGameTacticsPoolConfig>(DiceGameTacticsPoolPath);
+		if (diceGameTacticsPoolConfig == null)
+		{
+			throw new InvalidOperationException($"[RunController] Tactics pool config '{DiceGameTacticsPoolPath}' was not loaded.");
+		}
+
+		if (!diceGameTacticsPoolConfig.TryValidateStatic(out var validationError))
+		{
+			throw new InvalidOperationException($"[RunController] Tactics pool validation failed: {validationError}");
+		}
 	}
 
 	private void OnTickChangeRequested(int value)
@@ -80,6 +95,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 
 	private void OnRunStarted()
 	{
+		SelectRunTactic();
 		UpdateLevelData();
 
 		int startCash = playerConfig.cash;
@@ -113,6 +129,50 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		var straightState = new StraightRuntimeState(defaults);
 		scoringService.SetStraightState(straightState);
 		run.SetStraightState(straightState);
+	}
+
+	private void SelectRunTactic()
+	{
+		if (diceGameTacticsPoolConfig?.tactics == null || diceGameTacticsPoolConfig.tactics.Count == 0)
+		{
+			throw new InvalidOperationException("[RunController] Tactics pool is empty.");
+		}
+
+		int totalWeight = 0;
+		for (int i = 0; i < diceGameTacticsPoolConfig.tactics.Count; i++)
+		{
+			totalWeight += diceGameTacticsPoolConfig.tactics[i].weight;
+		}
+
+		if (totalWeight <= 0)
+		{
+			throw new InvalidOperationException("[RunController] Tactics pool total weight must be > 0.");
+		}
+
+		var roll = UnityEngine.Random.Range(0, totalWeight);
+		int cumulativeWeight = 0;
+		DiceGameTacticProfileConfig selectedProfile = null;
+		for (int i = 0; i < diceGameTacticsPoolConfig.tactics.Count; i++)
+		{
+			var profile = diceGameTacticsPoolConfig.tactics[i];
+			cumulativeWeight += profile.weight;
+			if (roll < cumulativeWeight)
+			{
+				selectedProfile = profile;
+				break;
+			}
+		}
+
+		if (selectedProfile == null)
+		{
+			throw new InvalidOperationException("[RunController] Failed to resolve tactic profile.");
+		}
+
+		run.SetDiceGameTacticSelection(
+			selectedProfile.id,
+			selectedProfile.enemy_ai_scenarios_path,
+			selectedProfile.enemy_ai_scenario_schedule_path,
+			selectedProfile.modifiers_schedule_path);
 	}
 
 	private void OnDayChangeRequested(int value)

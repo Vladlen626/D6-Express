@@ -13,6 +13,10 @@ public class Run
     public int TicketPrice { get; private set; }
     public int NextTicketPrice { get; private set; }
     public bool Started { get; private set; }
+    public string DiceGameTacticId { get; private set; } = string.Empty;
+    public string EnemyAiScenariosPath { get; private set; } = string.Empty;
+    public string EnemyAiScenarioSchedulePath { get; private set; } = string.Empty;
+    public string ModifiersSchedulePath { get; private set; } = string.Empty;
 
     public event Action<int> TickChangeRequested;
     public event Action<int> DayChangeRequested;
@@ -29,6 +33,10 @@ public class Run
     public event Action RunStarted;
     public event Action<bool> RunFinished;
     public StraightRuntimeState StraightState { get; private set; } = new StraightRuntimeState();
+    public bool HasDiceGameTacticSelection =>
+        !string.IsNullOrWhiteSpace(EnemyAiScenariosPath)
+        && !string.IsNullOrWhiteSpace(EnemyAiScenarioSchedulePath)
+        && !string.IsNullOrWhiteSpace(ModifiersSchedulePath);
 
     public void SetStraightState(StraightRuntimeState state)
     {
@@ -49,6 +57,7 @@ public class Run
 
     public void Start()
     {
+        ResetDiceGameTacticSelection();
         Started = true;
         RunStarted?.Invoke();
     }
@@ -142,5 +151,40 @@ public class Run
     {
         Started = false;
         RunFinished?.Invoke(result);
+    }
+
+    public void SetDiceGameTacticSelection(
+        string tacticId,
+        string enemyAiScenariosPath,
+        string enemyAiScenarioSchedulePath,
+        string modifiersSchedulePath)
+    {
+        if (string.IsNullOrWhiteSpace(enemyAiScenariosPath))
+        {
+            throw new ArgumentException("[Run] enemyAiScenariosPath is required.", nameof(enemyAiScenariosPath));
+        }
+
+        if (string.IsNullOrWhiteSpace(enemyAiScenarioSchedulePath))
+        {
+            throw new ArgumentException("[Run] enemyAiScenarioSchedulePath is required.", nameof(enemyAiScenarioSchedulePath));
+        }
+
+        if (string.IsNullOrWhiteSpace(modifiersSchedulePath))
+        {
+            throw new ArgumentException("[Run] modifiersSchedulePath is required.", nameof(modifiersSchedulePath));
+        }
+
+        DiceGameTacticId = tacticId?.Trim() ?? string.Empty;
+        EnemyAiScenariosPath = enemyAiScenariosPath.Trim();
+        EnemyAiScenarioSchedulePath = enemyAiScenarioSchedulePath.Trim();
+        ModifiersSchedulePath = modifiersSchedulePath.Trim();
+    }
+
+    private void ResetDiceGameTacticSelection()
+    {
+        DiceGameTacticId = string.Empty;
+        EnemyAiScenariosPath = string.Empty;
+        EnemyAiScenarioSchedulePath = string.Empty;
+        ModifiersSchedulePath = string.Empty;
     }
 }

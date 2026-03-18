@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using PlatformCore.Services;
-using PlatformCore.Services.Factory;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -12,7 +11,6 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceGameModel diceGameModel;
 		private readonly Run run;
-		private readonly ConfigService configService;
 		private readonly IResourceService resourceService;
 		private readonly List<IModifier> runtimeGlobalModifiers = new();
 
@@ -21,12 +19,10 @@ namespace _Main.Scripts.Dice
 		public DiceGameScenarioSetup(
 			DiceGameModel diceGameModel,
 			Run run,
-			ConfigService configService,
 			IResourceService resourceService)
 		{
 			this.diceGameModel = diceGameModel;
 			this.run = run;
-			this.configService = configService;
 			this.resourceService = resourceService;
 		}
 
@@ -43,13 +39,18 @@ namespace _Main.Scripts.Dice
 				return true;
 			}
 
-			var scenarioMap = await LoadEnemyScenarioMapAsync();
+			if (!TryGetRunTacticPaths(out var scenariosPath, out var scenarioSchedulePath, out _))
+			{
+				return false;
+			}
+
+			var scenarioMap = await LoadEnemyScenarioMapAsync(scenariosPath);
 			if (scenarioMap == null)
 			{
 				return false;
 			}
 
-			var scenarioId = await ResolveScenarioIdAsync(diceGameConfig);
+			var scenarioId = await ResolveScenarioIdAsync(diceGameConfig, scenarioSchedulePath);
 			if (string.IsNullOrWhiteSpace(scenarioId))
 			{
 				return false;
@@ -57,7 +58,7 @@ namespace _Main.Scripts.Dice
 
 			if (!scenarioMap.TryGetValue(scenarioId, out var scenario) || scenario == null)
 			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI scenario '{scenarioId}' not found in map '{ResourcePaths.Json.enemy_ai_scenarios}'.");
+				FailDiceGameSetup($"[DiceGame] Enemy AI scenario '{scenarioId}' not found in map '{scenariosPath}'.");
 				return false;
 			}
 
@@ -87,7 +88,12 @@ namespace _Main.Scripts.Dice
 
 			if (string.Equals(modifiersMode, DiceGameModifiersMode.Scripted, StringComparison.OrdinalIgnoreCase))
 			{
-				return await ApplyModifiersScheduleAsync(diceGameConfig.modifiers_set_id);
+				if (!TryGetRunTacticPaths(out _, out _, out var modifiersSchedulePath))
+				{
+					return false;
+				}
+
+				return await ApplyModifiersScheduleAsync(diceGameConfig.modifiers_set_id, modifiersSchedulePath);
 			}
 
 			FailDiceGameSetup(
@@ -95,12 +101,12 @@ namespace _Main.Scripts.Dice
 			return false;
 		}
 
-		private async UniTask<Dictionary<string, EnemyAiScenarioConfig>> LoadEnemyScenarioMapAsync()
+		private async UniTask<Dictionary<string, EnemyAiScenarioConfig>> LoadEnemyScenarioMapAsync(string scenariosPath)
 		{
-			var textAsset = await resourceService.LoadAsync<TextAsset>(ResourcePaths.Json.enemy_ai_scenarios);
+			var textAsset = await resourceService.LoadAsync<TextAsset>(scenariosPath);
 			if (!textAsset)
 			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI scenarios file '{ResourcePaths.Json.enemy_ai_scenarios}' not found.");
+				FailDiceGameSetup($"[DiceGame] Enemy AI scenarios file '{scenariosPath}' not found.");
 				return null;
 			}
 
@@ -111,13 +117,13 @@ namespace _Main.Scripts.Dice
 			}
 			catch (Exception exception)
 			{
-				FailDiceGameSetup($"[DiceGame] Failed to parse scenarios map '{ResourcePaths.Json.enemy_ai_scenarios}': {exception.Message}");
+				FailDiceGameSetup($"[DiceGame] Failed to parse scenarios map '{scenariosPath}': {exception.Message}");
 				return null;
 			}
 
 			if (scenarioMap == null || scenarioMap.Count == 0)
 			{
-				FailDiceGameSetup($"[DiceGame] Scenarios map '{ResourcePaths.Json.enemy_ai_scenarios}' is empty.");
+				FailDiceGameSetup($"[DiceGame] Scenarios map '{scenariosPath}' is empty.");
 				return null;
 			}
 
@@ -142,7 +148,9 @@ namespace _Main.Scripts.Dice
 			return scenarioMap;
 		}
 
-		private async UniTask<string> ResolveScenarioIdAsync(DiceGameConfig diceGameConfig)
+		private async UniTask<string> ResolveScenarioIdAsync(
+			DiceGameConfig diceGameConfig,
+			string scenarioSchedulePath)
 		{
 			var scenarioId = diceGameConfig.enemy_ai_scenario_id?.Trim();
 			if (!string.IsNullOrWhiteSpace(scenarioId))
@@ -150,14 +158,13 @@ namespace _Main.Scripts.Dice
 				return scenarioId;
 			}
 
-			var schedule = await configService.GetFirstOrDefaultAsync<EnemyAiScenarioScheduleConfig>(ResourcePaths.Json.enemy_ai_scenario_schedule);
+			var schedule =
+				await LoadConfigFromJsonAsync<EnemyAiScenarioScheduleConfig>(scenarioSchedulePath, "Enemy AI schedule");
 			if (schedule == null)
 			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI schedule '{ResourcePaths.Json.enemy_ai_scenario_schedule}' not found and enemy_ai_scenario_id override is empty.");
 				return null;
 			}
 
-			schedule.ParseConfig();
 			if (!schedule.TryValidateStatic(out var scheduleValidationError))
 			{
 				FailDiceGameSetup($"[DiceGame] Enemy AI schedule validation failed: {scheduleValidationError}");
@@ -170,7 +177,7 @@ namespace _Main.Scripts.Dice
 			var match = run.Tick + 1;
 			if (!schedule.TryResolveScenarioId(level, day, match, out scenarioId))
 			{
-				FailDiceGameSetup($"[DiceGame] Enemy AI schedule could not resolve scenario for level={level}, day={day}, match={match}.");
+				FailDiceGameSetup($"[DiceGame] Enemy AI schedule '{scenarioSchedulePath}' could not resolve scenario for level={level}, day={day}, match={match}.");
 				return null;
 			}
 
@@ -186,16 +193,16 @@ namespace _Main.Scripts.Dice
 			return UniTask.FromResult(true);
 		}
 
-		private async UniTask<bool> ApplyModifiersScheduleAsync(string setIdOverride)
+		private async UniTask<bool> ApplyModifiersScheduleAsync(string setIdOverride, string modifiersSchedulePath)
 		{
-			var schedule = await configService.GetFirstOrDefaultAsync<DiceGameModifiersScheduleConfig>(ResourcePaths.Json.dice_game_modifiers_schedule);
+			var schedule = await LoadConfigFromJsonAsync<DiceGameModifiersScheduleConfig>(
+				modifiersSchedulePath,
+				"modifiers schedule");
 			if (schedule == null)
 			{
-				FailDiceGameSetup($"[DiceGame] Modifiers schedule '{ResourcePaths.Json.dice_game_modifiers_schedule}' not found.");
 				return false;
 			}
 
-			schedule.ParseConfig();
 			if (!schedule.TryValidateStatic(out var validationError))
 			{
 				FailDiceGameSetup($"[DiceGame] Modifiers schedule validation failed: {validationError}");
@@ -209,7 +216,7 @@ namespace _Main.Scripts.Dice
 				if (!schedule.sets.TryGetValue(overrideSetId, out resolvedSet) || resolvedSet == null)
 				{
 					FailDiceGameSetup(
-						$"[DiceGame] modifiers_set_id override '{overrideSetId}' not found in schedule '{ResourcePaths.Json.dice_game_modifiers_schedule}'.");
+						$"[DiceGame] modifiers_set_id override '{overrideSetId}' not found in schedule '{modifiersSchedulePath}'.");
 					return false;
 				}
 			}
@@ -220,7 +227,7 @@ namespace _Main.Scripts.Dice
 				var match = run.Tick + 1;
 				if (!schedule.TryResolveSet(level, day, match, out resolvedSet) || resolvedSet == null)
 				{
-					FailDiceGameSetup($"[DiceGame] Modifiers schedule could not resolve set for level={level}, day={day}, match={match}.");
+					FailDiceGameSetup($"[DiceGame] Modifiers schedule '{modifiersSchedulePath}' could not resolve set for level={level}, day={day}, match={match}.");
 					return false;
 				}
 			}
@@ -230,6 +237,58 @@ namespace _Main.Scripts.Dice
 			diceGameModel.EnemyModifiersModel.Reset();
 
 			return ApplyGlobalModifierSet(resolvedSet.player_modifiers, diceGameModel.PlayerScoringService, "player");
+		}
+
+		private bool TryGetRunTacticPaths(
+			out string scenariosPath,
+			out string scenarioSchedulePath,
+			out string modifiersSchedulePath)
+		{
+			scenariosPath = null;
+			scenarioSchedulePath = null;
+			modifiersSchedulePath = null;
+
+			if (!run.HasDiceGameTacticSelection)
+			{
+				FailDiceGameSetup("[DiceGame] Run tactic profile is not selected.");
+				return false;
+			}
+
+			scenariosPath = run.EnemyAiScenariosPath;
+			scenarioSchedulePath = run.EnemyAiScenarioSchedulePath;
+			modifiersSchedulePath = run.ModifiersSchedulePath;
+			return true;
+		}
+
+		private async UniTask<TConfig> LoadConfigFromJsonAsync<TConfig>(string path, string label)
+			where TConfig : BaseConfig
+		{
+			var textAsset = await resourceService.LoadAsync<TextAsset>(path);
+			if (!textAsset)
+			{
+				FailDiceGameSetup($"[DiceGame] {label} '{path}' not found.");
+				return null;
+			}
+
+			TConfig config;
+			try
+			{
+				config = JsonConvert.DeserializeObject<TConfig>(textAsset.text);
+			}
+			catch (Exception exception)
+			{
+				FailDiceGameSetup($"[DiceGame] Failed to parse {label} '{path}': {exception.Message}");
+				return null;
+			}
+
+			if (config == null)
+			{
+				FailDiceGameSetup($"[DiceGame] Parsed {label} '{path}' is null.");
+				return null;
+			}
+
+			config.ParseConfig();
+			return config;
 		}
 
 		private bool ApplyGlobalModifierSet(

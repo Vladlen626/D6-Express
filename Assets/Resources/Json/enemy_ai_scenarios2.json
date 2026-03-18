@@ -1,0 +1,4197 @@
+{
+    "wb_d1m1_gentle_singles_path": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 2000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 5,
+            "enemy_final_banked_score": 2000,
+            "enemy_reaches_target": true
+        }
+    },
+    "wb_d1m2_careful_mixed_ladder": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 2500,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "default",
+                "strat_straight_1_6_hunter"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            1,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 6,
+            "enemy_final_banked_score": 2550,
+            "enemy_reaches_target": true
+        }
+    },
+    "wb_d1m3_slow_finish_builder": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 3000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "strat_straight_1_6_hunter",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            1,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1,
+                            5
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6
+                        ]
+                    },
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 6,
+            "enemy_final_banked_score": 3700,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d1m1_measured_station_start": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 3500,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 6,
+            "enemy_final_banked_score": 3500,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d1m2_soft_straight_detour": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 3500,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_straight_1_6_hunter",
+                "default",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            1,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 3500,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d1m3_ones_bias_journey": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 3500,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "gen_1_focus",
+                "gen_1_focus",
+                "default",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            1,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 6,
+            "enemy_final_banked_score": 3650,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d2m1_low_pressure_staircase": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "default",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 4000,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d2m2_broad_line_builder": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_straight_1_6_hunter",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "default",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            1,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 4000,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d2m3_cautious_chunked_route": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "gen_5_focus",
+                "gen_5_focus",
+                "default",
+                "gen_1_focus",
+                "strat_safe_ones_fives",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 6,
+            "enemy_final_banked_score": 4050,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d3m1_extended_safe_route": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 8,
+            "enemy_final_banked_score": 4000,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d3m2_two_straights_far_apart": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_straight_1_6_hunter",
+                "strat_straight_2_6_hunter",
+                "default",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            1
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 4000,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d3m3_polar_but_patient": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_polar_ends",
+                "gen_1_focus",
+                "gen_5_focus",
+                "default",
+                "default",
+                "strat_safe_ones_fives",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 4000,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d4m1_late_station_soft_grind": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 8,
+            "enemy_final_banked_score": 4000,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d4m2_wide_curve_builder": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_straight_1_6_hunter",
+                "default",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "default",
+                "default",
+                "strat_safe_ones_fives"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4,
+                            6
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1,
+                            5,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 4000,
+            "enemy_reaches_target": true
+        }
+    },
+    "sp_d4m3_mellow_heavy_faces": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_polar_ends",
+                "gen_1_focus",
+                "gen_5_focus",
+                "default",
+                "default",
+                "default",
+                "strat_safe_ones_fives",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            1,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            1,
+                            5
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7
+                        ]
+                    },
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4,
+                            6
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4,
+                            6
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 4000,
+            "enemy_reaches_target": true
+        }
+    },
+    "mh_d1m1_final_station_breathing_room": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4500,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "strat_straight_1_6_hunter",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            1,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 4550,
+            "enemy_reaches_target": true
+        }
+    },
+    "mh_d1m2_slow_double_line": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4500,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_straight_1_6_hunter",
+                "strat_straight_2_6_hunter",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            1
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 8,
+            "enemy_final_banked_score": 4500,
+            "enemy_reaches_target": true
+        }
+    },
+    "mh_d1m3_polar_controlled_finish": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4500,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_polar_ends",
+                "gen_1_focus",
+                "gen_5_focus",
+                "default",
+                "default",
+                "strat_safe_ones_fives",
+                "default",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4,
+                            6
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 7,
+            "enemy_final_banked_score": 4500,
+            "enemy_reaches_target": true
+        }
+    },
+    "mh_d2m1_long_final_day_route": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4500,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "default",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_safe_ones_fives",
+                "default",
+                "strat_straight_1_6_hunter",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1,
+                            5,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 8,
+            "enemy_final_banked_score": 4500,
+            "enemy_reaches_target": true
+        }
+    },
+    "mh_d2m2_softened_second_spike": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 4700,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_straight_2_6_hunter",
+                "default",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_polar_ends",
+                "default",
+                "default",
+                "strat_safe_ones_fives"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            1,
+                            5
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 8,
+            "enemy_final_banked_score": 4700,
+            "enemy_reaches_target": true
+        }
+    },
+    "mh_d2m3_gradual_final_climb": {
+        "mode": "scripted",
+        "strict_validation": true,
+        "on_mismatch": "fail_scenario",
+        "target_score": 5000,
+        "enemy_setup": {
+            "use_modifiers": false,
+            "dice_in_hand": [
+                "strat_polar_ends",
+                "gen_1_focus",
+                "gen_1_focus",
+                "gen_5_focus",
+                "strat_straight_1_6_hunter",
+                "default",
+                "strat_safe_ones_fives",
+                "default"
+            ]
+        },
+        "turns": [
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4,
+                            6
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            1,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            5,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            1,
+                            1,
+                            1,
+                            2,
+                            2,
+                            3,
+                            3
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3
+                        ]
+                    },
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            5,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            5,
+                            2,
+                            2,
+                            3,
+                            3,
+                            4,
+                            4,
+                            6
+                        ],
+                        "save_unbanked_indexes": [
+                            0
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            },
+            {
+                "steps": [
+                    {
+                        "action": "roll",
+                        "forced_values": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            2,
+                            2
+                        ],
+                        "save_unbanked_indexes": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5
+                        ]
+                    },
+                    {
+                        "action": "pass"
+                    }
+                ]
+            }
+        ],
+        "expected_result": {
+            "completed_in_enemy_turns": 9,
+            "enemy_final_banked_score": 5350,
+            "enemy_reaches_target": true
+        }
+    }
+}
