@@ -174,17 +174,18 @@ namespace _Main.Scripts.Dice
 			_context.SetActivationLabel(null);
 			_context.SetRarity(diceConfig.rarityEnum);
 
-			var pos = diceModel.CurrentPosition;
-			if (tableView && tableView.TooltipPos)
+			if (tableView)
 			{
-				pos = tableView.TooltipPos;
+				_context.SetStaticPosition();
 			}
-
-			_context.SetPositionFromWorld(
-				pos,
-				Vector3.zero,
-				mainCamera
-			);
+			else
+			{
+				_context.SetPositionFromWorld(
+					diceModel.CurrentPosition,
+					Vector3.zero,
+					mainCamera
+				);
+			}
 
 			_context.ShowTooltip();
 		}
@@ -318,9 +319,9 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			if (tableView && tableView.TooltipPos)
+			if (tableView)
 			{
-				_context.SetPositionFromWorld(tableView.TooltipPos, Vector3.zero, mainCamera);
+				_context.SetStaticPosition();
 				return;
 			}
 

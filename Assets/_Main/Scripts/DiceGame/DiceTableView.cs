@@ -21,7 +21,6 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnAllInClicked;
 
 	[Header("Global")]
-	[SerializeField] private Transform tooltipPos;
 	[SerializeField]
 	private Transform[] DiceBonusPositions;
 	[SerializeField]
@@ -93,7 +92,6 @@ public class DiceTableView : MonoBehaviour
 	public Transform[] SelectDiceBonusSlots => SelectDiceBonusPositions;
 	public Transform UpgradeDicePos => upgradeDicePos;
 	public float UpgradeDiceScreenScale => upgradeDiceScreenScale > 0.05f ? upgradeDiceScreenScale : DefaultUpgradeDiceScale;
-	public Transform TooltipPos => tooltipPos;
 	public Transform CombinationCardsRoot => combinationCardsRoot;
 	public DiceCombinationCardView CombinationCardPrefab => combinationCardPrefab;
 	public RectTransform CombinationFlyLayer => combinationFlyLayer;

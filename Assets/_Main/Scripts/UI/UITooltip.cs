@@ -36,6 +36,9 @@ namespace _Main.Scripts.UI
 
 		[SerializeField] 
 		private RectTransform tooltipRectTransform;
+
+		[SerializeField]
+		private Vector2 staticAnchoredPosition;
 		
 		[SerializeField]
 		private List<TooltipSeparatorEntry> tooltipEntries;
@@ -44,12 +47,12 @@ namespace _Main.Scripts.UI
  
 		public void ShowTooltip()
 		{
-			tooltipTransform.DOScale(Vector3.one, 0.02f);
+			tooltipTransform.DOScale(Vector3.one, 0.075f);
 		}
 
 		public void HideTooltip()
 		{
-			tooltipTransform.DOScale(Vector3.zero, 0.01f);
+			tooltipTransform.DOScale(Vector3.zero, 0.035f);
 		}
 
 		public void SetHeaderText(string text)
@@ -118,6 +121,11 @@ namespace _Main.Scripts.UI
 			}
 
 			tooltipRectTransform.position = screenPos;
+		}
+
+		public void SetStaticPosition()
+		{
+			tooltipRectTransform.anchoredPosition = staticAnchoredPosition;
 		}
 
 		private bool TryValidateActivationLabelSetup()
