@@ -43,6 +43,7 @@ namespace _Main.Scripts.Dice
 		private bool isInAnimation;
 		private float visualScale = 1f;
 		private Vector3 baseModelScale = Vector3.one;
+		private Tween moveTween;
 		private Tween upgradeRotateTween;
 		private Sequence upgradeStopSequence;
 
@@ -69,6 +70,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnDestroy()
 		{
+			KillMoveTween();
 			KillUpgradeSpinSequence();
 			_isHovered = false;
 			OnDiceHoverExit?.Invoke();
@@ -236,8 +238,10 @@ namespace _Main.Scripts.Dice
 
 		public Tween MoveToPosition(Vector3 position, float speedMultiplier = 1)
 		{
+			KillMoveTween();
 			_audioService?.PlaySoundAt(SoundNames.DiceMove, transform.position);
-			return transform.DOMove(position, animSpeed / speedMultiplier);
+			moveTween = transform.DOMove(position, animSpeed / speedMultiplier);
+			return moveTween;
 		}
 
 		public void ResetYRotation()
@@ -249,6 +253,7 @@ namespace _Main.Scripts.Dice
 
 		public void Hide()
 		{
+			KillMoveTween();
 			KillUpgradeSpinSequence();
 			if (!model)
 			{
@@ -352,6 +357,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			KillMoveTween();
 			isInAnimation = true;
 			var randomOffset = new Vector3(Random.Range(-0.02f, 0.02f), 0, Random.Range(-0.02f, 0.02f));
 
@@ -396,6 +402,16 @@ namespace _Main.Scripts.Dice
 			upgradeRotateTween = null;
 			upgradeStopSequence = null;
 			isInAnimation = false;
+		}
+
+		private void KillMoveTween()
+		{
+			if (moveTween != null && moveTween.IsActive())
+			{
+				moveTween.Kill();
+			}
+
+			moveTween = null;
 		}
 
 		private Vector3 GetScaledModelScale(float multiplier = 1f)

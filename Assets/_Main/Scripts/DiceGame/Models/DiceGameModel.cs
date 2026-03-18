@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
+using _Main.Scripts;
 using _Main.Scripts.Core.Services;
 using UnityEngine;
 
@@ -64,6 +67,7 @@ namespace _Main.Scripts.Dice
 		private int baseMaxDiceCount = DefaultMaxDiceCount;
 		private int diceAnimationInProgressCounter;
 		private bool isGameConditionResolved;
+		private Tween[] turnRepositionTweens = Array.Empty<Tween>();
 		private readonly Dictionary<string, int> playerDiceCapBonuses = new();
 		private readonly Dictionary<string, int> enemyDiceCapBonuses = new();
 
@@ -440,14 +444,29 @@ namespace _Main.Scripts.Dice
 			IncreaseCurrentTurn();
 			tableModel.ResetTurn();
 			ResetAllDices();
-			foreach (var diceModel in CurrentDiceModelList)
+			RepositionCurrentTurnDiceAsync().RegisterAwaiter(TurnFlowAwaiter).Forget();
+		}
+
+		private UniTask RepositionCurrentTurnDiceAsync()
+		{
+			var diceList = CurrentDiceModelList;
+			if (turnRepositionTweens.Length < diceList.Count)
+			{
+				turnRepositionTweens = new Tween[diceList.Count];
+			}
+
+			var tweenCount = 0;
+			foreach (var diceModel in diceList)
 			{
 				var position = tableModel.GetFreeActivePosition();
 				diceModel.SetCurrentPosition(position);
 				var view = ScreenDiceDict[diceModel];
 				view.transform.SetParent(position);
-				view.MoveToPosition(position.position);
+				turnRepositionTweens[tweenCount] = view.MoveToPosition(position.position);
+				tweenCount++;
 			}
+
+			return UniTaskUtils.WaitAllTweens(turnRepositionTweens, tweenCount);
 		}
 
 		private bool IsEffectivelySaved(DiceModel dice)
@@ -507,6 +526,7 @@ namespace _Main.Scripts.Dice
 			EnemyDiceModelList.Clear();
 			ResetDiceAnimationState();
 			ResetEnemyRuntime();
+			turnRepositionTweens = Array.Empty<Tween>();
 			DiceGameState = DiceGameState.DEFAULT;
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;

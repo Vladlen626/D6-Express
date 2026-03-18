@@ -178,8 +178,16 @@ namespace _Main.Scripts.Dice
 			}
 			finally
 			{
+				try
+				{
+					await WaitTurnFlowAsync();
+				}
+				finally
+				{
+					SetProcessingState(false);
+				}
+
 				diceGameModel.RollEnded();
-				SetProcessingState(false);
 				await TryStartInitialRollAfterProcessingAsync();
 			}
 		}
@@ -243,8 +251,16 @@ namespace _Main.Scripts.Dice
 			}
 			finally
 			{
+				try
+				{
+					await WaitTurnFlowAsync();
+				}
+				finally
+				{
+					SetProcessingState(false);
+				}
+
 				diceGameModel.PassEnded();
-				SetProcessingState(false);
 				await TryStartInitialRollAfterProcessingAsync();
 			}
 		}
