@@ -1,0 +1,12 @@
+{
+  "id": "default",
+  "tactics": [
+    {
+      "id": "base",
+      "weight": 1,
+      "enemy_ai_scenarios_path": "Json/enemy_ai_scenarios",
+      "enemy_ai_scenario_schedule_path": "Json/enemy_ai_scenario_schedule",
+      "modifiers_schedule_path": "Json/dice_game_modifiers_schedule"
+    }
+  ]
+}
