@@ -110,12 +110,12 @@ public class DebugWindowPlayer : DebugWindowModel
 
 			if (ImGui.Button("Win Run"))
 			{
-				run.FinishRun(true);
+				run.FinishRun(Run.FinishType.WIN);
 			}
 
 			if (ImGui.Button("Lose Run"))
 			{
-				run.FinishRun(false);
+				run.FinishRun(Run.FinishType.LOSE);
 			}
 		}
 

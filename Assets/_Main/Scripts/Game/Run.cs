@@ -31,7 +31,7 @@ public class Run
     public event Action TicketPriceChanged;
     public event Action NextTicketPriceChanged;
     public event Action RunStarted;
-    public event Action<bool> RunFinished;
+    public event Action<FinishType> RunFinished;
     public StraightRuntimeState StraightState { get; private set; } = new StraightRuntimeState();
     public bool HasDiceGameTacticSelection =>
         !string.IsNullOrWhiteSpace(EnemyAiScenariosPath)
@@ -147,7 +147,7 @@ public class Run
         }
     }
 
-    public void FinishRun(bool result)
+    public void FinishRun(FinishType result)
     {
         Started = false;
         RunFinished?.Invoke(result);
@@ -186,5 +186,12 @@ public class Run
         EnemyAiScenariosPath = string.Empty;
         EnemyAiScenarioSchedulePath = string.Empty;
         ModifiersSchedulePath = string.Empty;
+    }
+    
+    public enum FinishType
+    {
+        WIN,
+        LOSE,
+        ABORT
     }
 }

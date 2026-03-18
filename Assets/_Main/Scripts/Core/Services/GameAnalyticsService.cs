@@ -36,9 +36,21 @@ namespace _Main.Scripts.Core.Services
 			GameAnalytics.NewDesignEvent($"{RunStartEventPrefix}:{stationId}:{level}");
 		}
 
-		public void TrackRunFinished(Run run, bool won)
+		public void TrackRunFinished(Run run, Run.FinishType finishType)
 		{
-			var result = won ? "win" : "lose";
+			string result = string.Empty;
+			switch (finishType)
+			{
+				case Run.FinishType.WIN:
+					result = "win";
+					break;
+				case Run.FinishType.LOSE:
+					result = "lose";
+					break;
+				case Run.FinishType.ABORT:
+					result = "abort";
+					break;
+			}
 			var stationId = NormalizeEventPart(run.StationId);
 			var level = FormatLevel(run.Level);
 

@@ -10,6 +10,7 @@ public class MainQuestContoller : IBaseController, IPreloadable, IQuestGenerator
     private readonly ConfigService configService;
 
     private TextsConfig textsConfig;
+    private D6Game d6Game;
 
     public MainQuestContoller(Run run, PlayerModel playerModel, ConfigService configService)
     {

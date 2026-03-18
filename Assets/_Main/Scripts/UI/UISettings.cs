@@ -14,6 +14,7 @@ public class UISettings : UIBaseElement
 	public event Action<float> OnMusicChanged;
 	public event Action<float> OnSfxChanged;
 	public event Action OnCloseClicked;
+	public event Action OnMainMenuClicked;
 
 	protected override void OnAwake()
 	{
@@ -32,5 +33,10 @@ public class UISettings : UIBaseElement
 	public void Close()
 	{
 		OnCloseClicked?.Invoke();
+	}
+
+	public void MainMenu()
+	{
+		OnMainMenuClicked?.Invoke();
 	}
 }

@@ -72,7 +72,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	{
 		if (value >= run.TicksPerDay && !CanMoveNextLevel())
 		{
-			run.FinishRun(false);
+			run.FinishRun(Run.FinishType.LOSE);
 		}
 		else
 		{
@@ -183,7 +183,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			{
 				if (run.Level + 1 == run.LevelsCount)
 				{
-					run.FinishRun(true);
+					run.FinishRun(Run.FinishType.WIN);
 				}
 				else
 				{
@@ -194,7 +194,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			}
 			else
 			{
-				run.FinishRun(false);
+				run.FinishRun(Run.FinishType.LOSE);
 			}
 		}
 		else
