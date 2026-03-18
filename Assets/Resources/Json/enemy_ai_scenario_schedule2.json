@@ -1,1 +1,97 @@
-{}
+{
+    "default_scenario_id": "wb_d1m1_gentle_singles_path",
+    "by_level": {
+        "1": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "wb_d1m1_gentle_singles_path",
+                        "2": "wb_d1m2_careful_mixed_ladder",
+                        "3": "wb_d1m3_slow_finish_builder",
+                        "*": "wb_d1m3_slow_finish_builder"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "wb_d1m3_slow_finish_builder"
+                    }
+                }
+            }
+        },
+        "2": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "sp_d1m1_measured_station_start",
+                        "2": "sp_d1m2_soft_straight_detour",
+                        "3": "sp_d1m3_ones_bias_journey",
+                        "*": "sp_d1m3_ones_bias_journey"
+                    }
+                },
+                "2": {
+                    "by_match": {
+                        "1": "sp_d2m1_low_pressure_staircase",
+                        "2": "sp_d2m2_broad_line_builder",
+                        "3": "sp_d2m3_cautious_chunked_route",
+                        "*": "sp_d2m3_cautious_chunked_route"
+                    }
+                },
+                "3": {
+                    "by_match": {
+                        "1": "sp_d3m1_extended_safe_route",
+                        "2": "sp_d3m2_two_straights_far_apart",
+                        "3": "sp_d3m3_polar_but_patient",
+                        "*": "sp_d3m3_polar_but_patient"
+                    }
+                },
+                "4": {
+                    "by_match": {
+                        "1": "sp_d4m1_late_station_soft_grind",
+                        "2": "sp_d4m2_wide_curve_builder",
+                        "3": "sp_d4m3_mellow_heavy_faces",
+                        "*": "sp_d4m3_mellow_heavy_faces"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "sp_d4m3_mellow_heavy_faces"
+                    }
+                }
+            }
+        },
+        "3": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "mh_d1m1_final_station_breathing_room",
+                        "2": "mh_d1m2_slow_double_line",
+                        "3": "mh_d1m3_polar_controlled_finish",
+                        "*": "mh_d1m3_polar_controlled_finish"
+                    }
+                },
+                "2": {
+                    "by_match": {
+                        "1": "mh_d2m1_long_final_day_route",
+                        "2": "mh_d2m2_softened_second_spike",
+                        "3": "mh_d2m3_gradual_final_climb",
+                        "*": "mh_d2m3_gradual_final_climb"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "mh_d2m3_gradual_final_climb"
+                    }
+                }
+            }
+        },
+        "*": {
+            "by_day": {
+                "*": {
+                    "by_match": {
+                        "*": "wb_d1m1_gentle_singles_path"
+                    }
+                }
+            }
+        }
+    }
+}

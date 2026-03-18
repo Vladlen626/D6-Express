@@ -7,6 +7,13 @@
       "enemy_ai_scenarios_path": "Json/enemy_ai_scenarios",
       "enemy_ai_scenario_schedule_path": "Json/enemy_ai_scenario_schedule",
       "modifiers_schedule_path": "Json/dice_game_modifiers_schedule"
+    },
+    {
+      "id": "new1",
+      "weight": 1,
+      "enemy_ai_scenarios_path": "Json/enemy_ai_scenarios2",
+      "enemy_ai_scenario_schedule_path": "Json/enemy_ai_scenario_schedule2",
+      "modifiers_schedule_path": "Json/dice_game_modifiers_schedule"
     }
   ]
 }
