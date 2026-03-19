@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using DG.Tweening;
 using PlatformCore.Services.Audio;
 using UnityEngine.Events;
+using _Main.Scripts.UI;
 using Random = UnityEngine.Random;
 
 namespace _Main.Scripts.Dice
@@ -32,6 +33,12 @@ namespace _Main.Scripts.Dice
 
 		[SerializeField] private float animSpeed = 0.10f;
 		[SerializeField] private float yOffset = 0.02f;
+		[SerializeField] private float itemTargetYOffset = 0.05f;
+		[SerializeField] private float hoverScaleMultiplier = 1.06f;
+		[SerializeField] private ColorStyleRef defaultOutlineColor;
+		[SerializeField] private ColorStyleRef selectedOutlineColor;
+		[SerializeField] private ColorStyleRef itemTargetSelectedOutlineColor;
+		[SerializeField] private ColorStyleRef hoverOutlineColor;
 
 		private IAudioService _audioService;
 		private Dictionary<string, Transform> _diceVisualMap;
@@ -41,6 +48,8 @@ namespace _Main.Scripts.Dice
 		private bool isPlayerDice;
 		private bool _isHovered;
 		private bool isInAnimation;
+		private bool isChosenVisual;
+		private bool isItemTargetSelectedVisual;
 		private float visualScale = 1f;
 		private Vector3 baseModelScale = Vector3.one;
 		private Tween moveTween;
@@ -65,7 +74,10 @@ namespace _Main.Scripts.Dice
 			isActive = true;
 			baseModelScale = model ? model.localScale : Vector3.one;
 			visualScale = 1f;
+			isChosenVisual = false;
+			isItemTargetSelectedVisual = false;
 			SetupVisual(diceConfigId);
+			ApplySelectionVisual();
 		}
 
 		private void OnDestroy()
@@ -92,12 +104,14 @@ namespace _Main.Scripts.Dice
 			{
 				_isHovered = true;
 				OnDiceHoverEnter?.Invoke();
+				ApplySelectionVisual();
 			}
 
 			if (!isMouseOver && _isHovered)
 			{
 				_isHovered = false;
 				OnDiceHoverExit?.Invoke();
+				ApplySelectionVisual();
 			}
 
 			if (!isActive)
@@ -199,21 +213,61 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			isChosenVisual = isChosen;
+			ApplySelectionVisual();
+		}
+
+		public void SetItemTargetSelectedVisual(bool isSelected)
+		{
+			if (!model || !outline)
+			{
+				return;
+			}
+
+			if (isItemTargetSelectedVisual == isSelected)
+			{
+				return;
+			}
+
+			isItemTargetSelectedVisual = isSelected;
+			ApplySelectionVisual();
+		}
+
+		private void ApplySelectionVisual()
+		{
+			if (!model || !outline)
+			{
+				return;
+			}
+
 			if (!outline.enabled)
 			{
 				outline.enabled = true;
 			}
 
-			if (isChosen)
+			var targetY = 0f;
+			var outlineColor = defaultOutlineColor.Value;
+			var scaleMultiplier = _isHovered ? hoverScaleMultiplier : 1f;
+
+			if (isItemTargetSelectedVisual)
 			{
-				model.DOLocalMove(Vector3.up * yOffset, animSpeed);
-				outline.OutlineColor = Color.green;
+				targetY = itemTargetYOffset;
+				outlineColor = itemTargetSelectedOutlineColor.Value;
 			}
-			else
+			else if (isChosenVisual)
 			{
-				model.DOLocalMove(Vector3.zero, animSpeed);
-				outline.OutlineColor = Color.black;
+				targetY = yOffset;
+				outlineColor = selectedOutlineColor.Value;
 			}
+
+			if (_isHovered)
+			{
+				outlineColor = hoverOutlineColor.Value;
+			}
+
+			model.DOLocalMove(Vector3.up * targetY, animSpeed);
+			model.DOScale(GetScaledModelScale(scaleMultiplier), animSpeed);
+			outline.OutlineColor = outlineColor;
 		}
 
 		public void PlayPressAnimation()
@@ -223,7 +277,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			model.transform.DOScale(GetScaledModelScale(0.9f), animSpeed);
+			model.transform.DOScale(GetScaledModelScale(GetCurrentVisualScaleMultiplier() * 0.9f), animSpeed);
 		}
 
 		public void PlayReleaseAnimation()
@@ -233,7 +287,7 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			model.transform.DOScale(GetScaledModelScale(1f), animSpeed);
+			model.transform.DOScale(GetScaledModelScale(GetCurrentVisualScaleMultiplier()), animSpeed);
 		}
 
 		public Tween MoveToPosition(Vector3 position, float speedMultiplier = 1)
@@ -417,6 +471,11 @@ namespace _Main.Scripts.Dice
 		private Vector3 GetScaledModelScale(float multiplier = 1f)
 		{
 			return baseModelScale * (visualScale * multiplier);
+		}
+
+		private float GetCurrentVisualScaleMultiplier()
+		{
+			return _isHovered ? hoverScaleMultiplier : 1f;
 		}
 	}
 }

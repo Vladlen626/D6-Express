@@ -107,7 +107,7 @@ MonoBehaviour:
   hoverExitDuration: 0.12
   hoverEnterEase: 8
   hoverExitEase: 8
-  armedScaleMultiplier: 1.025
+  armedScaleMultiplier: 1.05
   armedPulseDuration: 0.5
   armedPulseEase: 9
   consumedScaleMultiplier: 0

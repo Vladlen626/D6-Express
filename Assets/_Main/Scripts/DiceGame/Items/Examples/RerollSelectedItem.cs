@@ -25,6 +25,8 @@ namespace _Main.Scripts.Dice
 			customPrefab = prefabOverride;
 		}
 
+		public override bool BlocksGameplayWhileArmed => true;
+
 		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
 
 		public override bool IsActivationAllowed(DiceGameState gameState)
@@ -104,7 +106,12 @@ namespace _Main.Scripts.Dice
 
 		private async void OnDiceClickedAsync(DiceModel model, DiceView view)
 		{
-			if (State != DiceItemState.Armed || model == null || model.IsSaved || DiceGameUtils.IsDiceBanked(model, boundGameModel?.tableModel))
+			if (State != DiceItemState.Armed || model == null || boundGameModel == null)
+			{
+				return;
+			}
+
+			if (model.IsSaved || DiceGameUtils.IsDiceBanked(model, boundGameModel.tableModel))
 			{
 				return;
 			}
@@ -130,9 +137,8 @@ namespace _Main.Scripts.Dice
 
 			if (handlersAttached)
 			{
-				// If this is a new game instance or the dice set changed, reattach.
-				if (!ReferenceEquals(boundGameModel, gameModel) ||
-				    clickHandlers.Count != gameModel.ScreenDiceDict.Count)
+				// If this is a new game instance or the dice views changed, reattach.
+				if (!ReferenceEquals(boundGameModel, gameModel) || !HasSameDiceViews(gameModel))
 				{
 					DetachDiceHandlers();
 				}
@@ -159,6 +165,27 @@ namespace _Main.Scripts.Dice
 			}
 
 			handlersAttached = true;
+		}
+
+		private bool HasSameDiceViews(DiceGameModel gameModel)
+		{
+			var attachableViewCount = 0;
+			foreach (var kv in gameModel.ScreenDiceDict)
+			{
+				var view = kv.Value;
+				if (!view)
+				{
+					continue;
+				}
+
+				attachableViewCount++;
+				if (!clickHandlers.ContainsKey(view))
+				{
+					return false;
+				}
+			}
+
+			return clickHandlers.Count == attachableViewCount;
 		}
 
 		private void DetachDiceHandlers()

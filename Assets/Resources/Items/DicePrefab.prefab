@@ -958,6 +958,16 @@ MonoBehaviour:
   diceCollider: {fileID: 3459348804150879815}
   animSpeed: 0.16
   yOffset: 0.02
+  itemTargetYOffset: 0.05
+  hoverScaleMultiplier: 1.06
+  defaultOutlineColor:
+    id: Black
+  selectedOutlineColor:
+    id: GreenLight
+  itemTargetSelectedOutlineColor:
+    id: OrangeBg
+  hoverOutlineColor:
+    id: SliderBg
 --- !u!65 &3459348804150879815
 BoxCollider:
   m_ObjectHideFlags: 0

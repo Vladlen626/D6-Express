@@ -91,4 +91,14 @@ namespace _Main.Scripts.Dice
 	{
 		void OnMatchFinished();
 	}
+
+	/// <summary>
+	/// Optional interface for click-to-activate items that enter an armed targeting mode
+	/// and must block other gameplay interactions until they are applied or canceled.
+	/// </summary>
+	public interface IArmedTargetingItem
+	{
+		bool IsAwaitingTargetSelection { get; }
+		bool TryCancelArmedTargeting();
+	}
 }

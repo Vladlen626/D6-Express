@@ -32,6 +32,8 @@ namespace _Main.Scripts.Dice
 			customPrefab = prefabOverride;
 		}
 
+		public override bool BlocksGameplayWhileArmed => true;
+
 		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
 
 		public override bool IsActivationAllowed(DiceGameState gameState)
@@ -78,6 +80,7 @@ namespace _Main.Scripts.Dice
 
 			if (!selectedDice.Add(model))
 			{
+				selectedDice.Remove(model);
 				return;
 			}
 
@@ -160,8 +163,7 @@ namespace _Main.Scripts.Dice
 
 			if (handlersAttached)
 			{
-				if (!object.ReferenceEquals(boundGameModel, gameModel) ||
-				    clickHandlers.Count != gameModel.ScreenDiceDict.Count)
+				if (!object.ReferenceEquals(boundGameModel, gameModel) || !HasSameDiceViews(gameModel))
 				{
 					DetachDiceHandlers();
 					selectedDice.Clear();
@@ -189,6 +191,27 @@ namespace _Main.Scripts.Dice
 			}
 
 			handlersAttached = true;
+		}
+
+		private bool HasSameDiceViews(DiceGameModel gameModel)
+		{
+			var attachableViewCount = 0;
+			foreach (var kv in gameModel.ScreenDiceDict)
+			{
+				var view = kv.Value;
+				if (!view)
+				{
+					continue;
+				}
+
+				attachableViewCount++;
+				if (!clickHandlers.ContainsKey(view))
+				{
+					return false;
+				}
+			}
+
+			return clickHandlers.Count == attachableViewCount;
 		}
 
 		private void DetachDiceHandlers()
@@ -228,6 +251,12 @@ namespace _Main.Scripts.Dice
 			}
 
 			boundGameModel.tableModel.SendUpdateUI();
+		}
+
+		protected override void OnCancelArmedTargeting()
+		{
+			selectedDice.Clear();
+			isProcessing = false;
 		}
 
 		public override void ResetItem()

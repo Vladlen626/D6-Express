@@ -9,13 +9,15 @@ namespace _Main.Scripts.Dice
 		private readonly TableModel tableModel;
 		private readonly DiceModel diceModel;
 		private readonly DiceView diceView;
+		private readonly DiceGameModel diceGameModel;
 		private readonly IAudioService audioService;
 
-		public DiceController(DiceModel diceModel, DiceView diceView, TableModel tableModel, IAudioService audioService)
+		public DiceController(DiceModel diceModel, DiceView diceView, TableModel tableModel, DiceGameModel diceGameModel, IAudioService audioService)
 		{
 			this.diceModel = diceModel;
 			this.diceView = diceView;
 			this.tableModel = tableModel;
+			this.diceGameModel = diceGameModel;
 			this.audioService = audioService;
 		}
 
@@ -51,8 +53,13 @@ namespace _Main.Scripts.Dice
 
 		private void OnDiceClickedHandler()
 		{
+			if (diceGameModel != null && diceGameModel.IsItemTargetingActive)
+			{
+				return;
+			}
+
 			audioService.PlaySound(SoundNames.DiceClick);
-			
+
 			if (diceModel.IsSaved)
 			{
 				return;
