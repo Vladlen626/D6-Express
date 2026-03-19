@@ -5,7 +5,7 @@ namespace _Main.Scripts.Core.Services
 	public interface IAnalyticsService : IService
 	{
 		void TrackRunStarted(Run run);
-		void TrackRunFinished(Run run, bool won);
+		void TrackRunFinished(Run run, Run.FinishType type);
 		void TrackLocationChanged(Location location);
 		void TrackShopPurchase(string shopId, TradeItem tradeItem);
 	}

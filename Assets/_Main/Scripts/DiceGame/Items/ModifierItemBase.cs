@@ -6,13 +6,15 @@ namespace _Main.Scripts.Dice
 	/// Base implementation for dice items that double as modifiers.
 	/// Derive from this and implement ModifyValues to plug into the modifier pipeline.
 	/// </summary>
-	public abstract class ModifierItemBase : IModifierItem, IItemTooltipActivationLabelProvider
+	public abstract class ModifierItemBase : IModifierItem, IItemTooltipActivationLabelProvider, IArmedTargetingItem
 	{
 		public string Id { get; }
 		public string DisplayName { get; }
 		public DiceItemActivationType ActivationType { get; }
 		public DiceItemState State { get; protected set; } = DiceItemState.Ready;
 		public bool IsVisible { get; protected set; } = true;
+		public virtual bool BlocksGameplayWhileArmed => false;
+		public bool IsAwaitingTargetSelection => BlocksGameplayWhileArmed && State == DiceItemState.Armed;
 		public virtual string InvalidActivationNotificationKey => string.Empty;
 		public virtual ItemTooltipActivationLabel? TooltipActivationLabel
 		{
@@ -80,6 +82,18 @@ namespace _Main.Scripts.Dice
 			return true;
 		}
 
+		public virtual bool TryCancelArmedTargeting()
+		{
+			if (!IsAwaitingTargetSelection)
+			{
+				return false;
+			}
+
+			OnCancelArmedTargeting();
+			SetState(DiceItemState.Ready);
+			return true;
+		}
+
 		/// <summary>
 		/// Override to perform arming or immediate effect on click. Return true if handled.
 		/// </summary>
@@ -92,6 +106,10 @@ namespace _Main.Scripts.Dice
 			}
 
 			return false;
+		}
+
+		protected virtual void OnCancelArmedTargeting()
+		{
 		}
 
 		/// <summary>

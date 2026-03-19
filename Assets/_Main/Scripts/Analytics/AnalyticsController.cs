@@ -34,7 +34,7 @@ public class AnalyticsController : IBaseController, IActivatable
 		analytics.TrackRunStarted(run);
 	}
 
-	private void OnRunFinished(bool result)
+	private void OnRunFinished(Run.FinishType result)
 	{
 		analytics.TrackRunFinished(run, result);
 	}

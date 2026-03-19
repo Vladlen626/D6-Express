@@ -16,6 +16,7 @@ namespace _Main.Scripts.Dice
 		private readonly LifecycleService lifecycleService;
 		private readonly IObjectFactory objectFactory;
 		private readonly GlobalNotificationService notificationService;
+		private readonly DiceItemViewRegistry itemViewRegistry;
 
 		private readonly List<IBaseController> itemControllers = new();
 		private readonly List<ItemView> itemViews = new();
@@ -25,12 +26,14 @@ namespace _Main.Scripts.Dice
 			DiceTableView diceTableView,
 			LifecycleService lifecycleService,
 			IObjectFactory objectFactory,
+			DiceItemViewRegistry itemViewRegistry,
 			GlobalNotificationService notificationService)
 		{
-			this.diceGameModel = diceGameModel;
-			this.diceTableView = diceTableView;
-			this.lifecycleService = lifecycleService;
-			this.objectFactory = objectFactory;
+			this.diceGameModel = diceGameModel ?? throw new ArgumentNullException(nameof(diceGameModel));
+			this.diceTableView = diceTableView ? diceTableView : throw new ArgumentNullException(nameof(diceTableView));
+			this.lifecycleService = lifecycleService ?? throw new ArgumentNullException(nameof(lifecycleService));
+			this.objectFactory = objectFactory ?? throw new ArgumentNullException(nameof(objectFactory));
+			this.itemViewRegistry = itemViewRegistry ?? throw new ArgumentNullException(nameof(itemViewRegistry));
 			this.notificationService = notificationService;
 		}
 
@@ -52,7 +55,7 @@ namespace _Main.Scripts.Dice
 				var view = Object.Instantiate(prefab);
 				PlaceViewInSlot(view, slot);
 
-				var controller = new ModifierItemController(items[i], view, diceGameModel, notificationService);
+				var controller = new ModifierItemController(items[i], view, diceGameModel, itemViewRegistry, notificationService);
 				itemControllers.Add(controller);
 				itemViews.Add(view);
 				await lifecycleService.RegisterAsync(controller);

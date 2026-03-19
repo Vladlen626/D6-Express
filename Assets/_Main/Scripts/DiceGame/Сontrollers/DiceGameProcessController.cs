@@ -76,7 +76,7 @@ namespace _Main.Scripts.Dice
 
 		public void HandleRoll()
 		{
-			if (IsProcessing)
+			if (IsProcessing || diceGameModel.IsItemTargetingActive)
 			{
 				return;
 			}
@@ -201,7 +201,7 @@ namespace _Main.Scripts.Dice
 
 		private void HandlePass()
 		{
-			if (IsProcessing)
+			if (IsProcessing || diceGameModel.IsItemTargetingActive)
 			{
 				return;
 			}

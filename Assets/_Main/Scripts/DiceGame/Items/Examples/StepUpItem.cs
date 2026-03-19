@@ -32,6 +32,8 @@ namespace _Main.Scripts.Dice
 			customPrefab = prefabOverride;
 		}
 
+		public override bool BlocksGameplayWhileArmed => true;
+
 		public override string InvalidActivationNotificationKey => GlobalConstants.Localization.ItemActivationOnlyGame;
 
 		public override bool IsActivationAllowed(DiceGameState gameState)
@@ -39,16 +41,15 @@ namespace _Main.Scripts.Dice
 			return gameState == DiceGameState.GAME;
 		}
 
-		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
+		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			if (State == DiceItemState.Consumed)
 			{
-				await UniTask.CompletedTask;
-				return;
+				return UniTask.CompletedTask;
 			}
 
 			TryAttachDiceHandlers(modifierContext.DiceGameModel);
-			await UniTask.CompletedTask;
+			return UniTask.CompletedTask;
 		}
 
 		protected override bool OnClick()
@@ -64,27 +65,39 @@ namespace _Main.Scripts.Dice
 			return true;
 		}
 
-		private async void OnDiceClickedAsync(DiceModel model)
+		private void OnDiceClicked(DiceModel model)
 		{
-			if (State != DiceItemState.Armed || isProcessing || model == null || model.IsSaved)
+			if (State != DiceItemState.Armed || isProcessing || model == null || boundGameModel == null)
+			{
+				return;
+			}
+
+			if (model.IsSaved || DiceGameUtils.IsDiceBanked(model, boundGameModel.tableModel))
 			{
 				return;
 			}
 
 			if (!selectedDice.Add(model))
 			{
+				selectedDice.Remove(model);
 				return;
 			}
 
 			if (selectedDice.Count >= selectionTarget)
 			{
 				isProcessing = true;
-				await ApplyStepAsync();
-				isProcessing = false;
+				try
+				{
+					ApplyStep();
+				}
+				finally
+				{
+					isProcessing = false;
+				}
 			}
 		}
 
-		private async UniTask ApplyStepAsync()
+		private void ApplyStep()
 		{
 			var diceList = boundGameModel?.CurrentDiceModelList;
 			if (diceList == null || diceList.Count == 0)
@@ -97,10 +110,17 @@ namespace _Main.Scripts.Dice
 			var targetDice = new List<DiceModel>(selectedDice.Count);
 			foreach (var dice in selectedDice)
 			{
-				if (dice != null && availableDice.Contains(dice))
+				if (dice == null || !availableDice.Contains(dice))
 				{
-					targetDice.Add(dice);
+					continue;
 				}
+
+				if (dice.IsSaved || DiceGameUtils.IsDiceBanked(dice, boundGameModel.tableModel))
+				{
+					continue;
+				}
+
+				targetDice.Add(dice);
 			}
 
 			if (targetDice.Count == 0)
@@ -141,8 +161,7 @@ namespace _Main.Scripts.Dice
 
 			if (handlersAttached)
 			{
-				if (!ReferenceEquals(boundGameModel, gameModel) ||
-				    clickHandlers.Count != gameModel.ScreenDiceDict.Count)
+				if (!ReferenceEquals(boundGameModel, gameModel) || !HasSameDiceViews(gameModel))
 				{
 					DetachDiceHandlers();
 					selectedDice.Clear();
@@ -164,12 +183,33 @@ namespace _Main.Scripts.Dice
 					continue;
 				}
 
-				UnityAction listener = () => OnDiceClickedAsync(model);
+				UnityAction listener = () => OnDiceClicked(model);
 				view.OnDiceClicked.AddListener(listener);
 				clickHandlers[view] = listener;
 			}
 
 			handlersAttached = true;
+		}
+
+		private bool HasSameDiceViews(DiceGameModel gameModel)
+		{
+			var attachableViewCount = 0;
+			foreach (var kv in gameModel.ScreenDiceDict)
+			{
+				var view = kv.Value;
+				if (!view)
+				{
+					continue;
+				}
+
+				attachableViewCount++;
+				if (!clickHandlers.ContainsKey(view))
+				{
+					return false;
+				}
+			}
+
+			return clickHandlers.Count == attachableViewCount;
 		}
 
 		private void DetachDiceHandlers()
@@ -208,6 +248,12 @@ namespace _Main.Scripts.Dice
 			}
 
 			boundGameModel.tableModel.SendUpdateUI();
+		}
+
+		protected override void OnCancelArmedTargeting()
+		{
+			selectedDice.Clear();
+			isProcessing = false;
 		}
 
 		public override void ResetItem()

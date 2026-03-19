@@ -12,36 +12,46 @@ namespace _Main.Scripts.UI
 		private readonly ICursorService cursorService;
 		private readonly IInputService inputService;
 		private readonly PauseState pauseState;
+		private Run run;
 		private bool cursorUnlockedBySettings;
 
-		public SettingsController(IUIService uiService, IAudioService audioService, ICursorService cursorService,
-			IInputService inputService, PauseState pauseState) : base(uiService)
-		{
-			this.uiService = uiService;
-			this.audioService = audioService;
-			this.cursorService = cursorService;
-			this.inputService = inputService;
-			this.pauseState = pauseState;
-		}
+        public SettingsController(
+            IUIService uiService,
+            IAudioService audioService,
+            ICursorService cursorService,
+            IInputService inputService,
+            PauseState pauseState,
+            Run run) : base(uiService)
+        {
+            this.uiService = uiService;
+            this.audioService = audioService;
+            this.cursorService = cursorService;
+            this.inputService = inputService;
+            this.pauseState = pauseState;
+            this.run = run;
+        }
 
-		protected override void OnActivate()
+        protected override void OnActivate()
 		{
 			base.OnActivate();
 			_context.Hide();
+
 			inputService.OnPausePressed += OnPausePressedHandler;
 			_context.OnMasterChanged += OnMasterChangedHandler;
 			_context.OnMusicChanged += OnMusicChangedHandler;
 			_context.OnSfxChanged += OnSfxChangedHandler;
 			_context.OnCloseClicked += OnCloseClickHandler;
+			_context.OnMainMenuClicked += OnMainMenuClickHandler;
 		}
 
 		protected override void OnDeactivate()
 		{
-			inputService.OnPausePressed -= OnPausePressedHandler;
-			_context.OnMasterChanged -= OnMasterChangedHandler;
-			_context.OnMusicChanged -= OnMusicChangedHandler;
-			_context.OnSfxChanged -= OnSfxChangedHandler;
+			_context.OnMainMenuClicked -= OnMainMenuClickHandler;
 			_context.OnCloseClicked -= OnCloseClickHandler;
+			_context.OnSfxChanged -= OnSfxChangedHandler;
+			_context.OnMusicChanged -= OnMusicChangedHandler;
+			_context.OnMasterChanged -= OnMasterChangedHandler;
+			inputService.OnPausePressed -= OnPausePressedHandler;
 
 			base.OnDeactivate();
 		}
@@ -101,6 +111,12 @@ namespace _Main.Scripts.UI
 
 		private void OnCloseClickHandler()
 		{
+			HideContext();
+		}
+
+		private void OnMainMenuClickHandler()
+		{
+			run.FinishRun(Run.FinishType.ABORT);
 			HideContext();
 		}
 	}

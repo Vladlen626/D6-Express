@@ -142,6 +142,21 @@ public class GameStateController : IBaseController, IActivatable
 		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
 	};
 
+	private static readonly GameStateTransitionTask[] RunFinishedAbortRecipe =
+{
+		GameStateTransitionTask.LOCK_PLAYER_INPUT,
+		GameStateTransitionTask.CHARACTER_TRANSITION_START,
+		GameStateTransitionTask.VISUAL_TRANSITION_START,
+		GameStateTransitionTask.DISABLE_CHARACTER,
+		GameStateTransitionTask.HIDE_LOSE,
+		GameStateTransitionTask.HIDE_WIN,
+		GameStateTransitionTask.CHANGE_LOCATION,
+		GameStateTransitionTask.UNLOCK_CURSOR,
+		GameStateTransitionTask.CHARACTER_TRANSITION_FINISH,
+		GameStateTransitionTask.VISUAL_TRANSITION_FINISH,
+		GameStateTransitionTask.UNLOCK_PLAYER_INPUT,
+	};
+
 	public GameStateController(D6Game game, Run run)
 	{
 		this.game = game;
@@ -213,14 +228,26 @@ public class GameStateController : IBaseController, IActivatable
 		}
 	}
 
-	private void OnRunFinished(bool finished)
+	private void OnRunFinished(Run.FinishType finished)
 	{
 		run.RunFinished -= OnRunFinished;
 		game.DayChanged -= OnDayChanged;
 		game.TickChanged -= OnTickChanged;
 
-		var recipe = finished ? RunFinishedWinRecipe : RunFinishedLoseRecipe;
-		RequestChange(new GameStateTransition(recipe));
+		GameStateTransitionTask[] recipe = null;
+		switch (finished)
+		{
+			case Run.FinishType.WIN:
+				recipe = RunFinishedWinRecipe;
+				break;
+			case Run.FinishType.LOSE:
+				recipe = RunFinishedLoseRecipe;
+				break;
+			case Run.FinishType.ABORT:
+				recipe = RunFinishedAbortRecipe;
+				break;
+		}
+		RequestChange(new GameStateTransition(recipe, Location.MAIN_MENU));
 	}
 
 	private async void RequestChange(GameStateTransition data)

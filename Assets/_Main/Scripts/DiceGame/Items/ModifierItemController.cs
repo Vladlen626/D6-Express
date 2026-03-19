@@ -1,5 +1,6 @@
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
+using System;
 
 namespace _Main.Scripts.Dice
 {
@@ -12,17 +13,20 @@ namespace _Main.Scripts.Dice
 		private readonly IModifierItem item;
 		private readonly ItemView view;
 		private readonly DiceGameModel diceGameModel;
+		private readonly DiceItemViewRegistry itemViewRegistry;
 		private readonly GlobalNotificationService notificationService;
 
 		public ModifierItemController(
 			IModifierItem item,
 			ItemView view,
 			DiceGameModel diceGameModel,
+			DiceItemViewRegistry itemViewRegistry,
 			GlobalNotificationService notificationService)
 		{
-			this.item = item;
-			this.view = view;
-			this.diceGameModel = diceGameModel;
+			this.item = item ?? throw new ArgumentNullException(nameof(item));
+			this.view = view ? view : throw new ArgumentNullException(nameof(view));
+			this.diceGameModel = diceGameModel ?? throw new ArgumentNullException(nameof(diceGameModel));
+			this.itemViewRegistry = itemViewRegistry ?? throw new ArgumentNullException(nameof(itemViewRegistry));
 			this.notificationService = notificationService;
 		}
 
@@ -31,21 +35,21 @@ namespace _Main.Scripts.Dice
 			item.AttachView(view);
 			view.OnClicked.AddListener(OnViewClicked);
 			item.OnChanged += OnItemChanged;
+			itemViewRegistry.Register(item, view);
 
-			if (diceGameModel != null)
-			{
-				diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChanged;
-			}
+			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChanged;
+			diceGameModel.OnActiveTargetingItemChanged += OnActiveTargetingItemChanged;
 
+			SyncTargetingState();
 			RefreshPhaseDisabledVisual();
 		}
 
 		public void Deactivate()
 		{
-			if (diceGameModel != null)
-			{
-				diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChanged;
-			}
+			diceGameModel.OnActiveTargetingItemChanged -= OnActiveTargetingItemChanged;
+			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChanged;
+			diceGameModel.ClearItemTargeting(item);
+			itemViewRegistry.Unregister(item, view);
 
 			item.OnChanged -= OnItemChanged;
 			view.OnClicked.RemoveListener(OnViewClicked);
@@ -54,9 +58,14 @@ namespace _Main.Scripts.Dice
 
 		private void OnViewClicked()
 		{
-			if (IsPhaseActivationBlocked())
+			if (TryCancelActiveTargetingOnSelfClick())
 			{
-				if (!string.IsNullOrWhiteSpace(item.InvalidActivationNotificationKey))
+				return;
+			}
+
+			if (IsInteractionBlocked())
+			{
+				if (IsActivationPhaseBlocked() && !string.IsNullOrWhiteSpace(item.InvalidActivationNotificationKey))
 				{
 					notificationService?.ShowToastImmediate(item.InvalidActivationNotificationKey, true);
 				}
@@ -64,7 +73,35 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			item.TryHandleClick();
+			if (!item.TryHandleClick())
+			{
+				return;
+			}
+
+			SyncTargetingState();
+			RefreshPhaseDisabledVisual();
+		}
+
+		private bool TryCancelActiveTargetingOnSelfClick()
+		{
+			if (!object.ReferenceEquals(diceGameModel.ActiveTargetingItem, item))
+			{
+				return false;
+			}
+
+			if (item is not IArmedTargetingItem targetingItem || !targetingItem.IsAwaitingTargetSelection)
+			{
+				return false;
+			}
+
+			if (!targetingItem.TryCancelArmedTargeting())
+			{
+				return false;
+			}
+
+			SyncTargetingState();
+			RefreshPhaseDisabledVisual();
+			return true;
 		}
 
 		private void OnDiceGameStateChanged()
@@ -72,31 +109,84 @@ namespace _Main.Scripts.Dice
 			RefreshPhaseDisabledVisual();
 		}
 
+		private void OnActiveTargetingItemChanged(IModifierItem _)
+		{
+			RefreshPhaseDisabledVisual();
+		}
+
 		private void OnItemChanged(IModifierItem _)
 		{
+			SyncTargetingState();
 			RefreshPhaseDisabledVisual();
 		}
 
 		private void RefreshPhaseDisabledVisual()
 		{
-			if (!view || diceGameModel == null)
+			if (!view)
 			{
 				return;
 			}
 
-			view.SetPhaseDisabled(IsPhaseActivationBlocked());
+			var shouldDisable = item.State == DiceItemState.Ready && IsInteractionBlocked();
+			view.SetPhaseDisabled(shouldDisable);
 		}
 
-		private bool IsPhaseActivationBlocked()
+		private bool IsInteractionBlocked()
 		{
-			if (diceGameModel == null)
+			if (item.ActivationType != DiceItemActivationType.ClickToActivate)
 			{
 				return false;
 			}
 
+			if (diceGameModel.IsItemTargetingActive &&
+			    !object.ReferenceEquals(diceGameModel.ActiveTargetingItem, item))
+			{
+				return true;
+			}
+
+			if (diceGameModel.IsDiceAnimationInProgress)
+			{
+				return true;
+			}
+
+			if (item.State != DiceItemState.Ready)
+			{
+				return false;
+			}
+
+			if (!diceGameModel.IsPlayerTurn)
+			{
+				return true;
+			}
+
+			return !item.IsActivationAllowed(diceGameModel.DiceGameState);
+		}
+
+		private bool IsActivationPhaseBlocked()
+		{
 			return item.ActivationType == DiceItemActivationType.ClickToActivate &&
 			       item.State == DiceItemState.Ready &&
 			       !item.IsActivationAllowed(diceGameModel.DiceGameState);
+		}
+
+		private void SyncTargetingState()
+		{
+			if (item is not IArmedTargetingItem targetingItem)
+			{
+				diceGameModel.ClearItemTargeting(item);
+				return;
+			}
+
+			if (targetingItem.IsAwaitingTargetSelection)
+			{
+				if (!diceGameModel.TryStartItemTargeting(item))
+				{
+					targetingItem.TryCancelArmedTargeting();
+				}
+				return;
+			}
+
+			diceGameModel.ClearItemTargeting(item);
 		}
 	}
 }

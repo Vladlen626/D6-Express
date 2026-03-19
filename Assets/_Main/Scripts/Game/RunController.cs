@@ -72,7 +72,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	{
 		if (value >= run.TicksPerDay && !CanMoveNextLevel())
 		{
-			run.FinishRun(false);
+			run.FinishRun(Run.FinishType.LOSE);
 		}
 		else
 		{
@@ -124,11 +124,9 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			}
 		}
 
-		// Initialize straight upgrade state for the new run
-		var defaults = scoringService.GetStraightDefaults();
-		var straightState = new StraightRuntimeState(defaults);
-		scoringService.SetStraightState(straightState);
-		run.SetStraightState(straightState);
+		// Reset all combo upgrade runtime states for the new run.
+		scoringService.ResetUpgradeStatesToDefaults();
+		run.SetStraightState(scoringService.GetStraightState());
 	}
 
 	private void SelectRunTactic()
@@ -189,7 +187,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			{
 				if (run.Level + 1 == run.LevelsCount)
 				{
-					run.FinishRun(true);
+					run.FinishRun(Run.FinishType.WIN);
 				}
 				else
 				{
@@ -200,7 +198,7 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			}
 			else
 			{
-				run.FinishRun(false);
+				run.FinishRun(Run.FinishType.LOSE);
 			}
 		}
 		else
