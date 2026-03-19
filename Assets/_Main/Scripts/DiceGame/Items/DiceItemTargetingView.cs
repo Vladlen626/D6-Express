@@ -32,6 +32,9 @@ namespace _Main.Scripts.Dice
 		[SerializeField] private int dashResolutionPerSegment = 20;
 		[Range(0.1f, 1f)]
 		[SerializeField] private float dashFill = 0.56f;
+		[SerializeField] private bool autoScaleDashCountByLength = true;
+		[Min(0.01f)]
+		[SerializeField] private float dashReferenceLength = 1f;
 		[SerializeField] private float dashScrollSpeed = 1.4f;
 
 		private static readonly int BaseMapPropertyId = Shader.PropertyToID("_BaseMap");
@@ -44,6 +47,7 @@ namespace _Main.Scripts.Dice
 		private int cachedDashCount = -1;
 		private int cachedDashResolutionPerSegment = -1;
 		private float cachedDashFill = -1f;
+		private int cachedRuntimeDashCount = -1;
 		private bool isInitialized;
 
 		public float SourceYOffset => sourceYOffset;
@@ -102,7 +106,7 @@ namespace _Main.Scripts.Dice
 				throw new InvalidOperationException("[DiceItemTargetingView] Body LineRenderer material must expose _BaseMap or _MainTex.");
 			}
 
-			RebuildDashTexture(force: true);
+			RebuildDashTexture(force: true, dashCount);
 			ApplyRendererShapeSettings();
 			isInitialized = true;
 		}
@@ -142,17 +146,26 @@ namespace _Main.Scripts.Dice
 			var tipBackCenter = targetWorld - derivativeAtEnd * tipLength;
 			var bodyEndPoint = tipBackCenter - derivativeAtEnd * tipBodyGap;
 
+			var bodyLength = 0f;
+			Vector3 previousPoint = sourceWorld;
 			for (var i = 0; i < bodySegments; i++)
 			{
 				var t = i / (float)(bodySegments - 1);
 				var point = EvaluateQuadraticBezier(sourceWorld, controlPoint, bodyEndPoint, t);
 				bodyRenderer.SetPosition(i, point);
+				if (i > 0)
+				{
+					bodyLength += Vector3.Distance(previousPoint, point);
+				}
+
+				previousPoint = point;
 			}
 
 			tipRenderer.SetPosition(0, tipBackCenter);
 			tipRenderer.SetPosition(1, targetWorld);
 
-			UpdateDashAnimation();
+			var runtimeDashCount = CalculateRuntimeDashCount(bodyLength);
+			UpdateDashAnimation(runtimeDashCount);
 			UpdateTipWidth();
 			UpdateWidths();
 		}
@@ -176,9 +189,9 @@ namespace _Main.Scripts.Dice
 			return oneMinusT * oneMinusT * start + 2f * oneMinusT * t * control + t * t * end;
 		}
 
-		private void UpdateDashAnimation()
+		private void UpdateDashAnimation(int runtimeDashCount)
 		{
-			RebuildDashTexture(force: false);
+			RebuildDashTexture(force: false, runtimeDashCount);
 
 			if (!bodyRuntimeMaterial)
 			{
@@ -209,7 +222,7 @@ namespace _Main.Scripts.Dice
 			tipRenderer.endWidth = 0f;
 		}
 
-		private void RebuildDashTexture(bool force)
+		private void RebuildDashTexture(bool force, int runtimeDashCount)
 		{
 			if (dashCount < 1)
 			{
@@ -221,15 +234,21 @@ namespace _Main.Scripts.Dice
 				throw new InvalidOperationException("[DiceItemTargetingView] Dash resolution per segment must be >= 4.");
 			}
 
+			if (runtimeDashCount < 1)
+			{
+				throw new InvalidOperationException("[DiceItemTargetingView] Runtime dash count must be >= 1.");
+			}
+
 			if (!force &&
 			    cachedDashCount == dashCount &&
 			    cachedDashResolutionPerSegment == dashResolutionPerSegment &&
-			    Mathf.Approximately(cachedDashFill, dashFill))
+			    Mathf.Approximately(cachedDashFill, dashFill) &&
+			    cachedRuntimeDashCount == runtimeDashCount)
 			{
 				return;
 			}
 
-			var width = dashCount * dashResolutionPerSegment;
+			var width = runtimeDashCount * dashResolutionPerSegment;
 			const int height = 2;
 
 			if (!dashRuntimeTexture || dashRuntimeTexture.width != width || dashRuntimeTexture.height != height)
@@ -275,6 +294,7 @@ namespace _Main.Scripts.Dice
 			cachedDashCount = dashCount;
 			cachedDashResolutionPerSegment = dashResolutionPerSegment;
 			cachedDashFill = dashFill;
+			cachedRuntimeDashCount = runtimeDashCount;
 		}
 
 		private void ApplyRendererShapeSettings()
@@ -293,6 +313,28 @@ namespace _Main.Scripts.Dice
 			}
 
 			return 1f;
+		}
+
+		private int CalculateRuntimeDashCount(float bodyLength)
+		{
+			if (!autoScaleDashCountByLength)
+			{
+				return dashCount;
+			}
+
+			if (dashReferenceLength <= 0f)
+			{
+				throw new InvalidOperationException("[DiceItemTargetingView] Dash reference length must be > 0.");
+			}
+
+			var lengthScale = bodyLength / dashReferenceLength;
+			var scaledCount = Mathf.RoundToInt(dashCount * lengthScale);
+			if (scaledCount < dashCount)
+			{
+				return dashCount;
+			}
+
+			return scaledCount;
 		}
 	}
 }

@@ -3411,6 +3411,8 @@ MonoBehaviour:
   dashCount: 8
   dashResolutionPerSegment: 128
   dashFill: 0.56
+  autoScaleDashCountByLength: 1
+  dashReferenceLength: 1
   dashScrollSpeed: 0.05
 --- !u!1 &5953771069726487753
 GameObject:
