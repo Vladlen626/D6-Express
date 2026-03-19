@@ -147,36 +147,46 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			throw new InvalidOperationException("[RunController] Tactics pool total weight must be > 0.");
 		}
 
-		var roll = UnityEngine.Random.Range(0, totalWeight);
-		int cumulativeWeight = 0;
-		DiceGameTacticProfileConfig selectedProfile = null;
-		for (int i = 0; i < diceGameTacticsPoolConfig.tactics.Count; i++)
+		unchecked
 		{
-			var profile = diceGameTacticsPoolConfig.tactics[i];
-			cumulativeWeight += profile.weight;
-			if (roll < cumulativeWeight)
+			var guidHash = Guid.NewGuid().GetHashCode();
+			var ticksHash = DateTime.UtcNow.Ticks.GetHashCode();
+			var envHash = Environment.TickCount;
+			var seed = (guidHash * 397) ^ ticksHash ^ envHash;
+			var random = new Random(seed);
+			var roll = random.Next(totalWeight);
+			int cumulativeWeight = 0;
+			DiceGameTacticProfileConfig selectedProfile = null;
+			for (int i = 0; i < diceGameTacticsPoolConfig.tactics.Count; i++)
 			{
-				selectedProfile = profile;
-				break;
+				var profile = diceGameTacticsPoolConfig.tactics[i];
+				cumulativeWeight += profile.weight;
+				if (roll < cumulativeWeight)
+				{
+					selectedProfile = profile;
+					break;
+				}
 			}
+
+			if (selectedProfile == null)
+			{
+				throw new InvalidOperationException("[RunController] Failed to resolve tactic profile.");
+			}
+
+			run.SetDiceGameTacticSelection(
+				selectedProfile.id,
+				selectedProfile.enemy_ai_scenarios_path,
+				selectedProfile.enemy_ai_scenario_schedule_path,
+				selectedProfile.modifiers_schedule_path);
+
+			UnityEngine.Debug.Log(
+				$"[DiceGame][Tactic] Roll={roll}, totalWeight={totalWeight}, tacticsCount={diceGameTacticsPoolConfig.tactics.Count}. " +
+				$"seed={seed}. " +
+				$"Selected tactic='{selectedProfile.id}' " +
+				$"enemy_ai_scenarios_path='{selectedProfile.enemy_ai_scenarios_path}' " +
+				$"enemy_ai_scenario_schedule_path='{selectedProfile.enemy_ai_scenario_schedule_path}' " +
+				$"modifiers_schedule_path='{selectedProfile.modifiers_schedule_path}'.");
 		}
-
-		if (selectedProfile == null)
-		{
-			throw new InvalidOperationException("[RunController] Failed to resolve tactic profile.");
-		}
-
-		run.SetDiceGameTacticSelection(
-			selectedProfile.id,
-			selectedProfile.enemy_ai_scenarios_path,
-			selectedProfile.enemy_ai_scenario_schedule_path,
-			selectedProfile.modifiers_schedule_path);
-
-		UnityEngine.Debug.Log(
-			$"[DiceGame][Tactic] Selected tactic='{selectedProfile.id}' " +
-			$"enemy_ai_scenarios_path='{selectedProfile.enemy_ai_scenarios_path}' " +
-			$"enemy_ai_scenario_schedule_path='{selectedProfile.enemy_ai_scenario_schedule_path}' " +
-			$"modifiers_schedule_path='{selectedProfile.modifiers_schedule_path}'.");
 	}
 
 	private void OnDayChangeRequested(int value)
