@@ -132,7 +132,7 @@ namespace _Main.Scripts.Dice
 				var selectedDice = diceGameModel.GetSelected();
 				bool isHotDice = await TrySaveSelected(
 					selectedDice,
-					activeScoringService.Evaluate(GetValues(selectedDice)));
+					activeScoringService.Evaluate(DiceGameUtils.GetDiceValues(selectedDice)));
 				tableModel.SetPreviewPoints(0);
 
 				// Если все кубы забанкированы после сохранения, сбросить пул
@@ -163,7 +163,7 @@ namespace _Main.Scripts.Dice
 
 				await UniTask.Delay(GlobalParameters.Delay / 2);
 				
-				var diceCombinationResult = activeScoringService.Evaluate(GetValues(diceToRoll));
+				var diceCombinationResult = activeScoringService.Evaluate(DiceGameUtils.GetDiceValues(diceToRoll));
 				var rollModifierContext = new DiceModifierContext(
 					diceCombinationResult,
 					diceToRoll,
@@ -199,13 +199,6 @@ namespace _Main.Scripts.Dice
 			}
 		}
 
-		private int[] GetValues(DiceModel[] dice)
-		{
-			var values = new int[dice.Length];
-			for (int i = 0; i < dice.Length; i++) values[i] = dice[i].CurrentValue;
-			return values;
-		}
-
 		private void HandlePass()
 		{
 			if (IsProcessing || diceGameModel.IsItemTargetingActive)
@@ -237,7 +230,7 @@ namespace _Main.Scripts.Dice
 				var selected = diceGameModel.GetSelected();
 				logger?.Log($"{BuildFlowContext("pass_start")} selected={selected.Length}");
 				var activeScoringService = diceGameModel.GetCurrentScoringService();
-				var combo = activeScoringService.Evaluate(GetValues(selected));
+				var combo = activeScoringService.Evaluate(DiceGameUtils.GetDiceValues(selected));
 				var passModifierContext = new DiceModifierContext(
 					combo,
 					selected,
@@ -311,7 +304,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			var activeScoringService = diceGameModel.GetCurrentScoringService();
-			var diceCombinationResult = activeScoringService.Evaluate(GetValues(diceToCheck));
+			var diceCombinationResult = activeScoringService.Evaluate(DiceGameUtils.GetDiceValues(diceToCheck));
 			if (diceCombinationResult.Combinations.Count == 0)
 			{
 				await HandleFailedRollAsync(diceCombinationResult, diceToCheck);
@@ -443,7 +436,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			var selectedDice = diceGameModel.GetSelected();
-			var selectedValues = GetValues(selectedDice);
+			var selectedValues = DiceGameUtils.GetDiceValues(selectedDice);
 
 			var activeScoringService = diceGameModel.GetCurrentScoringService();
 			var previewSnapshot = DiceCombinationCardsSnapshot.Empty;

@@ -7,13 +7,15 @@ public class ShopItemView : MonoBehaviour
     [SerializeField]
     private List<DiceVisualEntry> diceVisuals;
 
+    private static readonly Dictionary<string, GameObject> RuntimePrefabCache = new();
+
     private Dictionary<string, Transform> _diceVisualMap;
     private GameObject runtimeInstance;
     private string runtimeVisualId;
 
     public void Initialize(string diceConfigId)
     {
-        BuildMap();
+        BuildMapIfNeeded();
         SetupVisual(diceConfigId);
     }
 
@@ -42,8 +44,13 @@ public class ShopItemView : MonoBehaviour
         SetupRuntimeVisual(diceViewId);
     }
 
-    private void BuildMap()
+    private void BuildMapIfNeeded()
     {
+        if (_diceVisualMap != null)
+        {
+            return;
+        }
+
         _diceVisualMap = new Dictionary<string, Transform>();
         if (diceVisuals == null)
         {
@@ -75,7 +82,12 @@ public class ShopItemView : MonoBehaviour
 
         ClearRuntimeInstance();
 
-        var prefab = Resources.Load<GameObject>($"Items/{visualId}");
+        if (!RuntimePrefabCache.TryGetValue(visualId, out var prefab))
+        {
+            prefab = Resources.Load<GameObject>($"Items/{visualId}");
+            RuntimePrefabCache[visualId] = prefab;
+        }
+
         if (!prefab)
         {
             return;

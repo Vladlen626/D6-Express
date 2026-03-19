@@ -70,6 +70,7 @@ namespace _Main.Scripts.Dice
 				}
 			}
 
+			var straightRuleProcessed = false;
 			foreach (var rule in activeRules)
 			{
 				if (!rule.Enabled || string.IsNullOrWhiteSpace(rule.Id))
@@ -80,7 +81,13 @@ namespace _Main.Scripts.Dice
 				switch (rule.RuleType)
 				{
 					case ComboRuleType.Straight:
+						if (straightRuleProcessed)
+						{
+							continue;
+						}
+
 						ApplyStraightRule(rule, remaining, result.Combinations);
+						straightRuleProcessed = true;
 						break;
 					case ComboRuleType.OfAKind:
 						ApplyOfAKindRule(rule, remaining, result.Combinations);
@@ -395,9 +402,10 @@ namespace _Main.Scripts.Dice
 		private void ApplyStraightRule(ComboRuleDefinition rule, int[] remaining, List<DiceCombinationEntry> output)
 		{
 			// Variable-length straight logic driven by StraightCombination
+			var producedStraight = false;
 			while (true)
 			{
-				if (!rule.Repeatable && output.Any(e => e.Id == rule.Id))
+				if (!rule.Repeatable && producedStraight)
 				{
 					return;
 				}
@@ -408,18 +416,32 @@ namespace _Main.Scripts.Dice
 				}
 
 				var baseScore = straightCombination.GetBaseScore(match.Length);
-				var entryId = $"{rule.Id}_{match.Length}";
+				var matchedRule = TryFindStraightRuleForMatch(match);
+				var entryId = !string.IsNullOrWhiteSpace(matchedRule?.Id)
+					? matchedRule.Id
+					: $"straight_len_{match.Length}";
+				var combination = ScoringUtils.MapToCombination(entryId, match.Length);
+				if (combination == DiceCombination.None)
+				{
+					combination = ScoringUtils.MapToCombination($"straight_len_{match.Length}", match.Length);
+				}
+
+				var fallbackDisplayName = !string.IsNullOrWhiteSpace(matchedRule?.DisplayName)
+					? matchedRule.DisplayName
+					: rule.DisplayName;
+				var displayName = ResolveStraightDisplayName(entryId, combination, fallbackDisplayName);
 				var entry = new DiceCombinationEntry
 				{
 					Id = entryId,
-					DisplayName = rule.DisplayName,
-					Combination = MapToCombination(match.Length >= 4 ? $"straight_len_{match.Length}" : rule.Id),
+					DisplayName = displayName,
+					Combination = combination,
 					Face = match.StartFace,
 					Count = match.Length,
 					BaseScore = GetScoreWithOverrides(entryId, baseScore) + straightCombination.ScoreBonus
 				};
 
 				output.Add(entry);
+				producedStraight = true;
 			}
 		}
 
@@ -457,7 +479,7 @@ namespace _Main.Scripts.Dice
 
 					remaining[face] -= take;
 
-					int baseScore = ComputeOfAKindScore(rule, face, take);
+					int baseScore = ScoringUtils.ComputeOfAKindScore(rule, face, take);
 					baseScore += extraBonus;
 					var entryId = $"{rule.Id}_{face}_{take}";
 
@@ -465,7 +487,7 @@ namespace _Main.Scripts.Dice
 					{
 						Id = entryId,
 						DisplayName = rule.DisplayName,
-						Combination = MapToCombination(rule.Id, take),
+						Combination = ScoringUtils.MapToCombination(rule.Id, take),
 						Face = face,
 						Count = take,
 						BaseScore = GetScoreWithOverrides(entryId, baseScore)
@@ -505,7 +527,7 @@ namespace _Main.Scripts.Dice
 				{
 					Id = entryId,
 					DisplayName = rule.DisplayName,
-					Combination = MapToCombination(rule.Id),
+					Combination = ScoringUtils.MapToCombination(rule.Id),
 					Face = face,
 					Count = count,
 					BaseScore = GetScoreWithOverrides(entryId, baseScore)
@@ -513,59 +535,6 @@ namespace _Main.Scripts.Dice
 
 				output.Add(entry);
 			}
-		}
-
-		private int ComputeOfAKindScore(ComboRuleDefinition rule, int face, int count)
-		{
-			// If caller set BaseScore explicitly, honour it with optional scaling rules.
-			if (rule.BaseScore > 0 || rule.PerFaceScaling)
-			{
-				int score = rule.BaseScore;
-				if (rule.PerFaceScaling)
-				{
-					score *= face;
-				}
-
-				if (rule.DoublePerExtraAboveMin)
-				{
-					score = ApplyOfAKindCountScaling(score, count, rule.MinCount);
-				}
-
-				return score;
-			}
-
-			// Legacy behaviour: 1s are 1000, others face * BaseScorePerPip, doubling per extra.
-			int baseScore = (face == 1) ? rule.BaseScoreForOne : face * rule.BaseScorePerPip;
-
-			if (rule.DoublePerExtraAboveMin)
-			{
-				baseScore = ApplyOfAKindCountScaling(baseScore, count, rule.MinCount);
-			}
-
-			return baseScore;
-		}
-
-		private static int ApplyOfAKindCountScaling(int score, int count, int baseMinCount)
-		{
-			if (score <= 0)
-			{
-				return 0;
-			}
-
-			var safeBaseMin = Mathf.Max(1, baseMinCount);
-			var delta = count - safeBaseMin;
-			if (delta == 0)
-			{
-				return score;
-			}
-
-			var factor = 1 << Mathf.Abs(delta);
-			if (delta > 0)
-			{
-				return score * factor;
-			}
-
-			return score / factor;
 		}
 
 		private int GetScoreWithOverrides(string id, int computedBaseScore)
@@ -578,24 +547,47 @@ namespace _Main.Scripts.Dice
 			return computedBaseScore;
 		}
 
-		private static DiceCombination MapToCombination(string ruleId, int count = 0)
+		private ComboRuleDefinition TryFindStraightRuleForMatch(StraightMatch match)
 		{
-			return ruleId switch
+			if (match.Length <= 0)
 			{
-				"straight_1_6" => DiceCombination.Straight_1_6,
-				"straight_1_5" => DiceCombination.Straight_1_5,
-				"straight_2_6" => DiceCombination.Straight_2_6,
-				"straight_len_4" => DiceCombination.StraightLength4,
-				"straight_len_5" => DiceCombination.StraightLength5,
-				"straight_len_6" => DiceCombination.StraightLength6,
-				"ofakind" when count == 3 => DiceCombination.ThreeOfAKind,
-				"ofakind" when count == 4 => DiceCombination.FourOfAKind,
-				"ofakind" when count == 5 => DiceCombination.FiveOfAKind,
-				"ofakind" when count >= 6 => DiceCombination.SixOfAKind,
-				"single_ones" => DiceCombination.SingleOnes,
-				"single_fives" => DiceCombination.SingleFives,
-				_ => DiceCombination.None
-			};
+				return null;
+			}
+
+			for (int i = 0; i < activeRules.Count; i++)
+			{
+				var rule = activeRules[i];
+				if (rule == null || !rule.Enabled || rule.RuleType != ComboRuleType.Straight)
+				{
+					continue;
+				}
+
+				if (ScoringUtils.IsStraightRuleMatch(rule, match))
+				{
+					return rule;
+				}
+			}
+
+			return null;
+		}
+
+		private string ResolveStraightDisplayName(
+			string entryId,
+			DiceCombination combination,
+			string fallbackDisplayName)
+		{
+			var resolved = GetDisplayName(entryId, combination);
+			if (!string.IsNullOrWhiteSpace(resolved))
+			{
+				return resolved;
+			}
+
+			if (!string.IsNullOrWhiteSpace(fallbackDisplayName))
+			{
+				return fallbackDisplayName;
+			}
+
+			return entryId ?? string.Empty;
 		}
 
 		#endregion

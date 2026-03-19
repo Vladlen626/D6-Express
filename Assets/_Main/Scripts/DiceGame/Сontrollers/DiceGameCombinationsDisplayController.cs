@@ -20,6 +20,7 @@ namespace _Main.Scripts.Dice
 		private readonly Dictionary<string, CardRuntime> cardByKey = new(StringComparer.Ordinal);
 		private readonly List<string> keysToRemove = new();
 		private readonly Stack<TextMeshProUGUI> flyLabelPool = new();
+		private readonly Stack<DiceCombinationCardView> cardViewPool = new();
 
 		private bool isActive;
 
@@ -174,9 +175,7 @@ namespace _Main.Scripts.Dice
 		{
 			if (!cardByKey.TryGetValue(entry.Key, out var runtime))
 			{
-				var view = UnityEngine.Object.Instantiate(
-					diceTableView.CombinationCardPrefab,
-					diceTableView.CombinationCardsRoot);
+				var view = RentCardView();
 				view.SetVisibleImmediate(false);
 				runtime = new CardRuntime(view);
 				cardByKey.Add(entry.Key, runtime);
@@ -224,7 +223,7 @@ namespace _Main.Scripts.Dice
 			cardByKey.Remove(key);
 			if (runtime.View)
 			{
-				UnityEngine.Object.Destroy(runtime.View.gameObject);
+				ReleaseCardView(runtime.View);
 			}
 		}
 
@@ -234,11 +233,42 @@ namespace _Main.Scripts.Dice
 			{
 				if (runtime.View)
 				{
-					UnityEngine.Object.Destroy(runtime.View.gameObject);
+					ReleaseCardView(runtime.View);
 				}
 			}
 
 			cardByKey.Clear();
+		}
+
+		private DiceCombinationCardView RentCardView()
+		{
+			while (cardViewPool.Count > 0)
+			{
+				var pooled = cardViewPool.Pop();
+				if (pooled)
+				{
+					pooled.transform.SetParent(diceTableView.CombinationCardsRoot, false);
+					pooled.gameObject.SetActive(true);
+					return pooled;
+				}
+			}
+
+			return UnityEngine.Object.Instantiate(
+				diceTableView.CombinationCardPrefab,
+				diceTableView.CombinationCardsRoot);
+		}
+
+		private void ReleaseCardView(DiceCombinationCardView view)
+		{
+			if (!view)
+			{
+				return;
+			}
+
+			view.SetVisibleImmediate(false);
+			view.gameObject.SetActive(false);
+			view.transform.SetParent(diceTableView.CombinationCardsRoot, false);
+			cardViewPool.Push(view);
 		}
 
 		private async UniTask AnimateScoreFlyAsync(int scoreDelta, RectTransform flyOrigin)

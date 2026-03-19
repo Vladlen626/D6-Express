@@ -90,35 +90,6 @@ namespace _Main.Scripts.Dice
 			scoreText.SetText("{0:0}", currentScore);
 		}
 
-		public async UniTask AnimateScoreAsync(int from, int to)
-		{
-			if (from == to)
-			{
-				SetScoreImmediate(to);
-				return;
-			}
-
-			if (scoreTween != null && scoreTween.IsActive())
-			{
-				scoreTween.Kill();
-			}
-
-			currentScore = from;
-			isScoreInitialized = true;
-			scoreText.SetText("{0:0}", currentScore);
-
-			scoreTween = DOTween
-				.To(() => currentScore, x =>
-				{
-					currentScore = x;
-					scoreText.SetText("{0:0}", currentScore);
-				}, to, scoreAnimationDuration)
-				.SetEase(Ease.OutQuad);
-
-			await scoreTween.AsyncWaitForCompletion().AsUniTask();
-			scoreTween = null;
-		}
-
 		public void SetVisibleImmediate(bool visible)
 		{
 			if (visibilityTween != null && visibilityTween.IsActive())
