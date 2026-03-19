@@ -10,7 +10,9 @@ namespace _Main.Scripts.Dice
 	{
 		private readonly DiceGameModel diceGameModel;
 		private readonly IAnalyticsService analyticsService;
-		private readonly HashSet<IModifierItem> subscribedItems = new();
+		private readonly Dictionary<IModifierItem, bool> subscribedItems = new();
+		private ModifierItemsModel playerItemsModel;
+		private ModifierItemsModel enemyItemsModel;
 
 		public DiceItemAnalyticsController(
 			DiceGameModel diceGameModel,
@@ -27,52 +29,68 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			var itemsModel = diceGameModel.PlayerModifierItemsModel;
-			if (itemsModel == null)
+			playerItemsModel = diceGameModel.PlayerModifierItemsModel;
+			enemyItemsModel = diceGameModel.EnemyModifierItemsModel;
+
+			if (playerItemsModel != null)
 			{
-				return;
+				playerItemsModel.ItemsChanged += OnPlayerItemsChanged;
+				SyncItemSubscriptions(playerItemsModel.Items, true);
 			}
 
-			itemsModel.ItemsChanged += OnItemsChanged;
-			SyncItemSubscriptions(itemsModel.Items);
+			if (enemyItemsModel != null)
+			{
+				enemyItemsModel.ItemsChanged += OnEnemyItemsChanged;
+				SyncItemSubscriptions(enemyItemsModel.Items, false);
+			}
 		}
 
 		public void Deactivate()
 		{
-			var itemsModel = diceGameModel.PlayerModifierItemsModel;
-			if (itemsModel != null)
+			if (playerItemsModel != null)
 			{
-				itemsModel.ItemsChanged -= OnItemsChanged;
+				playerItemsModel.ItemsChanged -= OnPlayerItemsChanged;
+			}
+
+			if (enemyItemsModel != null)
+			{
+				enemyItemsModel.ItemsChanged -= OnEnemyItemsChanged;
 			}
 
 			ClearItemSubscriptions();
+			playerItemsModel = null;
+			enemyItemsModel = null;
 		}
 
-		private void OnItemsChanged()
+		private void OnPlayerItemsChanged()
 		{
-			var items = diceGameModel.PlayerModifierItemsModel?.Items;
-			SyncItemSubscriptions(items);
+			SyncItemSubscriptions(playerItemsModel?.Items, true);
 		}
 
-		private void SyncItemSubscriptions(IReadOnlyList<IModifierItem> items)
+		private void OnEnemyItemsChanged()
+		{
+			SyncItemSubscriptions(enemyItemsModel?.Items, false);
+		}
+
+		private void SyncItemSubscriptions(IReadOnlyList<IModifierItem> items, bool isPlayerSide)
 		{
 			if (items == null)
 			{
-				ClearItemSubscriptions();
+				RemoveItemSubscriptionsBySide(isPlayerSide);
 				return;
 			}
 
 			var toRemove = new List<IModifierItem>();
-			foreach (var item in subscribedItems)
+			foreach (var pair in subscribedItems)
 			{
-				if (ContainsReference(items, item))
+				if (pair.Value != isPlayerSide || ContainsReference(items, pair.Key))
 				{
 					continue;
 				}
 
-				item.ActivationStarted -= OnItemActivationStarted;
-				item.EffectApplied -= OnItemEffectApplied;
-				toRemove.Add(item);
+				pair.Key.ActivationStarted -= OnItemActivationStarted;
+				pair.Key.EffectApplied -= OnItemEffectApplied;
+				toRemove.Add(pair.Key);
 			}
 
 			for (int i = 0; i < toRemove.Count; i++)
@@ -83,20 +101,53 @@ namespace _Main.Scripts.Dice
 			for (int i = 0; i < items.Count; i++)
 			{
 				var item = items[i];
-				if (item == null || subscribedItems.Contains(item))
+				if (item == null)
 				{
 					continue;
 				}
 
+				if (subscribedItems.TryGetValue(item, out var existingSide))
+				{
+					if (existingSide == isPlayerSide)
+					{
+						continue;
+					}
+
+					item.ActivationStarted -= OnItemActivationStarted;
+					item.EffectApplied -= OnItemEffectApplied;
+					subscribedItems.Remove(item);
+				}
+
 				item.ActivationStarted += OnItemActivationStarted;
 				item.EffectApplied += OnItemEffectApplied;
-				subscribedItems.Add(item);
+				subscribedItems[item] = isPlayerSide;
+			}
+		}
+
+		private void RemoveItemSubscriptionsBySide(bool isPlayerSide)
+		{
+			var toRemove = new List<IModifierItem>();
+			foreach (var pair in subscribedItems)
+			{
+				if (pair.Value != isPlayerSide)
+				{
+					continue;
+				}
+
+				pair.Key.ActivationStarted -= OnItemActivationStarted;
+				pair.Key.EffectApplied -= OnItemEffectApplied;
+				toRemove.Add(pair.Key);
+			}
+
+			for (int i = 0; i < toRemove.Count; i++)
+			{
+				subscribedItems.Remove(toRemove[i]);
 			}
 		}
 
 		private void ClearItemSubscriptions()
 		{
-			foreach (var item in subscribedItems)
+			foreach (var item in subscribedItems.Keys)
 			{
 				item.ActivationStarted -= OnItemActivationStarted;
 				item.EffectApplied -= OnItemEffectApplied;
@@ -112,11 +163,13 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			var isPlayerSide = ResolveItemSide(item);
 			analyticsService.TrackDiceItemActivation(
 				item.Id,
 				diceGameModel.DiceGameState,
 				item.State,
-				diceGameModel.CurrentTurn);
+				diceGameModel.CurrentTurn,
+				isPlayerSide);
 		}
 
 		private void OnItemEffectApplied(IModifierItem item)
@@ -126,11 +179,28 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
+			var isPlayerSide = ResolveItemSide(item);
 			analyticsService.TrackDiceItemEffect(
 				item.Id,
 				diceGameModel.DiceGameState,
 				item.State,
-				diceGameModel.CurrentTurn);
+				diceGameModel.CurrentTurn,
+				isPlayerSide);
+		}
+
+		private bool ResolveItemSide(IModifierItem item)
+		{
+			if (item == null)
+			{
+				return true;
+			}
+
+			if (subscribedItems.TryGetValue(item, out var isPlayerSide))
+			{
+				return isPlayerSide;
+			}
+
+			return ContainsReference(playerItemsModel?.Items, item);
 		}
 
 		private static bool ContainsReference(IReadOnlyList<IModifierItem> items, IModifierItem target)

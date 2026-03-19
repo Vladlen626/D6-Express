@@ -241,6 +241,13 @@ namespace _Main.Scripts.Dice
 
 			await ShowUpgradeBannerAsync();
 			int rolledFace = await RollUpgradeDieAsync();
+			if (rolledFace < 1 || rolledFace > 6)
+			{
+				logger?.LogWarning($"[Upgrade:{comboId}] Upgrade die roll is invalid ({rolledFace}).");
+				HideUpgradeDie();
+				return false;
+			}
+
 			analyticsService?.TrackDiceUpgradeRoll(comboId, rolledFace);
 
 			var before = activeScoringService.GetComboUpgradeState(comboId);
@@ -338,6 +345,13 @@ namespace _Main.Scripts.Dice
 
 			await ShowUpgradeBannerAsync();
 			int rolledFace = await RollUpgradeDieAsync();
+			if (rolledFace < 1 || rolledFace > 6)
+			{
+				logger?.LogWarning($"[Upgrade:{comboId}] Upgrade die roll is invalid ({rolledFace}).");
+				HideUpgradeDie();
+				return false;
+			}
+
 			analyticsService?.TrackDiceUpgradeRoll(comboId, rolledFace);
 
 			var before = activeScoringService.GetStraightState();

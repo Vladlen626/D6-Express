@@ -18,7 +18,8 @@ namespace _Main.Scripts.Core.Services
 			int enemyScore,
 			int targetScore,
 			int betSize,
-			int turnIndex);
+			int turnIndex,
+			string source);
 		void TrackDiceUpgradeChance(string comboId, string sourceCombinationId, float chance, bool passed);
 		void TrackDiceUpgradeRoll(string comboId, int rolledFace);
 		void TrackDiceUpgradeApplied(
@@ -34,11 +35,13 @@ namespace _Main.Scripts.Core.Services
 			string itemId,
 			DiceGameState gameState,
 			DiceItemState itemState,
-			int turnIndex);
+			int turnIndex,
+			bool isPlayerSide);
 		void TrackDiceItemEffect(
 			string itemId,
 			DiceGameState gameState,
 			DiceItemState itemState,
-			int turnIndex);
+			int turnIndex,
+			bool isPlayerSide);
 	}
 }

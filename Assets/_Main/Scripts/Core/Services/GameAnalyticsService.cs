@@ -17,6 +17,7 @@ namespace _Main.Scripts.Core.Services
 		private const string DiceMatchResultEventPrefix = "dice:match_result";
 		private const string DiceMatchScoreEventPrefix = "dice:match_score";
 		private const string DiceMatchContextEventPrefix = "dice:match_context";
+		private const string DiceMatchSourceEventPrefix = "dice:match_source";
 		private const string DiceMatchBetEvent = "dice:match_bet:size";
 		private const string DiceUpgradeChanceEventPrefix = "dice:upgrade_chance";
 		private const string DiceUpgradeRollEventPrefix = "dice:upgrade_roll";
@@ -96,21 +97,38 @@ namespace _Main.Scripts.Core.Services
 			int enemyScore,
 			int targetScore,
 			int betSize,
-			int turnIndex)
+			int turnIndex,
+			string source)
 		{
 			var resultValue = isWin ? "win" : "lose";
 			var reasonValue = MapDiceMatchResultReason(reason);
 			var stageValue = MapDiceMatchStage(stage);
+			var sourceValue = MapDiceMatchSource(source);
+			var contextKey = BuildDiceMatchContextKey(isWin, reason, stage, source);
 			var scoreDelta = Mathf.Abs(playerScore - enemyScore);
 
 			GameAnalytics.NewDesignEvent(
 				$"{DiceMatchResultEventPrefix}:{resultValue}:{reasonValue}:{stageValue}",
 				scoreDelta);
+			GameAnalytics.NewDesignEvent($"{DiceMatchSourceEventPrefix}:{sourceValue}");
 			GameAnalytics.NewDesignEvent($"{DiceMatchScoreEventPrefix}:player", Mathf.Max(0, playerScore));
 			GameAnalytics.NewDesignEvent($"{DiceMatchScoreEventPrefix}:enemy", Mathf.Max(0, enemyScore));
 			GameAnalytics.NewDesignEvent($"{DiceMatchScoreEventPrefix}:target", Mathf.Max(0, targetScore));
 			GameAnalytics.NewDesignEvent(DiceMatchBetEvent, Mathf.Max(0, betSize));
 			GameAnalytics.NewDesignEvent($"{DiceMatchContextEventPrefix}:turn", Mathf.Max(0, turnIndex));
+			GameAnalytics.NewDesignEvent(
+				$"{DiceMatchScoreEventPrefix}:player:{contextKey}",
+				Mathf.Max(0, playerScore));
+			GameAnalytics.NewDesignEvent(
+				$"{DiceMatchScoreEventPrefix}:enemy:{contextKey}",
+				Mathf.Max(0, enemyScore));
+			GameAnalytics.NewDesignEvent(
+				$"{DiceMatchScoreEventPrefix}:target:{contextKey}",
+				Mathf.Max(0, targetScore));
+			GameAnalytics.NewDesignEvent($"{DiceMatchBetEvent}:{contextKey}", Mathf.Max(0, betSize));
+			GameAnalytics.NewDesignEvent(
+				$"{DiceMatchContextEventPrefix}:turn:{contextKey}",
+				Mathf.Max(0, turnIndex));
 
 			if (run == null)
 			{
@@ -120,6 +138,15 @@ namespace _Main.Scripts.Core.Services
 			GameAnalytics.NewDesignEvent($"{DiceMatchContextEventPrefix}:level", Mathf.Max(1, run.Level + 1));
 			GameAnalytics.NewDesignEvent($"{DiceMatchContextEventPrefix}:day", Mathf.Max(1, run.Day + 1));
 			GameAnalytics.NewDesignEvent($"{DiceMatchContextEventPrefix}:match", Mathf.Max(1, run.Tick + 1));
+			GameAnalytics.NewDesignEvent(
+				$"{DiceMatchContextEventPrefix}:level:{contextKey}",
+				Mathf.Max(1, run.Level + 1));
+			GameAnalytics.NewDesignEvent(
+				$"{DiceMatchContextEventPrefix}:day:{contextKey}",
+				Mathf.Max(1, run.Day + 1));
+			GameAnalytics.NewDesignEvent(
+				$"{DiceMatchContextEventPrefix}:match:{contextKey}",
+				Mathf.Max(1, run.Tick + 1));
 			GameAnalytics.NewDesignEvent(
 				$"{DiceMatchContextEventPrefix}:station:{NormalizeEventPart(run.StationId)}");
 		}
@@ -138,9 +165,13 @@ namespace _Main.Scripts.Core.Services
 
 		public void TrackDiceUpgradeRoll(string comboId, int rolledFace)
 		{
+			if (rolledFace < 1 || rolledFace > 6)
+			{
+				return;
+			}
+
 			var comboValue = NormalizeEventPart(comboId);
-			var faceValue = Mathf.Clamp(rolledFace, 0, 6);
-			GameAnalytics.NewDesignEvent($"{DiceUpgradeRollEventPrefix}:{comboValue}:face_{faceValue}");
+			GameAnalytics.NewDesignEvent($"{DiceUpgradeRollEventPrefix}:{comboValue}:face_{rolledFace}");
 		}
 
 		public void TrackDiceUpgradeApplied(
@@ -173,13 +204,15 @@ namespace _Main.Scripts.Core.Services
 			string itemId,
 			DiceGameState gameState,
 			DiceItemState itemState,
-			int turnIndex)
+			int turnIndex,
+			bool isPlayerSide)
 		{
 			var itemValue = NormalizeEventPart(itemId);
 			var stateValue = MapDiceItemState(itemState);
 			var phaseValue = MapDiceGameState(gameState);
+			var ownerValue = isPlayerSide ? "player" : "enemy";
 			GameAnalytics.NewDesignEvent(
-				$"{DiceItemActivationEventPrefix}:{itemValue}:{phaseValue}:{stateValue}",
+				$"{DiceItemActivationEventPrefix}:{ownerValue}_{itemValue}:{phaseValue}:{stateValue}",
 				Mathf.Max(0, turnIndex));
 		}
 
@@ -187,13 +220,15 @@ namespace _Main.Scripts.Core.Services
 			string itemId,
 			DiceGameState gameState,
 			DiceItemState itemState,
-			int turnIndex)
+			int turnIndex,
+			bool isPlayerSide)
 		{
 			var itemValue = NormalizeEventPart(itemId);
 			var stateValue = MapDiceItemState(itemState);
 			var phaseValue = MapDiceGameState(gameState);
+			var ownerValue = isPlayerSide ? "player" : "enemy";
 			GameAnalytics.NewDesignEvent(
-				$"{DiceItemEffectEventPrefix}:{itemValue}:{phaseValue}:{stateValue}",
+				$"{DiceItemEffectEventPrefix}:{ownerValue}_{itemValue}:{phaseValue}:{stateValue}",
 				Mathf.Max(0, turnIndex));
 		}
 
@@ -288,6 +323,94 @@ namespace _Main.Scripts.Core.Services
 					return "debug_forced";
 				default:
 					return UnknownValue;
+			}
+		}
+
+		private static string MapDiceMatchSource(string source)
+		{
+			return NormalizeEventPart(source);
+		}
+
+		private static string BuildDiceMatchContextKey(
+			bool isWin,
+			DiceMatchResultReason reason,
+			DiceMatchStage stage,
+			string source)
+		{
+			var resultCode = isWin ? "w" : "l";
+			var reasonCode = MapDiceMatchResultReasonCode(reason);
+			var stageCode = MapDiceMatchStageCode(stage);
+			var sourceCode = MapDiceMatchSourceCode(source);
+			return $"{resultCode}_{reasonCode}_{stageCode}_{sourceCode}";
+		}
+
+		private static string MapDiceMatchResultReasonCode(DiceMatchResultReason reason)
+		{
+			switch (reason)
+			{
+				case DiceMatchResultReason.PlayerReachedTarget:
+					return "prt";
+				case DiceMatchResultReason.EnemyReachedTarget:
+					return "ert";
+				case DiceMatchResultReason.SetupFailed:
+					return "sf";
+				case DiceMatchResultReason.EnemyAiValidationFailed:
+					return "eav";
+				case DiceMatchResultReason.EnemyAiException:
+					return "eae";
+				case DiceMatchResultReason.DebugForced:
+					return "dbg";
+				default:
+					return "unk";
+			}
+		}
+
+		private static string MapDiceMatchStageCode(DiceMatchStage stage)
+		{
+			switch (stage)
+			{
+				case DiceMatchStage.Setup:
+					return "stp";
+				case DiceMatchStage.SelectDice:
+					return "sel";
+				case DiceMatchStage.Bet:
+					return "bet";
+				case DiceMatchStage.Roll:
+					return "rol";
+				case DiceMatchStage.Pass:
+					return "pas";
+				case DiceMatchStage.RoundEnd:
+					return "rnd";
+				case DiceMatchStage.EnemyTurn:
+					return "enr";
+				default:
+					return "unk";
+			}
+		}
+
+		private static string MapDiceMatchSourceCode(string source)
+		{
+			var sourceValue = NormalizeEventPart(source);
+			switch (sourceValue)
+			{
+				case "banked_points":
+					return "bp";
+				case "global_setup":
+					return "gs";
+				case "scenario_setup":
+					return "ss";
+				case "enemy_ai_scripted":
+					return "eas";
+				case "enemy_ai":
+					return "eai";
+				case "debug_window":
+					return "dbg";
+				case UnknownValue:
+					return "unk";
+				default:
+					return sourceValue.Length <= 8
+						? $"x{sourceValue}"
+						: $"x{sourceValue.Substring(0, 8)}";
 			}
 		}
 

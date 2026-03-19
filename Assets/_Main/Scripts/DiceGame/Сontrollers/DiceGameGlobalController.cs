@@ -686,7 +686,8 @@ namespace _Main.Scripts.Dice
 				enemyScore,
 				targetScore,
 				betSize,
-				turnIndex);
+				turnIndex,
+				diceGameModel.MatchResultSource);
 		}
 
 		private void OnPostDialogueFinished(CharacterState state)
