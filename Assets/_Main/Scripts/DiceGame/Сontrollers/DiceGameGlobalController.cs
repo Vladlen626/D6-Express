@@ -35,6 +35,7 @@ namespace _Main.Scripts.Dice
 		private readonly ILocalizationService localizationService;
 		private readonly DiceGameScenarioSetup scenarioSetup;
 		private readonly DiceGameItemsDisplayManager itemsDisplayManager;
+		private readonly DiceItemViewRegistry itemViewRegistry;
 
 		private readonly SceneContext sceneContext;
 
@@ -74,11 +75,13 @@ namespace _Main.Scripts.Dice
 			awaiterService = serviceLocator.Get<IAsyncAwaiterService>();
 			localizationService = serviceLocator.Get<ILocalizationService>();
 			scenarioSetup = new DiceGameScenarioSetup(diceGameModel, run, resourceService);
+			itemViewRegistry = new DiceItemViewRegistry();
 			itemsDisplayManager = new DiceGameItemsDisplayManager(
 				diceGameModel,
 				sceneContext.DiceGameTableView,
 				lifecycleService,
 				objectFactory,
+				itemViewRegistry,
 				notificationService);
 		}
 
@@ -192,11 +195,14 @@ namespace _Main.Scripts.Dice
 				tableView);
 			var processController = new DiceGameProcessController(
 				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, turnFlowAwaiter);
+			var itemTargetingController = new DiceItemTargetingController(diceGameModel);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
 				upgradeController,
 				processController,
+				itemTargetingController,
+				new DiceItemTargetingVisualController(diceGameModel, itemViewRegistry, tableView, itemTargetingController),
 				new DiceGameUpgradeVisualController(uiService, upgradeController, turnFlowAwaiter, resourceService, loggerService),
 				new DiceGameCombinationsDisplayController(diceGameModel, tableView, turnFlowAwaiter),
 				new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
@@ -328,7 +334,7 @@ namespace _Main.Scripts.Dice
 				view.MoveToPosition(gamePos.position);
 				model.SetCurrentPosition(gamePos);
 				playerDiceViewsArray[i] = view;
-				gameControllers.Add(new DiceController(model, view, tableModel, audioService));
+				gameControllers.Add(new DiceController(model, view, tableModel, diceGameModel, audioService));
 			}
 
 			ClenUpSelectionControllers();
@@ -382,7 +388,7 @@ namespace _Main.Scripts.Dice
 				view.MoveToPosition(gamePos.position);
 				model.SetCurrentPosition(gamePos);
 				enemyDiceViewsArray[i] = view;
-				gameControllers.Add(new DiceController(model, view, tableModel, audioService));
+				gameControllers.Add(new DiceController(model, view, tableModel, diceGameModel, audioService));
 			}
 
 			return true;

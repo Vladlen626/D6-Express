@@ -3,7 +3,6 @@ using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class DiceTableView : MonoBehaviour
@@ -21,7 +20,6 @@ public class DiceTableView : MonoBehaviour
 	public event Action OnAllInClicked;
 
 	[Header("Global")]
-	[SerializeField] private Transform tooltipPos;
 	[SerializeField]
 	private Transform[] DiceBonusPositions;
 	[SerializeField]
@@ -78,6 +76,9 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private ItemView itemViewPrefab;
 	[SerializeField] private Transform[] itemSlotsSelection;
 	[SerializeField] private Transform[] itemSlotsGame;
+	[SerializeField] private DiceItemTargetingView itemTargetingView;
+	[Min(0)]
+	[SerializeField] private int itemTargetingLockedArrowsPoolSize = 3;
 
 	[Header("Upgrade")]
 	[SerializeField] private Transform upgradeDicePos;
@@ -89,11 +90,12 @@ public class DiceTableView : MonoBehaviour
 	public ItemView ItemViewPrefab => itemViewPrefab;
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
+	public DiceItemTargetingView ItemTargetingView => itemTargetingView;
+	public int ItemTargetingLockedArrowsPoolSize => itemTargetingLockedArrowsPoolSize;
 	public Transform[] DiceBonusSlots => DiceBonusPositions;
 	public Transform[] SelectDiceBonusSlots => SelectDiceBonusPositions;
 	public Transform UpgradeDicePos => upgradeDicePos;
 	public float UpgradeDiceScreenScale => upgradeDiceScreenScale > 0.05f ? upgradeDiceScreenScale : DefaultUpgradeDiceScale;
-	public Transform TooltipPos => tooltipPos;
 	public Transform CombinationCardsRoot => combinationCardsRoot;
 	public DiceCombinationCardView CombinationCardPrefab => combinationCardPrefab;
 	public RectTransform CombinationFlyLayer => combinationFlyLayer;

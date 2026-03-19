@@ -22,6 +22,8 @@ public class UIGlobalNotificationView : UIBaseElement
 	[SerializeField] private float slideOffset = 18f;
 
 	private Sequence sequence;
+	private Vector2 baseAnchoredPosition;
+	private bool hasBaseAnchoredPosition;
 
 	public async UniTask PlayAsync(string message, float holdSeconds, bool isNegative = false)
 	{
@@ -47,12 +49,12 @@ public class UIGlobalNotificationView : UIBaseElement
 		_group.interactable = false;
 		_group.blocksRaycasts = false;
 
-		var rect = container ? container : GetComponent<RectTransform>();
-		var originalPos = rect ? rect.anchoredPosition : Vector2.zero;
+		var rect = ResolveContainerRect();
+		CacheBaseAnchoredPosition(rect);
 		if (rect)
 		{
 			rect.localScale = Vector3.one * scaleIn;
-			rect.anchoredPosition = originalPos + Vector2.down * slideOffset;
+			rect.anchoredPosition = baseAnchoredPosition + Vector2.down * slideOffset;
 		}
 
 		sequence?.Kill();
@@ -62,7 +64,7 @@ public class UIGlobalNotificationView : UIBaseElement
 		if (rect)
 		{
 			sequence.Join(rect.DOScale(popScale, fadeInDuration).SetEase(Ease.OutBack));
-			sequence.Join(rect.DOAnchorPos(originalPos, fadeInDuration).SetEase(Ease.OutQuad));
+			sequence.Join(rect.DOAnchorPos(baseAnchoredPosition, fadeInDuration).SetEase(Ease.OutQuad));
 			sequence.Append(rect.DOScale(1f, settleDuration).SetEase(Ease.OutQuad));
 		}
 
@@ -72,10 +74,11 @@ public class UIGlobalNotificationView : UIBaseElement
 		if (rect)
 		{
 			sequence.Join(rect.DOScale(scaleIn, fadeOutDuration).SetEase(Ease.InQuad));
-			sequence.Join(rect.DOAnchorPos(originalPos + Vector2.up * (slideOffset * 0.4f), fadeOutDuration).SetEase(Ease.InQuad));
+			sequence.Join(rect.DOAnchorPos(baseAnchoredPosition + Vector2.up * (slideOffset * 0.4f), fadeOutDuration).SetEase(Ease.InQuad));
 		}
 
 		await sequence.AsyncWaitForCompletion().AsUniTask();
+		ResetContainerTransform();
 		Hide();
 	}
 
@@ -99,12 +102,14 @@ public class UIGlobalNotificationView : UIBaseElement
 	public void Interrupt()
 	{
 		sequence?.Kill();
+		ResetContainerTransform();
 		Hide();
 	}
 
 	protected override void OnAwake()
 	{
 		base.OnAwake();
+		CacheBaseAnchoredPosition(ResolveContainerRect());
 		if (_group)
 		{
 			_group.interactable = false;
@@ -115,6 +120,36 @@ public class UIGlobalNotificationView : UIBaseElement
 	protected override void OnHide()
 	{
 		sequence?.Kill();
+		ResetContainerTransform();
 		base.OnHide();
+	}
+
+	private RectTransform ResolveContainerRect()
+	{
+		return container ? container : GetComponent<RectTransform>();
+	}
+
+	private void CacheBaseAnchoredPosition(RectTransform rect)
+	{
+		if (!rect || hasBaseAnchoredPosition)
+		{
+			return;
+		}
+
+		baseAnchoredPosition = rect.anchoredPosition;
+		hasBaseAnchoredPosition = true;
+	}
+
+	private void ResetContainerTransform()
+	{
+		var rect = ResolveContainerRect();
+		CacheBaseAnchoredPosition(rect);
+		if (!rect)
+		{
+			return;
+		}
+
+		rect.anchoredPosition = baseAnchoredPosition;
+		rect.localScale = Vector3.one;
 	}
 }

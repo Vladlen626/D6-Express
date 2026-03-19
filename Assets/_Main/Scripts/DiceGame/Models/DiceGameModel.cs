@@ -21,6 +21,8 @@ namespace _Main.Scripts.Dice
 		public event Action<int, int> OnMaxDiceCountChanged;
 		public event Action<bool, bool> OnDiceAnimationInProgressChanged;
 		public event Action OnDiceGameStateChanged;
+		public event Action<bool, bool> OnItemTargetingChanged;
+		public event Action<IModifierItem> OnActiveTargetingItemChanged;
 		public event Action OnRollClicked;
 		public event Action OnPassClicked;
 		public event Action DiceValuesChanged;
@@ -59,6 +61,8 @@ namespace _Main.Scripts.Dice
 		public bool IsDiceGameStarted { get; private set; }
 		public bool EnemyComboUpgradesEnabled { get; private set; } = true;
 		public bool IsDiceAnimationInProgress => diceAnimationInProgressCounter > 0;
+		public bool IsItemTargetingActive => activeTargetingItem != null;
+		public IModifierItem ActiveTargetingItem => activeTargetingItem;
 		public int MaxDiceCount => GetMaxDiceCount(IsPlayerTurn);
 		public int BaseMaxDiceCount => baseMaxDiceCount;
 		public IAsyncAwaiterPool TurnFlowAwaiter { get; private set; }
@@ -67,6 +71,7 @@ namespace _Main.Scripts.Dice
 		private int baseMaxDiceCount = DefaultMaxDiceCount;
 		private int diceAnimationInProgressCounter;
 		private bool isGameConditionResolved;
+		private IModifierItem activeTargetingItem;
 		private Tween[] turnRepositionTweens = Array.Empty<Tween>();
 		private readonly Dictionary<string, int> playerDiceCapBonuses = new();
 		private readonly Dictionary<string, int> enemyDiceCapBonuses = new();
@@ -247,6 +252,11 @@ namespace _Main.Scripts.Dice
 		
 		public void ChangeDiceGameState(DiceGameState diceGameState)
 		{
+			if (diceGameState != DiceGameState.GAME)
+			{
+				CancelItemTargeting();
+			}
+
 			DiceGameState = diceGameState;
 			if (diceGameState == DiceGameState.GAME)
 			{
@@ -335,10 +345,51 @@ namespace _Main.Scripts.Dice
 
 		public void SetCurrentTurn(int turn, bool isPlayerTurn)
 		{
+			if (CurrentTurn != turn || IsPlayerTurn != isPlayerTurn)
+			{
+				CancelItemTargeting();
+			}
+
 			var oldValue = CurrentTurn;
 			CurrentTurn = turn;
 			IsPlayerTurn = isPlayerTurn;
 			OnCurrentTurnChanged?.Invoke(oldValue, CurrentTurn);
+		}
+
+		public bool TryStartItemTargeting(IModifierItem item)
+		{
+			if (item == null)
+			{
+				return false;
+			}
+
+			if (activeTargetingItem != null && !ReferenceEquals(activeTargetingItem, item))
+			{
+				return false;
+			}
+
+			SetActiveTargetingItem(item);
+			return true;
+		}
+
+		public void ClearItemTargeting(IModifierItem item = null)
+		{
+			if (item != null && !ReferenceEquals(activeTargetingItem, item))
+			{
+				return;
+			}
+
+			SetActiveTargetingItem(null);
+		}
+
+		public void CancelItemTargeting()
+		{
+			if (activeTargetingItem is IArmedTargetingItem targetingItem)
+			{
+				targetingItem.TryCancelArmedTargeting();
+			}
+
+			SetActiveTargetingItem(null);
 		}
 
 		public void SetConditionPassed()
@@ -519,6 +570,7 @@ namespace _Main.Scripts.Dice
 
 		public void Reset()
 		{
+			CancelItemTargeting();
 			tableModel.Reset();
 			PublishCombinationPreview(DiceCombinationCardsSnapshot.Empty);
 			PublishCombinationCommitted(DiceCombinationCardsSnapshot.Empty);
@@ -534,6 +586,25 @@ namespace _Main.Scripts.Dice
 			CurrentTurn = 0;
 			IsAllInBet = false;
 			TurnFlowAwaiter = null;
+		}
+
+		private void SetActiveTargetingItem(IModifierItem item)
+		{
+			if (ReferenceEquals(activeTargetingItem, item))
+			{
+				return;
+			}
+
+			var oldTargetingState = IsItemTargetingActive;
+			activeTargetingItem = item;
+			var newTargetingState = IsItemTargetingActive;
+
+			if (oldTargetingState != newTargetingState)
+			{
+				OnItemTargetingChanged?.Invoke(oldTargetingState, newTargetingState);
+			}
+
+			OnActiveTargetingItemChanged?.Invoke(activeTargetingItem);
 		}
 
 		private void ResetDiceAnimationState()

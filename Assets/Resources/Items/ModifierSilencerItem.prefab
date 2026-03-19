@@ -87,39 +87,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 4036963258318227798}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
 --- !u!4 &398654314299479157 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
   m_PrefabInstance: {fileID: 144946976830665630}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1063866904135798479 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
-  m_PrefabInstance: {fileID: 144946976830665630}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &4036963258318227798
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1063866904135798479}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 1
-  outlineColor: {r: 0, g: 0, b: 0, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!23 &1568203886326492954 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 9e5c580ee0c8a0447bf5009ac2d7ca7b, type: 3}
@@ -133,10 +107,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
-      propertyPath: visualOutline
-      value: 
-      objectReference: {fileID: 4036963258318227798}
     - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
       propertyPath: 'disabledVisual.renderers.Array.data[0]'
       value: 

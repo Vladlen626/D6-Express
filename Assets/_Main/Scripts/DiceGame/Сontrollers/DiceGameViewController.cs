@@ -27,6 +27,7 @@ namespace _Main.Scripts.Dice
 		{
 			diceGameModel.OnTargetPointsChanged += OnTargetPointsChangedHandler;
 			diceGameModel.OnCurrentTurnChanged += OnCurrentTurnChangedHandler;
+			diceGameModel.OnItemTargetingChanged += OnItemTargetingChangedHandler;
 
 			diceTableView.OnPassClicked += diceGameModel.SendPassClicked;
 			diceTableView.OnRollClicked += diceGameModel.SendRollClicked;
@@ -53,6 +54,7 @@ namespace _Main.Scripts.Dice
 		{
 			diceGameModel.OnTargetPointsChanged -= OnTargetPointsChangedHandler;
 			diceGameModel.OnCurrentTurnChanged -= OnCurrentTurnChangedHandler;
+			diceGameModel.OnItemTargetingChanged -= OnItemTargetingChangedHandler;
 
 			diceTableView.OnPassClicked -= diceGameModel.SendPassClicked;
 			diceTableView.OnRollClicked -= diceGameModel.SendRollClicked;
@@ -96,6 +98,11 @@ namespace _Main.Scripts.Dice
 		{
 			diceTableView.SetCurrentPointsText(oldValue, newValue);
 		}
+
+		private void OnItemTargetingChangedHandler(bool oldValue, bool newValue)
+		{
+			UpdateUI();
+		}
 		
 		private void OnPreviewPointsChangedHandler(int oldValue, int newValue)
 		{
@@ -120,8 +127,9 @@ namespace _Main.Scripts.Dice
 		public void UpdateUI()
 		{
 			bool hasValidComboSelected = tableModel.PreviewPoints > 0;
-			bool canPass = hasValidComboSelected;
-			bool canRoll = tableModel.isFirstRoll || hasValidComboSelected;
+			bool isTargetingActive = diceGameModel.IsItemTargetingActive;
+			bool canPass = hasValidComboSelected && !isTargetingActive;
+			bool canRoll = (tableModel.isFirstRoll || hasValidComboSelected) && !isTargetingActive;
 
 			diceTableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);
 			diceTableView.SetButtonInteractable("Pass", canPass && diceGameModel.IsPlayerTurn);

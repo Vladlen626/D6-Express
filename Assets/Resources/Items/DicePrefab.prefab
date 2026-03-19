@@ -146,7 +146,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Outline
   outlineMode: 1
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
-  outlineWidth: 2
+  outlineWidth: 3
   precomputeOutline: 1
   bakeKeys:
   - {fileID: 7193849918037988991, guid: 8d400ad96dc116647b0dfeba5b490335, type: 3}
@@ -958,6 +958,16 @@ MonoBehaviour:
   diceCollider: {fileID: 3459348804150879815}
   animSpeed: 0.16
   yOffset: 0.02
+  itemTargetYOffset: 0.05
+  hoverScaleMultiplier: 1.04
+  defaultOutlineColor:
+    id: Black
+  selectedOutlineColor:
+    id: GreenBlue
+  itemTargetSelectedOutlineColor:
+    id: OrangeBg
+  hoverOutlineColor:
+    id: SliderBg
 --- !u!65 &3459348804150879815
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -977,7 +987,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.08, y: 0.08, z: 0.08}
+  m_Size: {x: 0.1, y: 0.1, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7572771816867450250
 GameObject:

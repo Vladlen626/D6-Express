@@ -124,11 +124,9 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			}
 		}
 
-		// Initialize straight upgrade state for the new run
-		var defaults = scoringService.GetStraightDefaults();
-		var straightState = new StraightRuntimeState(defaults);
-		scoringService.SetStraightState(straightState);
-		run.SetStraightState(straightState);
+		// Reset all combo upgrade runtime states for the new run.
+		scoringService.ResetUpgradeStatesToDefaults();
+		run.SetStraightState(scoringService.GetStraightState());
 	}
 
 	private void SelectRunTactic()

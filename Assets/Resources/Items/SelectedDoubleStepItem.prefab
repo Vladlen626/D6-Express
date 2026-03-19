@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 598aebed9f6c262479b6a89b1938496b, type: 3}
       propertyPath: m_LocalScale.x
-      value: 18
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 598aebed9f6c262479b6a89b1938496b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 18
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 598aebed9f6c262479b6a89b1938496b, type: 3}
       propertyPath: m_LocalScale.z
-      value: 18
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 598aebed9f6c262479b6a89b1938496b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -91,10 +91,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 598aebed9f6c262479b6a89b1938496b, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1463550899174370362}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 598aebed9f6c262479b6a89b1938496b, type: 3}
 --- !u!23 &47752161089552877 stripped
 MeshRenderer:
@@ -106,29 +103,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 598aebed9f6c262479b6a89b1938496b, type: 3}
   m_PrefabInstance: {fileID: 1686655199447522665}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1993223430713876536 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 598aebed9f6c262479b6a89b1938496b, type: 3}
-  m_PrefabInstance: {fileID: 1686655199447522665}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1463550899174370362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1993223430713876536}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Outline
-  outlineMode: 0
-  outlineColor: {r: 0, g: 0, b: 0, a: 1}
-  outlineWidth: 2
-  precomputeOutline: 0
-  bakeKeys: []
-  bakeValues: []
 --- !u!1001 &9187809782355847437
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -137,10 +111,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
-      propertyPath: visualOutline
-      value: 
-      objectReference: {fileID: 1463550899174370362}
     - target: {fileID: 797631225612096017, guid: 3df1f9d29682901d1b4ade41c9e29afb, type: 3}
       propertyPath: 'disabledVisual.renderers.Array.data[0]'
       value: 
