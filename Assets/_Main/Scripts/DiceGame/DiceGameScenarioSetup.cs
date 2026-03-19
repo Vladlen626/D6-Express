@@ -155,6 +155,7 @@ namespace _Main.Scripts.Dice
 			var scenarioId = diceGameConfig.enemy_ai_scenario_id?.Trim();
 			if (!string.IsNullOrWhiteSpace(scenarioId))
 			{
+				Debug.Log($"[DiceGame][Scenario] Using override enemy_ai_scenario_id='{scenarioId}'.");
 				return scenarioId;
 			}
 
@@ -181,6 +182,9 @@ namespace _Main.Scripts.Dice
 				return null;
 			}
 
+			Debug.Log(
+				$"[DiceGame][Scenario] Resolved scenario_id='{scenarioId}' from schedule='{scenarioSchedulePath}' " +
+				$"for level={level}, day={day}, match={match}.");
 			return scenarioId;
 		}
 
@@ -210,6 +214,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			DiceGameModifierSet resolvedSet = null;
+			string resolvedSetId = null;
 			var overrideSetId = setIdOverride?.Trim();
 			if (!string.IsNullOrWhiteSpace(overrideSetId))
 			{
@@ -219,6 +224,8 @@ namespace _Main.Scripts.Dice
 						$"[DiceGame] modifiers_set_id override '{overrideSetId}' not found in schedule '{modifiersSchedulePath}'.");
 					return false;
 				}
+
+				resolvedSetId = overrideSetId;
 			}
 			else
 			{
@@ -230,6 +237,16 @@ namespace _Main.Scripts.Dice
 					FailDiceGameSetup($"[DiceGame] Modifiers schedule '{modifiersSchedulePath}' could not resolve set for level={level}, day={day}, match={match}.");
 					return false;
 				}
+
+				resolvedSetId = FindSetIdByReference(schedule, resolvedSet);
+				Debug.Log(
+					$"[DiceGame][Modifiers] Resolved set_id='{resolvedSetId}' from schedule='{modifiersSchedulePath}' " +
+					$"for level={level}, day={day}, match={match}.");
+			}
+
+			if (!string.IsNullOrWhiteSpace(overrideSetId))
+			{
+				Debug.Log($"[DiceGame][Modifiers] Using override modifiers_set_id='{resolvedSetId}'.");
 			}
 
 			ClearRuntimeGlobalModifiers();
@@ -237,6 +254,21 @@ namespace _Main.Scripts.Dice
 			diceGameModel.EnemyModifiersModel.Reset();
 
 			return ApplyGlobalModifierSet(resolvedSet.player_modifiers, diceGameModel.PlayerScoringService, "player");
+		}
+
+		private static string FindSetIdByReference(
+			DiceGameModifiersScheduleConfig schedule,
+			DiceGameModifierSet resolvedSet)
+		{
+			foreach (var pair in schedule.sets)
+			{
+				if (ReferenceEquals(pair.Value, resolvedSet))
+				{
+					return pair.Key;
+				}
+			}
+
+			return "<unknown>";
 		}
 
 		private bool TryGetRunTacticPaths(

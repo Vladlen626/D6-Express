@@ -173,6 +173,12 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 			selectedProfile.enemy_ai_scenarios_path,
 			selectedProfile.enemy_ai_scenario_schedule_path,
 			selectedProfile.modifiers_schedule_path);
+
+		UnityEngine.Debug.Log(
+			$"[DiceGame][Tactic] Selected tactic='{selectedProfile.id}' " +
+			$"enemy_ai_scenarios_path='{selectedProfile.enemy_ai_scenarios_path}' " +
+			$"enemy_ai_scenario_schedule_path='{selectedProfile.enemy_ai_scenario_schedule_path}' " +
+			$"modifiers_schedule_path='{selectedProfile.modifiers_schedule_path}'.");
 	}
 
 	private void OnDayChangeRequested(int value)
