@@ -141,14 +141,22 @@ namespace _Main.Scripts.Core
 			var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
 			var loseViewController =
 				new LoseViewController(uiService, game, inputService, cursorService, configService);
+			var diceGameGlobalController = new DiceGameGlobalController(
+				diceGameModel,
+				playerModel,
+				playerView,
+				sceneContext,
+				_serviceLocator,
+				run,
+				configService,
+				notificationService);
 			var baseControllers = new IBaseController[]
 			{
 				winViewController,
 				loseViewController,
 				new SettingsController(uiService, audioService, cursorService, inputService, pauseState, run),
 				new DiceGameUIController(uiService, inputService, audioService, playerModel.PlayerStateModel),
-				new DiceGameGlobalController(diceGameModel, playerModel, playerView, sceneContext, _serviceLocator,
-					run, configService, notificationService),
+				diceGameGlobalController,
 				new DiceBonusSlotsController(diceGameModel, sceneContext.DiceGameTableView),
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
@@ -248,6 +256,7 @@ namespace _Main.Scripts.Core
 			gameStateController.AddChanger(locationController);
 			gameStateController.AddChanger(winViewController);
 			gameStateController.AddChanger(loseViewController);
+			gameStateController.AddChanger(diceGameGlobalController);
 			gameStateController.AddChanger(statsController);
 
 			await _lifecycle.RegisterAsync(gameStateController);

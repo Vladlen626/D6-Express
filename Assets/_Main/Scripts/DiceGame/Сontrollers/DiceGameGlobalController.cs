@@ -14,7 +14,7 @@ using UnityEngine;
 namespace _Main.Scripts.Dice
 {
 
-	public class DiceGameGlobalController : IBaseController, IActivatable
+	public class DiceGameGlobalController : IBaseController, IActivatable, IGameStateChanger
 	{
 		private readonly DiceGameModel diceGameModel;
 		private readonly PlayerModel playerModel;
@@ -111,6 +111,28 @@ namespace _Main.Scripts.Dice
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.OnGameConditionPassed -= OnGameConditionPassedHandler;
 			diceGameModel.OnGameConditionFailed -= OnGameConditionFailedHandler;
+		}
+
+		public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
+		{
+			yield return (GameStateTransitionTask.PREPARE_DICE_MODIFIERS, PrepareModifiersForStatsAsync);
+		}
+
+		private async UniTask PrepareModifiersForStatsAsync(GameStateTransition _)
+		{
+			if (playerModel.PlayerStateModel.HasState(CharacterState.DICE_GAME))
+			{
+				return;
+			}
+
+			var diceGameConfig = await configService.GetFirstOrDefaultAsync<DiceGameConfig>(ResourcePaths.Json.dice_game_rules);
+			if (diceGameConfig == null)
+			{
+				FailDiceGameSetup("[DiceGame] dice_game_rules config is missing.");
+				return;
+			}
+
+			await scenarioSetup.SetupModifiersAsync(diceGameConfig);
 		}
 
 		private void OnGameConditionPassedHandler()
