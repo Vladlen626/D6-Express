@@ -102,6 +102,9 @@ namespace _Main.Scripts.Dice
 			try
 			{
 				logger?.Log("[DiceGameController] Handle roll");
+				logger?.Log(
+					$"{BuildFlowContext("roll_start")} selected={diceGameModel.GetSelected().Length} " +
+					$"unbanked={diceGameModel.GetUnbanked().Length} first_roll={tableModel.isFirstRoll}");
 
 				diceGameModel.tableModel.DisableButtons();
 
@@ -170,6 +173,10 @@ namespace _Main.Scripts.Dice
 					run);
 
 				await diceGameModel.GetCurrentModifiersModel().PlayRollActions(rollModifierContext);
+				var evaluatedScore = activeScoringService.CalculateTotalScore(diceCombinationResult);
+				logger?.Log(
+					$"{BuildFlowContext("roll_eval")} combo_count={diceCombinationResult.Combinations.Count} " +
+					$"evaluated_score={evaluatedScore}");
 
 				if (diceCombinationResult.Combinations.Count == 0)
 				{
@@ -228,6 +235,7 @@ namespace _Main.Scripts.Dice
 				diceGameModel.tableModel.DisableButtons();
 				
 				var selected = diceGameModel.GetSelected();
+				logger?.Log($"{BuildFlowContext("pass_start")} selected={selected.Length}");
 				var activeScoringService = diceGameModel.GetCurrentScoringService();
 				var combo = activeScoringService.Evaluate(GetValues(selected));
 				var passModifierContext = new DiceModifierContext(
@@ -247,6 +255,7 @@ namespace _Main.Scripts.Dice
 					ModifierStage.RoundEnd,
 					run);
 				await diceGameModel.GetCurrentModifiersModel().PlayRoundEndActions(roundEndContext);
+				logger?.Log($"{BuildFlowContext("pass_commit")} selected={selected.Length}");
 				EndTurn(true);
 			}
 			finally
@@ -311,6 +320,9 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask HandleFailedRollAsync(DiceCombinationResult diceCombinationResult, DiceModel[] diceToRoll)
 		{
+			logger?.Log(
+				$"{BuildFlowContext("roll_failed")} combo_count={diceCombinationResult.Combinations?.Count ?? 0} " +
+				$"unbanked={diceToRoll?.Length ?? 0}");
 			audioService.PlaySound(SoundNames.Fail);
 			if (notificationService != null)
 			{
@@ -331,6 +343,7 @@ namespace _Main.Scripts.Dice
 		// ReSharper disable Unity.PerformanceAnalysis
 		public void EndTurn(bool success)
 		{
+			logger?.Log($"{BuildFlowContext("turn_end")} success={success}");
 			diceGameModel.EndTurn(success);
 			audioService.PlaySound(SoundNames.TurnChange);
 		}
@@ -341,6 +354,9 @@ namespace _Main.Scripts.Dice
 			int points = activeScoringService.CalculateTotalScore(combinationResult);
 			if (points <= 0)
 			{
+				logger?.Log(
+					$"{BuildFlowContext("save_selected_skipped")} selected={selected.Length} " +
+					$"combo_count={combinationResult.Combinations?.Count ?? 0}");
 				return false;
 			}
 
@@ -367,6 +383,9 @@ namespace _Main.Scripts.Dice
 			await WaitTurnFlowAsync();
 
 			tableModel.AddTurnPoints(points);
+			logger?.Log(
+				$"{BuildFlowContext("save_selected")} selected={selected.Length} " +
+				$"combo_count={combinationResult.Combinations?.Count ?? 0} added_points={points}");
 
 			diceGameModel.RequestUpgrade(combinationResult);
 			await WaitTurnFlowAsync();
@@ -452,6 +471,19 @@ namespace _Main.Scripts.Dice
 		private UniTask WaitTurnFlowAsync()
 		{
 			return turnFlowAwaiter.WaitForEmptyAsync();
+		}
+
+		private string BuildFlowContext(string stage)
+		{
+			var currentTableModel = tableModel;
+			var playerBanked = currentTableModel != null ? currentTableModel.PlayerBankedPoints : 0;
+			var enemyBanked = currentTableModel != null ? currentTableModel.EnemyBankedPoints : 0;
+			var turnPoints = currentTableModel != null ? currentTableModel.TurnPoints : 0;
+			var side = diceGameModel.IsPlayerTurn ? "player" : "enemy";
+
+			return $"[DiceMatchFlow] stage={stage} side={side} turn={diceGameModel.CurrentTurn} " +
+			       $"player_banked={playerBanked} enemy_banked={enemyBanked} " +
+			       $"target={diceGameModel.TargetPoints} turn_points={turnPoints}";
 		}
 
 		private bool CanStartInitialRoll()

@@ -33,6 +33,7 @@ namespace _Main.Scripts.Dice
 		private readonly IInputService inputService;
 		private readonly IAsyncAwaiterService awaiterService;
 		private readonly ILocalizationService localizationService;
+		private readonly IAnalyticsService analyticsService;
 		private readonly DiceGameScenarioSetup scenarioSetup;
 		private readonly DiceGameItemsDisplayManager itemsDisplayManager;
 		private readonly DiceItemViewRegistry itemViewRegistry;
@@ -74,6 +75,7 @@ namespace _Main.Scripts.Dice
 			inputService = serviceLocator.Get<IInputService>();
 			awaiterService = serviceLocator.Get<IAsyncAwaiterService>();
 			localizationService = serviceLocator.Get<ILocalizationService>();
+			analyticsService = serviceLocator.Get<IAnalyticsService>();
 			scenarioSetup = new DiceGameScenarioSetup(diceGameModel, run, resourceService);
 			itemViewRegistry = new DiceItemViewRegistry();
 			itemsDisplayManager = new DiceGameItemsDisplayManager(
@@ -137,6 +139,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnGameConditionPassedHandler()
 		{
+			TrackMatchResultAnalytics(true);
 			playerModel.InventoryModel.GiveCash(diceGameModel.CalculateWinPayout());
 
 			playerModel.PlayerStateModel.StateRemoved += OnPostDialogueFinished;
@@ -145,6 +148,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnGameConditionFailedHandler()
 		{
+			TrackMatchResultAnalytics(false);
 			playerModel.PlayerStateModel.StateRemoved += OnPostDialogueFinished;
 			PostGameDialogue(false);
 		}
@@ -214,6 +218,7 @@ namespace _Main.Scripts.Dice
 				audioService,
 				notificationService,
 				localizationService,
+				analyticsService,
 				tableView);
 			var processController = new DiceGameProcessController(
 				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, turnFlowAwaiter);
@@ -329,6 +334,7 @@ namespace _Main.Scripts.Dice
 			persistentControllers.AddRange(
 				new IBaseController[]
 				{
+					new DiceItemAnalyticsController(diceGameModel, analyticsService)
 				});
 
 			await lifecycleService.RegisterControllersGroupAsync(persistentControllers);
@@ -651,7 +657,36 @@ namespace _Main.Scripts.Dice
 		private void FailDiceGameSetup(string message)
 		{
 			Debug.LogError(message);
-			diceGameModel.SetConditionFailed();
+			diceGameModel.SetConditionFailed(
+				DiceMatchResultReason.SetupFailed,
+				DiceMatchStage.Setup,
+				"global_setup");
+		}
+
+		private void TrackMatchResultAnalytics(bool isWin)
+		{
+			if (analyticsService == null)
+			{
+				return;
+			}
+
+			var currentTableModel = tableModel;
+			var playerScore = currentTableModel != null ? currentTableModel.PlayerBankedPoints : 0;
+			var enemyScore = currentTableModel != null ? currentTableModel.EnemyBankedPoints : 0;
+			var targetScore = diceGameModel.TargetPoints;
+			var betSize = diceGameModel.BetSize;
+			var turnIndex = diceGameModel.CurrentTurn;
+
+			analyticsService.TrackDiceMatchFinished(
+				run,
+				isWin,
+				diceGameModel.MatchResultReason,
+				diceGameModel.MatchResultStage,
+				playerScore,
+				enemyScore,
+				targetScore,
+				betSize,
+				turnIndex);
 		}
 
 		private void OnPostDialogueFinished(CharacterState state)

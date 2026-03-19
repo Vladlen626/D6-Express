@@ -27,7 +27,10 @@ namespace _Main.Scripts.Dice
 		{
 			if (tableModel.PlayerBankedPoints >= diceGameModel.TargetPoints)
 			{
-				diceGameModel.SetConditionPassed();
+				diceGameModel.SetConditionPassed(
+					DiceMatchResultReason.PlayerReachedTarget,
+					DiceMatchStage.RoundEnd,
+					"banked_points");
 			}
 		}
 		
@@ -35,7 +38,10 @@ namespace _Main.Scripts.Dice
 		{
 			if (tableModel.EnemyBankedPoints >= diceGameModel.TargetPoints)
 			{
-				diceGameModel.SetConditionFailed();
+				diceGameModel.SetConditionFailed(
+					DiceMatchResultReason.EnemyReachedTarget,
+					DiceMatchStage.RoundEnd,
+					"banked_points");
 			}
 		}
 	}

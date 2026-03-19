@@ -107,12 +107,18 @@ public class EnemyTurnController : IBaseController, IActivatable
 		{
 			scenarioRuntime?.MarkFailed(ex.Message);
 			Debug.LogError($"[EnemyAI][Scripted] Validation failed: {ex.Message}");
-			diceGameModel.SetConditionFailed();
+			diceGameModel.SetConditionFailed(
+				DiceMatchResultReason.EnemyAiValidationFailed,
+				DiceMatchStage.EnemyTurn,
+				"enemy_ai_scripted");
 		}
 		catch (Exception ex)
 		{
 			Debug.LogError($"[EnemyAI] Turn failed: {ex}");
-			diceGameModel.SetConditionFailed();
+			diceGameModel.SetConditionFailed(
+				DiceMatchResultReason.EnemyAiException,
+				DiceMatchStage.EnemyTurn,
+				"enemy_ai");
 		}
 		finally
 		{

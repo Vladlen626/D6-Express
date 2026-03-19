@@ -27,6 +27,7 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly GlobalNotificationService notificationService;
 		private readonly ILocalizationService localizationService;
+		private readonly IAnalyticsService analyticsService;
 		private readonly DiceTableView diceTableView;
 
 		private DiceView upgradeDiceView;
@@ -43,6 +44,7 @@ namespace _Main.Scripts.Dice
 			IAudioService audioService,
 			GlobalNotificationService notificationService,
 			ILocalizationService localizationService,
+			IAnalyticsService analyticsService,
 			DiceTableView diceTableView)
 		{
 			this.diceGameModel = diceGameModel;
@@ -53,6 +55,7 @@ namespace _Main.Scripts.Dice
 			this.audioService = audioService;
 			this.notificationService = notificationService;
 			this.localizationService = localizationService;
+			this.analyticsService = analyticsService;
 			this.diceTableView = diceTableView;
 		}
 
@@ -137,16 +140,18 @@ namespace _Main.Scripts.Dice
 
 			// 1) Straight first
 			var straightConfig = activeScoringService.GetStraightUpgradeConfig();
-			if (straightConfig != null && straightConfig.Chance > 0f && combinationResult.Combinations.Any(e => IsStraightCombination(e.Combination)))
+			var straightSourceCombinationId = TryGetSourceCombinationId(combinationResult, IsStraightCombination);
+			if (straightConfig != null && straightConfig.Chance > 0f && !string.IsNullOrEmpty(straightSourceCombinationId))
 			{
-				return await HandleStraightUpgrade(straightConfig, activeScoringService);
+				return await HandleStraightUpgrade("straight", straightSourceCombinationId, straightConfig, activeScoringService);
 			}
 
 			// 2) Of-a-kind
 			var ofaConfig = activeScoringService.GetComboUpgradeConfig("ofakind");
-			if (ofaConfig != null && ofaConfig.Chance > 0f && combinationResult.Combinations.Any(e => e.Combination == DiceCombination.ThreeOfAKind || e.Combination == DiceCombination.FourOfAKind || e.Combination == DiceCombination.FiveOfAKind || e.Combination == DiceCombination.SixOfAKind))
+			var ofakindSourceCombinationId = TryGetSourceCombinationId(combinationResult, IsOfAKindCombination);
+			if (ofaConfig != null && ofaConfig.Chance > 0f && !string.IsNullOrEmpty(ofakindSourceCombinationId))
 			{
-				return await HandleUpgradeForCombo("ofakind", ofaConfig, activeScoringService);
+				return await HandleUpgradeForCombo("ofakind", ofakindSourceCombinationId, ofaConfig, activeScoringService);
 			}
 
 			return false;
@@ -162,14 +167,57 @@ namespace _Main.Scripts.Dice
 			       || combination == DiceCombination.StraightLength6;
 		}
 
-		private async UniTask<bool> HandleUpgradeForCombo(string comboId, ComboUpgradeConfig upgradeConfig, DiceScoringService activeScoringService)
+		private static bool IsOfAKindCombination(DiceCombination combination)
+		{
+			return combination == DiceCombination.ThreeOfAKind
+			       || combination == DiceCombination.FourOfAKind
+			       || combination == DiceCombination.FiveOfAKind
+			       || combination == DiceCombination.SixOfAKind;
+		}
+
+		private static string TryGetSourceCombinationId(
+			DiceCombinationResult combinationResult,
+			Func<DiceCombination, bool> predicate)
+		{
+			var combinations = combinationResult.Combinations;
+			if (combinations == null)
+			{
+				return string.Empty;
+			}
+
+			for (int i = 0; i < combinations.Count; i++)
+			{
+				var entry = combinations[i];
+				if (!predicate(entry.Combination))
+				{
+					continue;
+				}
+
+				if (!string.IsNullOrWhiteSpace(entry.Id))
+				{
+					return entry.Id;
+				}
+
+				return entry.Combination.ToString();
+			}
+
+			return string.Empty;
+		}
+
+		private async UniTask<bool> HandleUpgradeForCombo(
+			string comboId,
+			string sourceCombinationId,
+			ComboUpgradeConfig upgradeConfig,
+			DiceScoringService activeScoringService)
 		{
 			if (diceGameModel.tableModel == null)
 			{
 				return false;
 			}
 
-			if (Random.value > upgradeConfig.Chance)
+			var chancePassed = Random.value <= upgradeConfig.Chance;
+			analyticsService?.TrackDiceUpgradeChance(comboId, sourceCombinationId, upgradeConfig.Chance, chancePassed);
+			if (!chancePassed)
 			{
 				if (upgradeConfig.Debug)
 				{
@@ -193,11 +241,27 @@ namespace _Main.Scripts.Dice
 
 			await ShowUpgradeBannerAsync();
 			int rolledFace = await RollUpgradeDieAsync();
+			analyticsService?.TrackDiceUpgradeRoll(comboId, rolledFace);
 
 			var before = activeScoringService.GetComboUpgradeState(comboId);
 			var outcome = activeScoringService.ApplyGenericUpgradeOutcome(comboId, rolledFace, logger, null, run);
 			var applied = outcome != null;
 			var after = activeScoringService.GetComboUpgradeState(comboId);
+			var beforeMin = before?.Min ?? 0;
+			var beforeMax = before?.Max ?? 0;
+			var beforeBonus = before?.ScoreBonus ?? 0;
+			var afterMin = after?.Min ?? 0;
+			var afterMax = after?.Max ?? 0;
+			var afterBonus = after?.ScoreBonus ?? 0;
+			analyticsService?.TrackDiceUpgradeApplied(
+				comboId,
+				applied,
+				beforeMin,
+				beforeMax,
+				beforeBonus,
+				afterMin,
+				afterMax,
+				afterBonus);
 			if (applied && before != null && after != null)
 			{
 				Debug.Log($"[UpgradeDebug:ApplyOutcome] combo={comboId}, rolledFace={rolledFace}, outcomeFace={outcome.Face}");
@@ -237,14 +301,20 @@ namespace _Main.Scripts.Dice
 			return false;
 		}
 
-		private async UniTask<bool> HandleStraightUpgrade(StraightUpgradeConfig upgradeConfig, DiceScoringService activeScoringService)
+		private async UniTask<bool> HandleStraightUpgrade(
+			string comboId,
+			string sourceCombinationId,
+			StraightUpgradeConfig upgradeConfig,
+			DiceScoringService activeScoringService)
 		{
 			if (diceGameModel.tableModel == null)
 			{
 				return false;
 			}
 
-			if (Random.value > upgradeConfig.Chance)
+			var chancePassed = Random.value <= upgradeConfig.Chance;
+			analyticsService?.TrackDiceUpgradeChance(comboId, sourceCombinationId, upgradeConfig.Chance, chancePassed);
+			if (!chancePassed)
 			{
 				if (upgradeConfig.Debug)
 				{
@@ -268,11 +338,21 @@ namespace _Main.Scripts.Dice
 
 			await ShowUpgradeBannerAsync();
 			int rolledFace = await RollUpgradeDieAsync();
+			analyticsService?.TrackDiceUpgradeRoll(comboId, rolledFace);
 
 			var before = activeScoringService.GetStraightState();
 			var outcome = activeScoringService.ApplyStraightUpgradeOutcome(rolledFace, logger, null, run);
 			var applied = outcome != null;
 			var after = activeScoringService.GetStraightState();
+			analyticsService?.TrackDiceUpgradeApplied(
+				comboId,
+				applied,
+				before.MinLen,
+				before.MaxLen,
+				before.ScoreBonus,
+				after.MinLen,
+				after.MaxLen,
+				after.ScoreBonus);
 			if (applied)
 			{
 				Debug.Log($"[UpgradeDebug:ApplyOutcome] combo=straight, rolledFace={rolledFace}, outcomeFace={outcome.Face}");

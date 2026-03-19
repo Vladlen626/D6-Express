@@ -60,6 +60,9 @@ namespace _Main.Scripts.Dice
 		public bool IsConditionPassed { get; private set; }
 		public bool IsDiceGameStarted { get; private set; }
 		public bool EnemyComboUpgradesEnabled { get; private set; } = true;
+		public DiceMatchResultReason MatchResultReason { get; private set; } = DiceMatchResultReason.Unknown;
+		public DiceMatchStage MatchResultStage { get; private set; } = DiceMatchStage.Unknown;
+		public string MatchResultSource { get; private set; } = string.Empty;
 		public bool IsDiceAnimationInProgress => diceAnimationInProgressCounter > 0;
 		public bool IsItemTargetingActive => activeTargetingItem != null;
 		public IModifierItem ActiveTargetingItem => activeTargetingItem;
@@ -98,6 +101,7 @@ namespace _Main.Scripts.Dice
 			this.tableModel = tableModel;
 			IsConditionPassed = false;
 			isGameConditionResolved = false;
+			SetMatchResultContext(DiceMatchResultReason.Unknown, DiceMatchStage.Unknown, null);
 			ResetDiceAnimationState();
 			SetMinBetSize(minBetSize);
 			SetMaxBetSize(maxBetSize);
@@ -392,25 +396,33 @@ namespace _Main.Scripts.Dice
 			SetActiveTargetingItem(null);
 		}
 
-		public void SetConditionPassed()
+		public void SetConditionPassed(
+			DiceMatchResultReason reason = DiceMatchResultReason.PlayerReachedTarget,
+			DiceMatchStage stage = DiceMatchStage.RoundEnd,
+			string source = null)
 		{
 			if (isGameConditionResolved)
 			{
 				return;
 			}
 
+			SetMatchResultContext(reason, stage, source);
 			isGameConditionResolved = true;
 			IsConditionPassed = true;
 			OnGameConditionPassed?.Invoke();
 		}
 
-		public void SetConditionFailed()
+		public void SetConditionFailed(
+			DiceMatchResultReason reason = DiceMatchResultReason.Unknown,
+			DiceMatchStage stage = DiceMatchStage.Unknown,
+			string source = null)
 		{
 			if (isGameConditionResolved)
 			{
 				return;
 			}
 
+			SetMatchResultContext(reason, stage, source);
 			isGameConditionResolved = true;
 			IsConditionPassed = false;
 			OnGameConditionFailed?.Invoke();
@@ -583,9 +595,17 @@ namespace _Main.Scripts.Dice
 			IsDiceGameStarted = false;
 			IsConditionPassed = false;
 			isGameConditionResolved = false;
+			SetMatchResultContext(DiceMatchResultReason.Unknown, DiceMatchStage.Unknown, null);
 			CurrentTurn = 0;
 			IsAllInBet = false;
 			TurnFlowAwaiter = null;
+		}
+
+		private void SetMatchResultContext(DiceMatchResultReason reason, DiceMatchStage stage, string source)
+		{
+			MatchResultReason = reason;
+			MatchResultStage = stage;
+			MatchResultSource = string.IsNullOrWhiteSpace(source) ? string.Empty : source.Trim();
 		}
 
 		private void SetActiveTargetingItem(IModifierItem item)

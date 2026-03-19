@@ -282,12 +282,18 @@ public class DebugWindowPlayer : DebugWindowModel
 
 			if (ImGui.Button("Win"))
 			{
-				diceGameModel.SetConditionPassed();
+				diceGameModel.SetConditionPassed(
+					DiceMatchResultReason.DebugForced,
+					DiceMatchStage.Unknown,
+					"debug_window");
 			}
 
 			if (ImGui.Button("Lose"))
 			{
-				diceGameModel.SetConditionFailed();
+				diceGameModel.SetConditionFailed(
+					DiceMatchResultReason.DebugForced,
+					DiceMatchStage.Unknown,
+					"debug_window");
 			}
 		}
 

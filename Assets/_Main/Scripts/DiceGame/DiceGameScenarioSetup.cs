@@ -382,7 +382,10 @@ namespace _Main.Scripts.Dice
 		private void FailDiceGameSetup(string message)
 		{
 			Debug.LogError(message);
-			diceGameModel.SetConditionFailed();
+			diceGameModel.SetConditionFailed(
+				DiceMatchResultReason.SetupFailed,
+				DiceMatchStage.Setup,
+				"scenario_setup");
 		}
 	}
 }
