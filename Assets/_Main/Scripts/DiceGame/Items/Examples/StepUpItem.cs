@@ -41,16 +41,15 @@ namespace _Main.Scripts.Dice
 			return gameState == DiceGameState.GAME;
 		}
 
-		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
+		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			if (State == DiceItemState.Consumed)
 			{
-				await UniTask.CompletedTask;
-				return;
+				return UniTask.CompletedTask;
 			}
 
 			TryAttachDiceHandlers(modifierContext.DiceGameModel);
-			await UniTask.CompletedTask;
+			return UniTask.CompletedTask;
 		}
 
 		protected override bool OnClick()
@@ -66,7 +65,7 @@ namespace _Main.Scripts.Dice
 			return true;
 		}
 
-		private async void OnDiceClickedAsync(DiceModel model)
+		private void OnDiceClicked(DiceModel model)
 		{
 			if (State != DiceItemState.Armed || isProcessing || model == null || boundGameModel == null)
 			{
@@ -87,12 +86,18 @@ namespace _Main.Scripts.Dice
 			if (selectedDice.Count >= selectionTarget)
 			{
 				isProcessing = true;
-				await ApplyStepAsync();
-				isProcessing = false;
+				try
+				{
+					ApplyStep();
+				}
+				finally
+				{
+					isProcessing = false;
+				}
 			}
 		}
 
-		private async UniTask ApplyStepAsync()
+		private void ApplyStep()
 		{
 			var diceList = boundGameModel?.CurrentDiceModelList;
 			if (diceList == null || diceList.Count == 0)
@@ -178,7 +183,7 @@ namespace _Main.Scripts.Dice
 					continue;
 				}
 
-				UnityAction listener = () => OnDiceClickedAsync(model);
+				UnityAction listener = () => OnDiceClicked(model);
 				view.OnDiceClicked.AddListener(listener);
 				clickHandlers[view] = listener;
 			}

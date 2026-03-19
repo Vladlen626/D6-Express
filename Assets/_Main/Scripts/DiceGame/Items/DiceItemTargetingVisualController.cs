@@ -17,7 +17,6 @@ namespace _Main.Scripts.Dice
 		private readonly DiceItemTargetingController targetingController;
 		private readonly int lockedArrowPoolSize;
 		private readonly List<DiceItemTargetingView> lockedArrowViews = new();
-		private readonly List<DiceView> selectedDiceBuffer = new();
 		private Camera mainCamera;
 		private CancellationTokenSource watchLoopCts;
 
@@ -142,14 +141,8 @@ namespace _Main.Scripts.Dice
 
 		private void UpdateLockedArrows(Vector3 source)
 		{
-			selectedDiceBuffer.Clear();
-			foreach (var selectedView in targetingController.SelectedDiceViews)
-			{
-				if (selectedView)
-				{
-					selectedDiceBuffer.Add(selectedView);
-				}
-			}
+			var selectedDiceViews = targetingController.SelectedDiceViews;
+			var selectedCount = selectedDiceViews.Count;
 
 			for (var i = 0; i < lockedArrowViews.Count; i++)
 			{
@@ -159,10 +152,18 @@ namespace _Main.Scripts.Dice
 					continue;
 				}
 
-				if (i < selectedDiceBuffer.Count)
+				if (i < selectedCount)
 				{
-					lockedArrow.SetPoints(source, selectedDiceBuffer[i].transform.position);
-					lockedArrow.SetVisible(true);
+					var targetDiceView = selectedDiceViews[i];
+					if (targetDiceView)
+					{
+						lockedArrow.SetPoints(source, targetDiceView.transform.position);
+						lockedArrow.SetVisible(true);
+					}
+					else
+					{
+						lockedArrow.SetVisible(false);
+					}
 				}
 				else
 				{
@@ -221,7 +222,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			lockedArrowViews.Clear();
-			selectedDiceBuffer.Clear();
 		}
 
 		private Vector3 ResolvePointerWorldPoint(Vector3 sourcePoint)

@@ -3,7 +3,6 @@ using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class DiceTableView : MonoBehaviour
@@ -78,6 +77,7 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private Transform[] itemSlotsSelection;
 	[SerializeField] private Transform[] itemSlotsGame;
 	[SerializeField] private DiceItemTargetingView itemTargetingView;
+	[Min(0)]
 	[SerializeField] private int itemTargetingLockedArrowsPoolSize = 3;
 
 	[Header("Upgrade")]

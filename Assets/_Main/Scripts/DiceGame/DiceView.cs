@@ -87,6 +87,7 @@ namespace _Main.Scripts.Dice
 			_isHovered = false;
 			OnDiceHoverExit?.Invoke();
 			OnDiceClicked?.RemoveAllListeners();
+			OnDiceRelease?.RemoveAllListeners();
 			OnDiceHoverEnter?.RemoveAllListeners();
 			OnDiceHoverExit?.RemoveAllListeners();
 		}

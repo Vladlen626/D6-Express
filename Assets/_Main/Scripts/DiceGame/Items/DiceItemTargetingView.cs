@@ -47,7 +47,8 @@ namespace _Main.Scripts.Dice
 		private int cachedDashCount = -1;
 		private int cachedDashResolutionPerSegment = -1;
 		private float cachedDashFill = -1f;
-		private int cachedRuntimeDashCount = -1;
+		private int cachedDashScaleCount = -1;
+		private Color[] dashTexturePixels;
 		private bool isInitialized;
 
 		public float SourceYOffset => sourceYOffset;
@@ -106,7 +107,7 @@ namespace _Main.Scripts.Dice
 				throw new InvalidOperationException("[DiceItemTargetingView] Body LineRenderer material must expose _BaseMap or _MainTex.");
 			}
 
-			RebuildDashTexture(force: true, dashCount);
+			RebuildDashTexture(force: true);
 			ApplyRendererShapeSettings();
 			isInitialized = true;
 		}
@@ -181,6 +182,8 @@ namespace _Main.Scripts.Dice
 			{
 				Destroy(dashRuntimeTexture);
 			}
+
+			dashTexturePixels = null;
 		}
 
 		private static Vector3 EvaluateQuadraticBezier(Vector3 start, Vector3 control, Vector3 end, float t)
@@ -191,11 +194,27 @@ namespace _Main.Scripts.Dice
 
 		private void UpdateDashAnimation(int runtimeDashCount)
 		{
-			RebuildDashTexture(force: false, runtimeDashCount);
+			RebuildDashTexture(force: false);
 
 			if (!bodyRuntimeMaterial)
 			{
 				return;
+			}
+
+			if (runtimeDashCount != cachedDashScaleCount)
+			{
+				var scale = new Vector2(runtimeDashCount / (float)dashCount, 1f);
+				if (hasBaseMapProperty)
+				{
+					bodyRuntimeMaterial.SetTextureScale(BaseMapPropertyId, scale);
+				}
+
+				if (hasMainTexProperty)
+				{
+					bodyRuntimeMaterial.SetTextureScale(MainTexPropertyId, scale);
+				}
+
+				cachedDashScaleCount = runtimeDashCount;
 			}
 
 			var offset = new Vector2(-Time.unscaledTime * dashScrollSpeed, 0f);
@@ -222,7 +241,7 @@ namespace _Main.Scripts.Dice
 			tipRenderer.endWidth = 0f;
 		}
 
-		private void RebuildDashTexture(bool force, int runtimeDashCount)
+		private void RebuildDashTexture(bool force)
 		{
 			if (dashCount < 1)
 			{
@@ -234,21 +253,15 @@ namespace _Main.Scripts.Dice
 				throw new InvalidOperationException("[DiceItemTargetingView] Dash resolution per segment must be >= 4.");
 			}
 
-			if (runtimeDashCount < 1)
-			{
-				throw new InvalidOperationException("[DiceItemTargetingView] Runtime dash count must be >= 1.");
-			}
-
 			if (!force &&
 			    cachedDashCount == dashCount &&
 			    cachedDashResolutionPerSegment == dashResolutionPerSegment &&
-			    Mathf.Approximately(cachedDashFill, dashFill) &&
-			    cachedRuntimeDashCount == runtimeDashCount)
+			    Mathf.Approximately(cachedDashFill, dashFill))
 			{
 				return;
 			}
 
-			var width = runtimeDashCount * dashResolutionPerSegment;
+			var width = dashCount * dashResolutionPerSegment;
 			const int height = 2;
 
 			if (!dashRuntimeTexture || dashRuntimeTexture.width != width || dashRuntimeTexture.height != height)
@@ -265,7 +278,12 @@ namespace _Main.Scripts.Dice
 				};
 			}
 
-			var colors = new Color[width * height];
+			var pixelsCount = width * height;
+			if (dashTexturePixels == null || dashTexturePixels.Length != pixelsCount)
+			{
+				dashTexturePixels = new Color[pixelsCount];
+			}
+
 			for (var x = 0; x < width; x++)
 			{
 				var local = (x % dashResolutionPerSegment) / (float)(dashResolutionPerSegment - 1);
@@ -274,11 +292,11 @@ namespace _Main.Scripts.Dice
 
 				for (var y = 0; y < height; y++)
 				{
-					colors[y * width + x] = color;
+					dashTexturePixels[y * width + x] = color;
 				}
 			}
 
-			dashRuntimeTexture.SetPixels(colors);
+			dashRuntimeTexture.SetPixels(dashTexturePixels);
 			dashRuntimeTexture.Apply(false, false);
 
 			if (hasBaseMapProperty)
@@ -294,7 +312,7 @@ namespace _Main.Scripts.Dice
 			cachedDashCount = dashCount;
 			cachedDashResolutionPerSegment = dashResolutionPerSegment;
 			cachedDashFill = dashFill;
-			cachedRuntimeDashCount = runtimeDashCount;
+			cachedDashScaleCount = -1;
 		}
 
 		private void ApplyRendererShapeSettings()

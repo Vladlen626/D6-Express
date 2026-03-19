@@ -41,16 +41,15 @@ namespace _Main.Scripts.Dice
 			return gameState == DiceGameState.GAME;
 		}
 
-		public override async UniTask ModifyValues(DiceModifierContext modifierContext)
+		public override UniTask ModifyValues(DiceModifierContext modifierContext)
 		{
 			if (State == DiceItemState.Consumed)
 			{
-				await UniTask.CompletedTask;
-				return;
+				return UniTask.CompletedTask;
 			}
 
 			TryAttachDiceHandlers(modifierContext.DiceGameModel);
-			await UniTask.CompletedTask;
+			return UniTask.CompletedTask;
 		}
 
 		protected override bool OnClick()
@@ -86,11 +85,11 @@ namespace _Main.Scripts.Dice
 
 			if (selectedDice.Count >= selectionTarget)
 			{
-				_ = ApplyPairUpAsync();
+				ApplyPairUp();
 			}
 		}
 
-		private async UniTask ApplyPairUpAsync()
+		private void ApplyPairUp()
 		{
 			isProcessing = true;
 			try
@@ -150,8 +149,6 @@ namespace _Main.Scripts.Dice
 				selectedDice.Clear();
 				isProcessing = false;
 			}
-
-			await UniTask.CompletedTask;
 		}
 
 		private void TryAttachDiceHandlers(DiceGameModel gameModel)

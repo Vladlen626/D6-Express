@@ -13,11 +13,13 @@ namespace _Main.Scripts.Dice
 	public class DiceItemTargetingController : IBaseController, IActivatable
 	{
 		private readonly DiceGameModel diceGameModel;
-		private readonly HashSet<DiceView> selectedDiceViews = new();
+		private readonly HashSet<DiceView> selectedDiceSet = new();
+		private readonly List<DiceView> selectedDiceViews = new();
 		private readonly Dictionary<DiceView, UnityAction> diceClickHandlers = new();
+		private readonly Dictionary<DiceView, DiceModel> diceModelsByView = new();
 		private Camera mainCamera;
 		private CancellationTokenSource watchLoopCts;
-		public IReadOnlyCollection<DiceView> SelectedDiceViews => selectedDiceViews;
+		public IReadOnlyList<DiceView> SelectedDiceViews => selectedDiceViews;
 
 		public DiceItemTargetingController(DiceGameModel diceGameModel)
 		{
@@ -121,6 +123,7 @@ namespace _Main.Scripts.Dice
 
 		private void OnScreenDiceDictChanged()
 		{
+			ClearSelectedDiceVisuals();
 			RebindDiceClickHandlers();
 		}
 
@@ -135,6 +138,7 @@ namespace _Main.Scripts.Dice
 
 			foreach (var kv in diceGameModel.ScreenDiceDict)
 			{
+				var model = kv.Key;
 				var view = kv.Value;
 				if (!view)
 				{
@@ -145,6 +149,7 @@ namespace _Main.Scripts.Dice
 				UnityAction handler = () => OnDiceClicked(capturedView);
 				capturedView.OnDiceClicked.AddListener(handler);
 				diceClickHandlers[capturedView] = handler;
+				diceModelsByView[capturedView] = model;
 			}
 		}
 
@@ -159,6 +164,7 @@ namespace _Main.Scripts.Dice
 			}
 
 			diceClickHandlers.Clear();
+			diceModelsByView.Clear();
 		}
 
 		private void OnDiceClicked(DiceView diceView)
@@ -257,17 +263,7 @@ namespace _Main.Scripts.Dice
 
 		private bool TryGetDiceModelByView(DiceView diceView, out DiceModel diceModel)
 		{
-			foreach (var kv in diceGameModel.ScreenDiceDict)
-			{
-				if (ReferenceEquals(kv.Value, diceView))
-				{
-					diceModel = kv.Key;
-					return true;
-				}
-			}
-
-			diceModel = null;
-			return false;
+			return diceModelsByView.TryGetValue(diceView, out diceModel);
 		}
 
 		private void ToggleDiceItemSelection(DiceView diceView)
@@ -277,12 +273,14 @@ namespace _Main.Scripts.Dice
 				return;
 			}
 
-			if (selectedDiceViews.Remove(diceView))
+			if (selectedDiceSet.Remove(diceView))
 			{
+				selectedDiceViews.Remove(diceView);
 				diceView.SetItemTargetSelectedVisual(false);
 				return;
 			}
 
+			selectedDiceSet.Add(diceView);
 			selectedDiceViews.Add(diceView);
 			diceView.SetItemTargetSelectedVisual(true);
 		}
@@ -297,6 +295,7 @@ namespace _Main.Scripts.Dice
 				}
 			}
 
+			selectedDiceSet.Clear();
 			selectedDiceViews.Clear();
 		}
 	}
