@@ -1,0 +1,97 @@
+{
+    "default_scenario_id": "wb_d1m1_relay_line_opening",
+    "by_level": {
+        "1": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "wb_d1m1_relay_line_opening",
+                        "2": "wb_d1m2_center_faces_then_reset",
+                        "3": "wb_d1m3_hot_fives_pivot",
+                        "*": "wb_d1m3_hot_fives_pivot"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "wb_d1m3_hot_fives_pivot"
+                    }
+                }
+            }
+        },
+        "2": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "sp_d1m1_midface_relay",
+                        "2": "sp_d1m2_broken_straight_ladder",
+                        "3": "sp_d1m3_crosswind_numbers",
+                        "*": "sp_d1m3_crosswind_numbers"
+                    }
+                },
+                "2": {
+                    "by_match": {
+                        "1": "sp_d2m1_low_track_reset",
+                        "2": "sp_d2m2_full_hand_echo",
+                        "3": "sp_d2m3_detour_then_relay",
+                        "*": "sp_d2m3_detour_then_relay"
+                    }
+                },
+                "3": {
+                    "by_match": {
+                        "1": "sp_d3m1_long_middle_wheel",
+                        "2": "sp_d3m2_hotdice_pendulum",
+                        "3": "sp_d3m3_angular_centerline",
+                        "*": "sp_d3m3_angular_centerline"
+                    }
+                },
+                "4": {
+                    "by_match": {
+                        "1": "sp_d4m1_reset_loop",
+                        "2": "sp_d4m2_fours_then_release",
+                        "3": "sp_d4m3_six_lane_reversal",
+                        "*": "sp_d4m3_six_lane_reversal"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "sp_d4m3_six_lane_reversal"
+                    }
+                }
+            }
+        },
+        "3": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "mh_d1m1_final_day_number_relay",
+                        "2": "mh_d1m2_hinged_midfaces",
+                        "3": "mh_d1m3_triple_axis",
+                        "*": "mh_d1m3_triple_axis"
+                    }
+                },
+                "2": {
+                    "by_match": {
+                        "1": "mh_d2m1_long_reset_arc",
+                        "2": "mh_d2m2_dual_reset_lanes",
+                        "3": "mh_d2m3_hotdice_cascade_marathon",
+                        "*": "mh_d2m3_hotdice_cascade_marathon"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "mh_d2m3_hotdice_cascade_marathon"
+                    }
+                }
+            }
+        },
+        "*": {
+            "by_day": {
+                "*": {
+                    "by_match": {
+                        "*": "wb_d1m1_relay_line_opening"
+                    }
+                }
+            }
+        }
+    }
+}

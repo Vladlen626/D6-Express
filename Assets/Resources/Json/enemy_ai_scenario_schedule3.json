@@ -1,0 +1,97 @@
+{
+    "default_scenario_id": "wb_d1m1_twos_and_fours_route",
+    "by_level": {
+        "1": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "wb_d1m1_twos_and_fours_route",
+                        "2": "wb_d1m2_sixes_with_small_lines",
+                        "3": "wb_d1m3_middle_faces_carousel",
+                        "*": "wb_d1m3_middle_faces_carousel"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "wb_d1m3_middle_faces_carousel"
+                    }
+                }
+            }
+        },
+        "2": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "sp_d1m1_center_lane_start",
+                        "2": "sp_d1m2_three_four_engine",
+                        "3": "sp_d1m3_sixes_and_long_line",
+                        "*": "sp_d1m3_sixes_and_long_line"
+                    }
+                },
+                "2": {
+                    "by_match": {
+                        "1": "sp_d2m1_twin_two_six_tracks",
+                        "2": "sp_d2m2_three_six_staircase",
+                        "3": "sp_d2m3_center_face_grinder",
+                        "*": "sp_d2m3_center_face_grinder"
+                    }
+                },
+                "3": {
+                    "by_match": {
+                        "1": "sp_d3m1_two_six_recycler",
+                        "2": "sp_d3m2_fours_with_line_reset",
+                        "3": "sp_d3m3_six_focus_drift",
+                        "*": "sp_d3m3_six_focus_drift"
+                    }
+                },
+                "4": {
+                    "by_match": {
+                        "1": "sp_d4m1_wide_middle_route",
+                        "2": "sp_d4m2_double_straight_patience",
+                        "3": "sp_d4m3_center_face_finisher",
+                        "*": "sp_d4m3_center_face_finisher"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "sp_d4m3_center_face_finisher"
+                    }
+                }
+            }
+        },
+        "3": {
+            "by_day": {
+                "1": {
+                    "by_match": {
+                        "1": "mh_d1m1_structured_six_lane",
+                        "2": "mh_d1m2_three_four_weave",
+                        "3": "mh_d1m3_neutral_line_engine",
+                        "*": "mh_d1m3_neutral_line_engine"
+                    }
+                },
+                "2": {
+                    "by_match": {
+                        "1": "mh_d2m1_slow_lattice_climb",
+                        "2": "mh_d2m2_middle_weight_pressure",
+                        "3": "mh_d2m3_alternating_line_marathon",
+                        "*": "mh_d2m3_alternating_line_marathon"
+                    }
+                },
+                "*": {
+                    "by_match": {
+                        "*": "mh_d2m3_alternating_line_marathon"
+                    }
+                }
+            }
+        },
+        "*": {
+            "by_day": {
+                "*": {
+                    "by_match": {
+                        "*": "wb_d1m1_twos_and_fours_route"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -14,6 +14,20 @@
       "enemy_ai_scenarios_path": "Json/enemy_ai_scenarios2",
       "enemy_ai_scenario_schedule_path": "Json/enemy_ai_scenario_schedule2",
       "modifiers_schedule_path": "Json/dice_game_modifiers_schedule"
+    },
+    {
+      "id": "new2",
+      "weight": 1,
+      "enemy_ai_scenarios_path": "Json/enemy_ai_scenarios3",
+      "enemy_ai_scenario_schedule_path": "Json/enemy_ai_scenario_schedule3",
+      "modifiers_schedule_path": "Json/dice_game_modifiers_schedule2"
+    },
+    {
+      "id": "new3",
+      "weight": 1,
+      "enemy_ai_scenarios_path": "Json/enemy_ai_scenarios4",
+      "enemy_ai_scenario_schedule_path": "Json/enemy_ai_scenario_schedule4",
+      "modifiers_schedule_path": "Json/dice_game_modifiers_schedule2"
     }
   ]
 }
