@@ -175,7 +175,6 @@ namespace _Main.Scripts.Dice
 				{
 					logger?.Log($"[Upgrade:{comboId}] Chance failed ({upgradeConfig.Chance:P0}).");
 				}
-				await ShowUpgradeFailedAsync();
 				return false;
 			}
 
@@ -235,7 +234,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			HideUpgradeDie();
-			await ShowUpgradeFailedAsync();
 			return false;
 		}
 
@@ -252,7 +250,6 @@ namespace _Main.Scripts.Dice
 				{
 					logger?.Log($"[Upgrade:straight] Chance failed ({upgradeConfig.Chance:P0}).");
 				}
-				await ShowUpgradeFailedAsync();
 				return false;
 			}
 
@@ -312,7 +309,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			HideUpgradeDie();
-			await ShowUpgradeFailedAsync();
 			return false;
 		}
 
@@ -324,16 +320,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			await notificationService.ShowBannerAsync(GlobalConstants.Localization.DiceBannerUpgradeTriggered, 0.8f);
-		}
-
-		private async UniTask ShowUpgradeFailedAsync()
-		{
-			if (notificationService == null)
-			{
-				return;
-			}
-
-			await notificationService.ShowBannerAsync(GlobalConstants.Localization.DiceBannerUpgradeFailed, 0.8f);
 		}
 
 		private async UniTask<int> RollUpgradeDieAsync()
