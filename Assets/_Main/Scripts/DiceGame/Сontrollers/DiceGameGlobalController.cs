@@ -295,8 +295,14 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
+			if (!TryCalculateStageBaseBet(levelConfig, out var stageBaseBet, out var stageBetError))
+			{
+				FailDiceGameSetup(stageBetError);
+				return false;
+			}
+
 			var newTableModel = new TableModel(CouplePositionsHandler.FirstPosArray, CouplePositionsHandler.SecondPosArray);
-			diceGameModel.Setup(diceGameConfig, playerModel.InventoryModel.CashCount, newTableModel);
+			diceGameModel.Setup(diceGameConfig, stageBaseBet, playerModel.InventoryModel.CashCount, newTableModel);
 			diceGameModel.SetTargetScore(stageTargetScore);
 			// Keep the base cap aligned with available board slots; items can extend beyond this value.
 			var baseCap = DiceGameSetupUtils.CalcBaseCap(
@@ -594,6 +600,52 @@ namespace _Main.Scripts.Dice
 			}
 
 			return defaults;
+		}
+
+		private static bool TryCalculateStageBaseBet(LevelConfig levelConfig, out int stageBaseBet, out string error)
+		{
+			stageBaseBet = 0;
+			error = null;
+			if (levelConfig.cash_goal <= 0)
+			{
+				error = $"[DiceGame] cash_goal must be > 0 for level '{levelConfig.id}'.";
+				return false;
+			}
+
+			var matchesLeft = levelConfig.days * levelConfig.ticks_per_day;
+			if (matchesLeft <= 0)
+			{
+				error = $"[DiceGame] matches_left must be > 0 for level '{levelConfig.id}'.";
+				return false;
+			}
+
+			var halfMatches = Mathf.CeilToInt(matchesLeft * 0.5f);
+			var denominator = 3 * halfMatches;
+			if (denominator <= 0)
+			{
+				error = $"[DiceGame] Invalid stage bet denominator for level '{levelConfig.id}'.";
+				return false;
+			}
+
+			var rawBet = (float)levelConfig.cash_goal / denominator;
+			stageBaseBet = CeilToStep(rawBet, 5);
+			if (stageBaseBet <= 0)
+			{
+				error = $"[DiceGame] Computed stage base bet is invalid for level '{levelConfig.id}'.";
+				return false;
+			}
+
+			return true;
+		}
+
+		private static int CeilToStep(float value, int step)
+		{
+			if (step <= 0)
+			{
+				throw new ArgumentOutOfRangeException(nameof(step), step, "[DiceGame] Ceil step must be > 0.");
+			}
+
+			return Mathf.CeilToInt(value / step) * step;
 		}
 
 		private void FailDiceGameSetup(string message)

@@ -93,15 +93,15 @@ namespace _Main.Scripts.Dice
 			EnemyScoringService = enemyScoringService ?? new DiceScoringService();
 		}
 		
-		public void Setup(DiceGameConfig diceGameConfig, int maxBetSize, TableModel tableModel)
+		public void Setup(DiceGameConfig diceGameConfig, int minBetSize, int maxBetSize, TableModel tableModel)
 		{
 			this.tableModel = tableModel;
 			IsConditionPassed = false;
 			isGameConditionResolved = false;
 			ResetDiceAnimationState();
-			SetMinBetSize(diceGameConfig.min_bet_size);
+			SetMinBetSize(minBetSize);
 			SetMaxBetSize(maxBetSize);
-			SetBetSize((diceGameConfig.min_bet_size + maxBetSize) / 2);
+			SetBetSize((minBetSize + maxBetSize) / 2);
 			EnemyComboUpgradesEnabled = diceGameConfig.enemy_combo_upgrades_enabled;
 			SetCurrentTurn(1, true);
 		}
