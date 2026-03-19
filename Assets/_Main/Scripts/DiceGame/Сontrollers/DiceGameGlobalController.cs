@@ -195,13 +195,14 @@ namespace _Main.Scripts.Dice
 				tableView);
 			var processController = new DiceGameProcessController(
 				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, turnFlowAwaiter);
+			var itemTargetingController = new DiceItemTargetingController(diceGameModel);
 
 			gameControllers.AddRange(new IBaseController[]
 			{
 				upgradeController,
 				processController,
-				new DiceItemTargetingController(diceGameModel),
-				new DiceItemTargetingVisualController(diceGameModel, itemViewRegistry, tableView),
+				itemTargetingController,
+				new DiceItemTargetingVisualController(diceGameModel, itemViewRegistry, tableView, itemTargetingController),
 				new DiceGameUpgradeVisualController(uiService, upgradeController, turnFlowAwaiter, resourceService, loggerService),
 				new DiceGameCombinationsDisplayController(diceGameModel, tableView, turnFlowAwaiter),
 				new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),

@@ -649,7 +649,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6065413604265137208}
@@ -704,7 +704,7 @@ LineRenderer:
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 1}
+  - {x: 1, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -800,7 +800,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6065413604265137208}
@@ -831,7 +831,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e847a8d5919d8164dad4ba87d79e5371, type: 2}
+  - {fileID: 2100000, guid: 286ea7cbb5171824ea049f9b28083657, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -915,7 +915,7 @@ LineRenderer:
       m_NumAlphaKeys: 2
     numCornerVertices: 0
     numCapVertices: 0
-    alignment: 0
+    alignment: 1
     textureMode: 0
     textureScale: {x: 1, y: 1}
     shadowBias: 0.5
@@ -3394,15 +3394,24 @@ MonoBehaviour:
   bodyRenderer: {fileID: 920100000000000003}
   tipRenderer: {fileID: 920100000000000006}
   bodySegments: 18
-  sourceYOffset: 0.08
-  targetYOffset: 0.02
-  arcHeight: 0.22
+  sourceYOffset: 0.1
+  targetYOffset: 0.075
+  arcHeight: 0.12
   arcHeightByDistance: 0.08
-  tipLength: 0.15
-  tipHalfWidth: 0.06
-  dashScrollSpeed: 1.4
-  tipPulseAmplitude: 0.12
-  tipPulseFrequency: 7
+  arcWaveAmplitude: 0.015
+  arcWaveFrequency: 3.2
+  bodyWidth: 0.015
+  tipLength: 0.03
+  tipBaseWidth: 0.03
+  tipBodyGap: 0.01
+  bodyAlignment: 0
+  tipAlignment: 0
+  bodyCapVertices: 0
+  tipCapVertices: 3
+  dashCount: 8
+  dashResolutionPerSegment: 128
+  dashFill: 0.56
+  dashScrollSpeed: 0.05
 --- !u!1 &5953771069726487753
 GameObject:
   m_ObjectHideFlags: 0
@@ -4054,6 +4063,7 @@ MonoBehaviour:
   - {fileID: 6368909250523785631}
   - {fileID: 6517028207585709836}
   itemTargetingView: {fileID: 2283662866544279373}
+  itemTargetingLockedArrowsPoolSize: 3
   upgradeDicePos: {fileID: 624061350578805070}
   upgradeDiceScreenScale: 0.5
   animDuration: 0.15
@@ -4076,8 +4086,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 1.656616, z: 1.7}
-  m_Center: {x: 0.012280601, y: 0.3283081, z: 0}
+  m_Size: {x: 2, y: 1.5352972, z: 1.7000002}
+  m_Center: {x: 0.012280601, y: 0.26764935, z: 0}
 --- !u!114 &6110710948473678924
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -78,6 +78,7 @@ public class DiceTableView : MonoBehaviour
 	[SerializeField] private Transform[] itemSlotsSelection;
 	[SerializeField] private Transform[] itemSlotsGame;
 	[SerializeField] private DiceItemTargetingView itemTargetingView;
+	[SerializeField] private int itemTargetingLockedArrowsPoolSize = 3;
 
 	[Header("Upgrade")]
 	[SerializeField] private Transform upgradeDicePos;
@@ -90,6 +91,7 @@ public class DiceTableView : MonoBehaviour
 	public Transform[] ItemSlotsSelection => itemSlotsSelection;
 	public Transform[] ItemSlotsGame => itemSlotsGame;
 	public DiceItemTargetingView ItemTargetingView => itemTargetingView;
+	public int ItemTargetingLockedArrowsPoolSize => itemTargetingLockedArrowsPoolSize;
 	public Transform[] DiceBonusSlots => DiceBonusPositions;
 	public Transform[] SelectDiceBonusSlots => SelectDiceBonusPositions;
 	public Transform UpgradeDicePos => upgradeDicePos;

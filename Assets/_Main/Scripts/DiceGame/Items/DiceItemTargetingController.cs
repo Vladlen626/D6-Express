@@ -17,6 +17,7 @@ namespace _Main.Scripts.Dice
 		private readonly Dictionary<DiceView, UnityAction> diceClickHandlers = new();
 		private Camera mainCamera;
 		private CancellationTokenSource watchLoopCts;
+		public IReadOnlyCollection<DiceView> SelectedDiceViews => selectedDiceViews;
 
 		public DiceItemTargetingController(DiceGameModel diceGameModel)
 		{
