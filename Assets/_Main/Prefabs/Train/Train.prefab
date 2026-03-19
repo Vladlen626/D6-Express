@@ -760,6 +760,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1558494628716004490}
     m_Modifications:
+    - target: {fileID: 239814533810964329, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: characterName
+      value: toilet guy
+      objectReference: {fileID: 0}
     - target: {fileID: 2961610860379200973, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: interactable
       value: 
@@ -767,6 +771,10 @@ PrefabInstance:
     - target: {fileID: 4452512210732342694, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_Name
       value: NpcPassenger
+      objectReference: {fileID: 0}
+    - target: {fileID: 6736098947388740489, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
+      propertyPath: id
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 8731935229789357799, guid: 3bfb3f4fe357aba4f8e8f2bb59b78310, type: 3}
       propertyPath: m_LocalScale.x

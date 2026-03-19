@@ -208,6 +208,11 @@
         "combination_desc_one": "One dice",
         "combination_desc_three": "Three of a kind",
         "combination_desc_straight": "Straight",
-        "combination_desc_kind_of": "each subsequent cube in \"of a kind\" multiplies the points"
+        "combination_desc_kind_of": "each subsequent cube in \"of a kind\" multiplies the points",
+        "toilet_npc_random_1": "I’m… uh… kind of busy right now.",
+        "toilet_npc_random_2": "This is the most important job in the game.",
+        "toilet_npc_random_3": "The toilet and I… we have a bond.",
+        "toilet_npc_random_4": "If you see my respawn timer, tell it to hurry up.",
+        "toilet_npc_random_5": "I’m not stuck, I’m… strategically positioned."
     }
 }

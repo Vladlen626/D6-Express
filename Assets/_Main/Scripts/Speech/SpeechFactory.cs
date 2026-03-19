@@ -44,7 +44,8 @@ public static class SpeechFactory
             speechOpponentNoMoney,
             speechOpponentWin,
             speechOpponentLose,
-            speechOpponentNoTicks
+            speechOpponentNoTicks,
+            GetToiletNpcSpeech(textsConfig)
         };
 
         var speechModel = new SpeechModel(speeches);
@@ -310,6 +311,23 @@ public static class SpeechFactory
         );
 
         speechEnemy.SetRootNode(speechNodePositive);
+        return speechEnemy;
+    }
+
+    private static Speech GetToiletNpcSpeech(TextsConfig textsConfig)
+    {
+        var speechEnemy = new Speech(22);
+
+        var speechNodeRandom = SayRandom(
+            speechEnemy,
+            textsConfig.texts["toilet_npc_random_1"],
+            textsConfig.texts["toilet_npc_random_2"],
+            textsConfig.texts["toilet_npc_random_3"],
+            textsConfig.texts["toilet_npc_random_4"],
+            textsConfig.texts["toilet_npc_random_5"]
+        );
+
+        speechEnemy.SetRootNode(speechNodeRandom);
         return speechEnemy;
     }
 }
