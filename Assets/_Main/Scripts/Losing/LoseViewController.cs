@@ -65,7 +65,7 @@ public class LoseViewController : BaseContextController<UIEndView>, IGameStateCh
 	private void ShowContext()
 	{
 		int requiredCash = Math.Max(0, run.NextTicketPrice);
-		int missingCash = Math.Max(0, requiredCash - playerModel.InventoryModel.CashCount);
+		int playerCash = Math.Max(0, playerModel.InventoryModel.CashCount);
 
 		_context.SetTitle(textsConfig.texts["end_header"]);
 		_context.SetMessage(textsConfig.texts["lose_header"]);
@@ -75,7 +75,7 @@ public class LoseViewController : BaseContextController<UIEndView>, IGameStateCh
 		_context.SetPostcardColor(_context.colorLose);
 
 		_context.Show();
-		_context.PlayLoseCashAnimation(missingCash, requiredCash);
+		_context.PlayLoseCashAnimation(playerCash, requiredCash);
 	}
 
 	private void HideContext()

@@ -54,6 +54,11 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	public void OnUpdate(float deltaTime)
 	{
+		if (!playerView || !controller)
+		{
+			return;
+		}
+
 		if (!playerView.gameObject.activeSelf)
 		{
 			return;
@@ -128,11 +133,21 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	private void ResetCameraRotation()
 	{
+		if (!HasCameraRoot())
+		{
+			return;
+		}
+
 		playerView.CameraRoot.DOLocalRotate(Vector3.zero, 0.5f);
 	}
 
 	private void UpdateCameraBob(float deltaTime)
 	{
+		if (!HasCameraRoot())
+		{
+			return;
+		}
+
 		bool isDefaultState = playerModel.PlayerStateModel.CurrentStates.Count == 0;
 		bool isMoving = isDefaultState && controller.enabled && controller.isGrounded && MoveInput.sqrMagnitude > 0.01f;
 		isMoving = isMoving && playerView.EnableMovementCameraBob;
@@ -161,6 +176,17 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	{
 		cameraBobPhase = 0f;
 		cameraBobOffsetY = 0f;
+
+		if (!HasCameraRoot())
+		{
+			return;
+		}
+
 		playerView.CameraRoot.localPosition = cameraRootBaseLocalPosition;
+	}
+
+	private bool HasCameraRoot()
+	{
+		return playerView && playerView.CameraRoot;
 	}
 }
