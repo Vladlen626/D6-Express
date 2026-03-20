@@ -65,7 +65,8 @@
 - Null checks in Unity style: `if (!obj)` instead of `obj == null`.
 - Always use braces for `if` blocks.
 - Follow existing naming/style conventions of surrounding code.
-- Do not add fallback chains. The project assumes correct, valid configuration; if something is missing or invalid, fail fast with errors/exceptions instead of layering silent defaults.
+- Do not add fallback chains.
+- Do not add extra fail-fast guards/exceptions by default. Prefer minimal code and Unity-native failure behavior unless explicit validation/exception handling is requested.
 
 ## Collaboration Rules
 - For non-trivial changes, ask for confirmation before implementation.

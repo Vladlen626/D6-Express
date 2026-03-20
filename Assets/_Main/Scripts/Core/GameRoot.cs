@@ -81,7 +81,7 @@ namespace _Main.Scripts.Core
 
 			var playerModel = new PlayerModel();
 
-			var transitionViewController = new TransitionViewController(uiService);
+			var transitionViewController = new TransitionViewController(uiService, audioService);
 			await _lifecycle.RegisterAsync(transitionViewController);
 			await transitionViewController.ShowContext(0);
 
@@ -155,13 +155,13 @@ namespace _Main.Scripts.Core
 				winViewController,
 				loseViewController,
 				new SettingsController(uiService, audioService, cursorService, inputService, pauseState, run),
-				new DiceGameUIController(uiService, inputService, audioService, playerModel.PlayerStateModel),
+				new DiceGameUIController(uiService, inputService, audioService, playerModel.PlayerStateModel, diceGameModel),
 				diceGameGlobalController,
 				new DiceBonusSlotsController(diceGameModel, sceneContext.DiceGameTableView),
 				new LightController(sceneContext.Lights, run),
 				new InformationPanelStationController(run, sceneContext.InformationPanelView, configService),
 				new LevelStartModifierController(run, diceGameModel),
-				new CameraController(inputService, cameraService, playerModel.PlayerStateModel, game, audioService),
+				new CameraController(inputService, cameraService, diceGameModel, playerModel.PlayerStateModel, game, audioService),
 				new InventoryController(playerModel.InventoryModel, diceGameModel, factory, configService, audioService,
 					sceneContext.InventoryView),
 				new ModifierItemsSyncController(playerModel.InventoryModel,

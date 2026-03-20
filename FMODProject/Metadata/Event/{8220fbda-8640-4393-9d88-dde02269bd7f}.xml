@@ -73,7 +73,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{3f330342-6fa0-47a1-b7f9-0a31bd9e829e}">
 		<property name="volume">
-			<value>5</value>
+			<value>1.5</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{b5733143-f5af-4c82-a6e1-b6115f37b574}</destination>
@@ -99,6 +99,8 @@
 	<object class="MixerBusEffectChain" id="{b5733143-f5af-4c82-a6e1-b6115f37b574}">
 		<relationship name="effects">
 			<destination>{5e42adb1-962e-41b1-b31c-c012977e2164}</destination>
+			<destination>{2abafe35-b215-4a0d-bfef-2dda06763858}</destination>
+			<destination>{0988333c-072a-42d0-8478-95e6538f6ea8}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{161c9eff-40c6-4ef2-84b1-032b5a0ebeb7}" />
@@ -109,4 +111,10 @@
 	</object>
 	<object class="MixerBusFader" id="{d4c1e319-515f-4700-9950-5881286f150c}" />
 	<object class="MixerBusFader" id="{5e42adb1-962e-41b1-b31c-c012977e2164}" />
+	<object class="ThreeEQEffect" id="{2abafe35-b215-4a0d-bfef-2dda06763858}" />
+	<object class="PitchShifterEffect" id="{0988333c-072a-42d0-8478-95e6538f6ea8}">
+		<property name="overlap">
+			<value>1</value>
+		</property>
+	</object>
 </objects>

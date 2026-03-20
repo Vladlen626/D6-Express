@@ -137,7 +137,7 @@
         "modifier_target_discount_item_description": "Lowers the target score for this match by 300.",
         "modifier_selected_double_step_item_title": "Double Burger",
         "modifier_selected_double_step_item_description": "The next selected die jumps by +2 immediately.",
-        "modifier_invert_all_faces_item_title": "Camera",
+        "modifier_invert_all_faces_item_title": "Camera Film",
         "modifier_invert_all_faces_item_description": "Flips all dice to their opposite face values.",
         "modifier_pair_up_item_title": "Spare Keys",
         "modifier_pair_up_item_description": "Select two dice; both become the higher of the two.",

@@ -29,6 +29,7 @@ namespace _Main.Scripts.Dice
 		public event Action<DiceCombinationResult> UpgradeRequested;
 		public event Action<DiceCombinationCardsSnapshot> CombinationPreviewChanged;
 		public event Action<DiceCombinationCardsSnapshot> CombinationCommitted;
+		public event Action<int> CombinationScoreChunkLanded;
 		
 		public TableModel tableModel;
 		public ModifiersModel PlayerModifiersModel { get; }
@@ -64,6 +65,10 @@ namespace _Main.Scripts.Dice
 		public DiceMatchStage MatchResultStage { get; private set; } = DiceMatchStage.Unknown;
 		public string MatchResultSource { get; private set; } = string.Empty;
 		public bool IsDiceAnimationInProgress => diceAnimationInProgressCounter > 0;
+		public bool IsPlayerActionPhase =>
+			DiceGameState == DiceGameState.GAME &&
+			IsPlayerTurn &&
+			!IsDiceAnimationInProgress;
 		public bool IsItemTargetingActive => activeTargetingItem != null;
 		public IModifierItem ActiveTargetingItem => activeTargetingItem;
 		public int MaxDiceCount => GetMaxDiceCount(IsPlayerTurn);
@@ -478,6 +483,11 @@ namespace _Main.Scripts.Dice
 		public void PublishCombinationCommitted(DiceCombinationCardsSnapshot snapshot)
 		{
 			CombinationCommitted?.Invoke(snapshot);
+		}
+
+		public void NotifyCombinationScoreChunkLanded(int scoreChunk)
+		{
+			CombinationScoreChunkLanded?.Invoke(scoreChunk);
 		}
 
 		public void EndTurn(bool success)

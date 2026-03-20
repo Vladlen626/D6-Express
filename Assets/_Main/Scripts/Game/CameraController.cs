@@ -12,7 +12,6 @@ public class CameraController : IBaseController, IActivatable
 		CameraStateEnum.DiceGame,
 		CameraStateEnum.DiceGameCombinations,
 		CameraStateEnum.Inventory,
-		CameraStateEnum.TrainWatch,
 	};
 
 	private static readonly (CharacterState characterState, CameraStateEnum cameraState)[] stateToCamera = {
@@ -25,6 +24,7 @@ public class CameraController : IBaseController, IActivatable
 	private readonly IAudioService audioService;
 	private readonly ICameraService cameraService;
 	private readonly PlayerStateModel playerStateModel;
+	private readonly DiceGameModel diceGameModel;
 	private readonly D6Game game;
 
 	private int currentCameraIndex;
@@ -32,12 +32,14 @@ public class CameraController : IBaseController, IActivatable
 	public CameraController(
 		IInputService inputService,
 		ICameraService cameraService,
+		DiceGameModel diceGameModel,
 		PlayerStateModel playerStateModel,
 		D6Game game,
 		IAudioService audioService)
 	{
 		this.inputService = inputService;
 		this.cameraService = cameraService;
+		this.diceGameModel = diceGameModel;
 		this.playerStateModel = playerStateModel;
 		this.audioService = audioService;
 		this.game = game;
@@ -100,6 +102,11 @@ public class CameraController : IBaseController, IActivatable
 
 	private async void OnNextHandler()
 	{
+		if (!CanSwitchDiceGameCamera())
+		{
+			return;
+		}
+
 		currentCameraIndex++;
 		if (currentCameraIndex >= diceGameCameraStates.Length)
 		{
@@ -112,6 +119,11 @@ public class CameraController : IBaseController, IActivatable
 
 	private async void OnPreviousHandler()
 	{
+		if (!CanSwitchDiceGameCamera())
+		{
+			return;
+		}
+
 		currentCameraIndex--;
 		if (currentCameraIndex < 0)
 		{
@@ -120,5 +132,20 @@ public class CameraController : IBaseController, IActivatable
 
 		audioService.PlaySound(SoundNames.CameraMove);
 		await cameraService.SetActiveCameraAsync(diceGameCameraStates[currentCameraIndex]);
+	}
+
+	private bool CanSwitchDiceGameCamera()
+	{
+		if (!playerStateModel.HasState(CharacterState.DICE_GAME))
+		{
+			return false;
+		}
+
+		if (playerStateModel.HasState(CharacterState.SPEAKING))
+		{
+			return false;
+		}
+
+		return diceGameModel.IsPlayerActionPhase;
 	}
 }

@@ -171,9 +171,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: Train
       objectReference: {fileID: 0}
+    - target: {fileID: 8090697997683460468, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 3536812921183376495, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      insertIndex: 33
+      addedObject: {fileID: 2055718892}
+    - targetCorrespondingSourceObject: {fileID: 3536812921183376495, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      insertIndex: 34
+      addedObject: {fileID: 1546303383}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2343718285314815937, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       insertIndex: -1
@@ -289,6 +299,11 @@ MonoBehaviour:
   trainShopkeeper: {fileID: 91070833}
   informationPanelView: {fileID: 1514168068}
   diceGameOpponent: {fileID: 91070834}
+--- !u!1 &169120742 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8090697997683460468, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+  m_PrefabInstance: {fileID: 91070831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,6 +478,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a482f3d4abd4a2180a7841c810447aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DiceGameTableView
+--- !u!4 &678058442 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3536812921183376495, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+  m_PrefabInstance: {fileID: 91070831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1051988742 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2339946849442571684, guid: 39913bafe7ff19348b861d55fefbd6b1, type: 3}
@@ -506,6 +526,117 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e45ed0996184d242ab1a9efdaaaaf34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InformationPanelView
+--- !u!1 &1546303382
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1546303383}
+  - component: {fileID: 1546303386}
+  - component: {fileID: 1546303385}
+  - component: {fileID: 1546303384}
+  m_Layer: 0
+  m_Name: Toilet seat.001 (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 5
+  m_IsActive: 0
+--- !u!4 &1546303383
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546303382}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.6895909, y: 0.18366596, z: 0.18765879, w: 0.67491895}
+  m_LocalPosition: {x: 10.997004, y: -1.153, z: -1.8880014}
+  m_LocalScale: {x: 100.00003, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 678058442}
+  m_LocalEulerAnglesHint: {x: -91.232, y: 30.447006, z: 0}
+--- !u!65 &1546303384
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546303382}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.005981884, y: 0.0005423936, z: 0.006966763}
+  m_Center: {x: 0.000000022633133, y: -0.00006403011, z: 0.0033286782}
+--- !u!23 &1546303385
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546303382}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: bbcb648212aa03d4bb2122ae5d034624, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1546303386
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546303382}
+  m_Mesh: {fileID: 4816239658254143502, guid: 2e4612e34f776b043a5fa964f9e5f75b, type: 3}
 --- !u!1 &1911067291 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5875971813687885191, guid: 95af2103d90efcd4aa7a901171d78bef, type: 3}
@@ -538,6 +669,90 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74186b1190ceeea4c9eab8f8f9830a7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombinationsView
+--- !u!1 &2055718891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2055718892}
+  - component: {fileID: 2055718895}
+  - component: {fileID: 2055718894}
+  - component: {fileID: 2055718893}
+  m_Layer: 6
+  m_Name: Toilet seat.001 (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 5
+  m_IsActive: 1
+--- !u!4 &2055718892
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055718891}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.6895909, y: 0.18366596, z: 0.18765879, w: 0.67491895}
+  m_LocalPosition: {x: 10.997004, y: -1.153, z: -1.8880014}
+  m_LocalScale: {x: 100.00003, y: 100, z: 100}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 678058442}
+  m_LocalEulerAnglesHint: {x: -91.232, y: 30.447006, z: 0}
+--- !u!114 &2055718893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055718891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ec829d1ff9204141abe2a717fc79d6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractableCurtains
+  blockInteract: 0
+  isOpened: 0
+  opened: {fileID: 1546303382}
+  closed: {fileID: 169120742}
+  hintableDynamic: {fileID: 2055718894}
+--- !u!114 &2055718894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055718891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7675ec5ed4b9b7b4f941339dbdf5e95e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HintableDynamic
+--- !u!65 &2055718895
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055718891}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.005981884, y: 0.0005423936, z: 0.006966763}
+  m_Center: {x: 0.000000022633133, y: -0.00006403011, z: 0.0033286782}
 --- !u!1001 &2168928334553278686
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -839,8 +1054,8 @@ SceneRoots:
   - {fileID: 157643400}
   - {fileID: 2168928334553278686}
   - {fileID: 410087041}
-  - {fileID: 91070831}
   - {fileID: 5741847972874531002}
   - {fileID: 7205606119079278648}
   - {fileID: 2898664066417321363}
   - {fileID: 494900644}
+  - {fileID: 91070831}

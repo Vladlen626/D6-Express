@@ -3818,7 +3818,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6006603185710485537}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9430,9 +9430,81 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2605124189525995683, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2605124189525995683, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2605124189525995683, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: 2752976170471052848, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2752976170471052848, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2752976170471052848, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: 3067364656711163632, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3067364656711163632, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3067364656711163632, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: 4775270337945373670, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4775270337945373670, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4775270337945373670, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
     - target: {fileID: 5908361341010381931, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
       propertyPath: m_Name
       value: ItemSlots_Game
+      objectReference: {fileID: 0}
+    - target: {fileID: 5912758194410190119, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5912758194410190119, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5912758194410190119, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910199707323777491, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910199707323777491, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6910199707323777491, guid: 40816f9de905ff2439a20dcc86279ceb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -180
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

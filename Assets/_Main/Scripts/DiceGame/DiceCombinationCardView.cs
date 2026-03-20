@@ -90,6 +90,11 @@ namespace _Main.Scripts.Dice
 			scoreText.SetText("{0:0}", currentScore);
 		}
 
+		public void PrewarmFaceIcons(int iconsCount)
+		{
+			EnsureFaceIconCount(Mathf.Max(0, iconsCount));
+		}
+
 		public void SetVisibleImmediate(bool visible)
 		{
 			if (visibilityTween != null && visibilityTween.IsActive())

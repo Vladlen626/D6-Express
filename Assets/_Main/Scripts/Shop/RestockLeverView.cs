@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class RestockLeverView : MonoBehaviour
 {
+	private static readonly int PulledParam = Animator.StringToHash("Pulled");
+
 	[SerializeField]
 	private Animator animator;
 
 	[SerializeField]
 	private AnimatorSignalBridge bridge;
 
-	private UniTask? currentPullTask;
+	private bool isPulling;
 
 	public event Action RestockRequested;
 
-	public bool IsPulling => currentPullTask.HasValue;
+	public bool IsPulling => isPulling;
 
 	private void Awake()
 	{
@@ -28,16 +30,16 @@ public class RestockLeverView : MonoBehaviour
 
 	public async UniTask Pull()
 	{
-		if (IsPulling) return; // Already pulling
+		if (isPulling)
+		{
+			return;
+		}
 
-		animator.SetBool("Pulled", true);
-
-		currentPullTask = bridge.EnterFinished.Task;
-		await currentPullTask.Value;
-
-		animator.SetBool("Pulled", false);
+		isPulling = true;
+		animator.SetBool(PulledParam, true);
+		await bridge.EnterFinished.Task;
+		animator.SetBool(PulledParam, false);
 		bridge.Reset();
-
-		currentPullTask = null;
+		isPulling = false;
 	}
 }

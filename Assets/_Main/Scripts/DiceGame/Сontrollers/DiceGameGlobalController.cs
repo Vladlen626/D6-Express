@@ -231,7 +231,7 @@ namespace _Main.Scripts.Dice
 				itemTargetingController,
 				new DiceItemTargetingVisualController(diceGameModel, itemViewRegistry, tableView, itemTargetingController),
 				new DiceGameUpgradeVisualController(uiService, upgradeController, turnFlowAwaiter, resourceService, loggerService),
-				new DiceGameCombinationsDisplayController(diceGameModel, tableView, turnFlowAwaiter),
+				new DiceGameCombinationsDisplayController(diceGameModel, tableView, turnFlowAwaiter, audioService),
 				new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
 				new DiceGameViewController(tableView, diceGameModel, cameraShakeService, notificationService),
 				new DiceGameResultController(diceGameModel)
