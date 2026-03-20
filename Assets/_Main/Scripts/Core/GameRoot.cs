@@ -149,7 +149,7 @@ namespace _Main.Scripts.Core
 				configService,
 				playerModel);
 			var loseViewController =
-				new LoseViewController(uiService, game, inputService, cursorService, configService);
+				new LoseViewController(uiService, game, inputService, cursorService, configService, run, playerModel);
 			var diceGameGlobalController = new DiceGameGlobalController(
 				diceGameModel,
 				playerModel,

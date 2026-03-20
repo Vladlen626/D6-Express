@@ -13,14 +13,25 @@ public class LoseViewController : BaseContextController<UIEndView>, IGameStateCh
 	private readonly IInputService inputService;
 	private readonly ICursorService cursorService;
 	private readonly ConfigService configService;
+	private readonly Run run;
+	private readonly PlayerModel playerModel;
 	private TextsConfig textsConfig;
 
-	public LoseViewController(IUIService uiService, D6Game game, IInputService inputService, ICursorService cursorService, ConfigService configService) : base(uiService)
+	public LoseViewController(
+		IUIService uiService,
+		D6Game game,
+		IInputService inputService,
+		ICursorService cursorService,
+		ConfigService configService,
+		Run run,
+		PlayerModel playerModel) : base(uiService)
 	{
 		this.game = game;
 		this.inputService = inputService;
 		this.cursorService = cursorService;
 		this.configService = configService;
+		this.run = run;
+		this.playerModel = playerModel;
 	}
 
 	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
@@ -53,6 +64,9 @@ public class LoseViewController : BaseContextController<UIEndView>, IGameStateCh
 
 	private void ShowContext()
 	{
+		int requiredCash = Math.Max(0, run.NextTicketPrice);
+		int missingCash = Math.Max(0, requiredCash - playerModel.InventoryModel.CashCount);
+
 		_context.SetTitle(textsConfig.texts["end_header"]);
 		_context.SetMessage(textsConfig.texts["lose_header"]);
 		_context.SetExitButtonText(textsConfig.texts["exit_button"]);
@@ -61,7 +75,7 @@ public class LoseViewController : BaseContextController<UIEndView>, IGameStateCh
 		_context.SetPostcardColor(_context.colorLose);
 
 		_context.Show();
-		_context.PlayLoseCashAnimation();
+		_context.PlayLoseCashAnimation(missingCash, requiredCash);
 	}
 
 	private void HideContext()

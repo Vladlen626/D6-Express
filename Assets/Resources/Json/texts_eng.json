@@ -46,7 +46,7 @@
         "shopkeeper_poor_random_3": "Another starving wretch. We don't give freebies—go beg for alms",
         "shopkeeper_poor_random_4": "My poor fellow, have you ever looked in a mirror? Pay up or scram",
         "end_header": "Dear Parents,",
-        "lose_header": "I've been <color=#FF7717>kicked off the train</color>. Now my adventure leads me under a bridge, where i'll die stoned.",
+        "lose_header": "I've been <color=#FF7717>kicked off the train</color>. Now my adventure leads me under a bridge, where I'll die stoned - <color=#FF7717>I didn't have enough money</color> for another ticket.",
         "win_header": "I have come a long way and have finally <color=#FF7717>arrived at the final station!</color>",
         "continue_button": "Continue",
         "exit_button": "Exit",

@@ -131,11 +131,18 @@ public class UIEndView : UIBaseElement
         AnimateWinCashAsync(clampedFinalCash, cashAnimationCts.Token).Forget();
     }
 
-    public void PlayLoseCashAnimation()
+    public void PlayLoseCashAnimation(int missingCash, int requiredCash)
     {
         StopCashAnimation();
         CacheAnimatedRootBaseline();
-        UIUtils.SetCashText(moneyText, 0);
+
+        int clampedMissingCash = Mathf.Max(0, missingCash);
+        int clampedRequiredCash = Mathf.Max(0, requiredCash);
+        if (moneyText)
+        {
+            moneyText.SetText("$: {0:0}/{1:0}", clampedMissingCash, clampedRequiredCash);
+        }
+
         StartLoseRootAnimation();
     }
 
