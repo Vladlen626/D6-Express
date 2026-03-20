@@ -30,4 +30,5 @@
     public const string Transition = "event:/Transition";
     public const string Restock = "event:/Restock";
     public const string Whoosh = "event:/Whoosh";
+    public const string StepSound = "event:/StepSound";
 }

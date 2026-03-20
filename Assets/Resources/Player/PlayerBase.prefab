@@ -332,6 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Hintable
   hintText: end the day
+  highlighted: 0
 --- !u!114 &6341495803138910348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -450,6 +451,11 @@ MonoBehaviour:
   runSpeed: 10
   jumpHeight: 2
   gravity: -20
+  enableMovementCameraBob: 1
+  movementCameraBobAmplitude: 0.0002
+  movementCameraBobFrequency: 14
+  movementCameraBobSprintFrequencyMultiplier: 1
+  movementCameraBobReturnSpeed: 1
   references:
     version: 2
     RefIds:

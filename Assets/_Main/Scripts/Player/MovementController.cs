@@ -8,11 +8,6 @@ using UnityEngine;
 
 public class MovementController : IBaseController, IActivatable, IUpdatable
 {
-	private const float CameraBobAmplitude = 0.003f;
-	private const float CameraBobFrequency = 7f;
-	private const float CameraBobSprintFrequencyMultiplier = 1.2f;
-	private const float CameraBobReturnSpeed = 6f;
-
 	private readonly PlayerModel playerModel;
 	private readonly CharacterController controller;
 	private readonly PlayerView playerView;
@@ -145,17 +140,17 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 		if (isMoving)
 		{
-			float frequency = CameraBobFrequency;
+			float frequency = playerView.MovementCameraBobFrequency;
 			if (IsSprint)
 			{
-				frequency *= CameraBobSprintFrequencyMultiplier;
+				frequency *= playerView.MovementCameraBobSprintFrequencyMultiplier;
 			}
 
 			cameraBobPhase += deltaTime * frequency;
-			targetOffsetY = Mathf.Sin(cameraBobPhase) * CameraBobAmplitude;
+			targetOffsetY = Mathf.Sin(cameraBobPhase) * playerView.MovementCameraBobAmplitude;
 		}
 
-		cameraBobOffsetY = Mathf.MoveTowards(cameraBobOffsetY, targetOffsetY, CameraBobReturnSpeed * deltaTime);
+		cameraBobOffsetY = Mathf.MoveTowards(cameraBobOffsetY, targetOffsetY, playerView.MovementCameraBobReturnSpeed * deltaTime);
 
 		var localPosition = cameraRootBaseLocalPosition;
 		localPosition.y += cameraBobOffsetY;

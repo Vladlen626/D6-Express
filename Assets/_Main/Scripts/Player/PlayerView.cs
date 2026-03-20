@@ -14,9 +14,25 @@ public class PlayerView : CharacterView
 	[Header("Camera Bob")]
 	[SerializeField]
 	private bool enableMovementCameraBob = false;
+	[SerializeField]
+	[Min(0f)]
+	private float movementCameraBobAmplitude = 0.003f;
+	[SerializeField]
+	[Min(0f)]
+	private float movementCameraBobFrequency = 7f;
+	[SerializeField]
+	[Min(0f)]
+	private float movementCameraBobSprintFrequencyMultiplier = 1.2f;
+	[SerializeField]
+	[Min(0f)]
+	private float movementCameraBobReturnSpeed = 6f;
 
 	public CharacterController CharacterController => characterController;
 	public bool EnableMovementCameraBob => enableMovementCameraBob;
+	public float MovementCameraBobAmplitude => movementCameraBobAmplitude;
+	public float MovementCameraBobFrequency => movementCameraBobFrequency;
+	public float MovementCameraBobSprintFrequencyMultiplier => movementCameraBobSprintFrequencyMultiplier;
+	public float MovementCameraBobReturnSpeed => movementCameraBobReturnSpeed;
 
     protected override void SetGhostActive()
     {
