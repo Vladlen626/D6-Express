@@ -52,6 +52,7 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> selectionControllers = new();
 		private bool gamePreviousStoped = false;
 		private bool isMatchResultFlowStarted;
+		private bool diceInputsLockedBySpeaking;
 		private CancellationTokenSource startDiceGameCts;
 
 		private CouplePositionsHandler CouplePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
@@ -112,6 +113,7 @@ namespace _Main.Scripts.Dice
 			dicePreGameController = null;
 			playerModel.PlayerStateModel.StateRemoved -= OnPostDialogueFinished;
 			isMatchResultFlowStarted = false;
+			ReleaseDiceInputsLockedBySpeaking();
 
 			diceGameModel.OnDiceAnimationInProgressChanged -= OnDiceAnimationInProgressChangedHandler;
 			playerModel.PlayerStateModel.StateAdded -= OnCharacterStateAddedHandler;
@@ -227,7 +229,7 @@ namespace _Main.Scripts.Dice
 			}
 			else if (playerModel.PlayerStateModel.HasState(CharacterState.DICE_GAME) && state == CharacterState.SPEAKING)
 			{
-				inputService.DisableDiceGameInputs();
+				AcquireDiceInputsLockedBySpeaking();
 			}
 		}
 
@@ -238,9 +240,9 @@ namespace _Main.Scripts.Dice
 			{
 				StopDiceGame();
 			}
-			else if (playerModel.PlayerStateModel.HasState(CharacterState.DICE_GAME) && state == CharacterState.SPEAKING)
+			else if (state == CharacterState.SPEAKING)
 			{
-				inputService.EnableDiceGameInputs();
+				ReleaseDiceInputsLockedBySpeaking();
 			}
 		}
 
@@ -325,6 +327,7 @@ namespace _Main.Scripts.Dice
 			playerModel.PlayerStateModel.StateRemoved -= OnPostDialogueFinished;
 			isMatchResultFlowStarted = false;
 			CancelStartDiceGameFlow();
+			ReleaseDiceInputsLockedBySpeaking();
 
 			if (gamePreviousStoped)
 			{
@@ -823,6 +826,28 @@ namespace _Main.Scripts.Dice
 			{
 				inputService.EnableDiceGameInputs();
 			}
+		}
+
+		private void AcquireDiceInputsLockedBySpeaking()
+		{
+			if (diceInputsLockedBySpeaking)
+			{
+				return;
+			}
+
+			diceInputsLockedBySpeaking = true;
+			inputService.DisableDiceGameInputs();
+		}
+
+		private void ReleaseDiceInputsLockedBySpeaking()
+		{
+			if (!diceInputsLockedBySpeaking)
+			{
+				return;
+			}
+
+			diceInputsLockedBySpeaking = false;
+			inputService.EnableDiceGameInputs();
 		}
 	}
 }
