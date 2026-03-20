@@ -57,6 +57,7 @@ public class Run
 
     public void Start()
     {
+        Level = 0;
         ResetDiceGameTacticSelection();
         Started = true;
         RunStarted?.Invoke();
