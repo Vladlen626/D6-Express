@@ -70,7 +70,7 @@ public class Run
 
     public void RequestSetTick(int value)
     {
-        if (value > TicksPerDay)
+        if (value >= TicksPerDay)
         {
             RequestSetDay(Day + 1);
         }
