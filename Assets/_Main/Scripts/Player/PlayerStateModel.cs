@@ -5,13 +5,19 @@ using UnityEngine;
 public class PlayerStateModel
 {
 	private readonly List<CharacterState> currentStates = new();
+	private readonly IReadOnlyList<CharacterState> currentStatesReadonly;
 	private readonly Dictionary<CharacterState, CharacterStateHandler> dictStates = new();
 
 	public event Action StatesChanged;
 	public event Action<CharacterState> StateAdded;
 	public event Action<CharacterState> StateRemoved;
 
-	public IReadOnlyList<CharacterState> CurrentStates => currentStates.AsReadOnly();
+	public IReadOnlyList<CharacterState> CurrentStates => currentStatesReadonly;
+
+	public PlayerStateModel()
+	{
+		currentStatesReadonly = currentStates.AsReadOnly();
+	}
 
 	public void FillCharacterStatesDict(CharacterStateHandler[] stateHandlers)
 	{

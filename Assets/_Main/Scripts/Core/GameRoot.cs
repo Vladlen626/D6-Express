@@ -98,6 +98,9 @@ namespace _Main.Scripts.Core
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(persistentSceneName));
 			// --------------
 
+			await UniTask.WhenAll(
+				audioService.PrewarmEventAsync(SoundNames.StationSound),
+				audioService.PrewarmEventAsync(SoundNames.TrainSound));
 			await audioService.PlayMusicAsync(SoundNames.StationSound, 0.5f);
 
 			var mainMenuController = new MainMenuController(uiService, game, run);

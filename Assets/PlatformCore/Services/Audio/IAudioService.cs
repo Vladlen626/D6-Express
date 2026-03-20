@@ -5,6 +5,7 @@ namespace PlatformCore.Services.Audio
 {
 	public interface IAudioService
 	{
+		UniTask PrewarmEventAsync(string eventPath);
 		UniTask PlayMusicAsync(string eventPath, float fadeTime = 0f);
 		UniTask StopMusicAsync(float fadeTime = 0f);
 		void PlaySoundParallel(string eventPath);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using _Main.Scripts.Core;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
@@ -51,6 +52,7 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> selectionControllers = new();
 		private bool gamePreviousStoped = false;
 		private bool isMatchResultFlowStarted;
+		private CancellationTokenSource startDiceGameCts;
 
 		private CouplePositionsHandler CouplePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
 		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
@@ -105,6 +107,7 @@ namespace _Main.Scripts.Dice
 
 		public void Deactivate()
 		{
+			CancelStartDiceGameFlow();
 			lifecycleService.Unregister(dicePreGameController);
 			dicePreGameController = null;
 			playerModel.PlayerStateModel.StateRemoved -= OnPostDialogueFinished;
@@ -243,61 +246,76 @@ namespace _Main.Scripts.Dice
 
 		private async UniTask StartDiceGame()
 		{
+			var cancellationToken = BeginStartDiceGameFlow();
 			gamePreviousStoped = false;
 			isMatchResultFlowStarted = false;
 			inputService.EnableDiceGameInputs();
 
 			inputService.OnDiceGameLeave += OnExitRequested;
 
-			if (!await SetupBaseModels())
+			try
 			{
-				return;
+				if (!await SetupBaseModels())
+				{
+					return;
+				}
+
+				cancellationToken.ThrowIfCancellationRequested();
+				await DiceGamePersistentControllers();
+				cancellationToken.ThrowIfCancellationRequested();
+				await itemsDisplayManager.SetupItemsDisplayAsync();
+				cancellationToken.ThrowIfCancellationRequested();
+				await SelectionProcess();
+				cancellationToken.ThrowIfCancellationRequested();
+
+				itemsDisplayManager.MoveItemsToGameSlots();
+
+				await BetProcess(cancellationToken);
+				cancellationToken.ThrowIfCancellationRequested();
+				if (!await SetupEnemyDiceList())
+				{
+					return;
+				}
+
+				cancellationToken.ThrowIfCancellationRequested();
+				var turnFlowAwaiter = awaiterService.GetPool("dice.turn_flow");
+				diceGameModel.SetTurnFlowAwaiter(turnFlowAwaiter);
+				var tableView = sceneContext.DiceGameTableView;
+				var upgradeController = new DiceGameUpgradeController(
+					diceGameModel,
+					run,
+					loggerService,
+					turnFlowAwaiter,
+					objectFactory,
+					audioService,
+					notificationService,
+					localizationService,
+					analyticsService,
+					tableView);
+				var processController = new DiceGameProcessController(
+					loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, turnFlowAwaiter);
+				var itemTargetingController = new DiceItemTargetingController(diceGameModel);
+
+				gameControllers.AddRange(new IBaseController[]
+				{
+					upgradeController,
+					processController,
+					itemTargetingController,
+					new DiceItemTargetingVisualController(diceGameModel, itemViewRegistry, tableView, itemTargetingController),
+					new DiceGameUpgradeVisualController(uiService, upgradeController, turnFlowAwaiter, resourceService, loggerService),
+					new DiceGameCombinationsDisplayController(diceGameModel, tableView, turnFlowAwaiter, audioService),
+					new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
+					new DiceGameViewController(tableView, diceGameModel, cameraShakeService, notificationService),
+					new DiceGameResultController(diceGameModel)
+				});
+
+				await lifecycleService.RegisterControllersGroupAsync(gameControllers);
+				cancellationToken.ThrowIfCancellationRequested();
+				processController.TryStartInitialRoll();
 			}
-			await DiceGamePersistentControllers();
-			await itemsDisplayManager.SetupItemsDisplayAsync();
-			await SelectionProcess();
-
-			itemsDisplayManager.MoveItemsToGameSlots();
-
-			await BetProcess();
-			if (!await SetupEnemyDiceList())
+			catch (OperationCanceledException)
 			{
-				return;
 			}
-
-			var turnFlowAwaiter = awaiterService.GetPool("dice.turn_flow");
-			diceGameModel.SetTurnFlowAwaiter(turnFlowAwaiter);
-			var tableView = sceneContext.DiceGameTableView;
-			var upgradeController = new DiceGameUpgradeController(
-				diceGameModel,
-				run,
-				loggerService,
-				turnFlowAwaiter,
-				objectFactory,
-				audioService,
-				notificationService,
-				localizationService,
-				analyticsService,
-				tableView);
-			var processController = new DiceGameProcessController(
-				loggerService, diceGameModel, cameraShakeService, audioService, run, notificationService, turnFlowAwaiter);
-			var itemTargetingController = new DiceItemTargetingController(diceGameModel);
-
-			gameControllers.AddRange(new IBaseController[]
-			{
-				upgradeController,
-				processController,
-				itemTargetingController,
-				new DiceItemTargetingVisualController(diceGameModel, itemViewRegistry, tableView, itemTargetingController),
-				new DiceGameUpgradeVisualController(uiService, upgradeController, turnFlowAwaiter, resourceService, loggerService),
-				new DiceGameCombinationsDisplayController(diceGameModel, tableView, turnFlowAwaiter, audioService),
-				new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
-				new DiceGameViewController(tableView, diceGameModel, cameraShakeService, notificationService),
-				new DiceGameResultController(diceGameModel)
-			});
-
-			await lifecycleService.RegisterControllersGroupAsync(gameControllers);
-			processController.TryStartInitialRoll();
 		}
 
 		// ReSharper disable Unity.PerformanceAnalysis
@@ -306,6 +324,7 @@ namespace _Main.Scripts.Dice
 			inputService.OnDiceGameLeave -= OnExitRequested;
 			playerModel.PlayerStateModel.StateRemoved -= OnPostDialogueFinished;
 			isMatchResultFlowStarted = false;
+			CancelStartDiceGameFlow();
 
 			if (gamePreviousStoped)
 			{
@@ -489,7 +508,7 @@ namespace _Main.Scripts.Dice
 			return true;
 		}
 
-		private async UniTask BetProcess()
+		private async UniTask BetProcess(CancellationToken cancellationToken)
 		{
 			diceGameModel.ChangeDiceGameState(DiceGameState.BET);
 
@@ -499,14 +518,38 @@ namespace _Main.Scripts.Dice
 				await lifecycleService.RegisterAsync(controller);
 			}
 
-			await UniTask.WaitUntil(() => diceGameModel.DiceGameState != DiceGameState.BET);
-
-			if (diceGameModel.DiceGameState == DiceGameState.GAME)
+			try
 			{
-				playerModel.InventoryModel.TakeCash(diceGameModel.BetSize);
+				await UniTask.WaitUntil(() => diceGameModel.DiceGameState != DiceGameState.BET, cancellationToken: cancellationToken);
+
+				if (diceGameModel.DiceGameState == DiceGameState.GAME)
+				{
+					playerModel.InventoryModel.TakeCash(diceGameModel.BetSize);
+				}
+			}
+			finally
+			{
+				ClenUpBetControllers();
+			}
+		}
+
+		private CancellationToken BeginStartDiceGameFlow()
+		{
+			CancelStartDiceGameFlow();
+			startDiceGameCts = new CancellationTokenSource();
+			return startDiceGameCts.Token;
+		}
+
+		private void CancelStartDiceGameFlow()
+		{
+			if (startDiceGameCts == null)
+			{
+				return;
 			}
 
-			ClenUpBetControllers();
+			startDiceGameCts.Cancel();
+			startDiceGameCts.Dispose();
+			startDiceGameCts = null;
 		}
 
 		private void ClenUpPersistentControllers()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using FMOD;
 using FMOD.Studio;
 using UnityEngine;
 using FMODUnity;
@@ -18,6 +19,7 @@ namespace PlatformCore.Services.Audio
 		private bool _isMuted;
 		
 		private Dictionary<string, EventInstance> _eventInstances = new ();
+		private readonly HashSet<string> _prewarmedEvents = new(StringComparer.Ordinal);
 
 		public bool IsMuted => _isMuted;
 		public float MasterVolume => _masterVolume;
@@ -29,12 +31,68 @@ namespace PlatformCore.Services.Audio
 			_logger = logger;
 		}
 
+		public async UniTask PrewarmEventAsync(string eventPath)
+		{
+			if (string.IsNullOrWhiteSpace(eventPath) || _prewarmedEvents.Contains(eventPath))
+			{
+				return;
+			}
+
+			try
+			{
+				var eventDescription = RuntimeManager.GetEventDescription(eventPath);
+				if (!eventDescription.isValid())
+				{
+					_logger?.LogError($"[AudioService] Failed to prewarm event, invalid description: {eventPath}");
+					return;
+				}
+
+				var loadResult = eventDescription.loadSampleData();
+				if (loadResult != RESULT.OK)
+				{
+					_logger?.Log($"[AudioService] Sample prewarm request returned {loadResult} for {eventPath}");
+				}
+
+				const int maxFramesToWait = 120;
+				for (int frame = 0; frame < maxFramesToWait; frame++)
+				{
+					var stateResult = eventDescription.getSampleLoadingState(out var loadingState);
+					if (stateResult != RESULT.OK)
+					{
+						_logger?.LogError($"[AudioService] Failed to check sample loading state for {eventPath}: {stateResult}");
+						return;
+					}
+
+					if (loadingState == LOADING_STATE.LOADED)
+					{
+						_prewarmedEvents.Add(eventPath);
+						return;
+					}
+
+					if (loadingState == LOADING_STATE.UNLOADED)
+					{
+						break;
+					}
+
+					await UniTask.Yield();
+				}
+
+				_prewarmedEvents.Add(eventPath);
+			}
+			catch (Exception ex)
+			{
+				_logger?.LogError($"[AudioService] Failed to prewarm event {eventPath}: {ex.Message}");
+			}
+		}
+
 		public async UniTask PlayMusicAsync(string eventPath, float fadeTime = 1f)
 		{
 			_logger?.Log($"[AudioService] Playing music: {eventPath}");
 
 			try
 			{
+				await PrewarmEventAsync(eventPath);
+
 				if (_currentMusic.isValid())
 				{
 					_currentMusic.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
