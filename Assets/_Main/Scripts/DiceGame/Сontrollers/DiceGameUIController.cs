@@ -11,7 +11,6 @@ public class DiceGameUIController : BaseContextController<DiceGameUIView>
         "dice_ui_to_board",
         "dice_ui_to_combinations",
         "dice_ui_to_inventory",
-        "dice_ui_to_watches",
     };
 
     private readonly IInputService inputService;
