@@ -12,14 +12,22 @@ public class WinViewController : BaseContextController<UIEndView>, IGameStateCha
 	private readonly IInputService inputService;
 	private readonly ICursorService cursorService;
 	private readonly ConfigService configService;
+	private readonly PlayerModel playerModel;
 	private TextsConfig textsConfig;
 
-	public WinViewController(IUIService uiService, D6Game game, IInputService inputService, ICursorService cursorService, ConfigService configService) : base(uiService)
+	public WinViewController(
+		IUIService uiService,
+		D6Game game,
+		IInputService inputService,
+		ICursorService cursorService,
+		ConfigService configService,
+		PlayerModel playerModel) : base(uiService)
 	{
 		this.game = game;
 		this.inputService = inputService;
 		this.cursorService = cursorService;
 		this.configService = configService;
+		this.playerModel = playerModel;
 	}
 
 	public IEnumerable<(GameStateTransitionTask task, GameStateChangeFunc func)> GetStateChangeFuncs()
@@ -60,6 +68,7 @@ public class WinViewController : BaseContextController<UIEndView>, IGameStateCha
 		_context.SetPostcardColor(_context.colorWin);
 
 		_context.Show();
+		_context.PlayWinCashAnimation(playerModel.InventoryModel.CashCount);
 	}
 
 	private void HideContext()

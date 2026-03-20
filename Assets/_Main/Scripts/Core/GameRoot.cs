@@ -138,7 +138,13 @@ namespace _Main.Scripts.Core
 
 			controllersList.Add(new AnalyticsController(game, run, analyticsService));
 
-			var winViewController = new WinViewController(uiService, game, inputService, cursorService, configService);
+			var winViewController = new WinViewController(
+				uiService,
+				game,
+				inputService,
+				cursorService,
+				configService,
+				playerModel);
 			var loseViewController =
 				new LoseViewController(uiService, game, inputService, cursorService, configService);
 			var diceGameGlobalController = new DiceGameGlobalController(

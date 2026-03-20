@@ -22,7 +22,7 @@ namespace _Main.Scripts.UI
 
 		public void SetCashCountText(int value)
 		{
-			cashCountText.SetText("$: {0:0}", value);
+			UIUtils.SetCashText(cashCountText, value);
 		}
 
 		public void SetTicksText(string id, params string[] args)

@@ -61,6 +61,7 @@ public class LoseViewController : BaseContextController<UIEndView>, IGameStateCh
 		_context.SetPostcardColor(_context.colorLose);
 
 		_context.Show();
+		_context.PlayLoseCashAnimation();
 	}
 
 	private void HideContext()
