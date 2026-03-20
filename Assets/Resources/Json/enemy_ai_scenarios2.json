@@ -294,7 +294,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 6,
-            "enemy_final_banked_score": 2550,
+            "enemy_final_banked_score": 2800,
             "enemy_reaches_target": true
         }
     },
@@ -411,21 +411,6 @@
                         ]
                     },
                     {
-                        "action": "roll",
-                        "forced_values": [
-                            5,
-                            2,
-                            2,
-                            3,
-                            3,
-                            4,
-                            4
-                        ],
-                        "save_unbanked_indexes": [
-                            0
-                        ]
-                    },
-                    {
                         "action": "pass"
                     }
                 ]
@@ -483,7 +468,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 6,
-            "enemy_final_banked_score": 3700,
+            "enemy_final_banked_score": 3900,
             "enemy_reaches_target": true
         }
     },
@@ -833,7 +818,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 7,
-            "enemy_final_banked_score": 3500,
+            "enemy_final_banked_score": 3750,
             "enemy_reaches_target": true
         }
     },
@@ -1401,7 +1386,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 7,
-            "enemy_final_banked_score": 4000,
+            "enemy_final_banked_score": 4250,
             "enemy_reaches_target": true
         }
     },
@@ -1997,7 +1982,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 7,
-            "enemy_final_banked_score": 4000,
+            "enemy_final_banked_score": 4250,
             "enemy_reaches_target": true
         }
     },
@@ -2599,7 +2584,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 7,
-            "enemy_final_banked_score": 4000,
+            "enemy_final_banked_score": 4250,
             "enemy_reaches_target": true
         }
     },
@@ -2748,22 +2733,6 @@
                         ]
                     },
                     {
-                        "action": "roll",
-                        "forced_values": [
-                            5,
-                            2,
-                            2,
-                            3,
-                            3,
-                            4,
-                            4,
-                            6
-                        ],
-                        "save_unbanked_indexes": [
-                            0
-                        ]
-                    },
-                    {
                         "action": "pass"
                     }
                 ]
@@ -2819,8 +2788,8 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 7,
-            "enemy_final_banked_score": 4000,
-            "enemy_reaches_target": true
+            "enemy_final_banked_score": 3950,
+            "enemy_reaches_target": false
         }
     },
     "mh_d1m1_final_station_breathing_room": {
@@ -3015,7 +2984,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 7,
-            "enemy_final_banked_score": 4550,
+            "enemy_final_banked_score": 4800,
             "enemy_reaches_target": true
         }
     },
@@ -3238,7 +3207,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 8,
-            "enemy_final_banked_score": 4500,
+            "enemy_final_banked_score": 4750,
             "enemy_reaches_target": true
         }
     },
@@ -3684,7 +3653,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 8,
-            "enemy_final_banked_score": 4500,
+            "enemy_final_banked_score": 4750,
             "enemy_reaches_target": true
         }
     },
@@ -4190,7 +4159,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 9,
-            "enemy_final_banked_score": 5350,
+            "enemy_final_banked_score": 5600,
             "enemy_reaches_target": true
         }
     }

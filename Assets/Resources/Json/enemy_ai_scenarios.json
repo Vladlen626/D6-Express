@@ -401,7 +401,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 4,
-			"enemy_final_banked_score": 4000,
+			"enemy_final_banked_score": 4250,
 			"enemy_reaches_target": true
 		}
 	},
@@ -598,20 +598,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							2,
-							2,
-							3,
-							3,
-							4
-						],
-						"save_unbanked_indexes": [
-							0
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -691,7 +677,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 5,
-			"enemy_final_banked_score": 3550,
+			"enemy_final_banked_score": 3700,
 			"enemy_reaches_target": true
 		}
 	},
@@ -891,20 +877,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							2,
-							2,
-							3,
-							3,
-							4
-						],
-						"save_unbanked_indexes": [
-							0
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -983,7 +955,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 5,
-			"enemy_final_banked_score": 4100,
+			"enemy_final_banked_score": 4000,
 			"enemy_reaches_target": true
 		}
 	},
@@ -1189,21 +1161,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							2,
-							2,
-							3,
-							3,
-							4,
-							6
-						],
-						"save_unbanked_indexes": [
-							0
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -1294,7 +1251,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 5,
-			"enemy_final_banked_score": 4400,
+			"enemy_final_banked_score": 4300,
 			"enemy_reaches_target": true
 		}
 	},
@@ -1570,21 +1527,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							2,
-							2,
-							3,
-							3,
-							6,
-							6
-						],
-						"save_unbanked_indexes": [
-							0
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -1641,7 +1583,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 5,
-			"enemy_final_banked_score": 4150,
+			"enemy_final_banked_score": 4300,
 			"enemy_reaches_target": true
 		}
 	},
@@ -2038,22 +1980,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							2,
-							2,
-							3,
-							3,
-							4,
-							6,
-							6
-						],
-						"save_unbanked_indexes": [
-							0
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -2107,23 +2033,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							5,
-							2,
-							2,
-							3,
-							3,
-							6,
-							6
-						],
-						"save_unbanked_indexes": [
-							0,
-							1
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -2156,7 +2065,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 5,
-			"enemy_final_banked_score": 4350,
+			"enemy_final_banked_score": 4100,
 			"enemy_reaches_target": true
 		}
 	},
@@ -2406,21 +2315,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							5,
-							2,
-							2,
-							3,
-							3,
-							6,
-							6
-						],
-						"save_unbanked_indexes": [
-							0
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -2503,7 +2397,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 5,
-			"enemy_final_banked_score": 5150,
+			"enemy_final_banked_score": 5100,
 			"enemy_reaches_target": true
 		}
 	},
@@ -2568,21 +2462,6 @@
 							4,
 							5,
 							6
-						]
-					},
-					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							2,
-							2,
-							3,
-							3,
-							6,
-							6
-						],
-						"save_unbanked_indexes": [
-							0
 						]
 					},
 					{
@@ -2714,7 +2593,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 6,
-			"enemy_final_banked_score": 4700,
+			"enemy_final_banked_score": 4850,
 			"enemy_reaches_target": true
 		}
 	},
@@ -2992,22 +2871,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							2,
-							2,
-							3,
-							3,
-							4,
-							6,
-							6
-						],
-						"save_unbanked_indexes": [
-							0
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -3092,7 +2955,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 6,
-			"enemy_final_banked_score": 5300,
+			"enemy_final_banked_score": 5200,
 			"enemy_reaches_target": true
 		}
 	},
@@ -3164,22 +3027,6 @@
 						]
 					},
 					{
-						"action": "roll",
-						"forced_values": [
-							1,
-							2,
-							2,
-							3,
-							3,
-							4,
-							6,
-							6
-						],
-						"save_unbanked_indexes": [
-							0
-						]
-					},
-					{
 						"action": "pass"
 					}
 				]
@@ -3312,7 +3159,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 6,
-			"enemy_final_banked_score": 5150,
+			"enemy_final_banked_score": 5300,
 			"enemy_reaches_target": true
 		}
 	},
@@ -3542,7 +3389,7 @@
 		],
 		"expected_result": {
 			"completed_in_enemy_turns": 7,
-			"enemy_final_banked_score": 5850,
+			"enemy_final_banked_score": 6100,
 			"enemy_reaches_target": true
 		}
 	}

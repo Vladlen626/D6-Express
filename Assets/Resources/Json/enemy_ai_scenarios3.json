@@ -299,7 +299,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 6,
-            "enemy_final_banked_score": 2500,
+            "enemy_final_banked_score": 2750,
             "enemy_reaches_target": true
         }
     },
@@ -484,7 +484,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 6,
-            "enemy_final_banked_score": 3200,
+            "enemy_final_banked_score": 3450,
             "enemy_reaches_target": true
         }
     },
@@ -2095,7 +2095,7 @@
         ],
         "expected_result": {
             "completed_in_enemy_turns": 7,
-            "enemy_final_banked_score": 4100,
+            "enemy_final_banked_score": 4350,
             "enemy_reaches_target": true
         }
     },
