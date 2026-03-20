@@ -129,15 +129,19 @@ namespace _Main.Scripts.Core.Services
 
 		public void EnablePlayerInputs()
 		{
-			if (TryUnlock(InputType.PLAYER))
+			if (TryUnlock(InputType.PLAYER_CORE))
 			{
 				_actions.Player.Enable();
+				if (IsLocked(InputType.LOOK))
+				{
+					_actions.Player.Look.Disable();
+				}
 			}
 		}
 
 		public void DisablePlayerInputs()
 		{
-			if (TryLock(InputType.PLAYER))
+			if (TryLock(InputType.PLAYER_CORE))
 			{
 				_actions.Player.Disable();
 			}
@@ -147,7 +151,10 @@ namespace _Main.Scripts.Core.Services
 		{
 			if (TryUnlock(InputType.LOOK))
 			{
-				_actions.Player.Look.Enable();
+				if (!IsLocked(InputType.PLAYER_CORE))
+				{
+					_actions.Player.Look.Enable();
+				}
 			}
 		}
 

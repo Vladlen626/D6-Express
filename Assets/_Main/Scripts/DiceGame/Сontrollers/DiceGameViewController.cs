@@ -11,6 +11,7 @@ namespace _Main.Scripts.Dice
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly GlobalNotificationService notificationService;
 		private TableModel tableModel => diceGameModel.tableModel;
+		private bool isMatchResolved;
 
 		public DiceGameViewController(
 			DiceTableView diceTableView,
@@ -25,9 +26,12 @@ namespace _Main.Scripts.Dice
 		}
 		public void Activate()
 		{
+			isMatchResolved = false;
 			diceGameModel.OnTargetPointsChanged += OnTargetPointsChangedHandler;
 			diceGameModel.OnCurrentTurnChanged += OnCurrentTurnChangedHandler;
 			diceGameModel.OnItemTargetingChanged += OnItemTargetingChangedHandler;
+			diceGameModel.OnGameConditionPassed += OnGameConditionPassedHandler;
+			diceGameModel.OnGameConditionFailed += OnGameConditionFailedHandler;
 
 			diceTableView.OnPassClicked += diceGameModel.SendPassClicked;
 			diceTableView.OnRollClicked += diceGameModel.SendRollClicked;
@@ -55,6 +59,8 @@ namespace _Main.Scripts.Dice
 			diceGameModel.OnTargetPointsChanged -= OnTargetPointsChangedHandler;
 			diceGameModel.OnCurrentTurnChanged -= OnCurrentTurnChangedHandler;
 			diceGameModel.OnItemTargetingChanged -= OnItemTargetingChangedHandler;
+			diceGameModel.OnGameConditionPassed -= OnGameConditionPassedHandler;
+			diceGameModel.OnGameConditionFailed -= OnGameConditionFailedHandler;
 
 			diceTableView.OnPassClicked -= diceGameModel.SendPassClicked;
 			diceTableView.OnRollClicked -= diceGameModel.SendRollClicked;
@@ -109,6 +115,18 @@ namespace _Main.Scripts.Dice
 			diceTableView.SetPreviewPointsText(oldValue, newValue);
 		}
 
+		private void OnGameConditionPassedHandler()
+		{
+			isMatchResolved = true;
+			DisableButtons();
+		}
+
+		private void OnGameConditionFailedHandler()
+		{
+			isMatchResolved = true;
+			DisableButtons();
+		}
+
 		private void OnRollClickedHandler()
 		{
 			cameraShakeService.ShakeAsync(0.3f, 0.05f);
@@ -130,9 +148,10 @@ namespace _Main.Scripts.Dice
 			bool isTargetingActive = diceGameModel.IsItemTargetingActive;
 			bool canPass = hasValidComboSelected && !isTargetingActive;
 			bool canRoll = (tableModel.isFirstRoll || hasValidComboSelected) && !isTargetingActive;
+			bool canInteract = !isMatchResolved && diceGameModel.IsPlayerActionPhase;
 
-			diceTableView.SetButtonInteractable("Roll", canRoll && diceGameModel.IsPlayerTurn);
-			diceTableView.SetButtonInteractable("Pass", canPass && diceGameModel.IsPlayerTurn);
+			diceTableView.SetButtonInteractable("Roll", canRoll && canInteract);
+			diceTableView.SetButtonInteractable("Pass", canPass && canInteract);
 		}
 
 		public void DisableButtons()

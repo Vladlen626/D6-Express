@@ -95,7 +95,7 @@ public class InteractorPlayer : Interactor
 
 	private void OnInteract()
 	{
-		if (selectedInteractable != null)
+		if (selectedInteractable != null && CanInteract(selectedInteractable))
 		{
 			audioService?.PlaySound(SoundNames.Button);
 			Interact(selectedInteractable);
