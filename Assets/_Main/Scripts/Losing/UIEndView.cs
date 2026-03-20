@@ -69,12 +69,12 @@ public class UIEndView : UIBaseElement
 
     public void SetWinImage(bool enable)
     {
-        imageWin.gameObject.SetActive(enable);
+        // imageWin.gameObject.SetActive(enable);
     }
 
     public void SetLoseImage(bool enable)
     {
-        imageLose.gameObject.SetActive(enable);
+        // imageLose.gameObject.SetActive(enable);
     }
 
     public void SetPostcardColor(Color color)

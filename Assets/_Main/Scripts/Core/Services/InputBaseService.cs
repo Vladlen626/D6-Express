@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using PlatformCore.Services;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -7,14 +8,17 @@ namespace _Main.Scripts.Core.Services
 {
 	public class InputBaseService : IInputService, ISyncInitializable
 	{
+		[Flags]
 		private enum InputType
 		{
-			UI,
-			PLAYER,
-			DICE_GAME,
-			DEBUG,
-			SPEECH,
-			LOOK
+			NONE = 0,
+			LOOK = 1 << 0,
+			PLAYER_CORE = 1 << 1,
+			PLAYER = PLAYER_CORE | LOOK,
+			UI = 1 << 2,
+			DICE_GAME = 1 << 3,
+			DEBUG = 1 << 4,
+			SPEECH = 1 << 5
 		}
 
 		public event Action OnJumpPressed;
@@ -49,11 +53,27 @@ namespace _Main.Scripts.Core.Services
 		private Vector2 _lookInput;
 		private bool _cancelInput;
 
-		private readonly int[] lockCount = new int[Enum.GetValues(typeof(InputType)).Length];
+		private static readonly InputType[] singleFlags =
+		{
+			InputType.UI,
+			InputType.PLAYER_CORE,
+			InputType.DICE_GAME,
+			InputType.DEBUG,
+			InputType.SPEECH,
+			InputType.LOOK
+		};
+
+		private readonly Dictionary<InputType, int> lockCount = new Dictionary<InputType, int>();
 
 		public void Initialize()
 		{
 			_actions = new InputSystem_Actions();
+
+			lockCount.Clear();
+			foreach (var flag in singleFlags)
+			{
+				lockCount[flag] = 0;
+			}
 
 			BindActions();
 			EnableAllInputs();
@@ -173,23 +193,83 @@ namespace _Main.Scripts.Core.Services
 
 		private bool TryLock(InputType type)
 		{
-			ref int c = ref lockCount[(int)type];
-			c++;
-			return c == 1;
+			bool wasLocked = IsLocked(type);
+			foreach (var flag in EnumerateFlags(type))
+			{
+				lockCount[flag]++;
+			}
+
+			bool isLocked = IsLocked(type);
+			Debug.Log($"[InputBaseService] TryLock {type} -> locked={isLocked}, counts={FormatCounts(type)}");
+			return !wasLocked && isLocked;
 		}
 
 		private bool TryUnlock(InputType type)
 		{
-			ref int c = ref lockCount[(int)type];
-			if (c == 0)
+			bool wasLocked = IsLocked(type);
+			if (!wasLocked)
 			{
+				Debug.Log($"[InputBaseService] TryUnlock {type} ignored -> counts={FormatCounts(type)}");
 				return true;
 			}
 			else
 			{
-				c--;
-				return c == 0;
+				foreach (var flag in EnumerateFlags(type))
+				{
+					if (lockCount[flag] > 0)
+					{
+						lockCount[flag]--;
+					}
+				}
+
+				bool isLocked = IsLocked(type);
+				Debug.Log($"[InputBaseService] TryUnlock {type} -> locked={isLocked}, counts={FormatCounts(type)}");
+				return !isLocked;
 			}
+		}
+
+		private bool IsLocked(InputType type)
+		{
+			foreach (var flag in EnumerateFlags(type))
+			{
+				if (lockCount[flag] > 0)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private IEnumerable<InputType> EnumerateFlags(InputType type)
+		{
+			foreach (var flag in singleFlags)
+			{
+				if (type.HasFlag(flag))
+				{
+					yield return flag;
+				}
+			}
+		}
+
+		private string FormatCounts(InputType type)
+		{
+			bool first = true;
+			var builder = new System.Text.StringBuilder();
+			foreach (var flag in EnumerateFlags(type))
+			{
+				if (!first)
+				{
+					builder.Append(", ");
+				}
+
+				first = false;
+				builder.Append(flag);
+				builder.Append("=");
+				builder.Append(lockCount[flag]);
+			}
+
+			return builder.ToString();
 		}
 
 		private void BindActions()
