@@ -8,6 +8,11 @@ using UnityEngine;
 
 public class MovementController : IBaseController, IActivatable, IUpdatable
 {
+	private const float CameraBobAmplitude = 0.003f;
+	private const float CameraBobFrequency = 7f;
+	private const float CameraBobSprintFrequencyMultiplier = 1.2f;
+	private const float CameraBobReturnSpeed = 6f;
+
 	private readonly PlayerModel playerModel;
 	private readonly CharacterController controller;
 	private readonly PlayerView playerView;
@@ -16,6 +21,9 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	private CameraState cameraState;
 	private Vector3 velocity;
+	private Vector3 cameraRootBaseLocalPosition;
+	private float cameraBobPhase;
+	private float cameraBobOffsetY;
 
 	private Vector2 MoveInput => inputService.Move;
 	private Vector2 LookInput => inputService.Look;
@@ -34,6 +42,8 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	public void Activate()
 	{
 		cameraState = playerView.GetCameraState(CharacterState.DEFAULT);
+		cameraRootBaseLocalPosition = playerView.CameraRoot.localPosition;
+		ResetCameraBob();
 
 		playerModel.PlayerStateModel.StateAdded += OnCharacterStateChanged;
 		playerModel.PlayerStateModel.StateRemoved += OnCharacterStateChanged;
@@ -41,6 +51,8 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	public void Deactivate()
 	{
+		ResetCameraBob();
+
 		playerModel.PlayerStateModel.StateRemoved -= OnCharacterStateChanged;
 		playerModel.PlayerStateModel.StateAdded -= OnCharacterStateChanged;
 	}
@@ -65,6 +77,8 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 			velocity.y += playerView.gravity * deltaTime;
 			controller.Move(velocity * deltaTime);
 		}
+
+		UpdateCameraBob(deltaTime);
 
 		var rotationTransform = cameraState.rotationType == RotationType.HEAD ? playerView.Head : playerView.transform;
 
@@ -93,6 +107,8 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 
 	private void OnCharacterStateChanged(CharacterState state)
 	{
+		ResetCameraBob();
+
 		if (state == CharacterState.DICE_GAME)
 		{
 			ResetCameraRotation();
@@ -118,5 +134,38 @@ public class MovementController : IBaseController, IActivatable, IUpdatable
 	private void ResetCameraRotation()
 	{
 		playerView.CameraRoot.DOLocalRotate(Vector3.zero, 0.5f);
+	}
+
+	private void UpdateCameraBob(float deltaTime)
+	{
+		bool isDefaultState = playerModel.PlayerStateModel.CurrentStates.Count == 0;
+		bool isMoving = isDefaultState && controller.enabled && controller.isGrounded && MoveInput.sqrMagnitude > 0.01f;
+		isMoving = isMoving && playerView.EnableMovementCameraBob;
+		float targetOffsetY = 0f;
+
+		if (isMoving)
+		{
+			float frequency = CameraBobFrequency;
+			if (IsSprint)
+			{
+				frequency *= CameraBobSprintFrequencyMultiplier;
+			}
+
+			cameraBobPhase += deltaTime * frequency;
+			targetOffsetY = Mathf.Sin(cameraBobPhase) * CameraBobAmplitude;
+		}
+
+		cameraBobOffsetY = Mathf.MoveTowards(cameraBobOffsetY, targetOffsetY, CameraBobReturnSpeed * deltaTime);
+
+		var localPosition = cameraRootBaseLocalPosition;
+		localPosition.y += cameraBobOffsetY;
+		playerView.CameraRoot.localPosition = localPosition;
+	}
+
+	private void ResetCameraBob()
+	{
+		cameraBobPhase = 0f;
+		cameraBobOffsetY = 0f;
+		playerView.CameraRoot.localPosition = cameraRootBaseLocalPosition;
 	}
 }
