@@ -113,21 +113,18 @@ namespace _Main.Scripts.Dice
 				var renderer = renderers[i];
 				if (!renderer)
 				{
-					throw new InvalidOperationException(
-						$"[ItemDisabledVisual] Target renderer at index {i} is not assigned.");
+					continue;
 				}
 
 				if (!uniqueRenderers.Add(renderer))
 				{
-					throw new InvalidOperationException(
-						$"[ItemDisabledVisual] Duplicate renderer '{renderer.name}' in target list.");
+					continue;
 				}
 
 				var sourceMaterials = renderer.sharedMaterials ?? Array.Empty<Material>();
 				if (sourceMaterials.Length == 0)
 				{
-					throw new InvalidOperationException(
-						$"[ItemDisabledVisual] Renderer '{renderer.name}' has no materials.");
+					continue;
 				}
 			}
 		}

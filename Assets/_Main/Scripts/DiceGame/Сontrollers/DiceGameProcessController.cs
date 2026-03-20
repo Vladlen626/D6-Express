@@ -23,8 +23,6 @@ namespace _Main.Scripts.Dice
 		private TableModel tableModel => diceGameModel.tableModel;
 		private Tween[] saveSelectedTweens = Array.Empty<Tween>();
 		private Tween[] resetAllDiceTweens = Array.Empty<Tween>();
-		private bool isWaitingForCommittedScoreChunks;
-		private int pendingCommittedScore;
 
 		public bool IsProcessing { get; private set; }
 
@@ -53,7 +51,6 @@ namespace _Main.Scripts.Dice
 			diceGameModel.OnRollClicked += HandleRoll;
 			diceGameModel.OnPassClicked += HandlePass;
 			diceGameModel.DiceValuesChanged += OnDiceValuesChanged;
-			diceGameModel.CombinationScoreChunkLanded += OnCombinationScoreChunkLandedHandler;
 
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
@@ -70,9 +67,6 @@ namespace _Main.Scripts.Dice
 			diceGameModel.OnRollClicked -= HandleRoll;
 			diceGameModel.OnPassClicked -= HandlePass;
 			diceGameModel.DiceValuesChanged -= OnDiceValuesChanged;
-			diceGameModel.CombinationScoreChunkLanded -= OnCombinationScoreChunkLandedHandler;
-			isWaitingForCommittedScoreChunks = false;
-			pendingCommittedScore = 0;
 
 			foreach (var diceModel in diceGameModel.CurrentDiceModelList)
 			{
@@ -384,19 +378,10 @@ namespace _Main.Scripts.Dice
 
 			await UniTaskUtils.WaitAllTweens(tweens, tweenCount);
 			var committedSnapshot = DiceCombinationCardsSnapshotBuilder.Build(combinationResult, activeScoringService);
-			pendingCommittedScore = points;
-			isWaitingForCommittedScoreChunks = true;
 			diceGameModel.PublishCombinationCommitted(committedSnapshot);
 
 			await WaitTurnFlowAsync();
-			isWaitingForCommittedScoreChunks = false;
-
-			if (pendingCommittedScore > 0)
-			{
-				tableModel.AddTurnPoints(pendingCommittedScore);
-			}
-
-			pendingCommittedScore = 0;
+			tableModel.AddTurnPoints(points);
 			logger?.Log(
 				$"{BuildFlowContext("save_selected")} selected={selected.Length} " +
 				$"combo_count={combinationResult.Combinations?.Count ?? 0} added_points={points}");
@@ -443,23 +428,6 @@ namespace _Main.Scripts.Dice
 			}
 
 			await UniTaskUtils.WaitAllTweens(tweens, tweenCount);
-		}
-
-		private void OnCombinationScoreChunkLandedHandler(int scoreChunk)
-		{
-			if (!isWaitingForCommittedScoreChunks)
-			{
-				return;
-			}
-
-			if (scoreChunk <= 0 || pendingCommittedScore <= 0)
-			{
-				return;
-			}
-
-			var appliedScore = scoreChunk > pendingCommittedScore ? pendingCommittedScore : scoreChunk;
-			pendingCommittedScore -= appliedScore;
-			tableModel.AddTurnPoints(appliedScore);
 		}
 
 		private void UpdateUI()

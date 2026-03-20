@@ -36,16 +36,16 @@ public class GlobalNotificationService : BaseAsyncService
 	/// Shows a localized banner immediately. Duration is controlled by <paramref name="holdSeconds"/>
 	/// plus the animation timings inside <c>UIGlobalNotificationView</c>.
 	/// </summary>
-	public void ShowBanner(string id, float holdSeconds = 0.9f, bool isNegative = false)
+	public void ShowBanner(string id, float holdSeconds = 0.9f, bool isNegative = false, bool playSound = true)
 	{
-		ShowBannerAsync(id, holdSeconds, isNegative).Forget();
+		ShowBannerAsync(id, holdSeconds, isNegative, playSound).Forget();
 	}
 
 	/// <summary>
 	/// Shows a localized banner and awaits its completion. Duration is controlled by <paramref name="holdSeconds"/>
 	/// plus the animation timings inside <c>UIGlobalNotificationView</c>.
 	/// </summary>
-	public UniTask ShowBannerAsync(string id, float holdSeconds = 0.9f, bool isNegative = false)
+	public UniTask ShowBannerAsync(string id, float holdSeconds = 0.9f, bool isNegative = false, bool playSound = true)
 	{
 		if (string.IsNullOrWhiteSpace(id))
 		{
@@ -53,14 +53,14 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		var message = localizationService != null ? localizationService.GetLocalized(id) : id;
-		return ShowBannerRawAsync(message, holdSeconds, isNegative);
+		return ShowBannerRawAsync(message, holdSeconds, isNegative, playSound);
 	}
 
 	/// <summary>
 	/// Shows a formatted localized banner (string.Format) and awaits its completion.
 	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
 	/// </summary>
-	public UniTask ShowBannerAsync(string id, string[] args, float holdSeconds = 0.9f, bool isNegative = false)
+	public UniTask ShowBannerAsync(string id, string[] args, float holdSeconds = 0.9f, bool isNegative = false, bool playSound = true)
 	{
 		if (string.IsNullOrWhiteSpace(id))
 		{
@@ -69,23 +69,23 @@ public class GlobalNotificationService : BaseAsyncService
 
 		var template = localizationService != null ? localizationService.GetLocalized(id) : id;
 		var message = args != null && args.Length > 0 ? string.Format(template, args) : template;
-		return ShowBannerRawAsync(message, holdSeconds, isNegative);
+		return ShowBannerRawAsync(message, holdSeconds, isNegative, playSound);
 	}
 
 	/// <summary>
 	/// Shows a raw banner message immediately (no localization).
 	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
 	/// </summary>
-	public void ShowBannerRaw(string message, float holdSeconds = 0.9f, bool isNegative = false)
+	public void ShowBannerRaw(string message, float holdSeconds = 0.9f, bool isNegative = false, bool playSound = true)
 	{
-		ShowBannerRawAsync(message, holdSeconds, isNegative).Forget();
+		ShowBannerRawAsync(message, holdSeconds, isNegative, playSound).Forget();
 	}
 
 	/// <summary>
 	/// Shows a raw banner message (no localization) and awaits its completion.
 	/// Duration is controlled by <paramref name="holdSeconds"/> plus banner animation timings.
 	/// </summary>
-	public async UniTask ShowBannerRawAsync(string message, float holdSeconds = 0.9f, bool isNegative = false)
+	public async UniTask ShowBannerRawAsync(string message, float holdSeconds = 0.9f, bool isNegative = false, bool playSound = true)
 	{
 		if (string.IsNullOrWhiteSpace(message))
 		{
@@ -99,7 +99,10 @@ public class GlobalNotificationService : BaseAsyncService
 		}
 
 		bannerView.Interrupt();
-		PlayNotificationSound(isNegative);
+		if (playSound)
+		{
+			PlayNotificationSound(isNegative);
+		}
 		await bannerView.PlayAsync(message, holdSeconds, isNegative);
 	}
 

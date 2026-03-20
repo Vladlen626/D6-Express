@@ -29,7 +29,6 @@ namespace _Main.Scripts.Dice
 		public event Action<DiceCombinationResult> UpgradeRequested;
 		public event Action<DiceCombinationCardsSnapshot> CombinationPreviewChanged;
 		public event Action<DiceCombinationCardsSnapshot> CombinationCommitted;
-		public event Action<int> CombinationScoreChunkLanded;
 		
 		public TableModel tableModel;
 		public ModifiersModel PlayerModifiersModel { get; }
@@ -483,11 +482,6 @@ namespace _Main.Scripts.Dice
 		public void PublishCombinationCommitted(DiceCombinationCardsSnapshot snapshot)
 		{
 			CombinationCommitted?.Invoke(snapshot);
-		}
-
-		public void NotifyCombinationScoreChunkLanded(int scoreChunk)
-		{
-			CombinationScoreChunkLanded?.Invoke(scoreChunk);
 		}
 
 		public void EndTurn(bool success)

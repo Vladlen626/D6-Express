@@ -55,6 +55,8 @@ namespace _Main.Scripts.Dice
 				cameraService.ActiveCameraChanged += OnActiveCameraChanged;
 			}
 			diceGameModel.OnDiceGameStateChanged += OnDiceGameStateChangedHandler;
+			diceGameModel.OnCurrentTurnChanged += OnCurrentTurnChangedHandler;
+			diceGameModel.OnDiceAnimationInProgressChanged += OnDiceAnimationInProgressChangedHandler;
 			diceGameModel.ScreenDiceDictChanged += ScreenDiceDictChangedHandler;
 			ScreenDiceDictChangedHandler();
 			OnDiceGameStateChangedHandler();
@@ -72,15 +74,23 @@ namespace _Main.Scripts.Dice
 			{
 				cameraService.ActiveCameraChanged -= OnActiveCameraChanged;
 			}
+			diceGameModel.OnDiceAnimationInProgressChanged -= OnDiceAnimationInProgressChangedHandler;
+			diceGameModel.OnCurrentTurnChanged -= OnCurrentTurnChangedHandler;
 			diceGameModel.OnDiceGameStateChanged -= OnDiceGameStateChangedHandler;
 			diceGameModel.ScreenDiceDictChanged -= ScreenDiceDictChangedHandler;
 			UnsubscribeFromItemHoverEvents();
+			ClearCurrentHoverAndHideTooltip();
 
 			base.OnDeactivate();
 		}
 
 		private void ScreenDiceDictChangedHandler()
 		{
+			if (currentDiceModel != null && !diceGameModel.ScreenDiceDict.ContainsKey(currentDiceModel))
+			{
+				ClearCurrentHoverAndHideTooltip();
+			}
+
 			UnsubscribeFromDiceHoverEvents();
 			SubscribeOnDiceHoverEvents();
 			SubscribeOnItemHoverEvents();
@@ -295,16 +305,37 @@ namespace _Main.Scripts.Dice
 
 		private void OnActiveCameraChanged(CameraStateEnum _)
 		{
-			if (currentItem != null)
+			ClearCurrentHoverAndHideTooltip();
+		}
+
+		private void OnCurrentTurnChangedHandler(int oldValue, int newValue)
+		{
+			ClearCurrentHoverAndHideTooltip();
+		}
+
+		private void OnDiceAnimationInProgressChangedHandler(bool oldValue, bool newValue)
+		{
+			if (newValue)
 			{
-				SetItemTooltipPosition();
+				ClearCurrentHoverAndHideTooltip();
+			}
+		}
+
+		private void ClearCurrentHoverAndHideTooltip()
+		{
+			if (!_context)
+			{
+				currentDiceModel = null;
+				currentItem = null;
+				currentItemView = null;
 				return;
 			}
 
-			if (currentDiceModel != null)
-			{
-				OnDiceHoverEnter(currentDiceModel);
-			}
+			currentDiceModel = null;
+			currentItem = null;
+			currentItemView = null;
+			_context.SetActivationLabel(null);
+			_context.HideTooltip();
 		}
 
 		private void SetItemTooltipPosition()

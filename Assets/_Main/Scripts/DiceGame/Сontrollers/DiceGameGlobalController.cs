@@ -50,6 +50,7 @@ namespace _Main.Scripts.Dice
 		private List<IBaseController> betControllers = new();
 		private List<IBaseController> selectionControllers = new();
 		private bool gamePreviousStoped = false;
+		private bool isMatchResultFlowStarted;
 
 		private CouplePositionsHandler CouplePositionsHandler => sceneContext.DiceGameTableView.GameStatePosHandler;
 		private DiceTableView diceTableView => sceneContext.DiceGameTableView;
@@ -106,6 +107,8 @@ namespace _Main.Scripts.Dice
 		{
 			lifecycleService.Unregister(dicePreGameController);
 			dicePreGameController = null;
+			playerModel.PlayerStateModel.StateRemoved -= OnPostDialogueFinished;
+			isMatchResultFlowStarted = false;
 
 			diceGameModel.OnDiceAnimationInProgressChanged -= OnDiceAnimationInProgressChangedHandler;
 			playerModel.PlayerStateModel.StateAdded -= OnCharacterStateAddedHandler;
@@ -139,18 +142,73 @@ namespace _Main.Scripts.Dice
 
 		private void OnGameConditionPassedHandler()
 		{
-			TrackMatchResultAnalytics(true);
-			playerModel.InventoryModel.GiveCash(diceGameModel.CalculateWinPayout());
+			if (isMatchResultFlowStarted)
+			{
+				return;
+			}
 
-			playerModel.PlayerStateModel.StateRemoved += OnPostDialogueFinished;
-			PostGameDialogue(true);
+			isMatchResultFlowStarted = true;
+			HandleMatchResultAsync(true).Forget();
 		}
 
 		private void OnGameConditionFailedHandler()
 		{
-			TrackMatchResultAnalytics(false);
-			playerModel.PlayerStateModel.StateRemoved += OnPostDialogueFinished;
-			PostGameDialogue(false);
+			if (isMatchResultFlowStarted)
+			{
+				return;
+			}
+
+			isMatchResultFlowStarted = true;
+			HandleMatchResultAsync(false).Forget();
+		}
+
+		private async UniTask HandleMatchResultAsync(bool isWin)
+		{
+			diceGameModel.BeginDiceAnimation();
+			try
+			{
+				var turnFlowAwaiter = diceGameModel.TurnFlowAwaiter;
+				if (turnFlowAwaiter != null)
+				{
+					await turnFlowAwaiter.WaitForEmptyAsync();
+				}
+
+				var scoreAnimationDuration = diceTableView.ScoreAnimationDuration;
+				if (scoreAnimationDuration > 0f)
+				{
+					await UniTask.Delay(TimeSpan.FromSeconds(scoreAnimationDuration));
+				}
+
+				if (isWin)
+				{
+					if (notificationService != null)
+					{
+						await notificationService.ShowBannerRawAsync("YOU WIN");
+					}
+				}
+				else
+				{
+					audioService?.PlaySound(SoundNames.Fail);
+					if (notificationService != null)
+					{
+						await notificationService.ShowBannerRawAsync("YOU LOSE", isNegative: true, playSound: false);
+					}
+				}
+
+				TrackMatchResultAnalytics(isWin);
+				if (isWin)
+				{
+					playerModel.InventoryModel.GiveCash(diceGameModel.CalculateWinPayout());
+				}
+
+				playerModel.PlayerStateModel.StateRemoved -= OnPostDialogueFinished;
+				playerModel.PlayerStateModel.StateRemoved += OnPostDialogueFinished;
+				PostGameDialogue(isWin);
+			}
+			finally
+			{
+				diceGameModel.EndDiceAnimation();
+			}
 		}
 
 		private void OnDiceGameStateChangedHandler()
@@ -186,6 +244,7 @@ namespace _Main.Scripts.Dice
 		private async UniTask StartDiceGame()
 		{
 			gamePreviousStoped = false;
+			isMatchResultFlowStarted = false;
 			inputService.EnableDiceGameInputs();
 
 			inputService.OnDiceGameLeave += OnExitRequested;
@@ -245,6 +304,8 @@ namespace _Main.Scripts.Dice
 		private void StopDiceGame()
 		{
 			inputService.OnDiceGameLeave -= OnExitRequested;
+			playerModel.PlayerStateModel.StateRemoved -= OnPostDialogueFinished;
+			isMatchResultFlowStarted = false;
 
 			if (gamePreviousStoped)
 			{

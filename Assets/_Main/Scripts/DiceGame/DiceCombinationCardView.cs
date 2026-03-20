@@ -26,9 +26,6 @@ namespace _Main.Scripts.Dice
 		private Sprite[] diceFaceSprites;
 
 		[SerializeField]
-		private RectTransform flyOrigin;
-
-		[SerializeField]
 		private float scoreAnimationDuration = 0.24f;
 
 		[SerializeField]
@@ -42,7 +39,6 @@ namespace _Main.Scripts.Dice
 		private bool isScoreInitialized;
 		private bool isShown;
 
-		public RectTransform FlyOrigin => flyOrigin;
 		public bool IsShown => isShown;
 
 		private void Awake()
@@ -218,10 +214,10 @@ namespace _Main.Scripts.Dice
 
 		private void ValidateReferences()
 		{
-			if (!combinationNameText || !scoreText || !diceFacesRoot || !diceFaceIconPrefab || !flyOrigin)
+			if (!combinationNameText || !scoreText || !diceFacesRoot || !diceFaceIconPrefab)
 			{
 				throw new MissingReferenceException(
-					"[DiceCombinationCardView] Assign combinationNameText, scoreText, diceFacesRoot, diceFaceIconPrefab and flyOrigin.");
+					"[DiceCombinationCardView] Assign combinationNameText, scoreText, diceFacesRoot and diceFaceIconPrefab.");
 			}
 
 			if (diceFaceSprites == null || diceFaceSprites.Length != 6)

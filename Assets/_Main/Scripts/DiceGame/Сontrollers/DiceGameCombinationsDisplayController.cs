@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using _Main.Scripts.Core.Services;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Audio;
-using TMPro;
 using UnityEngine;
 
 namespace _Main.Scripts.Dice
@@ -19,7 +17,6 @@ namespace _Main.Scripts.Dice
 		private readonly IAudioService audioService;
 		private readonly Dictionary<string, CardRuntime> cardByKey = new(StringComparer.Ordinal);
 		private readonly List<string> keysToRemove = new();
-		private readonly Stack<TextMeshProUGUI> flyLabelPool = new();
 		private readonly Stack<DiceCombinationCardView> cardViewPool = new();
 
 		private bool isActive;
@@ -130,8 +127,6 @@ namespace _Main.Scripts.Dice
 				{
 					return;
 				}
-
-				await AnimateScoreFlyAsync(entry.Score, runtime.View.FlyOrigin);
 			}
 
 			ApplyPreview(DiceCombinationCardsSnapshot.Empty);
@@ -281,98 +276,6 @@ namespace _Main.Scripts.Dice
 			cardViewPool.Push(view);
 		}
 
-		private async UniTask AnimateScoreFlyAsync(int scoreDelta, RectTransform flyOrigin)
-		{
-			if (scoreDelta == 0)
-			{
-				return;
-			}
-
-			var flyLabel = RentFlyLabel();
-			if (!flyLabel)
-			{
-				diceGameModel.NotifyCombinationScoreChunkLanded(scoreDelta);
-				return;
-			}
-
-			try
-			{
-				flyLabel.alpha = 1f;
-				if (scoreDelta > 0)
-				{
-					flyLabel.SetText("+{0:0}", scoreDelta);
-				}
-				else
-				{
-					flyLabel.SetText("{0:0}", scoreDelta);
-				}
-
-				var rect = flyLabel.rectTransform;
-				rect.position = flyOrigin.position;
-				rect.localScale = Vector3.one;
-				var riseTarget = rect.localPosition + diceTableView.CombinationFlyRiseOffset;
-				var riseDuration = diceTableView.CombinationFlyRiseDuration;
-				if (riseDuration > 0f)
-				{
-					await rect.DOLocalMove(riseTarget, riseDuration).SetEase(Ease.OutQuad).AsyncWaitForCompletion().AsUniTask();
-				}
-				else
-				{
-					rect.localPosition = riseTarget;
-				}
-
-				var holdDuration = diceTableView.CombinationFlyHoldDuration;
-				if (holdDuration > 0f)
-				{
-					await UniTask.Delay(TimeSpan.FromSeconds(holdDuration));
-				}
-
-				var moveDuration = diceTableView.CombinationFlyToTargetDuration;
-				var fadeDuration = diceTableView.CombinationFlyFadeDuration;
-				var sequence = DOTween.Sequence()
-					.Join(rect.DOMove(diceTableView.TurnScoreFlyTarget.position, moveDuration).SetEase(Ease.InQuad));
-
-				if (fadeDuration > 0f)
-				{
-					sequence.Join(flyLabel.DOFade(0f, fadeDuration).SetEase(Ease.Linear));
-				}
-
-				await sequence.AsyncWaitForCompletion().AsUniTask();
-			}
-			finally
-			{
-				ReleaseFlyLabel(flyLabel);
-			}
-
-			diceGameModel.NotifyCombinationScoreChunkLanded(scoreDelta);
-		}
-
-		private TextMeshProUGUI RentFlyLabel()
-		{
-			while (flyLabelPool.Count > 0)
-			{
-				var pooled = flyLabelPool.Pop();
-				if (pooled)
-				{
-					pooled.gameObject.SetActive(true);
-					return pooled;
-				}
-			}
-
-			return null;
-		}
-
-		private void ReleaseFlyLabel(TextMeshProUGUI flyLabel)
-		{
-			if (!flyLabel)
-			{
-				return;
-			}
-
-			flyLabel.gameObject.SetActive(false);
-			flyLabelPool.Push(flyLabel);
-		}
-
 		private void ValidateReferences()
 		{
 			if (!diceTableView)
@@ -400,16 +303,6 @@ namespace _Main.Scripts.Dice
 				cardView.SetVisibleImmediate(false);
 				cardView.gameObject.SetActive(false);
 				cardViewPool.Push(cardView);
-			}
-
-			var flyLabelPoolSize = diceTableView.CombinationFlyLabelsPrewarmCount;
-			for (int i = flyLabelPool.Count; i < flyLabelPoolSize; i++)
-			{
-				var flyLabel = UnityEngine.Object.Instantiate(
-					diceTableView.CombinationFlyScorePrefab,
-					diceTableView.CombinationFlyLayer);
-				flyLabel.gameObject.SetActive(false);
-				flyLabelPool.Push(flyLabel);
 			}
 
 			poolsPrewarmed = true;

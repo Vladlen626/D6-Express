@@ -48,19 +48,8 @@ public class DiceTableView : MonoBehaviour
 	[Header("Combinations Cards")]
 	[SerializeField] private Transform combinationCardsRoot;
 	[SerializeField] private DiceCombinationCardView combinationCardPrefab;
-	[SerializeField] private RectTransform combinationFlyLayer;
-	[SerializeField] private TextMeshProUGUI combinationFlyScorePrefab;
-	[SerializeField] private RectTransform turnScoreFlyTarget;
 	[SerializeField] private int combinationCardsPrewarmCount = 6;
-	[SerializeField] private int combinationFlyLabelsPrewarmCount = 2;
 	[SerializeField] private int combinationCardFaceIconsPrewarmCount = 6;
-
-	[Header("Combinations Fly Animation")]
-	[SerializeField] private Vector3 combinationFlyRiseOffset = new Vector3(0f, 0f, 0.35f);
-	[SerializeField] private float combinationFlyRiseDuration = 0.12f;
-	[SerializeField] private float combinationFlyHoldDuration = 0.15f;
-	[SerializeField] private float combinationFlyToTargetDuration = 0.26f;
-	[SerializeField] private float combinationFlyFadeDuration = 0.18f;
 
 	[Header("Buttons")]
 	[SerializeField] private Button rollButton;
@@ -108,17 +97,9 @@ public class DiceTableView : MonoBehaviour
 	public float UpgradeDiceScreenScale => upgradeDiceScreenScale > 0.05f ? upgradeDiceScreenScale : DefaultUpgradeDiceScale;
 	public Transform CombinationCardsRoot => combinationCardsRoot;
 	public DiceCombinationCardView CombinationCardPrefab => combinationCardPrefab;
-	public RectTransform CombinationFlyLayer => combinationFlyLayer;
-	public TextMeshProUGUI CombinationFlyScorePrefab => combinationFlyScorePrefab;
-	public RectTransform TurnScoreFlyTarget => turnScoreFlyTarget;
 	public int CombinationCardsPrewarmCount => Mathf.Max(1, combinationCardsPrewarmCount);
-	public int CombinationFlyLabelsPrewarmCount => Mathf.Max(1, combinationFlyLabelsPrewarmCount);
 	public int CombinationCardFaceIconsPrewarmCount => Mathf.Clamp(combinationCardFaceIconsPrewarmCount, 0, 6);
-	public Vector3 CombinationFlyRiseOffset => combinationFlyRiseOffset;
-	public float CombinationFlyRiseDuration => Mathf.Max(0f, combinationFlyRiseDuration);
-	public float CombinationFlyHoldDuration => Mathf.Max(0f, combinationFlyHoldDuration);
-	public float CombinationFlyToTargetDuration => Mathf.Max(0.01f, combinationFlyToTargetDuration);
-	public float CombinationFlyFadeDuration => Mathf.Max(0f, combinationFlyFadeDuration);
+	public float ScoreAnimationDuration => Mathf.Max(0f, animDuration);
 
 	private bool isCombinationsOpen;
 	private bool inAnimProcess;
@@ -305,10 +286,10 @@ public class DiceTableView : MonoBehaviour
 
 	public void ValidateCombinationCardReferences()
 	{
-		if (!combinationCardsRoot || !combinationCardPrefab || !combinationFlyLayer || !combinationFlyScorePrefab || !turnScoreFlyTarget)
+		if (!combinationCardsRoot || !combinationCardPrefab)
 		{
 			throw new MissingReferenceException(
-				"[DiceTableView] Combination card UI is not configured. Assign cards root, card prefab, fly layer, fly label prefab and turn score fly target.");
+				"[DiceTableView] Combination card UI is not configured. Assign cards root and card prefab.");
 		}
 	}
 }
