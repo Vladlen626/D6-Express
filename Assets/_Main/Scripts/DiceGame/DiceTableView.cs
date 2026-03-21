@@ -1,6 +1,7 @@
 ﻿using System;
 using _Main.Scripts.Dice;
 using _Main.Scripts.UI;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,6 +28,9 @@ public class DiceTableView : MonoBehaviour
 	
 	[SerializeField]
 	private TextMeshProUGUI HintDiceProcess;
+
+	[SerializeField]
+	private Transform HintDiceProcessRoot;
 
 	[Header("StateHandlers")]
 	[SerializeField] private Transform defaultStateHandler;
@@ -228,7 +232,8 @@ public class DiceTableView : MonoBehaviour
 		{
 			return;
 		}
-
+		
+		HintDiceProcessRoot.DOScale(text.Length > 0 ? Vector3.one : Vector3.zero, animDuration * 0.75f);
 		HintDiceProcess.text = text;
 	}
 

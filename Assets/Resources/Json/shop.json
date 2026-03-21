@@ -3,11 +3,8 @@
     "restock_price": 100,
     "restock_price_scale": 50,
     "items": [
-      { "itemId": "default" },
       { "itemId": "gen_1_focus" },
       { "itemId": "gen_2_focus" },
-      { "itemId": "gen_3_focus" },
-      { "itemId": "gen_4_focus" },
       { "itemId": "gen_5_focus" },
       { "itemId": "gen_6_focus" },
       { "itemId": "strat_safe_ones_fives" },
@@ -34,11 +31,8 @@
     "restock_price": 50,
     "restock_price_scale": 50,
     "items": [
-      { "itemId": "default" },
       { "itemId": "gen_1_focus" },
       { "itemId": "gen_2_focus" },
-      { "itemId": "gen_3_focus" },
-      { "itemId": "gen_4_focus" },
       { "itemId": "gen_5_focus" },
       { "itemId": "gen_6_focus" },
       { "itemId": "strat_safe_ones_fives" },

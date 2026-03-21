@@ -3,7 +3,6 @@ using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services.Factory;
-using UnityEngine;
 
 public class InformationPanelStationController : IBaseController, IActivatable, IPreloadable
 {
@@ -13,7 +12,7 @@ public class InformationPanelStationController : IBaseController, IActivatable, 
 
     private InformationPanelStationView activeStation;
     private Dictionary<string, StationConfig> stationConfigs;
-    private RunConfig runConfig;
+    private Dictionary<string, RunConfig> runConfigs;
 
     public InformationPanelStationController(Run run, InformationPanelView informationPanelView, ConfigService configService)
     {
@@ -39,11 +38,12 @@ public class InformationPanelStationController : IBaseController, IActivatable, 
     public async UniTask PreloadAsync()
     {
         stationConfigs = await configService.GetConfigsAsync<StationConfig>(ResourcePaths.Json.stations);
-        runConfig = await configService.GetFirstOrDefaultAsync<RunConfig>(ResourcePaths.Json.run_rules);
+        runConfigs = await configService.GetConfigsAsync<RunConfig>(ResourcePaths.Json.run_rules);
     }
 
     private void OnRunStarted()
     {
+        var runConfig = GetActiveRunConfig();
         if (runConfig == null || runConfig.levels == null || stationConfigs == null)
         {
             return;
@@ -52,7 +52,6 @@ public class InformationPanelStationController : IBaseController, IActivatable, 
         var stationsView = informationPanelView.Stations;
         var levelCount = runConfig.levels.Length;
         var viewCount = stationsView.Count;
-        var count = Mathf.Min(viewCount, levelCount);
 
         for (int i = 0; i < viewCount; i++)
         {
@@ -103,5 +102,20 @@ public class InformationPanelStationController : IBaseController, IActivatable, 
         }
 
         informationPanelView.SetProgress(run.Level);
+    }
+
+    private RunConfig GetActiveRunConfig()
+    {
+        if (runConfigs == null)
+        {
+            return null;
+        }
+
+        if (!runConfigs.TryGetValue(run.RunRulesId, out var runConfig))
+        {
+            return null;
+        }
+
+        return runConfig;
     }
 }

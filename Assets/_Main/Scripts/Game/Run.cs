@@ -3,6 +3,9 @@ using _Main.Scripts.Dice;
 
 public class Run
 {
+    public const string DefaultRulesId = "default";
+    public const string HardRulesId = "hard";
+
     public int Level { get; private set; }
     public int Day { get; private set; }
     public int Tick { get; private set; }
@@ -13,6 +16,7 @@ public class Run
     public int TicketPrice { get; private set; }
     public int NextTicketPrice { get; private set; }
     public bool Started { get; private set; }
+    public string RunRulesId { get; private set; } = DefaultRulesId;
     public string DiceGameTacticId { get; private set; } = string.Empty;
     public string EnemyAiScenariosPath { get; private set; } = string.Empty;
     public string EnemyAiScenarioSchedulePath { get; private set; } = string.Empty;
@@ -21,6 +25,7 @@ public class Run
     public event Action<int> TickChangeRequested;
     public event Action<int> DayChangeRequested;
     public event Action LevelChangeRequested;
+    public event Action StartRequested;
 
     public event Action TickChanged;
     public event Action TicksPerDayChanged;
@@ -61,6 +66,22 @@ public class Run
         ResetDiceGameTacticSelection();
         Started = true;
         RunStarted?.Invoke();
+    }
+
+    public void RequestStart()
+    {
+        StartRequested?.Invoke();
+    }
+
+    public void SetRunRulesId(string runRulesId)
+    {
+        if (string.IsNullOrWhiteSpace(runRulesId))
+        {
+            RunRulesId = DefaultRulesId;
+            return;
+        }
+
+        RunRulesId = runRulesId.Trim();
     }
 
     public void RequestIncrementTick()

@@ -11,6 +11,7 @@ public class Shop : IGameStateChanger
     private readonly InventoryModel inventoryModel;
     private readonly IReadOnlyDictionary<string, ItemCatalogEntry> catalog;
     private readonly ShopConfig config;
+    private readonly Func<float> itemPriceMultiplierResolver;
     private readonly TradeItem[] tradeItems = new TradeItem[SLOTS];
 
     public IReadOnlyList<TradeItem> TradeItems => tradeItems;
@@ -27,11 +28,16 @@ public class Shop : IGameStateChanger
 
     public event Action RestockFailed;
 
-    public Shop(InventoryModel inventoryModel, IReadOnlyDictionary<string, ItemCatalogEntry> catalog, ShopConfig config)
+    public Shop(
+        InventoryModel inventoryModel,
+        IReadOnlyDictionary<string, ItemCatalogEntry> catalog,
+        ShopConfig config,
+        Func<float> itemPriceMultiplierResolver)
     {
         this.inventoryModel = inventoryModel;
         this.catalog = catalog;
         this.config = config;
+        this.itemPriceMultiplierResolver = itemPriceMultiplierResolver;
 
         ResetRestockPrice();
     }
@@ -97,7 +103,8 @@ public class Shop : IGameStateChanger
 
             var entry = candidate.Entry;
             var visualId = string.IsNullOrEmpty(entry.visualId) ? entry.id : entry.visualId;
-            var tradeItem = new TradeItem(entry.id, entry.typeEnum, entry.price, visualId);
+            var itemPrice = ResolveItemPrice(entry.price);
+            var tradeItem = new TradeItem(entry.id, entry.typeEnum, itemPrice, visualId);
             tradeItem.Buyed += OnBuyed;
             tradeItems[i] = tradeItem;
 
@@ -322,6 +329,12 @@ public class Shop : IGameStateChanger
     {
         RestockPrice += RestockPriceScale;
         RestockPriceChanged?.Invoke();
+    }
+
+    private int ResolveItemPrice(int basePrice)
+    {
+        var scaledPrice = (int)Math.Round(basePrice * itemPriceMultiplierResolver());
+        return Math.Max(1, scaledPrice);
     }
 }
 

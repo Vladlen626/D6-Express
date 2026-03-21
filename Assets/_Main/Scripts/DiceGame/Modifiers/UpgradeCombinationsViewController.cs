@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using _Main.Scripts.Core;
 using _Main.Scripts.Dice;
@@ -144,6 +145,11 @@ public class UpgradeCombinationsViewController : BaseContextController<UIUpgrade
         if (cardViews.TryGetValue(StraightComboId, out var straightCard) && straightCard)
         {
             var straightState = scoringService.GetStraightState();
+            if (straightState == null)
+            {
+                straightState = new StraightRuntimeState(scoringService.GetStraightDefaults());
+            }
+
             straightCard.SetStats(
                 minLabel,
                 maxLabel,
@@ -156,17 +162,78 @@ public class UpgradeCombinationsViewController : BaseContextController<UIUpgrade
         if (cardViews.TryGetValue(OfAKindComboId, out var ofAKindCard) && ofAKindCard)
         {
             var ofAKindState = scoringService.GetComboUpgradeState(OfAKindComboId);
-            if (ofAKindState != null)
+            if (ofAKindState == null)
             {
-                ofAKindCard.SetStats(
-                    minLabel,
-                    maxLabel,
-                    bonusLabel,
-                    ofAKindState.Min,
-                    ofAKindState.Max,
-                    ofAKindState.ScoreBonus);
+                ofAKindState = ResolveOfAKindDefaultState(scoringService);
             }
+
+            ofAKindCard.SetStats(
+                minLabel,
+                maxLabel,
+                bonusLabel,
+                ofAKindState.Min,
+                ofAKindState.Max,
+                ofAKindState.ScoreBonus);
         }
+    }
+
+    private static ComboUpgradeState ResolveOfAKindDefaultState(DiceScoringService scoringService)
+    {
+        var min = 3;
+        var max = 6;
+        var rules = scoringService.GetActiveRules();
+        if (rules == null)
+        {
+            return new ComboUpgradeState
+            {
+                Min = min,
+                Max = max,
+                ScoreBonus = 0
+            };
+        }
+
+        for (int i = 0; i < rules.Count; i++)
+        {
+            var rule = rules[i];
+            if (rule == null)
+            {
+                continue;
+            }
+
+            if (rule.RuleType != ComboRuleType.OfAKind)
+            {
+                continue;
+            }
+
+            if (!string.Equals(rule.Id, OfAKindComboId, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (rule.MinCount > 0)
+            {
+                min = rule.MinCount;
+            }
+
+            if (rule.MaxCount > 0)
+            {
+                max = rule.MaxCount;
+            }
+
+            if (max < min)
+            {
+                max = min;
+            }
+
+            break;
+        }
+
+        return new ComboUpgradeState
+        {
+            Min = min,
+            Max = max,
+            ScoreBonus = 0
+        };
     }
 
     private void UpdateContextVisibility()

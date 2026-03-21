@@ -34,9 +34,9 @@ RectTransform:
   - {fileID: 1253263954525616989}
   m_Father: {fileID: 8973593660193272535}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 10, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &8848731586301820470
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.94509804, g: 0.90588236, b: 0.6627451, a: 1}
+  m_Color: {r: 0.94509804, g: 0.90588236, b: 0.6627451, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -161,7 +161,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 20, y: 20}
+  m_SizeDelta: {x: 0, y: -20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3967327273715292024
 CanvasRenderer:
@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.53333336, g: 0.47843137, b: 0.2627451, a: 1}
+  m_Color: {r: 0.53333336, g: 0.47843137, b: 0.2627451, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -236,8 +236,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 350, y: -360}
-  m_SizeDelta: {x: 137.92993, y: 37.51}
+  m_AnchoredPosition: {x: 350, y: -350}
+  m_SizeDelta: {x: 199.99, y: 37.51}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1587478866710385447
 MonoBehaviour:
@@ -254,11 +254,11 @@ MonoBehaviour:
   _background: {fileID: 7404816813157236204}
   _text: {fileID: 7989533370601486317}
   _layoutElement: {fileID: 0}
-  _maxWidth: 0
+  _maxWidth: 400
   _wrap: 1
   _useLayoutElement: 1
   _autoAddLayoutElement: 0
-  _applyToRootRect: 0
+  _applyToRootRect: 1
 --- !u!1 &4978555510789396697
 GameObject:
   m_ObjectHideFlags: 0
@@ -325,7 +325,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Modifiers
+  m_text: Combinations
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
   m_sharedMaterial: {fileID: -5374591420838769158, guid: cf26052a0d074a04baf69b944a16398d, type: 2}
@@ -334,8 +334,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4292142825
+  m_fontColor: {r: 0.9150943, g: 0.90370363, b: 0.8330811, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -449,7 +449,7 @@ RectTransform:
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 180, y: -140.97913}
   m_SizeDelta: {x: 389.1377, y: -481.7879}
-  m_Pivot: {x: 1, y: 0.5}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &6611339148828083645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -586,7 +586,7 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
-  m_Spacing: 25
+  m_Spacing: 15
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
@@ -642,7 +642,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -20, y: -20}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8383089924795704737
 GameObject:
@@ -709,8 +709,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIUpgradeCombinationsView
   _group: {fileID: 3018378485258149901}
   _canvasType: 11
-  list: {fileID: 0}
-  header: {fileID: 0}
+  list: {fileID: 2456790988821496310}
+  header: {fileID: 3208413059925019834}
 --- !u!1001 &3895105761448397449
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -721,15 +721,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
       propertyPath: m_Color.b
-      value: 0.41568628
+      value: 0.67058825
       objectReference: {fileID: 0}
     - target: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
       propertyPath: m_Color.g
-      value: 0.50980395
+      value: 0.7254902
       objectReference: {fileID: 0}
     - target: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
       propertyPath: m_Color.r
-      value: 0.8862745
+      value: 0.3137255
       objectReference: {fileID: 0}
     - target: {fileID: 4686558720634880075, guid: e40a9656e1cfcd940b4952d52d46a12a, type: 3}
       propertyPath: m_PixelsPerUnitMultiplier

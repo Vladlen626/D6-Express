@@ -1,6 +1,7 @@
 [
   {
     "id": "default",
+    "shop_item_price_multiplier": 0.8,
     "levels": [
       {
         "id": "default",
@@ -34,7 +35,54 @@
         "station_id": "mh",
         "days": 2,
         "ticks_per_day": 3,
-        "cash_goal": 1500,
+        "cash_goal": 2500,
+        "target_score_schedule": {
+          "by_day": {
+            "1": { "by_match": { "1": 4500, "2": 4500, "3": 4500 } },
+            "2": { "by_match": { "1": 4500, "2": 4700, "3": 5000 } },
+            "*": { "by_match": { "*": 5000 } }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "hard",
+    "shop_item_price_multiplier": 1.25,
+    "levels": [
+      {
+        "id": "hard",
+        "station_id": "wb",
+        "days": 1,
+        "ticks_per_day": 3,
+        "cash_goal": 800,
+        "target_score_schedule": {
+          "by_day": {
+            "1": { "by_match": { "1": 2000, "2": 2500, "3": 3000 } },
+            "*": { "by_match": { "*": 3000 } }
+          }
+        }
+      },
+      {
+        "id": "hard",
+        "station_id": "sp",
+        "days": 2,
+        "ticks_per_day": 3,
+        "cash_goal": 2500,
+        "target_score_schedule": {
+          "by_day": {
+            "1": { "by_match": { "1": 3500, "2": 3500, "3": 3500 } },
+            "2": { "by_match": { "1": 4000, "2": 4000, "3": 4000 } },
+            "*": { "by_match": { "*": 4000 } }
+          }
+        }
+      },
+      {
+        "id": "hard",
+        "station_id": "mh",
+        "days": 2,
+        "ticks_per_day": 3,
+        "cash_goal": 4500,
         "target_score_schedule": {
           "by_day": {
             "1": { "by_match": { "1": 4500, "2": 4500, "3": 4500 } },

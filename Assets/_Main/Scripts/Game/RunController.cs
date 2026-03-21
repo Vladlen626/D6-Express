@@ -1,5 +1,6 @@
-﻿using _Main.Scripts.Dice;
+using _Main.Scripts.Dice;
 using System;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
@@ -11,22 +12,21 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 
 	private readonly D6Game game;
 	private readonly Run run;
-	private readonly RunConfig runConfig;
 	private readonly PlayerModel playerModel;
 	private readonly DiceScoringService scoringService;
 	private readonly ConfigService configService;
 
 	private PlayerConfig playerConfig;
 	private DiceGameTacticsPoolConfig diceGameTacticsPoolConfig;
+	private Dictionary<string, RunConfig> runConfigs;
 
-	public RunController(D6Game game, Run run, RunConfig runConfig, PlayerModel playerModel, DiceScoringService scoringService, ConfigService configService)
+	public RunController(D6Game game, Run run, PlayerModel playerModel, DiceScoringService scoringService, ConfigService configService)
 	{
 		this.game = game;
 		this.run = run;
 		this.playerModel = playerModel;
 		this.scoringService = scoringService;
 		this.configService = configService;
-		this.runConfig = runConfig;
 	}
 
 	public void Activate()
@@ -66,6 +66,12 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 		{
 			throw new InvalidOperationException($"[RunController] Tactics pool validation failed: {validationError}");
 		}
+
+		runConfigs = await configService.GetConfigsAsync<RunConfig>(ResourcePaths.Json.run_rules);
+		if (runConfigs == null || runConfigs.Count == 0)
+		{
+			throw new InvalidOperationException("[RunController] Run rules config is empty.");
+		}
 	}
 
 	private void OnTickChangeRequested(int value)
@@ -88,9 +94,22 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 
 	private void UpdateLevelData()
 	{
-		var levelData = runConfig.levels[run.Level];
-		var ticketPrice = run.Level == 0 ? 0 : runConfig.levels[run.Level - 1].cash_goal;
-		run.SetLevelData(levelData.station_id, levelData.days, levelData.ticks_per_day, runConfig.levels.Length, ticketPrice, levelData.cash_goal);
+		var activeRunConfig = GetActiveRunConfig();
+		if (run.Level < 0 || run.Level >= activeRunConfig.levels.Length)
+		{
+			throw new InvalidOperationException(
+				$"[RunController] Level index {run.Level} is out of bounds for run rules '{run.RunRulesId}'.");
+		}
+
+		var levelData = activeRunConfig.levels[run.Level];
+		var ticketPrice = run.Level == 0 ? 0 : activeRunConfig.levels[run.Level - 1].cash_goal;
+		run.SetLevelData(
+			levelData.station_id,
+			levelData.days,
+			levelData.ticks_per_day,
+			activeRunConfig.levels.Length,
+			ticketPrice,
+			levelData.cash_goal);
 	}
 
 	private void OnRunStarted()
@@ -221,5 +240,27 @@ public class RunController : IBaseController, IActivatable, IPreloadable
 	private bool CanMoveNextLevel()
 	{
 		return playerModel.InventoryModel.CashCount >= run.NextTicketPrice;
+	}
+
+	private RunConfig GetActiveRunConfig()
+	{
+		if (runConfigs == null || runConfigs.Count == 0)
+		{
+			throw new InvalidOperationException("[RunController] Run rules config is empty.");
+		}
+
+		if (!runConfigs.TryGetValue(run.RunRulesId, out var activeRunConfig) || activeRunConfig == null)
+		{
+			throw new InvalidOperationException(
+				$"[RunController] Run rules with id '{run.RunRulesId}' were not found.");
+		}
+
+		if (activeRunConfig.levels == null || activeRunConfig.levels.Length == 0)
+		{
+			throw new InvalidOperationException(
+				$"[RunController] Run rules '{run.RunRulesId}' do not contain levels.");
+		}
+
+		return activeRunConfig;
 	}
 }

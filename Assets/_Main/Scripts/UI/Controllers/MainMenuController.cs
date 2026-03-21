@@ -49,7 +49,8 @@ namespace _Main.Scripts.UI
 		{
 			if (!run.Started)
 			{
-				run.Start();
+				_context.Hide();
+				run.RequestStart();
 			}
 		}
 

@@ -44,6 +44,7 @@ namespace _Main.Scripts.Dice
 		private DiceView[] playerDiceViewsArray;
 		private DiceView[] enemyDiceViewsArray;
 		private EnemyAiScenarioRuntime enemyScenarioRuntime;
+		private Dictionary<string, RunConfig> runConfigs;
 
 		private DicePreGameController dicePreGameController;
 		private List<IBaseController> persistentControllers = new();
@@ -361,8 +362,15 @@ namespace _Main.Scripts.Dice
 				return false;
 			}
 
-			var runConfig = await configService.GetFirstOrDefaultAsync<RunConfig>(ResourcePaths.Json.run_rules);
-			if (runConfig == null || runConfig.levels == null || run.Level < 0 || run.Level >= runConfig.levels.Length)
+			runConfigs ??= await configService.GetConfigsAsync<RunConfig>(ResourcePaths.Json.run_rules);
+			if (runConfigs == null || !runConfigs.TryGetValue(run.RunRulesId, out var runConfig) || runConfig == null)
+			{
+				FailDiceGameSetup(
+					$"[DiceGame] run_rules config is missing for selected id '{run.RunRulesId}'.");
+				return false;
+			}
+
+			if (runConfig.levels == null || run.Level < 0 || run.Level >= runConfig.levels.Length)
 			{
 				FailDiceGameSetup("[DiceGame] run_rules config is missing or does not contain current level.");
 				return false;

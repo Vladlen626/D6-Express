@@ -171,6 +171,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Train
       objectReference: {fileID: 0}
+    - target: {fileID: 5017843108929867041, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_Color.a
+      value: 0.11764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081537689029294607, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8090697997683460468, guid: 4bcd1477b4992f94595b38f25144e8df, type: 3}
       propertyPath: m_IsActive
       value: 1

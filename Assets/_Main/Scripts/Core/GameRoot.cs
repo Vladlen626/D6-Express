@@ -109,6 +109,8 @@ namespace _Main.Scripts.Core
 
 			var mainMenuController = new MainMenuController(uiService, game, run);
 			await _lifecycle.RegisterAsync(mainMenuController);
+			var difficultyLevelController = new DifficultyLevelController(uiService, game, run);
+			await _lifecycle.RegisterAsync(difficultyLevelController);
 
 			await sceneService.LoadSceneAsync(SceneNames.Train);
 			await UniTask.WaitUntil(() => sceneService.IsSceneLoaded(SceneNames.Train));
@@ -184,8 +186,8 @@ namespace _Main.Scripts.Core
 					sceneContext.DiceGameTableView),
 			};
 
-			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService);
-			var stationShop = await ShopFactory.GetStationShopAsync(playerModel.InventoryModel, configService);
+			var trainShop = await ShopFactory.GetTrainShopAsync(playerModel.InventoryModel, configService, run);
+			var stationShop = await ShopFactory.GetStationShopAsync(playerModel.InventoryModel, configService, run);
 
 			var sleepController = RunFactory.GetSleepControllers(run, playerView);
 			var locationController = new LocationController(game, sceneContext, audioService);

@@ -4,12 +4,10 @@ using _Main.Scripts.Core.Services;
 using _Main.Scripts.Dice;
 using PlatformCore.Core;
 using PlatformCore.Services;
-using PlatformCore.Services.Factory;
-using PlatformCore.Services.UI;
 
 public static class RunFactory
 {
-	public static async Task<IEnumerable<IBaseController>> GetBaseControllers(
+	public static Task<IEnumerable<IBaseController>> GetBaseControllers(
 		D6Game game,
 		Run run,
 		PlayerModel playerModel,
@@ -18,9 +16,7 @@ public static class RunFactory
 		ICameraService cameraService,
 		DiceScoringService scoringService)
 	{
-		var runConfig = await configService.GetFirstOrDefaultAsync<RunConfig>(ResourcePaths.Json.run_rules);
-
-		return new IBaseController[]
+		IEnumerable<IBaseController> controllers = new IBaseController[]
 		{
 			new LevelViewController(
 				game,
@@ -29,11 +25,12 @@ public static class RunFactory
 			new RunController(
 				game,
 				run,
-				runConfig,
 				playerModel,
 				scoringService,
 				configService)
 		};
+
+		return Task.FromResult(controllers);
 	}
 
 	public static SleepController GetSleepControllers(Run run, PlayerView playerView)
