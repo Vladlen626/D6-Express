@@ -7,6 +7,7 @@ namespace _Main.Scripts.Core
 			public const string DiceBannerUpgradeTriggered = "dice_banner_upgrade_triggered";
 			public const string DiceUpgradeComboStraight = "dice_upgrade_combo_straight";
 			public const string DiceUpgradeComboOfAKind = "dice_upgrade_combo_ofakind";
+			public const string DiceUpgradePauseHeader = "dice_upgrade_pause_header";
 			public const string DiceUpgradeHintContinue = "dice_upgrade_hint_continue";
 			public const string DiceUpgradeHintStop = "dice_upgrade_hint_stop";
 			public const string DiceUpgradeRolled = "dice_upgrade_rolled";

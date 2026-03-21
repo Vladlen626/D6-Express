@@ -234,10 +234,10 @@ RectTransform:
   - {fileID: 5805991128534123833}
   m_Father: {fileID: 8937243739714932157}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -380, y: -360}
-  m_SizeDelta: {x: 137.93, y: 37.51}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 350, y: -360}
+  m_SizeDelta: {x: 137.92993, y: 37.51}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1587478866710385447
 MonoBehaviour:
@@ -445,9 +445,9 @@ RectTransform:
   - {fileID: 317773344387496097}
   m_Father: {fileID: 8937243739714932157}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -180.05011, y: -140.97913}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 180, y: -140.97913}
   m_SizeDelta: {x: 389.1377, y: -481.7879}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &6611339148828083645
@@ -654,9 +654,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8937243739714932157}
   - component: {fileID: 3018378485258149901}
-  - component: {fileID: 4935978597754700905}
+  - component: {fileID: 8180546108677817521}
   m_Layer: 5
-  m_Name: UIModifiersView
+  m_Name: UIUpgradeCombinationsView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -695,7 +695,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &4935978597754700905
+--- !u!114 &8180546108677817521
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -704,13 +704,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8383089924795704737}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 518ac08e937cf654fa70a1d693fa4e01, type: 3}
+  m_Script: {fileID: 11500000, guid: 351c2125fde1f2f46a98df702876385f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIModifiersView
+  m_EditorClassIdentifier: Assembly-CSharp::UIUpgradeCombinationsView
   _group: {fileID: 3018378485258149901}
   _canvasType: 11
-  list: {fileID: 2456790988821496310}
-  header: {fileID: 3208413059925019834}
+  list: {fileID: 0}
+  header: {fileID: 0}
 --- !u!1001 &3895105761448397449
 PrefabInstance:
   m_ObjectHideFlags: 0

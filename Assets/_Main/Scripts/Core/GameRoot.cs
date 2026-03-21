@@ -227,6 +227,12 @@ namespace _Main.Scripts.Core
 					notificationService, configService, localizationService),
 				new ModifiersViewController(uiService, playerModel.InventoryModel.ModifiersModel, factory,
 					configService, pauseState),
+				new UpgradeCombinationsViewController(
+					uiService,
+					diceGameModel,
+					factory,
+					localizationService,
+					pauseState),
 				new CombinationsController(playerModel.InventoryModel.ModifiersModel,
 					sceneContext.CombinationsView),
 				sleepController,
