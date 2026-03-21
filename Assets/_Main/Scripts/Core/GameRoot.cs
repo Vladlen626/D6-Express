@@ -326,11 +326,10 @@ namespace _Main.Scripts.Core
 			}
 #else
 			shaderVariants.WarmUp();
-			transitionViewController.SetShaderWarmupProgress(100);
 			await UniTask.Yield();
 #endif
 
-			transitionViewController.SetShaderWarmupProgress(100);
+			transitionViewController.SetLoadingText("Loading...");
 			Debug.Log(
 				$"[GameRoot] Shader warmup completed: {shaderVariants.name}. " +
 				$"Warmed variants: {shaderVariants.warmedUpVariantCount}/{shaderVariants.variantCount}");
