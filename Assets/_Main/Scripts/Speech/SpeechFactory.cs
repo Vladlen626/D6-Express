@@ -148,7 +148,6 @@ public static class SpeechFactory
     {
         var speechPassengerGeneric = new Speech(1);
 
-        // Single node that does (random text + voice) in parallel:
         var root = SayRandom(
             speechPassengerGeneric,
             textsConfig.texts["passenger_random_0"],
@@ -156,7 +155,11 @@ public static class SpeechFactory
             textsConfig.texts["passenger_random_2"],
             textsConfig.texts["passenger_random_3"],
             textsConfig.texts["passenger_random_4"],
-            textsConfig.texts["passenger_random_5"]
+            textsConfig.texts["passenger_random_5"],
+            textsConfig.texts["dice_game_hint_no_valid_combo_after_roll"],
+            textsConfig.texts["dice_game_hint_select_combination_first"],
+            textsConfig.texts["dice_game_hint_end_day_early_sleep"],
+            textsConfig.texts["dice_game_hint_save_for_ticket"]
         );
 
         speechPassengerGeneric.SetRootNode(root);
