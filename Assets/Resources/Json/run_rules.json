@@ -7,7 +7,7 @@
         "station_id": "wb",
         "days": 1,
         "ticks_per_day": 3,
-        "cash_goal": 650,
+        "cash_goal": 500,
         "target_score_schedule": {
           "by_day": {
             "1": { "by_match": { "1": 2000, "2": 2500, "3": 3000 } },
@@ -20,7 +20,7 @@
         "station_id": "sp",
         "days": 2,
         "ticks_per_day": 3,
-        "cash_goal": 1100,
+        "cash_goal": 1000,
         "target_score_schedule": {
           "by_day": {
             "1": { "by_match": { "1": 3500, "2": 3500, "3": 3500 } },
@@ -34,7 +34,7 @@
         "station_id": "mh",
         "days": 2,
         "ticks_per_day": 3,
-        "cash_goal": 1300,
+        "cash_goal": 1500,
         "target_score_schedule": {
           "by_day": {
             "1": { "by_match": { "1": 4500, "2": 4500, "3": 4500 } },
