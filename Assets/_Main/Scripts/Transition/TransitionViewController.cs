@@ -41,4 +41,14 @@ public class TransitionViewController : BaseContextController<UITransitionView>,
 
         return _context.HideAsync(resolvedDuration);
     }
+
+    public void SetLoadingText(string text)
+    {
+        _context.SetLoadingText(text);
+    }
+
+    public void SetShaderWarmupProgress(int progressPercent)
+    {
+        _context.SetLoadingText($"Warming shaders... {progressPercent}%");
+    }
 }

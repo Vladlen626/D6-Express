@@ -15,6 +15,9 @@ namespace _Main.Scripts.Core
 {
 	public class GameRoot : BaseGameRoot
 	{
+		private const string ShaderWarmupCollectionResourcePath = "AllResources";
+		private const int ShaderWarmupBatchSize = 16;
+
 		protected override void RegisterServices(PersistentSceneContext persistentSceneContext)
 		{
 			Debug.Log("[GameRoot] Register services...");
@@ -101,6 +104,7 @@ namespace _Main.Scripts.Core
 			await UniTask.WhenAll(
 				audioService.PrewarmEventAsync(SoundNames.StationSound),
 				audioService.PrewarmEventAsync(SoundNames.TrainSound));
+			await WarmupShadersAsync(transitionViewController);
 			await audioService.PlayMusicAsync(SoundNames.StationSound, 0.5f);
 
 			var mainMenuController = new MainMenuController(uiService, game, run);
@@ -271,6 +275,65 @@ namespace _Main.Scripts.Core
 			await _lifecycle.RegisterAsync(gameStateController);
 
 			game.RequestSetLocation(Location.MAIN_MENU);
+		}
+
+		private async UniTask WarmupShadersAsync(TransitionViewController transitionViewController)
+		{
+			// Place collection asset at: Assets/**/Resources/AllResources.shadervariants
+			var shaderVariants = Resources.Load<ShaderVariantCollection>(ShaderWarmupCollectionResourcePath);
+
+			if (!shaderVariants)
+			{
+				transitionViewController.SetLoadingText("Loading...");
+				Debug.LogWarning(
+					$"[GameRoot] Shader warmup skipped. Collection not found at Resources/{ShaderWarmupCollectionResourcePath}. " +
+					"Expected location: Assets/**/Resources/AllResources.shadervariants");
+				return;
+			}
+
+			transitionViewController.SetShaderWarmupProgress(0);
+			Debug.Log(
+				$"[GameRoot] Shader warmup started: {shaderVariants.name}. " +
+				$"Shaders: {shaderVariants.shaderCount}, Variants: {shaderVariants.variantCount}");
+
+#if UNITY_6000_0_OR_NEWER
+			var isWarmedUp = false;
+			var nextProgressLog = 10;
+			while (!isWarmedUp)
+			{
+				isWarmedUp = shaderVariants.WarmUpProgressively(ShaderWarmupBatchSize);
+
+				if (shaderVariants.variantCount > 0)
+				{
+					var warmupProgress = (float)shaderVariants.warmedUpVariantCount / shaderVariants.variantCount;
+					var warmupPercent = Mathf.RoundToInt(Mathf.Clamp01(warmupProgress) * 100f);
+
+					if (isWarmedUp || warmupPercent >= nextProgressLog)
+					{
+						transitionViewController.SetShaderWarmupProgress(warmupPercent);
+						Debug.Log(
+							$"[GameRoot] Shader warmup progress: {warmupPercent}% " +
+							$"({shaderVariants.warmedUpVariantCount}/{shaderVariants.variantCount})");
+
+						while (warmupPercent >= nextProgressLog)
+						{
+							nextProgressLog += 10;
+						}
+					}
+				}
+
+				await UniTask.Yield();
+			}
+#else
+			shaderVariants.WarmUp();
+			transitionViewController.SetShaderWarmupProgress(100);
+			await UniTask.Yield();
+#endif
+
+			transitionViewController.SetShaderWarmupProgress(100);
+			Debug.Log(
+				$"[GameRoot] Shader warmup completed: {shaderVariants.name}. " +
+				$"Warmed variants: {shaderVariants.warmedUpVariantCount}/{shaderVariants.variantCount}");
 		}
 	}
 }

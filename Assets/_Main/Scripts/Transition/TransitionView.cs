@@ -1,15 +1,24 @@
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using PlatformCore.Services.UI;
+using TMPro;
 using UnityEngine;
 
 public class UITransitionView : UIBaseElement
 {
 	[SerializeField]
+	private TextMeshProUGUI loadingText;
+	
+	[SerializeField]
 	private RectTransform toScale;
 
 	[SerializeField]
 	private CanvasGroup loadingTextGroup;
+
+	public void SetLoadingText(string text)
+	{
+		loadingText.text = text;
+	}
 
 	public UniTask ShowAsync(float duration)
 	{
