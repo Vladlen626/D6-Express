@@ -1,4 +1,5 @@
-﻿using PlatformCore.Core;
+using _Main.Scripts.Core;
+using PlatformCore.Core;
 using PlatformCore.Infrastructure.Lifecycle;
 using PlatformCore.Services;
 
@@ -10,23 +11,32 @@ namespace _Main.Scripts.Dice
 		private readonly DiceTableView diceTableView;
 		private readonly ICameraShakeService cameraShakeService;
 		private readonly GlobalNotificationService notificationService;
+		private readonly ILocalizationService localizationService;
 		private TableModel tableModel => diceGameModel.tableModel;
 		private bool isMatchResolved;
+		private string hintProcessSelectText;
+		private string hintProcessInvalidText;
 
 		public DiceGameViewController(
 			DiceTableView diceTableView,
 			DiceGameModel diceGameModel,
 			ICameraShakeService cameraShakeService,
-			GlobalNotificationService notificationService)
+			GlobalNotificationService notificationService,
+			ILocalizationService localizationService)
 		{
 			this.diceTableView = diceTableView;
 			this.diceGameModel = diceGameModel;
 			this.cameraShakeService = cameraShakeService;
 			this.notificationService = notificationService;
+			this.localizationService = localizationService;
 		}
+
 		public void Activate()
 		{
 			isMatchResolved = false;
+			hintProcessSelectText = localizationService.GetLocalized(GlobalConstants.Localization.DiceHintProcessSelect);
+			hintProcessInvalidText = localizationService.GetLocalized(GlobalConstants.Localization.DiceHintProcessInvalid);
+
 			diceGameModel.OnTargetPointsChanged += OnTargetPointsChangedHandler;
 			diceGameModel.OnCurrentTurnChanged += OnCurrentTurnChangedHandler;
 			diceGameModel.OnItemTargetingChanged += OnItemTargetingChangedHandler;
@@ -78,7 +88,7 @@ namespace _Main.Scripts.Dice
 		{
 			diceTableView.SetPlayerBankedPointsText(oldValue, newValue);
 		}
-		
+
 		private void OnEnemyBankedPointsChangedHandler(int oldValue, int newValue)
 		{
 			diceTableView.SetEnemyBankedPointsText(oldValue, newValue);
@@ -109,7 +119,7 @@ namespace _Main.Scripts.Dice
 		{
 			UpdateUI();
 		}
-		
+
 		private void OnPreviewPointsChangedHandler(int oldValue, int newValue)
 		{
 			diceTableView.SetPreviewPointsText(oldValue, newValue);
@@ -152,12 +162,42 @@ namespace _Main.Scripts.Dice
 
 			diceTableView.SetButtonInteractable("Roll", canRoll && canInteract);
 			diceTableView.SetButtonInteractable("Pass", canPass && canInteract);
+			UpdateDiceProcessHint(hasValidComboSelected, isTargetingActive, canInteract);
 		}
 
 		public void DisableButtons()
 		{
 			diceTableView.SetButtonInteractable("Roll", false);
 			diceTableView.SetButtonInteractable("Pass", false);
+			diceTableView.SetDiceProcessHintText(string.Empty);
+		}
+
+		private void UpdateDiceProcessHint(bool hasValidComboSelected, bool isTargetingActive, bool canInteract)
+		{
+			if (diceGameModel.DiceGameState != DiceGameState.GAME ||
+				!diceGameModel.IsPlayerTurn ||
+				tableModel.isFirstRoll ||
+				isTargetingActive ||
+				!canInteract)
+			{
+				diceTableView.SetDiceProcessHintText(string.Empty);
+				return;
+			}
+
+			var selectedDiceCount = diceGameModel.GetSelected().Length;
+			if (selectedDiceCount <= 0)
+			{
+				diceTableView.SetDiceProcessHintText(hintProcessSelectText);
+				return;
+			}
+
+			if (hasValidComboSelected)
+			{
+				diceTableView.SetDiceProcessHintText(string.Empty);
+				return;
+			}
+
+			diceTableView.SetDiceProcessHintText(hintProcessInvalidText);
 		}
 	}
 }

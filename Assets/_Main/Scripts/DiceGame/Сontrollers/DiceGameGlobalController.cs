@@ -307,7 +307,7 @@ namespace _Main.Scripts.Dice
 					new DiceGameUpgradeVisualController(uiService, upgradeController, turnFlowAwaiter, resourceService, loggerService),
 					new DiceGameCombinationsDisplayController(diceGameModel, tableView, turnFlowAwaiter, audioService),
 					new EnemyTurnController(processController, diceGameModel, enemyScenarioRuntime),
-					new DiceGameViewController(tableView, diceGameModel, cameraShakeService, notificationService),
+					new DiceGameViewController(tableView, diceGameModel, cameraShakeService, notificationService, localizationService),
 					new DiceGameResultController(diceGameModel)
 				});
 

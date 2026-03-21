@@ -24,6 +24,9 @@ public class DiceTableView : MonoBehaviour
 	private Transform[] DiceBonusPositions;
 	[SerializeField]
 	private Transform[] SelectDiceBonusPositions;
+	
+	[SerializeField]
+	private TextMeshProUGUI HintDiceProcess;
 
 	[Header("StateHandlers")]
 	[SerializeField] private Transform defaultStateHandler;
@@ -217,6 +220,16 @@ public class DiceTableView : MonoBehaviour
 	public void SetPreviewPointsText(int oldValue, int newValue)
 	{
 		UIUtils.UpdateUiIntValueText(previewScoreText, oldValue, newValue, "{0:0}", animDuration);
+	}
+
+	public void SetDiceProcessHintText(string text)
+	{
+		if (!HintDiceProcess)
+		{
+			return;
+		}
+
+		HintDiceProcess.text = text;
 	}
 
 	public void SetTurnText(int oldValue, int newValue)
