@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: WhitePlastic
-  m_Shader: {fileID: 4800000, guid: 8d2bb70cbf9db8d4da26e15b26e74248, type: 3}
+  m_Shader: {fileID: 4800000, guid: 7ac3c6ff6fa23f649a39b856bc50003c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -30,8 +30,7 @@ Material:
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
   m_LockedProperties: 
@@ -107,6 +106,7 @@ Material:
     - _AddPrecomputedVelocity: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
+    - _AmbientStrength: 0.2
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -123,6 +123,7 @@ Material:
     - _Glossiness: 0.68446976
     - _GlossinessSource: 0
     - _GlossyReflections: 1
+    - _LightWrap: 0.2
     - _Metalic: 0.5
     - _Metallic: 0
     - _Mode: 0
@@ -130,7 +131,9 @@ Material:
     - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _RampSoftness: 0.3
     - _ReceiveShadows: 1
+    - _SaturationBoost: 1.1
     - _Shininess: 0
     - _Smoothness: 0.49
     - _SmoothnessSource: 0
@@ -144,6 +147,7 @@ Material:
     - _StrokeRandomness: 0.366
     - _StrokeScale: 5
     - _Surface: 0
+    - _TextureInfluence: 1
     - _UVSec: 0
     - _UseBlendingNoise: 1
     - _Variation: 0
@@ -154,6 +158,7 @@ Material:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _ShadowColor: {r: 0.78, g: 0.82, b: 0.92, a: 1}
     - _SpecColor: {r: 0, g: 0, b: 0, a: 1}
     - _VariationColorA: {r: 0, g: 0, b: 0, a: 0}
     - _VariationColorB: {r: 1, g: 1, b: 1, a: 0}
